@@ -1,9 +1,12 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
-        <ProjectGuid>{501FA698-5867-4666-A0DB-C9F27F1B2683}</ProjectGuid>
+        <ProjectGuid>{85D29FC7-E20D-4E62-9A5D-9CF55E8E95B5}</ProjectGuid>
     </PropertyGroup>
     <ItemGroup>
-        <Projects Include="..\Test\Project4.dproj">
+        <Projects Include="TelegarmBot.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="C:\Users\Maxim\Documents\Embarcadero\Studio\Projects\Project1.dproj">
             <Dependencies/>
         </Projects>
     </ItemGroup>
@@ -14,23 +17,32 @@
             <Default.Personality/>
         </BorlandProject>
     </ProjectExtensions>
-    <Target Name="Project4">
-        <MSBuild Projects="..\Test\Project4.dproj"/>
+    <Target Name="TelegarmBot">
+        <MSBuild Projects="TelegarmBot.dproj"/>
     </Target>
-    <Target Name="Project4:Clean">
-        <MSBuild Projects="..\Test\Project4.dproj" Targets="Clean"/>
+    <Target Name="TelegarmBot:Clean">
+        <MSBuild Projects="TelegarmBot.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="Project4:Make">
-        <MSBuild Projects="..\Test\Project4.dproj" Targets="Make"/>
+    <Target Name="TelegarmBot:Make">
+        <MSBuild Projects="TelegarmBot.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Project1">
+        <MSBuild Projects="C:\Users\Maxim\Documents\Embarcadero\Studio\Projects\Project1.dproj"/>
+    </Target>
+    <Target Name="Project1:Clean">
+        <MSBuild Projects="C:\Users\Maxim\Documents\Embarcadero\Studio\Projects\Project1.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Project1:Make">
+        <MSBuild Projects="C:\Users\Maxim\Documents\Embarcadero\Studio\Projects\Project1.dproj" Targets="Make"/>
     </Target>
     <Target Name="Build">
-        <CallTarget Targets="Project4"/>
+        <CallTarget Targets="TelegarmBot;Project1"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="Project4:Clean"/>
+        <CallTarget Targets="TelegarmBot:Clean;Project1:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="Project4:Make"/>
+        <CallTarget Targets="TelegarmBot:Make;Project1:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>
