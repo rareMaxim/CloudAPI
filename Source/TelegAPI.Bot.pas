@@ -22,11 +22,15 @@ Type
     FPollingTimeout: Integer;
     FMessageOffset: Integer;
     FOnError: TTelegaBorOnError;
+    function IfThen(Value: Boolean; IfTrue: String; IfFalse: String): String;
     /// <summary>Монитор слежки за обновлениями</summary>
     procedure SetIsReceiving(const Value: Boolean);
   protected
     /// <summary>Мастер-функция для запросов на сервак</summary>
     Function API<T>(Const Method: String; Const Params: TDictionary<String, TValue>): T;
+    Function SendMessage(MsgType: TTelegaMessageType; chatId: TValue; content: TValue;
+      replyToMessageId: Integer = 0; replyMarkup: TTelegaReplyMarkup = nil;
+      additionalParameters: TDictionary<String, TValue> = nil): TTelegaMessage;
   public
 
     /// <summary>A simple method for testing your bot's auth token.</summary>
@@ -38,14 +42,15 @@ Type
     /// <param name="timeout">Timeout in seconds for long polling. Defaults to 0, i.e. usual short polling</param>
     Function getUpdates(Const offset: Integer = 0; Const limit: Integer = 100;
       Const timeout: Integer = 0): TArray<TTelegaUpdate>;
-    Function sendTextMessage(Const chat_id: Int64; text: String;
+    Function sendTextMessage(Const chat_id: TValue; text: String;
       disableWebPagePreview: Boolean = false; replyToMessageId: Integer = 0;
-      replyMarkup: TTelegaReplyMarkup = nil; Const OtherParam: TDictionary<String, TValue> = nil)
-      : TTelegaMessage; overload;
-    Function sendTextMessage(Const chat_id: String; text: String;
-      disableWebPagePreview: Boolean = false; replyToMessageId: Integer = 0;
-      replyMarkup: TTelegaReplyMarkup = nil; Const OtherParam: TDictionary<String, TValue> = nil)
-      : TTelegaMessage; overload;
+      replyMarkup: TTelegaReplyMarkup = nil; ParseMode: TTelegaParseMode = TTelegaParseMode.Default;
+      additionalParameters: TDictionary<String, TValue> = nil): TTelegaMessage;
+
+    Function sendPhoto(chatId: TValue; photo: TValue; caption: string = '';
+      replyToMessageId: Integer = 0; replyMarkup: TTelegaReplyMarkup = nil): TTelegaMessage;
+
+    //
     constructor Create(AOwner: TComponent); overload; override;
     constructor Create(Const Token: String); overload;
   published
@@ -62,45 +67,102 @@ implementation
 
 uses
   XSuperObject,
+  System.Net.Mime,
   System.Threading,
   System.SysUtils,
   System.Net.HttpClient,
   System.Net.URLClient;
 
-{ TTelegram }
+Function TTelegaMessageToKeyValue(Value: TTelegaMessageType): TPair<String, String>;
+Begin
+  case Value of
+    TTelegaMessageType.TextMessage:
+      Result := TPair<String, String>.Create('sendMessage', 'text');
+    TTelegaMessageType.PhotoMessage:
+      Result := TPair<String, String>.Create('sendPhoto', 'photo');
+    TTelegaMessageType.AudioMessage:
+      Result := TPair<String, String>.Create('sendAudio', 'audio');
+    TTelegaMessageType.VideoMessage:
+      Result := TPair<String, String>.Create('sendVideo', 'video');
+    TTelegaMessageType.VoiceMessage:
+      Result := TPair<String, String>.Create('sendVoice', 'voice');
+    TTelegaMessageType.DocumentMessage:
+      Result := TPair<String, String>.Create('sendDocument', 'document');
+    TTelegaMessageType.StickerMessage:
+      Result := TPair<String, String>.Create('sendSticker', 'sticker');
+    TTelegaMessageType.LocationMessage:
+      Result := TPair<String, String>.Create('sendLocation', 'latitude');
+    TTelegaMessageType.ContactMessage:
+      Result := TPair<String, String>.Create('sendContact', 'contact');
+    TTelegaMessageType.VenueMessage:
+      Result := TPair<String, String>.Create('sendVenue', 'venue');
+  else
+    raise Exception.Create('Мы такое не сделали =(');
+  end
+End;
 
+Function ToModeString(Mode: TTelegaParseMode): String;
+Begin
+  case Mode of
+    TTelegaParseMode.Default:
+      Result := '';
+    TTelegaParseMode.Markdown:
+      Result := 'Markdown';
+    TTelegaParseMode.Html:
+      Result := 'HTML';
+  end;
+End;
+
+{ TTelegram }
 function TTelegramBot.API<T>(const Method: String; Const Params: TDictionary<String, TValue>): T;
 var
   Http: THTTPClient;
-  Content: String;
+  content: String;
   Response: TTelegaApiResponse<T>;
-  uri: TURI;
-  Param: TPair<String, TValue>;
+  parameter: TPair<String, TValue>;
+  Form: TMultipartFormData;
 begin
   Http := THTTPClient.Create;
-  uri := TURI.Create('https://api.telegram.org/bot' + FToken + '/' + Method);
+  Form := TMultipartFormData.Create;
   try
     // Преобразовуем параметры в строку, если нужно
     if Assigned(Params) then
-      for Param in Params do
+    Begin
+      for parameter in Params do
       begin
-        if Param.Value.IsEmpty then
-          Continue;
-        if Param.Value.IsType<String> then
-          uri.AddParameter(Param.Key, Param.Value.AsString);
-        if Param.Value.IsType<Integer> then
-          uri.AddParameter(Param.Key, Param.Value.AsInteger.ToString);
+        if parameter.Value.IsType<TTelegaReplyMarkup> then
+        begin
+          { TODO -oOwner -cGeneral : Проверить че за херня тут твориться }
+        end
+        else if parameter.Value.IsType<TTelegaFileToSend> then
+        Begin
+          { TODO -oOwner -cGeneral : Отправка файлов }
+          Form.AddFile(parameter.Key, parameter.Value.AsType<TTelegaFileToSend>.FileName);
+        End
+        else
+        begin
+          if parameter.Value.IsType<string> then
+            Form.AddField(parameter.Key, parameter.Value.AsString)
+          else if parameter.Value.IsType<Int64> then
+            Form.AddField(parameter.Key, parameter.Value.AsInt64.ToString)
+          else if parameter.Value.IsType<Boolean> then
+            Form.AddField(parameter.Key, IfThen(parameter.Value.AsBoolean, 'true', 'false'))
+        end;
       end;
-    //
-    Content := Http.Get(uri.ToString).ContentAsString(TEncoding.UTF8);
-    if Content.Contains('502 Bad Gateway') then
+
+    End;
+    content := Http.Post('https://api.telegram.org/bot' + FToken + '/' + Method, Form)
+      .ContentAsString(TEncoding.UTF8);
+    // else
+    // Content := Http.Get(Uri.ToString).ContentAsString(TEncoding.UTF8);
+
+    if content.Contains('502 Bad Gateway') then
     begin
       if Assigned(OnError) then
         OnError(Self, 502, 'Bad Gateway');
       Exit;
     end;
-
-    Response := TTelegaApiResponse<T>.FromJSON(Content);
+    Response := TTelegaApiResponse<T>.FromJSON(content);
     if Not Response.Ok then
     begin
       if Assigned(OnError) then
@@ -148,39 +210,91 @@ begin
   end;
 end;
 
-function TTelegramBot.sendTextMessage(const chat_id: String; text: String;
-  disableWebPagePreview: Boolean; replyToMessageId: Integer; replyMarkup: TTelegaReplyMarkup;
-  const OtherParam: TDictionary<String, TValue>): TTelegaMessage;
-var
-  Params: TDictionary<String, TValue>;
-  I: Integer;
+function TTelegramBot.IfThen(Value: Boolean; IfTrue, IfFalse: String): String;
 begin
-  Params := TDictionary<String, TValue>.Create;
-  try
-    if Assigned(OtherParam) then
-      Params := OtherParam;
-    Params.Add('chat_id', chat_id);
-    Params.Add('text', text);
-    if disableWebPagePreview then
-      Params.Add('disableWebPagePreview', disableWebPagePreview);
-    if replyToMessageId = 0 then
-      Params.Add('replyToMessageId', replyToMessageId);
-    if Assigned(replyMarkup) then
-      Params.Add('replyMarkup', replyMarkup);
+  if Value then
+    Result := IfTrue
+  else
+    Result := IfFalse;
+end;
 
-    Result := Self.API<TTelegaMessage>('sendMessage', Params);
+function TTelegramBot.SendMessage(MsgType: TTelegaMessageType; chatId: TValue; content: TValue;
+  replyToMessageId: Integer; replyMarkup: TTelegaReplyMarkup;
+  additionalParameters: TDictionary<String, TValue>): TTelegaMessage;
+var
+  KeyValue: TPair<String, String>;
+begin
+  if Not Assigned(additionalParameters) then
+    additionalParameters := TDictionary<String, TValue>.Create;
+
+  KeyValue := TTelegaMessageToKeyValue(MsgType);
+
+  additionalParameters.Add('chat_id', chatId);
+  additionalParameters.Add('reply_markup', replyMarkup);
+
+  if replyToMessageId <> 0 then
+    additionalParameters.Add('reply_to_message_id', replyToMessageId);
+
+  if NOT string.IsNullOrEmpty(KeyValue.Value) then
+    additionalParameters.Add(KeyValue.Value, content);
+  Result := API<TTelegaMessage>(KeyValue.Key, additionalParameters);
+end;
+
+function TTelegramBot.sendPhoto(chatId: TValue; photo: TValue; caption: string;
+  replyToMessageId: Integer; replyMarkup: TTelegaReplyMarkup): TTelegaMessage;
+var
+  additionalParameters: TDictionary<string, TValue>;
+begin
+  additionalParameters := TDictionary<string, TValue>.Create();
+  try
+    additionalParameters.Add('caption', caption);
+    Result := SendMessage(TTelegaMessageType.PhotoMessage, chatId.ToString, photo, replyToMessageId,
+      replyMarkup, additionalParameters);
   finally
-    Params.Free;
+    additionalParameters.Free;
   end;
 end;
 
-function TTelegramBot.sendTextMessage(const chat_id: Int64; text: String;
+function TTelegramBot.sendTextMessage(const chat_id: TValue; text: String;
   disableWebPagePreview: Boolean; replyToMessageId: Integer; replyMarkup: TTelegaReplyMarkup;
-  const OtherParam: TDictionary<String, TValue>): TTelegaMessage;
+  ParseMode: TTelegaParseMode; additionalParameters: TDictionary<String, TValue>): TTelegaMessage;
 begin
-  Result := sendTextMessage(chat_id.ToString, text, disableWebPagePreview, replyToMessageId,
-    replyMarkup, OtherParam);
+  if NOT Assigned(additionalParameters) then
+    additionalParameters := TDictionary<string, TValue>.Create();
+  if disableWebPagePreview then
+    additionalParameters.Add('disable_web_page_preview', true);
+  if ParseMode <> TTelegaParseMode.Default then
+    additionalParameters.Add('parse_mode', ToModeString(ParseMode));
+
+  Result := SendMessage(TTelegaMessageType.TextMessage, chat_id, text, replyToMessageId,
+    replyMarkup, additionalParameters);
 end;
+
+// function TTelegramBot.sendTextMessage(const chat_id: String; text: String;
+// disableWebPagePreview: Boolean; replyToMessageId: Integer; replyMarkup: TTelegaReplyMarkup;
+// const OtherParam: TDictionary<String, TValue>): TTelegaMessage;
+// var
+// Params: TDictionary<String, TValue>;
+// I: Integer;
+// begin
+// Params := TDictionary<String, TValue>.Create;
+// try
+// if Assigned(OtherParam) then
+// Params := OtherParam;
+// Params.Add('chat_id', chat_id);
+// Params.Add('text', text);
+// if disableWebPagePreview then
+// Params.Add('disableWebPagePreview', disableWebPagePreview);
+// if replyToMessageId = 0 then
+// Params.Add('replyToMessageId', replyToMessageId);
+// if Assigned(replyMarkup) then
+// Params.Add('replyMarkup', replyMarkup);
+//
+// Result := Self.API<TTelegaMessage>('sendMessage', Params);
+// finally
+// Params.Free;
+// end;
+// end;
 
 procedure TTelegramBot.SetIsReceiving(const Value: Boolean);
 var

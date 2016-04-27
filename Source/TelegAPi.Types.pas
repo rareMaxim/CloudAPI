@@ -19,6 +19,10 @@ Type
   /// Text parsing mode
   /// </summary>
   TTelegaParseMode = (Default = 0, Markdown, Html);
+  /// <summary>
+  /// The type of a Message
+  /// </summary>
+
 {$SCOPEDENUMS OFF}
 
   TTelegaReplyMarkup = Class
@@ -324,7 +328,6 @@ Type
   TTelegaChat = Class
   private
     FID: Int64;
-
   published
     /// <summary>
     /// Unique identifier for this chat, not exceeding 1e13 by absolute value
@@ -555,17 +558,16 @@ Type
     /// </value>
     [ALIAS('error_code')]
     property Code: Integer read FCode write FCode;
-
   End;
 
-  TTelegaApiFileToSend = Class
+  TTelegaFileToSend = Class
   private
     FFileName: String;
     FContent: TStream;
   public
     constructor Create(Const FileName: String; Const Content: TStream);
     destructor Destroy; override;
-
+  published
     property FileName: String read FFileName write FFileName;
     property Content: TStream read FContent write FContent;
   end;
@@ -757,13 +759,13 @@ end;
 
 { TTelegaApiFileToSend }
 
-constructor TTelegaApiFileToSend.Create(const FileName: String; const Content: TStream);
+constructor TTelegaFileToSend.Create(const FileName: String; const Content: TStream);
 begin
   Self.FFileName := FileName;
   Self.FContent := Content;
 end;
 
-destructor TTelegaApiFileToSend.Destroy;
+destructor TTelegaFileToSend.Destroy;
 begin
   FContent.Free;
   inherited;
