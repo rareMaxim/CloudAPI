@@ -1,0 +1,48 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{55585921-B228-41C2-9554-6F92BC4C6750}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="..\..\TelegramBOT\Install\TelegarmBot.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="..\..\TelegramBOT\Test\Demo.dproj">
+            <Dependencies>..\..\TelegramBOT\Install\TelegarmBot.dproj</Dependencies>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="TelegarmBot">
+        <MSBuild Projects="..\..\TelegramBOT\Install\TelegarmBot.dproj"/>
+    </Target>
+    <Target Name="TelegarmBot:Clean">
+        <MSBuild Projects="..\..\TelegramBOT\Install\TelegarmBot.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="TelegarmBot:Make">
+        <MSBuild Projects="..\..\TelegramBOT\Install\TelegarmBot.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Demo" DependsOnTargets="TelegarmBot">
+        <MSBuild Projects="..\..\TelegramBOT\Test\Demo.dproj"/>
+    </Target>
+    <Target Name="Demo:Clean" DependsOnTargets="TelegarmBot:Clean">
+        <MSBuild Projects="..\..\TelegramBOT\Test\Demo.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Demo:Make" DependsOnTargets="TelegarmBot:Make">
+        <MSBuild Projects="..\..\TelegramBOT\Test\Demo.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="TelegarmBot;Demo"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="TelegarmBot:Clean;Demo:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="TelegarmBot:Make;Demo:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

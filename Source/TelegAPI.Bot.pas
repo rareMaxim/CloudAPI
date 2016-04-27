@@ -28,11 +28,11 @@ Type
   protected
     /// <summary>Мастер-функция для запросов на сервак</summary>
     Function API<T>(Const Method: String; Const Params: TDictionary<String, TValue>): T;
+    /// <summary>Мастер-функция отправки сообщений </summary>
     Function SendMessage(MsgType: TTelegaMessageType; chatId: TValue; content: TValue;
       replyToMessageId: Integer = 0; replyMarkup: TTelegaReplyMarkup = nil;
       additionalParameters: TDictionary<String, TValue> = nil): TTelegaMessage;
   public
-
     /// <summary>A simple method for testing your bot's auth token.</summary>
     /// <returns>Returns basic information about the bot in form of a User object.</returns>
     Function getMe: TTelegaUser;
@@ -49,6 +49,9 @@ Type
 
     Function sendPhoto(chatId: TValue; photo: TValue; caption: string = '';
       replyToMessageId: Integer = 0; replyMarkup: TTelegaReplyMarkup = nil): TTelegaMessage;
+    Function sendAudio(chat_id: TValue; audio: TValue; duration: Integer = 0;
+      performer: String = ''; title: String = ''; disable_notification: Boolean = false;
+      reply_to_message_id: Integer = 0; replyMarkup: TTelegaReplyMarkup = nil): TTelegaMessage;
 
     //
     constructor Create(AOwner: TComponent); overload; override;
@@ -218,6 +221,28 @@ begin
     Result := IfFalse;
 end;
 
+function TTelegramBot.sendAudio(chat_id, audio: TValue; duration: Integer; performer, title: String;
+  disable_notification: Boolean; reply_to_message_id: Integer; replyMarkup: TTelegaReplyMarkup)
+  : TTelegaMessage;
+var
+  Params: TDictionary<String, TValue>;
+begin
+  Params := TDictionary<String, TValue>.Create;
+  try
+    Params.Add('chat_id', chat_id);
+    Params.Add('audio', audio);
+    Params.Add('duration', duration);
+    Params.Add('performer', performer);
+    Params.Add('title', title);
+    Params.Add('disable_notification', disable_notification);
+    Params.Add('reply_to_message_id', reply_to_message_id);
+    Params.Add('replyMarkup', replyMarkup);
+    Result := API<TTelegaMessage>('sendAudio', Params);
+  finally
+    Params.Free;
+  end;
+end;
+
 function TTelegramBot.SendMessage(MsgType: TTelegaMessageType; chatId: TValue; content: TValue;
   replyToMessageId: Integer; replyMarkup: TTelegaReplyMarkup;
   additionalParameters: TDictionary<String, TValue>): TTelegaMessage;
@@ -269,32 +294,6 @@ begin
   Result := SendMessage(TTelegaMessageType.TextMessage, chat_id, text, replyToMessageId,
     replyMarkup, additionalParameters);
 end;
-
-// function TTelegramBot.sendTextMessage(const chat_id: String; text: String;
-// disableWebPagePreview: Boolean; replyToMessageId: Integer; replyMarkup: TTelegaReplyMarkup;
-// const OtherParam: TDictionary<String, TValue>): TTelegaMessage;
-// var
-// Params: TDictionary<String, TValue>;
-// I: Integer;
-// begin
-// Params := TDictionary<String, TValue>.Create;
-// try
-// if Assigned(OtherParam) then
-// Params := OtherParam;
-// Params.Add('chat_id', chat_id);
-// Params.Add('text', text);
-// if disableWebPagePreview then
-// Params.Add('disableWebPagePreview', disableWebPagePreview);
-// if replyToMessageId = 0 then
-// Params.Add('replyToMessageId', replyToMessageId);
-// if Assigned(replyMarkup) then
-// Params.Add('replyMarkup', replyMarkup);
-//
-// Result := Self.API<TTelegaMessage>('sendMessage', Params);
-// finally
-// Params.Free;
-// end;
-// end;
 
 procedure TTelegramBot.SetIsReceiving(const Value: Boolean);
 var
