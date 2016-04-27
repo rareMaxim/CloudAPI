@@ -12,5 +12,5 @@ Telega π - Библиотека для работы с Telegram Bot API в Delp
 
 # Зависимости #
 
-* RAD Studio Berlin(возможно пару версий вниз)
+* [RAD Studio Berlin(возможно пару версий вниз)](https://www.embarcadero.com/products/delphi)
 * [XSuperObject](https://github.com/onryldz/x-superobject/)
