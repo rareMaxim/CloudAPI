@@ -109,6 +109,8 @@ $(PreBuildEvent)]]></PreBuildEvent>
         <DCCReference Include="..\Source\TelegAPI.Bot.pas"/>
         <DCCReference Include="..\Source\TelegAPi.Types.pas"/>
         <DCCReference Include="..\Source\TelegAPi.RegisterIDE.pas"/>
+        <DCCReference Include="..\x-superobject\XSuperJSON.pas"/>
+        <DCCReference Include="..\x-superobject\XSuperObject.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

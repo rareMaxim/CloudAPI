@@ -1,11 +1,17 @@
 ﻿unit TelegAPI.Bot;
 
+{$I ../jedi/jedi.inc}
+
 interface
 
 uses
-  TelegAPI.Types,
+{$IFDEF DELPHI2009_UP}
   System.Generics.Collections,
+{$ENDIF}
+{$IFDEF DELPHI2009_UP}
   System.Rtti,
+{$ENDIF}
+  TelegAPI.Types,
   System.Classes;
 
 Type
@@ -108,11 +114,10 @@ implementation
 
 uses
   XSuperObject,
+  System.SysUtils,
   System.Net.Mime,
   System.Threading,
-  System.SysUtils,
-  System.Net.HttpClient,
-  System.Net.URLClient;
+  System.Net.HttpClient;
 
 Function ToModeString(Mode: TTelegaParseMode): String;
 Begin
@@ -175,7 +180,7 @@ begin
           if parameter.Value.IsType<string> then
             Form.AddField(parameter.Key, parameter.Value.AsString)
           else if parameter.Value.IsType<Int64> then
-            Form.AddField(parameter.Key, parameter.Value.AsInt64.ToString)
+            Form.AddField(parameter.Key, IntToStr(parameter.Value.AsInt64))
           else if parameter.Value.IsType<Boolean> then
             Form.AddField(parameter.Key, IfThen(parameter.Value.AsBoolean, 'true', 'false'))
         end;
@@ -187,7 +192,7 @@ begin
     // else
     // Content := Http.Get(Uri.ToString).ContentAsString(TEncoding.UTF8);
 
-    if content.Contains('502 Bad Gateway') then
+    if Pos('502 Bad Gateway', content) > 0 then
     begin
       if Assigned(OnError) then
         OnError(Self, 502, 'Bad Gateway');
@@ -209,7 +214,7 @@ end;
 constructor TTelegramBot.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
-  Create(string.Empty);
+  Create('');
 end;
 
 constructor TTelegramBot.Create(const Token: String);

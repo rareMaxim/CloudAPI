@@ -39,6 +39,8 @@ requires
 contains
   TelegAPI.Bot in '..\Source\TelegAPI.Bot.pas',
   TelegAPi.Types in '..\Source\TelegAPi.Types.pas',
-  TelegAPi.RegisterIDE in '..\Source\TelegAPi.RegisterIDE.pas';
+  TelegAPi.RegisterIDE in '..\Source\TelegAPi.RegisterIDE.pas',
+  XSuperJSON in '..\x-superobject\XSuperJSON.pas',
+  XSuperObject in '..\x-superobject\XSuperObject.pas';
 
 end.

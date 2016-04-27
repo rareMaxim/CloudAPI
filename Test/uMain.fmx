@@ -1,0 +1,29 @@
+object Form2: TForm2
+  Left = 0
+  Top = 0
+  Caption = 'Form2'
+  ClientHeight = 396
+  ClientWidth = 580
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnCreate = FormCreate
+  DesignerMasterStyle = 3
+  object Memo1: TMemo
+    Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
+    DataDetectorTypes = []
+    Position.X = 128.000000000000000000
+    Position.Y = 8.000000000000000000
+    Size.Width = 449.000000000000000000
+    Size.Height = 321.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 0
+    Viewport.Width = 441.000000000000000000
+    Viewport.Height = 313.000000000000000000
+  end
+  object TelegramBot1: TTelegramBot
+    Token = '122041176:AAG-1c6kALOL04CHpGWptk3dbvyoU3Njnds'
+    Left = 56
+    Top = 40
+  end
+end
