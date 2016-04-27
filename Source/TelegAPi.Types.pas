@@ -176,7 +176,7 @@ Type
   /// This object represents one size of a photo or a file / sticker thumbnail.
   /// </summary>
   /// <remarks>A missing thumbnail for a file (or sticker) is presented as an empty object.</remarks>
-  TTelegaPhotoSize = Class(TTelegaFile)
+  ttelegaPhotoSize = Class(TTelegaFile)
   private
     FWidth: Integer;
     FHeight: Integer;
@@ -193,9 +193,19 @@ Type
     property Height: Integer read FHeight write FHeight;
   End;
 
+  TTelegaUserProfilePhotos = Class
+  private
+    Ftotal_count: Integer;
+    Fphotos: TArray<TArray<ttelegaPhotoSize>>;
+  published
+    [ALIAS('total_count')]
+    property total_count: Integer read Ftotal_count write Ftotal_count;
+    property photos: TArray < TArray < ttelegaPhotoSize >> read Fphotos write Fphotos;
+  End;
+
   TTelegaDocument = Class(TTelegaFile)
   private
-    FThumb: TTelegaPhotoSize;
+    FThumb: ttelegaPhotoSize;
     FFileName: String;
     FMimeType: String;
   published
@@ -203,7 +213,7 @@ Type
     /// Document thumbnail as defined by sender
     /// </summary>
     [ALIAS('thumb')]
-    property Thumb: TTelegaPhotoSize read FThumb write FThumb;
+    property Thumb: ttelegaPhotoSize read FThumb write FThumb;
     /// <summary>
     /// Optional. Original filename as defined by sender
     /// </summary>
@@ -220,7 +230,7 @@ Type
   private
     FWidth: Integer;
     FHeight: Integer;
-    FThumb: TTelegaPhotoSize;
+    FThumb: ttelegaPhotoSize;
   published
     /// <summary>
     /// Sticker width
@@ -236,7 +246,7 @@ Type
     /// Sticker thumbnail in .webp or .jpg format
     /// </summary>
     [ALIAS('thumb')]
-    property Thumb: TTelegaPhotoSize read FThumb write FThumb;
+    property Thumb: ttelegaPhotoSize read FThumb write FThumb;
 
   End;
 
@@ -245,7 +255,7 @@ Type
     FWidth: String;
     FHeight: String;
     FDuration: Integer;
-    FThumb: TTelegaPhotoSize;
+    FThumb: ttelegaPhotoSize;
     FMimeType: String;
   published
     /// <summary>
@@ -267,7 +277,7 @@ Type
     /// Video thumbnail
     /// </summary>
     [ALIAS('thumb')]
-    property Thumb: TTelegaPhotoSize read FThumb write FThumb;
+    property Thumb: ttelegaPhotoSize read FThumb write FThumb;
     /// <summary>
     /// Optional. Mime type of a file as defined by sender
     /// </summary>
@@ -349,7 +359,7 @@ Type
     FText: String;
     FAudio: TTelegaAudio;
     FDocument: TTelegaDocument;
-    FPhoto: TArray<TTelegaPhotoSize>;
+    FPhoto: TArray<ttelegaPhotoSize>;
     FSticker: TTelegaSticker;
     FVideo: TTelegaVideo;
     FVoice: TTelegaVoice;
@@ -360,7 +370,7 @@ Type
     FNewChatMember: TTelegaUser;
     FLeftChatMember: TTelegaUser;
     FNewChatTitle: String;
-    FNewChatPhoto: TArray<TTelegaPhotoSize>;
+    FNewChatPhoto: TArray<ttelegaPhotoSize>;
     FDeleteChatPhoto: Boolean;
     FGroupChatCreated: Boolean;
     FSupergroupChatCreated: Boolean;
@@ -424,7 +434,7 @@ Type
     /// Optional. Message is a photo, available sizes of the photo
     /// </summary>
     [ALIAS('photo')]
-    property Photo: TArray<TTelegaPhotoSize> read FPhoto write FPhoto;
+    property Photo: TArray<ttelegaPhotoSize> read FPhoto write FPhoto;
     /// <summary>
     /// Optional. Message is a sticker, information about the sticker
     /// </summary>
@@ -479,7 +489,7 @@ Type
     /// Optional. A group photo was change to this value
     /// </summary>
     [ALIAS('new_chat_photo')]
-    property NewChatPhoto: TArray<TTelegaPhotoSize> read FNewChatPhoto write FNewChatPhoto;
+    property NewChatPhoto: TArray<ttelegaPhotoSize> read FNewChatPhoto write FNewChatPhoto;
     /// <summary>
     /// Optional. Informs that the group photo was deleted
     /// </summary>
