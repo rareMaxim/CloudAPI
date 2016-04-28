@@ -432,8 +432,9 @@ Type
   private
     FText: String;
     Frequest_contact: Boolean;
-    Fphotos: TArray<TArray<TTelegaPhotoSize>>;
     Frequest_location: Boolean;
+  Public
+
   published
     /// <summary>Text of the button. If none of the optional fields are used, it will be sent to the bot as a message when the button is pressed</summary>
     [ALIAS('text')]
@@ -458,6 +459,28 @@ Type
     property hide_keyboard: Boolean read Fhide_keyboard write Fhide_keyboard;
     /// <summary>Optional. Use this parameter if you want to hide keyboard for specific users only. Targets: 1) users that are @mentioned in the text of the Message object; 2) if the bot's message is a reply (has reply_to_message_id), sender of the original message.</summary>
     /// <remarks>Example: A user votes in a poll, bot returns confirmation message in reply to the vote and hides keyboard for that user, while still showing the keyboard with poll options to users who haven't voted yet.</remarks>
+    [ALIAS('selective')]
+    property selective: Boolean read Fselective write Fselective;
+  End;
+
+  /// <summary>This object represents a custom keyboard with reply options (see Introduction to bots for details and examples).</summary>
+  TTelegaReplyKeyboardMarkup = Class
+  private
+    Fresize_keyboard: Boolean;
+    FKeyBoard: TArray<TArray<TTelegaKeyboardButton>>;
+    Fone_time_keyboard: Boolean;
+    Fselective: Boolean;
+  published
+    /// <summary>Array of button rows, each represented by an Array of KeyboardButton objects</summary>
+    [ALIAS('keyboard')]
+    property KeyBoard: TArray < TArray < TTelegaKeyboardButton >> read FKeyBoard write FKeyBoard;
+    /// <summary>Optional. Requests clients to resize the keyboard vertically for optimal fit (e.g., make the keyboard smaller if there are just two rows of buttons). Defaults to false, in which case the custom keyboard is always of the same height as the app's standard keyboard.</summary>
+    [ALIAS('resize_keyboard')]
+    property resize_keyboard: Boolean read Fresize_keyboard write Fresize_keyboard;
+    /// <summary>Optional. Requests clients to hide the keyboard as soon as it's been used. The keyboard will still be available, but clients will automatically display the usual letter-keyboard in the chat – the user can press a special button in the input field to see the custom keyboard again. Defaults to false.</summary>
+    [ALIAS('one_time_keyboard')]
+    property one_time_keyboard: Boolean read Fone_time_keyboard write Fone_time_keyboard;
+    /// <summary>Optional. Use this parameter if you want to show the keyboard to specific users only. Targets: 1) users that are @mentioned in the text of the Message object; 2) if the bot's message is a reply (has reply_to_message_id), sender of the original message.</summary>
     [ALIAS('selective')]
     property selective: Boolean read Fselective write Fselective;
   End;
@@ -601,16 +624,6 @@ Type
     [ALIAS('callback_query')]
     property CallbackQuery: TTelegaCallbackQuery read FCallbackQuery write FCallbackQuery;
     property &type: TTelegaUpdateType read Get;
-  End;
-
-  TTelegaReplyMarkup = Class
-  private
-    Fselective: Boolean;
-  published
-    /// <summary>Optional. Use this parameter if you want to show the keyboard to specific users only. Targets: 1) users that are @mentioned in the text of the Message object; 2) if the bot's message is a reply (has reply_to_message_id), sender of the original message.</summary>
-    /// <remarks>Example: A user requests to change the bot‘s language, bot replies to the request with a keyboard to select the new language.Other users in the group don’t see the keyboard.</remarks>
-    [ALIAS('selective')]
-    property selective: Boolean read Fselective write Fselective;
   End;
 
 implementation

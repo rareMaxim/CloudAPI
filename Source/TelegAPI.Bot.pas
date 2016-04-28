@@ -51,37 +51,40 @@ Type
     Function sendTextMessage(Const chat_id: TValue; text: String;
       ParseMode: TTelegaParseMode = TTelegaParseMode.Default;
       disableWebPagePreview: Boolean = False; disable_notification: Boolean = False;
-      replyToMessageId: Integer = 0; replyMarkup: String = ''): TTelegaMessage;
+      replyToMessageId: Integer = 0; replyMarkup: TTelegaReplyKeyboardMarkup = nil): TTelegaMessage;
     Function forwardMessage(chat_id: TValue; from_chat_id: TValue;
       disable_notification: Boolean = False; message_id: Integer = 0): TTelegaMessage;
     Function sendPhoto(chatId: TValue; photo: TValue; caption: string = '';
       disable_notification: Boolean = False; replyToMessageId: Integer = 0;
-      replyMarkup: TTelegaReplyMarkup = nil): TTelegaMessage;
+      replyMarkup: TTelegaReplyKeyboardMarkup = nil): TTelegaMessage;
     Function sendAudio(chat_id: TValue; audio: TValue; duration: Integer = 0;
       performer: String = ''; title: String = ''; disable_notification: Boolean = False;
-      reply_to_message_id: Integer = 0; replyMarkup: TTelegaReplyMarkup = nil): TTelegaMessage;
+      reply_to_message_id: Integer = 0; replyMarkup: TTelegaReplyKeyboardMarkup = nil)
+      : TTelegaMessage;
     Function sendDocument(chat_id: TValue; document: TValue; caption: String = '';
       disable_notification: Boolean = False; reply_to_message_id: Integer = 0;
-      reply_markup: TTelegaReplyMarkup = nil): TTelegaMessage;
+      reply_markup: TTelegaReplyKeyboardMarkup = nil): TTelegaMessage;
     Function sendSticker(chat_id: TValue; sticker: TValue; caption: String = '';
       disable_notification: Boolean = False; reply_to_message_id: Integer = 0;
-      reply_markup: TTelegaReplyMarkup = nil): TTelegaMessage;
+      reply_markup: TTelegaReplyKeyboardMarkup = nil): TTelegaMessage;
     function sendVideo(chat_id: TValue; video: TValue; duration: Integer = 0; width: Integer = 0;
       height: Integer = 0; caption: String = ''; disable_notification: Boolean = False;
-      reply_to_message_id: Integer = 0; reply_markup: TTelegaReplyMarkup = nil): TTelegaMessage;
+      reply_to_message_id: Integer = 0; reply_markup: TTelegaReplyKeyboardMarkup = nil)
+      : TTelegaMessage;
     Function sendVoice(chat_id: TValue; voice: TValue; duration: Integer = 0;
       disable_notification: Boolean = False; reply_to_message_id: Integer = 0;
-      reply_markup: TTelegaReplyMarkup = nil): TTelegaMessage;
+      reply_markup: TTelegaReplyKeyboardMarkup = nil): TTelegaMessage;
 
     Function sendLocation(chat_id: TValue; Location: TTelegaLocation;
       disable_notification: Boolean = False; reply_to_message_id: Integer = 0;
-      reply_markup: TTelegaReplyMarkup = nil): TTelegaMessage;
+      reply_markup: TTelegaReplyKeyboardMarkup = nil): TTelegaMessage;
 
     Function sendVenue(chat_id: TValue; venue: TTelegaVenue; disable_notification: Boolean = False;
-      reply_to_message_id: Integer = 0; reply_markup: TTelegaReplyMarkup = nil): TTelegaMessage;
+      reply_to_message_id: Integer = 0; reply_markup: TTelegaReplyKeyboardMarkup = nil)
+      : TTelegaMessage;
     Function sendContact(chat_id: TValue; contact: TTelegaContact;
       disable_notification: Boolean = False; reply_to_message_id: Integer = 0;
-      reply_markup: TTelegaReplyMarkup = nil): TTelegaMessage;
+      reply_markup: TTelegaReplyKeyboardMarkup = nil): TTelegaMessage;
 
     Procedure sendChatAction(chat_id: TValue; action: String);
     Function getUserProfilePhotos(chat_id: TValue; offset: Integer; limit: Integer = 100)
@@ -95,11 +98,12 @@ Type
 
     Function editMessageText(chat_id: TValue; message_id: Integer; inline_message_id: String;
       text: String; parse_mode: TTelegaParseMode = TTelegaParseMode.Default;
-      disable_web_page_preview: Boolean = False; reply_markup: TTelegaReplyMarkup = nil): Boolean;
+      disable_web_page_preview: Boolean = False;
+      reply_markup: TTelegaReplyKeyboardMarkup = nil): Boolean;
     Function editMessageCaption(chat_id: TValue; message_id: Integer; inline_message_id: String;
-      caption: String; reply_markup: TTelegaReplyMarkup = nil): Boolean;
+      caption: String; reply_markup: TTelegaReplyKeyboardMarkup = nil): Boolean;
     Function editMessageReplyMarkup(chat_id: TValue; message_id: Integer; inline_message_id: String;
-      reply_markup: TTelegaReplyMarkup = nil): Boolean;
+      reply_markup: TTelegaReplyKeyboardMarkup = nil): Boolean;
     constructor Create(AOwner: TComponent); overload; override;
     constructor Create(Const Token: String); overload;
   published
@@ -168,10 +172,10 @@ begin
     Begin
       for parameter in Parameters do
       begin
-        if parameter.Value.IsType<TTelegaReplyMarkup> then
+        if parameter.Value.IsType<TTelegaReplyKeyboardMarkup> then
         begin
           { TODO -oOwner -cGeneral : Проверить че за херня тут твориться }
-          Form.AddFile(parameter.Key, parameter.Value.AsType<TTelegaReplyMarkup>.AsJSON);
+          Form.AddField(parameter.Key, parameter.Value.AsType<TTelegaReplyKeyboardMarkup>.AsJSON);
         end
         else if parameter.Value.IsType<TTelegaFileToSend> then
         Begin
@@ -226,7 +230,7 @@ begin
 end;
 
 function TTelegramBot.editMessageCaption(chat_id: TValue; message_id: Integer;
-  inline_message_id, caption: String; reply_markup: TTelegaReplyMarkup): Boolean;
+  inline_message_id, caption: String; reply_markup: TTelegaReplyKeyboardMarkup): Boolean;
 var
   Parameters: TDictionary<String, TValue>;
 begin
@@ -244,7 +248,7 @@ begin
 end;
 
 function TTelegramBot.editMessageReplyMarkup(chat_id: TValue; message_id: Integer;
-  inline_message_id: String; reply_markup: TTelegaReplyMarkup): Boolean;
+  inline_message_id: String; reply_markup: TTelegaReplyKeyboardMarkup): Boolean;
 var
   Parameters: TDictionary<String, TValue>;
 begin
@@ -262,7 +266,7 @@ end;
 
 function TTelegramBot.editMessageText(chat_id: TValue; message_id: Integer;
   inline_message_id, text: String; parse_mode: TTelegaParseMode; disable_web_page_preview: Boolean;
-  reply_markup: TTelegaReplyMarkup): Boolean;
+  reply_markup: TTelegaReplyKeyboardMarkup): Boolean;
 var
   Parameters: TDictionary<String, TValue>;
 begin
@@ -370,8 +374,8 @@ begin
 end;
 
 function TTelegramBot.sendAudio(chat_id, audio: TValue; duration: Integer; performer, title: String;
-  disable_notification: Boolean; reply_to_message_id: Integer; replyMarkup: TTelegaReplyMarkup)
-  : TTelegaMessage;
+  disable_notification: Boolean; reply_to_message_id: Integer;
+  replyMarkup: TTelegaReplyKeyboardMarkup): TTelegaMessage;
 var
   Parameters: TDictionary<String, TValue>;
 begin
@@ -406,8 +410,8 @@ begin
 end;
 
 function TTelegramBot.sendContact(chat_id: TValue; contact: TTelegaContact;
-  disable_notification: Boolean; reply_to_message_id: Integer; reply_markup: TTelegaReplyMarkup)
-  : TTelegaMessage;
+  disable_notification: Boolean; reply_to_message_id: Integer;
+  reply_markup: TTelegaReplyKeyboardMarkup): TTelegaMessage;
 var
   Parameters: TDictionary<String, TValue>;
 begin
@@ -427,8 +431,8 @@ begin
 end;
 
 function TTelegramBot.sendDocument(chat_id, document: TValue; caption: String;
-  disable_notification: Boolean; reply_to_message_id: Integer; reply_markup: TTelegaReplyMarkup)
-  : TTelegaMessage;
+  disable_notification: Boolean; reply_to_message_id: Integer;
+  reply_markup: TTelegaReplyKeyboardMarkup): TTelegaMessage;
 var
   Parameters: TDictionary<String, TValue>;
 begin
@@ -447,8 +451,8 @@ begin
 end;
 
 function TTelegramBot.sendLocation(chat_id: TValue; Location: TTelegaLocation;
-  disable_notification: Boolean; reply_to_message_id: Integer; reply_markup: TTelegaReplyMarkup)
-  : TTelegaMessage;
+  disable_notification: Boolean; reply_to_message_id: Integer;
+  reply_markup: TTelegaReplyKeyboardMarkup): TTelegaMessage;
 var
   Parameters: TDictionary<String, TValue>;
 begin
@@ -467,7 +471,7 @@ begin
 end;
 
 function TTelegramBot.sendPhoto(chatId, photo: TValue; caption: string;
-  disable_notification: Boolean; replyToMessageId: Integer; replyMarkup: TTelegaReplyMarkup)
+  disable_notification: Boolean; replyToMessageId: Integer; replyMarkup: TTelegaReplyKeyboardMarkup)
   : TTelegaMessage;
 var
   Parameters: TDictionary<String, TValue>;
@@ -487,8 +491,8 @@ begin
 end;
 
 function TTelegramBot.sendSticker(chat_id, sticker: TValue; caption: String;
-  disable_notification: Boolean; reply_to_message_id: Integer; reply_markup: TTelegaReplyMarkup)
-  : TTelegaMessage;
+  disable_notification: Boolean; reply_to_message_id: Integer;
+  reply_markup: TTelegaReplyKeyboardMarkup): TTelegaMessage;
 var
   Parameters: TDictionary<String, TValue>;
 begin
@@ -508,7 +512,7 @@ end;
 
 function TTelegramBot.sendTextMessage(const chat_id: TValue; text: String;
   ParseMode: TTelegaParseMode; disableWebPagePreview, disable_notification: Boolean;
-  replyToMessageId: Integer; replyMarkup: String): TTelegaMessage;
+  replyToMessageId: Integer; replyMarkup: TTelegaReplyKeyboardMarkup): TTelegaMessage;
 var
   Parameters: TDictionary<String, TValue>;
 begin
@@ -528,7 +532,7 @@ begin
 end;
 
 function TTelegramBot.sendVenue(chat_id: TValue; venue: TTelegaVenue; disable_notification: Boolean;
-  reply_to_message_id: Integer; reply_markup: TTelegaReplyMarkup): TTelegaMessage;
+  reply_to_message_id: Integer; reply_markup: TTelegaReplyKeyboardMarkup): TTelegaMessage;
 var
   Parameters: TDictionary<String, TValue>;
 begin
@@ -551,7 +555,7 @@ end;
 
 function TTelegramBot.sendVideo(chat_id, video: TValue; duration, width, height: Integer;
   caption: String; disable_notification: Boolean; reply_to_message_id: Integer;
-  reply_markup: TTelegaReplyMarkup): TTelegaMessage;
+  reply_markup: TTelegaReplyKeyboardMarkup): TTelegaMessage;
 var
   Parameters: TDictionary<String, TValue>;
 begin
@@ -573,8 +577,8 @@ begin
 end;
 
 function TTelegramBot.sendVoice(chat_id, voice: TValue; duration: Integer;
-  disable_notification: Boolean; reply_to_message_id: Integer; reply_markup: TTelegaReplyMarkup)
-  : TTelegaMessage;
+  disable_notification: Boolean; reply_to_message_id: Integer;
+  reply_markup: TTelegaReplyKeyboardMarkup): TTelegaMessage;
 var
   Parameters: TDictionary<String, TValue>;
 begin
