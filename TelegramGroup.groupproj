@@ -7,7 +7,7 @@
             <Dependencies/>
         </Projects>
         <Projects Include="Test\TestTelegram.dproj">
-            <Dependencies/>
+            <Dependencies>Install\TelegarmBot.dproj</Dependencies>
         </Projects>
     </ItemGroup>
     <ProjectExtensions>
@@ -26,13 +26,13 @@
     <Target Name="TelegarmBot:Make">
         <MSBuild Projects="Install\TelegarmBot.dproj" Targets="Make"/>
     </Target>
-    <Target Name="TestTelegram">
+    <Target Name="TestTelegram" DependsOnTargets="TelegarmBot">
         <MSBuild Projects="Test\TestTelegram.dproj"/>
     </Target>
-    <Target Name="TestTelegram:Clean">
+    <Target Name="TestTelegram:Clean" DependsOnTargets="TelegarmBot:Clean">
         <MSBuild Projects="Test\TestTelegram.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="TestTelegram:Make">
+    <Target Name="TestTelegram:Make" DependsOnTargets="TelegarmBot:Make">
         <MSBuild Projects="Test\TestTelegram.dproj" Targets="Make"/>
     </Target>
     <Target Name="Build">

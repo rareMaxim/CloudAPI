@@ -12,18 +12,18 @@ object Form2: TForm2
   object Memo1: TMemo
     Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
     DataDetectorTypes = []
-    Position.X = 128.000000000000000000
-    Position.Y = 8.000000000000000000
-    Size.Width = 449.000000000000000000
-    Size.Height = 321.000000000000000000
+    Align = Client
+    Size.Width = 580.000000000000000000
+    Size.Height = 396.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 0
-    Viewport.Width = 441.000000000000000000
-    Viewport.Height = 313.000000000000000000
+    Viewport.Width = 572.000000000000000000
+    Viewport.Height = 388.000000000000000000
   end
   object TelegramBot1: TTelegramBot
-    Token = '122041176:AAG-1c6kALOL04CHpGWptk3dbvyoU3Njnds'
-    Left = 56
-    Top = 40
+    OnUpdate = TelegramBot1Update
+    OnError = TelegramBot1Error
+    Left = 32
+    Top = 16
   end
 end

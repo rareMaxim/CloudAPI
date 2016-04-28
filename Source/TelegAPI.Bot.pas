@@ -5,12 +5,8 @@
 interface
 
 uses
-{$IFDEF DELPHI2009_UP}
-  System.Generics.Collections,
-{$ENDIF}
-{$IFDEF DELPHI2009_UP}
-  System.Rtti,
-{$ENDIF}
+{$IFDEF DELPHI2009_UP} System.Generics.Collections, {$ENDIF}
+{$IFDEF DELPHI2009_UP} System.Rtti, {$ENDIF}
   TelegAPI.Types,
   System.Classes;
 
@@ -29,7 +25,6 @@ Type
     FMessageOffset: Integer;
     FOnError: TTelegaBorOnError;
     function IfThen(Value: Boolean; IfTrue: String; IfFalse: String): String;
-    /// <summary>Монитор слежки за обновлениями</summary>
     procedure SetIsReceiving(const Value: Boolean);
   protected
     /// <summary>Мастер-функция для запросов на сервак</summary>
@@ -44,10 +39,19 @@ Type
     /// <param name="timeout">Timeout in seconds for long polling. Defaults to 0, i.e. usual short polling</param>
     Function getUpdates(Const offset: Integer = 0; Const limit: Integer = 100;
       Const timeout: Integer = 0): TArray<TTelegaUpdate>;
+    /// <summary>Use this method to send text messages.</summary>
+    /// <param name="chat_id">Integer or String. Unique identifier for the target chat or username of the target channel (in the format @channelusername).</param>
+    /// <param name="text">Text of the message to be sent</param>
+    /// <param name="parse_mode">Send Markdown or HTML, if you want Telegram apps to show bold, italic, fixed-width text or inline URLs in your bot's message.</param>
+    /// <param name="disable_web_page_preview">Disables link previews for links in this message</param>
+    /// <param name="disable_notification">Sends the message silently. iOS users will not receive a notification, Android users will receive a notification with no sound.</param>
+    /// <param name="reply_to_message_id">If the message is a reply, ID of the original message</param>
+    /// <param name="reply_markup">InlineKeyboardMarkup or ReplyKeyboardMarkup or ReplyKeyboardHide or ForceReply. Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to hide reply keyboard or to force a reply from the user.</param>
+    /// <returns>On success, the sent Message is returned.</returns>
     Function sendTextMessage(Const chat_id: TValue; text: String;
       ParseMode: TTelegaParseMode = TTelegaParseMode.Default;
       disableWebPagePreview: Boolean = False; disable_notification: Boolean = False;
-      replyToMessageId: Integer = 0; replyMarkup: TTelegaReplyMarkup = nil): TTelegaMessage;
+      replyToMessageId: Integer = 0; replyMarkup: String = ''): TTelegaMessage;
     Function forwardMessage(chat_id: TValue; from_chat_id: TValue;
       disable_notification: Boolean = False; message_id: Integer = 0): TTelegaMessage;
     Function sendPhoto(chatId: TValue; photo: TValue; caption: string = '';
@@ -92,10 +96,8 @@ Type
     Function editMessageText(chat_id: TValue; message_id: Integer; inline_message_id: String;
       text: String; parse_mode: TTelegaParseMode = TTelegaParseMode.Default;
       disable_web_page_preview: Boolean = False; reply_markup: TTelegaReplyMarkup = nil): Boolean;
-    //
     Function editMessageCaption(chat_id: TValue; message_id: Integer; inline_message_id: String;
       caption: String; reply_markup: TTelegaReplyMarkup = nil): Boolean;
-    //
     Function editMessageReplyMarkup(chat_id: TValue; message_id: Integer; inline_message_id: String;
       reply_markup: TTelegaReplyMarkup = nil): Boolean;
     constructor Create(AOwner: TComponent); overload; override;
@@ -104,6 +106,7 @@ Type
     { x } property UploadTimeout: Integer read FUploadTimeout write FUploadTimeout default 60000;
     { x } property PollingTimeout: Integer read FPollingTimeout write FPollingTimeout default 1000;
     property MessageOffset: Integer read FMessageOffset write FMessageOffset default 0;
+    /// <summary>Монитор слежки за обновлениями</summary>
     property IsReceiving: Boolean read FIsReceiving write SetIsReceiving default False;
     property Token: String read FToken write FToken;
     property OnUpdate: TTelegaBotOnUpdate read FOnUpdate write FOnUpdate;
@@ -146,7 +149,6 @@ begin
   finally
     Parameters.Free;
   end;
-
 end;
 
 function TTelegramBot.API<T>(const Method: String;
@@ -169,6 +171,7 @@ begin
         if parameter.Value.IsType<TTelegaReplyMarkup> then
         begin
           { TODO -oOwner -cGeneral : Проверить че за херня тут твориться }
+          Form.AddFile(parameter.Key, parameter.Value.AsType<TTelegaReplyMarkup>.AsJSON);
         end
         else if parameter.Value.IsType<TTelegaFileToSend> then
         Begin
@@ -185,13 +188,9 @@ begin
             Form.AddField(parameter.Key, IfThen(parameter.Value.AsBoolean, 'true', 'false'))
         end;
       end;
-
     End;
     content := Http.Post('https://api.telegram.org/bot' + FToken + '/' + Method, Form)
       .ContentAsString(TEncoding.UTF8);
-    // else
-    // Content := Http.Get(Uri.ToString).ContentAsString(TEncoding.UTF8);
-
     if Pos('502 Bad Gateway', content) > 0 then
     begin
       if Assigned(OnError) then
@@ -280,7 +279,6 @@ begin
   finally
     Parameters.Free;
   end;
-
 end;
 
 function TTelegramBot.forwardMessage(chat_id, from_chat_id: TValue; disable_notification: Boolean;
@@ -506,12 +504,11 @@ begin
   finally
     Parameters.Free;
   end;
-
 end;
 
 function TTelegramBot.sendTextMessage(const chat_id: TValue; text: String;
   ParseMode: TTelegaParseMode; disableWebPagePreview, disable_notification: Boolean;
-  replyToMessageId: Integer; replyMarkup: TTelegaReplyMarkup): TTelegaMessage;
+  replyToMessageId: Integer; replyMarkup: String): TTelegaMessage;
 var
   Parameters: TDictionary<String, TValue>;
 begin
@@ -550,7 +547,6 @@ begin
   finally
     Parameters.Free;
   end;
-
 end;
 
 function TTelegramBot.sendVideo(chat_id, video: TValue; duration, width, height: Integer;
@@ -601,7 +597,6 @@ procedure TTelegramBot.SetIsReceiving(const Value: Boolean);
 var
   Task: ITask;
 begin
-  // Наверное надо бы синхронизацию добавить еще на события...
   FIsReceiving := Value;
   if (NOT Assigned(OnUpdate)) or (NOT FIsReceiving) then
     Exit;
@@ -609,7 +604,6 @@ begin
     procedure
     var
       LUpdates: TArray<TTelegaUpdate>;
-
     Begin
       while FIsReceiving do
       Begin
@@ -643,7 +637,6 @@ begin
   finally
     Parameters.Free;
   end;
-
 end;
 
 end.

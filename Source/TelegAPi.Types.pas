@@ -178,18 +178,18 @@ Type
   /// <summary>This object represents a video file.</summary>
   TTelegaVideo = Class(TTelegaFile)
   private
-    FWidth: String;
-    FHeight: String;
+    FWidth: Integer;
+    FHeight: Integer;
     FDuration: Integer;
     FThumb: TTelegaPhotoSize;
     FMimeType: String;
   published
     /// <summary>Video width as defined by sender</summary>
     [ALIAS('width')]
-    property Width: String read FWidth write FWidth;
+    property Width: Integer read FWidth write FWidth;
     /// <summary>Video height as defined by sender</summary>
     [ALIAS('height')]
-    property Height: String read FHeight write FHeight;
+    property Height: Integer read FHeight write FHeight;
     /// <summary>Duration of the video in seconds as defined by sender</summary>
     [ALIAS('duration')]
     property Duration: Integer read FDuration write FDuration;
