@@ -1,23 +1,27 @@
 object Form2: TForm2
-  Left = 0
-  Top = 0
+  Left = 384
+  Top = 149
   Caption = 'Form2'
   ClientHeight = 396
-  ClientWidth = 580
+  ClientWidth = 398
+  Position = Designed
   FormFactor.Width = 320
   FormFactor.Height = 480
   FormFactor.Devices = [Desktop]
   OnCreate = FormCreate
+  Left = 384
+  Top = 149
   DesignerMasterStyle = 3
   object Memo1: TMemo
     Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
     DataDetectorTypes = []
+    TextSettings.WordWrap = True
     Align = Client
-    Size.Width = 580.000000000000000000
+    Size.Width = 398.000000000000000000
     Size.Height = 396.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 0
-    Viewport.Width = 572.000000000000000000
+    Viewport.Width = 390.000000000000000000
     Viewport.Height = 388.000000000000000000
   end
   object TelegramBot1: TTelegramBot

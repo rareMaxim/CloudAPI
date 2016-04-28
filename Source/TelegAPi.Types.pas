@@ -434,7 +434,8 @@ Type
     Frequest_contact: Boolean;
     Frequest_location: Boolean;
   Public
-
+    constructor Create(Text: String; request_contact: Boolean = False;
+      request_location: Boolean = False); overload;
   published
     /// <summary>Text of the button. If none of the optional fields are used, it will be sent to the bot as a message when the button is pressed</summary>
     [ALIAS('text')]
@@ -662,6 +663,15 @@ begin
     Exit(TTelegaUpdateType.ChosenInlineResultUpdate);
   if Assigned(CallbackQuery) then
     Exit(TTelegaUpdateType.CallbackQueryUpdate);
+end;
+
+{ TTelegaKeyboardButton }
+
+constructor TTelegaKeyboardButton.Create(Text: String; request_contact, request_location: Boolean);
+begin
+  FText := Text;
+  Frequest_contact := request_contact;
+  Frequest_location := request_location;
 end;
 
 end.
