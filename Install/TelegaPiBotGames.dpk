@@ -1,7 +1,6 @@
-package TelegarmBot;
+package TelegaPiBotGames;
 
 {$R *.res}
-{$R 'TTelegramBot.dcr'}
 {$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
 {$ALIGN 8}
 {$ASSERTIONS ON}
@@ -26,7 +25,6 @@ package TelegarmBot;
 {$IMAGEBASE $400000}
 {$DEFINE DEBUG}
 {$ENDIF IMPLICITBUILDING}
-{$DESCRIPTION 'Telegram API for Delphi'}
 {$IMPLICITBUILD ON}
 
 requires
@@ -37,10 +35,6 @@ requires
   IndyCore;
 
 contains
-  TelegAPI.Bot in '..\Source\TelegAPI.Bot.pas',
-  TelegAPi.Types in '..\Source\TelegAPi.Types.pas',
-  TelegAPi.RegisterIDE in '..\Source\TelegAPi.RegisterIDE.pas',
-  XSuperJSON in '..\x-superobject\XSuperJSON.pas',
-  XSuperObject in '..\x-superobject\XSuperObject.pas';
+  TelegAPi.Game.Statistic in '..\Source\TelegAPi.Game.Statistic.pas';
 
 end.

@@ -2,22 +2,26 @@
 
 interface
 
-uses
+uses uVictorine,
   LoggerPro, TelegAPI.Bot, TelegAPI.Types,
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs,
-  FMX.Controls.Presentation, FMX.ScrollBox, FMX.Memo;
+  FMX.Controls.Presentation, FMX.ScrollBox, FMX.Memo,
+  System.Generics.Collections;
 
 type
   TForm2 = class(TForm)
-    Memo1: TMemo;
     TelegramBot1: TTelegramBot;
+    Memo1: TMemo;
+
     procedure FormCreate(Sender: TObject);
     procedure TelegramBot1Error(const Sender: TObject; const Code: Integer; const Message: string);
     procedure TelegramBot1Update(const Sender: TObject; const Update: TTelegaUpdate);
   private
     { Private declarations }
     FLog: ILogWriter;
+    FQuitz: TVictorine;
+    EnableAnswer: Boolean;
   public
     { Public declarations }
     function Log: ILogWriter;
@@ -29,6 +33,7 @@ var
 implementation
 
 uses
+
   XSuperObject,
   LoggerPro.FMXMemoAppender;
 {$R *.fmx}
@@ -39,6 +44,9 @@ begin
   FLog := BuildLogWriter([TFMXMemoLogAppender.Create(Memo1)]);
   TelegramBot1.Token := {$I telegaToken.inc};
   TelegramBot1.IsReceiving := True;
+  EnableAnswer := False;
+  FQuitz := TVictorine.Create(nil);
+  FQuitz.LoadFromFile('D:\VersionControl\DELPHI\uasoft-atari\Game Files\Викторина.txt');
 end;
 
 function TForm2.Log: ILogWriter;
@@ -57,8 +65,10 @@ var
   Msg: String;
   Reply: String;
   ReplyMark: TTelegaReplyKeyboardMarkup;
+  Quitz: TVictorine;
 begin
   Log.Info(Update.Message.Text, Update.Message.From.Username);
+
   Msg := Update.Message.Text.ToLower;
   if Msg.Contains('format') then
   Begin
@@ -75,14 +85,39 @@ begin
       ReplyMark.KeyBoard := [[TTelegaKeyboardButton.Create('♥ Валет'),
         TTelegaKeyboardButton.Create('♠️Туз')], [TTelegaKeyboardButton.Create('♥ 8'),
         TTelegaKeyboardButton.Create('♣️Джокер'), TTelegaKeyboardButton.Create('♦️2')]];
-
       Reply := 'Тест клавиатуры';
       TelegramBot1.sendTextMessage(Update.Message.From.ID, Reply, TTelegaParseMode.Html, False,
         False, 0, ReplyMark);
     finally
       ReplyMark.Free;
     end;
+
   End;
+  if Msg.Contains('XO') then
+  Begin
+    ReplyMark := TTelegaReplyKeyboardMarkup.Create;
+    try
+      ReplyMark.KeyBoard := [
+      [TTelegaKeyboardButton.Create()]
+      ];
+      Reply := 'Тест клавиатуры';
+      TelegramBot1.sendTextMessage(Update.Message.From.ID, Reply, TTelegaParseMode.Html, False,
+        False, 0, ReplyMark);
+    finally
+      ReplyMark.Free;
+    end;
+
+  End;
+  if Msg.Contains('включить ответы') then
+    EnableAnswer := True;
+  if Msg.Contains('выключить ответы') then
+    EnableAnswer := False;
+  if EnableAnswer then
+  begin
+    Reply := (string.Join(' ', FQuitz.Answer(Msg)));
+    if NOT Reply.Trim.IsEmpty then
+      TelegramBot1.sendTextMessage(Update.Message.Chat.ID, Reply);
+  end;
 end;
 
 end.

@@ -24,6 +24,7 @@ Type
     FPollingTimeout: Integer;
     FMessageOffset: Integer;
     FOnError: TTelegaBorOnError;
+    FUpdatePool: TList<TTelegaBotOnUpdate>;
     function IfThen(Value: Boolean; IfTrue: String; IfFalse: String): String;
     procedure SetIsReceiving(const Value: Boolean);
   protected
@@ -106,6 +107,7 @@ Type
       reply_markup: TTelegaReplyKeyboardMarkup = nil): Boolean;
     constructor Create(AOwner: TComponent); overload; override;
     constructor Create(Const Token: String); overload;
+    destructor Destroy; override;
   published
     { x } property UploadTimeout: Integer read FUploadTimeout write FUploadTimeout default 60000;
     { x } property PollingTimeout: Integer read FPollingTimeout write FPollingTimeout default 1000;
@@ -113,6 +115,7 @@ Type
     /// <summary>Монитор слежки за обновлениями</summary>
     property IsReceiving: Boolean read FIsReceiving write SetIsReceiving default False;
     property Token: String read FToken write FToken;
+    property UpdatePool: TList<TTelegaBotOnUpdate> read FUpdatePool write FUpdatePool;
     property OnUpdate: TTelegaBotOnUpdate read FOnUpdate write FOnUpdate;
     property OnError: TTelegaBorOnError read FOnError write FOnError;
   End;
@@ -175,7 +178,9 @@ begin
         if parameter.Value.IsType<TTelegaReplyKeyboardMarkup> then
         begin
           { TODO -oOwner -cGeneral : Проверить че за херня тут твориться }
-          Form.AddField(parameter.Key, parameter.Value.AsType<TTelegaReplyKeyboardMarkup>.AsJSON);
+          if parameter.Value.AsType<TTelegaReplyKeyboardMarkup> <> nil then
+
+            Form.AddField(parameter.Key, parameter.Value.AsType<TTelegaReplyKeyboardMarkup>.AsJSON);
         end
         else if parameter.Value.IsType<TTelegaFileToSend> then
         Begin
@@ -222,11 +227,18 @@ end;
 
 constructor TTelegramBot.Create(const Token: String);
 begin
+  FUpdatePool := TList<TTelegaBotOnUpdate>.Create;
   FToken := Token;
   IsReceiving := False;
   UploadTimeout := 60000;
   PollingTimeout := 1000;
   MessageOffset := 0;
+end;
+
+destructor TTelegramBot.Destroy;
+begin
+  FUpdatePool.Free;
+  inherited;
 end;
 
 function TTelegramBot.editMessageCaption(chat_id: TValue; message_id: Integer;
@@ -608,6 +620,7 @@ begin
     procedure
     var
       LUpdates: TArray<TTelegaUpdate>;
+
     Begin
       while FIsReceiving do
       Begin
@@ -617,10 +630,17 @@ begin
           procedure
           var
             Update: TTelegaUpdate;
+            PoolUpd: TTelegaBotOnUpdate;
           begin
             for Update in LUpdates do
             begin
               OnUpdate(Self, Update);
+              if FUpdatePool.Count > 0 then
+                for PoolUpd in FUpdatePool do
+                begin
+                  PoolUpd(Self, Update);
+                end;
+
               MessageOffset := Update.Id + 1;
             end;
           end);

@@ -1,7 +1,7 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
         <ProjectGuid>{AF7E5151-C6A5-4AE5-BD43-E004BEDCC1FD}</ProjectGuid>
-        <MainSource>TelegarmBot.dpk</MainSource>
+        <MainSource>TelegaPiBot.dpk</MainSource>
         <ProjectVersion>18.1</ProjectVersion>
         <FrameworkType>None</FrameworkType>
         <Base>True</Base>
@@ -51,7 +51,7 @@ $(PreBuildEvent)]]></PreBuildEvent>
         <VerInfo_Locale>1049</VerInfo_Locale>
         <VerInfo_Keys>CompanyName=Максим Сысоев;FileDescription=Компонент для работы с Telegram API;FileVersion=0.1.0.0;InternalName=TelegAπ;LegalCopyright=2016, Maxim Sysoev;LegalTrademarks=2016, Maxim Sysoev;OriginalFilename=TelegramBot;ProductName=Telega Pi;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;$(DCC_Namespace)</DCC_Namespace>
-        <SanitizedProjectName>TelegarmBot</SanitizedProjectName>
+        <SanitizedProjectName>TelegaPiBot</SanitizedProjectName>
         <GenPackage>true</GenPackage>
         <DCC_CBuilderOutput>All</DCC_CBuilderOutput>
         <GenDll>true</GenDll>
@@ -112,6 +112,7 @@ $(PreBuildEvent)]]></PreBuildEvent>
         <DCCReference Include="..\Source\TelegAPi.RegisterIDE.pas"/>
         <DCCReference Include="..\x-superobject\XSuperJSON.pas"/>
         <DCCReference Include="..\x-superobject\XSuperObject.pas"/>
+        <DCCReference Include="..\Source\TelegAPi.Bot.Notify.pas"/>
         <None Include="..\jedi\jedi.inc"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
@@ -131,7 +132,7 @@ $(PreBuildEvent)]]></PreBuildEvent>
         <BorlandProject>
             <Delphi.Personality>
                 <Source>
-                    <Source Name="MainSource">TelegarmBot.dpk</Source>
+                    <Source Name="MainSource">TelegaPiBot.dpk</Source>
                 </Source>
                 <Excluded_Packages>
                     <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\18.0\Bpl\TelegramBotGames.bpl">File C:\Users\Public\Documents\Embarcadero\Studio\18.0\Bpl\TelegramBotGames.bpl not found</Excluded_Packages>
@@ -161,9 +162,9 @@ $(PreBuildEvent)]]></PreBuildEvent>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="C:\Users\Public\Documents\Embarcadero\Studio\18.0\Bpl\TelegarmBot.bpl" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="C:\Users\Public\Documents\Embarcadero\Studio\18.0\Bpl\TelegaPiBot.bpl" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
-                        <RemoteName>TelegarmBot.bpl</RemoteName>
+                        <RemoteName>TelegaPiBot.bpl</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

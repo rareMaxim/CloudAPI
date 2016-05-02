@@ -3,11 +3,14 @@
         <ProjectGuid>{55585921-B228-41C2-9554-6F92BC4C6750}</ProjectGuid>
     </PropertyGroup>
     <ItemGroup>
-        <Projects Include="Install\TelegarmBot.dproj">
+        <Projects Include="Install\TelegaPiBot.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="Install\TelegaPiBotGames.dproj">
+            <Dependencies>Install\TelegaPiBot.dproj</Dependencies>
+        </Projects>
         <Projects Include="Test\TestTelegram.dproj">
-            <Dependencies>Install\TelegarmBot.dproj</Dependencies>
+            <Dependencies>Install\TelegaPiBot.dproj</Dependencies>
         </Projects>
     </ItemGroup>
     <ProjectExtensions>
@@ -17,32 +20,41 @@
             <Default.Personality/>
         </BorlandProject>
     </ProjectExtensions>
-    <Target Name="TelegarmBot">
-        <MSBuild Projects="Install\TelegarmBot.dproj"/>
+    <Target Name="TelegaPiBot">
+        <MSBuild Projects="Install\TelegaPiBot.dproj"/>
     </Target>
-    <Target Name="TelegarmBot:Clean">
-        <MSBuild Projects="Install\TelegarmBot.dproj" Targets="Clean"/>
+    <Target Name="TelegaPiBot:Clean">
+        <MSBuild Projects="Install\TelegaPiBot.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="TelegarmBot:Make">
-        <MSBuild Projects="Install\TelegarmBot.dproj" Targets="Make"/>
+    <Target Name="TelegaPiBot:Make">
+        <MSBuild Projects="Install\TelegaPiBot.dproj" Targets="Make"/>
     </Target>
-    <Target Name="TestTelegram" DependsOnTargets="TelegarmBot">
+    <Target Name="TelegaPiBotGames" DependsOnTargets="TelegaPiBot">
+        <MSBuild Projects="Install\TelegaPiBotGames.dproj"/>
+    </Target>
+    <Target Name="TelegaPiBotGames:Clean" DependsOnTargets="TelegaPiBot:Clean">
+        <MSBuild Projects="Install\TelegaPiBotGames.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="TelegaPiBotGames:Make" DependsOnTargets="TelegaPiBot:Make">
+        <MSBuild Projects="Install\TelegaPiBotGames.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="TestTelegram" DependsOnTargets="TelegaPiBot">
         <MSBuild Projects="Test\TestTelegram.dproj"/>
     </Target>
-    <Target Name="TestTelegram:Clean" DependsOnTargets="TelegarmBot:Clean">
+    <Target Name="TestTelegram:Clean" DependsOnTargets="TelegaPiBot:Clean">
         <MSBuild Projects="Test\TestTelegram.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="TestTelegram:Make" DependsOnTargets="TelegarmBot:Make">
+    <Target Name="TestTelegram:Make" DependsOnTargets="TelegaPiBot:Make">
         <MSBuild Projects="Test\TestTelegram.dproj" Targets="Make"/>
     </Target>
     <Target Name="Build">
-        <CallTarget Targets="TelegarmBot;TestTelegram"/>
+        <CallTarget Targets="TelegaPiBot;TelegaPiBotGames;TestTelegram"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="TelegarmBot:Clean;TestTelegram:Clean"/>
+        <CallTarget Targets="TelegaPiBot:Clean;TelegaPiBotGames:Clean;TestTelegram:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="TelegarmBot:Make;TestTelegram:Make"/>
+        <CallTarget Targets="TelegaPiBot:Make;TelegaPiBotGames:Make;TestTelegram:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>
