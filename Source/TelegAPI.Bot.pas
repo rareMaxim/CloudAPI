@@ -7,6 +7,7 @@ interface
 uses
 {$IFDEF DELPHI2009_UP} System.Generics.Collections, {$ENDIF}
 {$IFDEF DELPHI2009_UP} System.Rtti, {$ENDIF}
+  System.Threading,
   TelegAPI.Types,
   System.Classes;
 
@@ -25,12 +26,14 @@ Type
     FMessageOffset: Integer;
     FOnError: TTelegaBorOnError;
     FUpdatePool: TList<TTelegaBotOnUpdate>;
+
     function IfThen(Value: Boolean; IfTrue: String; IfFalse: String): String;
     procedure SetIsReceiving(const Value: Boolean);
   protected
     /// <summary>Мастер-функция для запросов на сервак</summary>
     Function API<T>(Const Method: String; Const Parameters: TDictionary<String, TValue>): T;
   public
+
     /// <summary>A simple method for testing your bot's auth token.</summary>
     /// <returns>Returns basic information about the bot in form of a User object.</returns>
     Function getMe: TTelegaUser;
@@ -126,7 +129,7 @@ uses
   XSuperObject,
   System.SysUtils,
   System.Net.Mime,
-  System.Threading,
+
   System.Net.HttpClient;
 
 Function ToModeString(Mode: TTelegaParseMode): String;

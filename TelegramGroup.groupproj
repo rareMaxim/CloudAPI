@@ -9,8 +9,8 @@
         <Projects Include="Install\TelegaPiBotGames.dproj">
             <Dependencies>Install\TelegaPiBot.dproj</Dependencies>
         </Projects>
-        <Projects Include="Test\TestTelegram.dproj">
-            <Dependencies>Install\TelegaPiBot.dproj</Dependencies>
+        <Projects Include="Test\TelegramServer.dproj">
+            <Dependencies/>
         </Projects>
     </ItemGroup>
     <ProjectExtensions>
@@ -38,23 +38,23 @@
     <Target Name="TelegaPiBotGames:Make" DependsOnTargets="TelegaPiBot:Make">
         <MSBuild Projects="Install\TelegaPiBotGames.dproj" Targets="Make"/>
     </Target>
-    <Target Name="TestTelegram" DependsOnTargets="TelegaPiBot">
-        <MSBuild Projects="Test\TestTelegram.dproj"/>
+    <Target Name="TelegramServer">
+        <MSBuild Projects="Test\TelegramServer.dproj"/>
     </Target>
-    <Target Name="TestTelegram:Clean" DependsOnTargets="TelegaPiBot:Clean">
-        <MSBuild Projects="Test\TestTelegram.dproj" Targets="Clean"/>
+    <Target Name="TelegramServer:Clean">
+        <MSBuild Projects="Test\TelegramServer.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="TestTelegram:Make" DependsOnTargets="TelegaPiBot:Make">
-        <MSBuild Projects="Test\TestTelegram.dproj" Targets="Make"/>
+    <Target Name="TelegramServer:Make">
+        <MSBuild Projects="Test\TelegramServer.dproj" Targets="Make"/>
     </Target>
     <Target Name="Build">
-        <CallTarget Targets="TelegaPiBot;TelegaPiBotGames;TestTelegram"/>
+        <CallTarget Targets="TelegaPiBot;TelegaPiBotGames;TelegramServer"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="TelegaPiBot:Clean;TelegaPiBotGames:Clean;TestTelegram:Clean"/>
+        <CallTarget Targets="TelegaPiBot:Clean;TelegaPiBotGames:Clean;TelegramServer:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="TelegaPiBot:Make;TelegaPiBotGames:Make;TestTelegram:Make"/>
+        <CallTarget Targets="TelegaPiBot:Make;TelegaPiBotGames:Make;TelegramServer:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

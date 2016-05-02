@@ -486,6 +486,42 @@ Type
     property selective: Boolean read Fselective write Fselective;
   End;
 
+  /// <summary>This object represents one button of an inline keyboard. You must use exactly one of the optional fields.</summary>
+  TTelegaInlineKeyboardButton = Class
+  private
+    FText: String;
+    Furl: String;
+    Fcallback_data: String;
+    Fswitch_inline_query: String;
+  published
+    /// <summary>Label text on the button</summary>
+    [ALIAS('text')]
+    property Text: String read FText write FText;
+    /// <summary>Optional. HTTP url to be opened when button is pressed</summary>
+    [ALIAS('url')]
+    property url: String read Furl write Furl;
+    /// <summary>Optional. Data to be sent in a callback query to the bot when button is pressed, 1-64 bytes</summary>
+    [ALIAS('callback_data')]
+    property callback_data: String read Fcallback_data write Fcallback_data;
+    /// <summary>Optional. If set, pressing the button will prompt the user to select one of their chats, open that chat and insert the bot‘s username and the specified inline query in the input field. Can be empty, in which case just the bot’s username will be inserted.</summary>
+    /// <remarks>Note: This offers an easy way for users to start using your bot in inline mode when they are currently in a private chat with it. Especially useful when combined with switch_pm… actions – in this case the user will be automatically returned to the chat they switched from, skipping the chat selection screen.</remarks>
+    [ALIAS('switch_inline_query')]
+    property switch_inline_query: String read Fswitch_inline_query write Fswitch_inline_query;
+  End;
+
+  /// <summary>This object represents an inline keyboard that appears right next to the message it belongs to.</summary>
+  /// <remarks>Warning: Inline keyboards are currently being tested and are only available in one-on-one chats (i.e., user-bot or user-user in the case of inline bots).</remarks>
+  TTelegaInlineKeyboardMarkup = Class
+  private
+    Finline_keyboard: TArray<TArray<TTelegaInlineKeyboardButton>>;
+  published
+    /// <summary>Array of button rows, each represented by an Array of InlineKeyboardButton objects</summary>
+    [ALIAS('inline_keyboard')]
+    property inline_keyboard: TArray < TArray < TTelegaInlineKeyboardButton >> read Finline_keyboard
+      write Finline_keyboard;
+
+  End;
+
   TTelegaApiResponse<T> = Class
   private
     FOk: Boolean;
@@ -536,7 +572,6 @@ Type
     /// <summary>Sender</summary>
     [ALIAS('from')]
     property From: TTelegaUser read FFrom write FFrom;
-    [ALIAS('query')]
     /// <summary>Text of the query</summary>
     [ALIAS('query')]
     property Query: String read FQuery write FQuery;
@@ -588,6 +623,24 @@ Type
     property Data: String read FData write FData;
   End;
 
+  /// <summary>Upon receiving a message with this object, Telegram clients will display a reply interface to the user (act as if the user has selected the bot‘s message and tapped ’Reply'). This can be extremely useful if you want to create user-friendly step-by-step interfaces without having to sacrifice privacy mode. </summary>
+  TTelegaForceReply = Class
+  private
+    Fforce_reply: Boolean;
+    Fselective: Boolean;
+  published
+    /// <summary>Shows reply interface to the user, as if they manually selected the bot‘s message and tapped ’Reply'</summary>
+    [ALIAS('force_reply')]
+    property force_reply: Boolean read Fforce_reply write Fforce_reply;
+    /// <summary>Optional. Use this parameter if you want to force reply from specific users only. Targets: 1) users that are @mentioned in the text of the Message object; 2) if the bot's message is a reply (has reply_to_message_id), sender of the original message.</summary>
+    [ALIAS('selective')]
+    property selective: Boolean read Fselective write Fselective;
+  End;
+
+  /// <summary>Use this method to send answers to an inline query. On success, True is returned. No more than 50 results per query are allowed.</summary>
+  TTelegaAnswerInlineQuery = class
+    propf
+  end;
 {$SCOPEDENUMS ON}
 
   /// <summary>The type of an Update</summary>

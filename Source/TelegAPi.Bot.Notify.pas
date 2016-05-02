@@ -48,6 +48,7 @@ end;
 
 procedure TTelegaUpdateNotify.SetBot(const Value: TTelegramBot);
 begin
+
   FBot := Value;
   if NOT Assigned(FBot) then
     Exit;
