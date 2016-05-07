@@ -2,6 +2,8 @@
 
 interface
 
+{$DEFINE LANG_EN}
+
 uses
   XSuperObject,
   System.Classes;
@@ -637,10 +639,6 @@ Type
     property selective: Boolean read Fselective write Fselective;
   End;
 
-  /// <summary>Use this method to send answers to an inline query. On success, True is returned. No more than 50 results per query are allowed.</summary>
-  TTelegaAnswerInlineQuery = class
-    propf
-  end;
 {$SCOPEDENUMS ON}
 
   /// <summary>The type of an Update</summary>
@@ -659,7 +657,6 @@ Type
     FCallbackQuery: TTelegaCallbackQuery;
     function Get: TTelegaUpdateType;
   public
-    Class Function FromString(Const Data: String): TTelegaUpdate;
   published
     /// <summary>The update‘s unique identifier. Update identifiers start from a certain positive number and increase sequentially. This ID becomes especially handy if you’re using Webhooks, since it allows you to ignore repeated updates or to restore the correct update sequence, should they get out of order. </summary>
     [ALIAS('update_id')]
@@ -679,6 +676,27 @@ Type
     property CallbackQuery: TTelegaCallbackQuery read FCallbackQuery write FCallbackQuery;
     property &type: TTelegaUpdateType read Get;
   End;
+
+  /// <summary>This object represents one result of an inline query. Telegram clients currently support results of the following 19 types   /// </summary>
+  [ALIAS('InlineQueryResult')]
+  TTelegaInlineQueryResult = Class
+  private
+    Ftype: String;
+    FID: String;
+  published
+    /// <summary>Type of the result</summary>
+    [ALIAS('type')]
+    property &type: String read Ftype write Ftype;
+    /// <summary>Unique identifier for this result, 1-64 bytes</summary>
+    [ALIAS('id')]
+    property ID: String read FID write FID;
+  End;
+
+  /// <summary>Represents a link to an article or web page.</summary>
+  [ALIAS('InlineQueryResultArticle')]
+  TTelegaInlineQueryResultArticle = class(TTelegaInlineQueryResult)
+
+  end;
 
 implementation
 
@@ -700,11 +718,6 @@ begin
 end;
 
 { TTelegaUpdate }
-
-class function TTelegaUpdate.FromString(const Data: String): TTelegaUpdate;
-begin
-  Result := Result.FromJSON(Data);
-end;
 
 function TTelegaUpdate.Get: TTelegaUpdateType;
 begin
