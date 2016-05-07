@@ -165,6 +165,7 @@ Type
     FWidth: Integer;
     FHeight: Integer;
     FThumb: TTelegaPhotoSize;
+    Femoji: String;
   published
     /// <summary>Sticker width</summary>
     [ALIAS('width')]
@@ -175,6 +176,9 @@ Type
     /// <summary>Sticker thumbnail in .webp or .jpg format</summary>
     [ALIAS('thumb')]
     property Thumb: TTelegaPhotoSize read FThumb write FThumb;
+    /// <summary>Optional. Emoji associated with the sticker</summary>
+    [ALIAS('emoji')]
+    property emoji: String read Femoji write Femoji;
   End;
 
   /// <summary>This object represents a video file.</summary>
@@ -315,6 +319,7 @@ Type
     FMigrateFromChatId: Int64;
     FPinnedMessage: TTelegaMessage;
     Fentities: TArray<TTelegaMessageEntity>;
+    Fforward_from_chat: TTelegaChat;
   public
     /// <summary>Unique message identifier</summary>
     [ALIAS('message_id')]
@@ -331,6 +336,9 @@ Type
     /// <summary>Optional. For forwarded messages, sender of the original message</summary>
     [ALIAS('forward_from')]
     property ForwardFrom: TTelegaUser read FForwardFrom write FForwardFrom;
+    /// <summary>Optional. For messages forwarded from a channel, information about the original channel</summary>
+    [ALIAS('forward_from_chat')]
+    property forward_from_chat: TTelegaChat read Fforward_from_chat write Fforward_from_chat;
     /// <summary>Optional. For forwarded messages, date the original message was sent in Unix time</summary>
     [ALIAS('forward_date')]
     property ForwardDate: Integer read FForwardDate write FForwardDate;
