@@ -40,16 +40,16 @@
         <Base>true</Base>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base)'!=''">
+        <VerInfo_AutoGenVersion>true</VerInfo_AutoGenVersion>
         <DCC_UnitSearchPath>..\X-SuperObject;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <VerInfo_MajorVer>0</VerInfo_MajorVer>
-        <VerInfo_MinorVer>1</VerInfo_MinorVer>
-        <VerInfo_AutoIncVersion>true</VerInfo_AutoIncVersion>
+        <VerInfo_MinorVer>2</VerInfo_MinorVer>
         <DCC_Description>Telegram API for Delphi</DCC_Description>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <PreBuildEvent><![CDATA[brcc32 -fo "TTelegramBot.dcr" "TTelegramBot.rc"
 $(PreBuildEvent)]]></PreBuildEvent>
         <VerInfo_Locale>1049</VerInfo_Locale>
-        <VerInfo_Keys>CompanyName=Максим Сысоев;FileDescription=Компонент для работы с Telegram API;FileVersion=0.1.0.0;InternalName=TelegAπ;LegalCopyright=2016, Maxim Sysoev;LegalTrademarks=2016, Maxim Sysoev;OriginalFilename=TelegramBot;ProductName=Telega Pi;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=Максим Сысоев;FileDescription=Компонент для работы с Telegram API;FileVersion=0.2.0.0;InternalName=TelegAπ;LegalCopyright=2016, Maxim Sysoev;LegalTrademarks=2016, Maxim Sysoev;OriginalFilename=TelegramBot;ProductName=Telega Pi;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;$(DCC_Namespace)</DCC_Namespace>
         <SanitizedProjectName>TelegaPiBot</SanitizedProjectName>
         <GenPackage>true</GenPackage>
@@ -86,8 +86,8 @@ $(PreBuildEvent)]]></PreBuildEvent>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
         <VerInfo_MinorVer>0</VerInfo_MinorVer>
         <VerInfo_MajorVer>1</VerInfo_MajorVer>
-        <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.4;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
-        <VerInfo_Build>4</VerInfo_Build>
+        <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.6;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_Build>6</VerInfo_Build>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
     </PropertyGroup>
@@ -132,6 +132,7 @@ $(PreBuildEvent)]]></PreBuildEvent>
                     <Source Name="MainSource">TelegaPiBot.dpk</Source>
                 </Source>
                 <Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Maxim\Desktop\FixIDEViewMenu240.bpl">File C:\Users\Maxim\Desktop\FixIDEViewMenu240.bpl not found</Excluded_Packages>
                     <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\18.0\Bpl\TelegramBotGames.bpl">File C:\Users\Public\Documents\Embarcadero\Studio\18.0\Bpl\TelegramBotGames.bpl not found</Excluded_Packages>
                     <Excluded_Packages Name="$(BDSBIN)\dcloffice2k240.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
                     <Excluded_Packages Name="$(BDSBIN)\dclofficexp240.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
@@ -165,7 +166,16 @@ $(PreBuildEvent)]]></PreBuildEvent>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployClass Name="ProjectiOSDeviceResourceRules"/>
+                <DeployClass Name="DependencyModule">
+                    <Platform Name="Win32">
+                        <Operation>0</Operation>
+                        <Extensions>.dll;.bpl</Extensions>
+                    </Platform>
+                    <Platform Name="OSX32">
+                        <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
+                    </Platform>
+                </DeployClass>
                 <DeployClass Name="ProjectOSXResource">
                     <Platform Name="OSX32">
                         <RemoteDir>Contents\Resources</RemoteDir>
@@ -476,16 +486,7 @@ $(PreBuildEvent)]]></PreBuildEvent>
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
-                <DeployClass Name="DependencyModule">
-                    <Platform Name="Win32">
-                        <Operation>0</Operation>
-                        <Extensions>.dll;.bpl</Extensions>
-                    </Platform>
-                    <Platform Name="OSX32">
-                        <Operation>1</Operation>
-                        <Extensions>.dylib</Extensions>
-                    </Platform>
-                </DeployClass>
+                <DeployClass Name="ProjectiOSDeviceResourceRules"/>
                 <ProjectRoot Platform="iOSDevice64" Name="$(PROJECTNAME).app"/>
                 <ProjectRoot Platform="Win64" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="iOSDevice32" Name="$(PROJECTNAME).app"/>
