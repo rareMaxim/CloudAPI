@@ -1,15 +1,12 @@
 ﻿unit TelegAPI.Bot;
 
 {$I ../jedi/jedi.inc}
+{$IFNDEF DELPHIXE7_UP}
+Поддерживается только RAD Studio XE7 и выше !
+{$ENDIF}
+  interface
 
-interface
-
-uses
-{$IFDEF DELPHI2009_UP} System.Generics.Collections, {$ENDIF}
-{$IFDEF DELPHI2009_UP} System.Rtti, {$ENDIF}
-  System.Threading,
-  TelegAPI.Types,
-  System.Classes;
+  uses System.Generics.Collections, System.Rtti, System.Threading, TelegAPI.Types, System.Classes;
 
 Type
   TTelegaBotOnUpdate = procedure(Const Sender: TObject; Const Update: TTelegaUpdate) of Object;
@@ -233,14 +230,24 @@ begin
         else
         begin
           if parameter.Value.IsType<string> then
-            Form.AddField(parameter.Key, parameter.Value.AsString)
+          Begin
+            if NOT parameter.Value.AsString.IsEmpty then
+              Form.AddField(parameter.Key, parameter.Value.AsString)
+          End
           else if parameter.Value.IsType<Int64> then
-            Form.AddField(parameter.Key, IntToStr(parameter.Value.AsInt64))
+          Begin
+            if parameter.Value.AsInt64 <> 0 then
+              Form.AddField(parameter.Key, IntToStr(parameter.Value.AsInt64));
+          End
           else if parameter.Value.IsType<Boolean> then
-            Form.AddField(parameter.Key, IfThen(parameter.Value.AsBoolean, 'true', 'false'))
+          Begin
+            if parameter.Value.AsBoolean = True then
+              Form.AddField(parameter.Key, IfThen(parameter.Value.AsBoolean, 'true', 'false'))
+          End;
         end;
       end;
     End;
+
     content := Http.Post('https://api.telegram.org/bot' + FToken + '/' + Method, Form)
       .ContentAsString(TEncoding.UTF8);
     if Pos('502 Bad Gateway', content) > 0 then

@@ -2,13 +2,12 @@
 
 interface
 
-{$DEFINE LANG_EN}
-
 uses
   XSuperObject,
   System.Classes;
 
 Type
+{$M+}
   /// <summary> This object represents a Telegram user or bot.</summary>
   TTelegaUser = Class
   private
@@ -462,7 +461,6 @@ Type
   TTelegaReplyKeyboardHide = Class
   private
     Fhide_keyboard: Boolean;
-    Fphotos: TArray<TArray<TTelegaPhotoSize>>;
     Fselective: Boolean;
   published
     /// <summary>Requested profile pictures (in up to 4 sizes each)</summary>
@@ -737,6 +735,7 @@ begin
     Exit(TTelegaUpdateType.ChosenInlineResultUpdate);
   if Assigned(CallbackQuery) then
     Exit(TTelegaUpdateType.CallbackQueryUpdate);
+  Result := TTelegaUpdateType.UnkownUpdate;
 end;
 
 { TTelegaKeyboardButton }
