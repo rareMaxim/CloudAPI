@@ -7,10 +7,14 @@
 }
 {$ENDIF}
 
-///
 interface
 
-uses System.Generics.Collections, System.Rtti, System.Threading, TelegAPI.Types, System.Classes;
+uses
+  System.Generics.Collections,
+  System.Rtti,
+  System.Threading,
+  TelegAPI.Types,
+  System.Classes;
 
 Type
   TtgBotOnUpdate = procedure(Const Sender: TObject; Const Update: TtgUpdate) of Object;
@@ -27,8 +31,6 @@ Type
     FMessageOffset: Integer;
     FOnError: TtgBorOnError;
     FUpdatePool: TList<TtgBotOnUpdate>;
-
-    function IfThen(Value: Boolean; IfTrue: String; IfFalse: String): String;
     procedure SetIsReceiving(const Value: Boolean);
   protected
     /// <summary>Мастер-функция для запросов на сервак</summary>
@@ -41,8 +43,19 @@ Type
     /// <param name="offset">Identifier of the first update to be returned. Must be greater by one than the highest among the identifiers of previously received updates. By default, updates starting with the earliest unconfirmed update are returned. An update is considered confirmed as soon as getUpdates is called with an offset higher than its update_id. The negative offset can be specified to retrieve updates starting from -offset update from the end of the updates queue. All previous updates will forgotten. </param>
     /// <param name="limit">Limits the number of updates to be retrieved. Values between 1—100 are accepted. Defaults to 100. </param>
     /// <param name="timeout">Timeout in seconds for long polling. Defaults to 0, i.e. usual short polling</param>
+    /// <remarks>1. This method will not work if an outgoing webhook is set up. 2. In order to avoid getting duplicate updates, recalculate offset after each server response.</remarks>
     Function getUpdates(Const offset: Integer = 0; Const limit: Integer = 100;
       Const timeout: Integer = 0): TArray<TtgUpdate>;
+    /// <summary>Use this method to specify a url and receive incoming updates via an outgoing webhook. Whenever there is an update for the bot, we will send an HTTPS POST request to the specified url, containing a JSON-serialized Update. In case of an unsuccessful request, we will give up after a reasonable amount of attempts.</summary>
+    /// <param name="url">HTTPS url to send updates to. Use an empty string to remove webhook integration</param>
+    /// <param name="certificate">Upload your public key certificate so that the root certificate in use can be checked. See our self-signed guide for details.</param>
+    /// <remarks>
+    /// <para>Notes</para>
+    /// <para>1. You will not be able to receive updates using getUpdates for as long as an outgoing webhook is set up.</para>
+    /// <para>2. To use a self-signed certificate, you need to upload your public key certificate using certificate parameter. Please upload as InputFile, sending a String will not work.</para>
+    /// <para>3. Ports currently supported for Webhooks: 443, 80, 88, 8443.</para>
+    /// </remarks>
+    Procedure setWebhook(url: String; certificate: TtgFileToSend = nil);
     /// <summary>Use this method to send text messages.</summary>
     /// <param name="chat_id">Integer or String. Unique identifier for the target chat or username of the target channel (in the format @channelusername).</param>
     /// <param name="text">Text of the message to be sent</param>
@@ -56,7 +69,6 @@ Type
       ParseMode: TtgParseMode = TtgParseMode.Default; disableWebPagePreview: Boolean = False;
       disable_notification: Boolean = False; replyToMessageId: Integer = 0;
       replyMarkup: TtgReplyKeyboardMarkup = nil): TtgMessage;
-
     /// <summary>Use this method to forward messages of any kind.</summary>
     /// <returns>On success, the sent Message is returned.</returns>
     /// <param name="chat_id">Unique identifier for the target chat or username of the target channel (in the format @channelusername)</param>
@@ -261,11 +273,8 @@ Type
     Function answerInlineQuery(inline_query_id: String; results: TArray<TtgInlineQueryResult>;
       cache_time: Integer = 300; is_personal: Boolean = False; next_offset: String = '';
       switch_pm_text: String = ''; switch_pm_parameter: String = ''): Boolean;
-
     constructor Create(AOwner: TComponent); overload; override;
-    constructor Create(
-
-      Const Token: String); overload;
+    constructor Create(Const Token: String); overload;
     destructor Destroy; override;
   published
     { x } property UploadTimeout: Integer read FUploadTimeout write FUploadTimeout default 60000;
@@ -281,7 +290,13 @@ Type
 
 implementation
 
-uses XSuperObject, System.SysUtils, System.Net.Mime, System.Net.HttpClient, System.TypInfo;
+uses
+  TelegAPI.Utils,
+  XSuperObject,
+  System.SysUtils,
+  System.Net.Mime,
+  System.Net.HttpClient,
+  System.TypInfo;
 
 Function ToModeString(Mode: TtgParseMode): String;
 Begin
@@ -304,8 +319,10 @@ begin
   Parameters := TDictionary<String, TValue>.Create;
   try
     Parameters.Add('callback_query_id', callback_query_id);
-    Parameters.Add('text', text);
-    Parameters.Add('show_alert', show_alert);
+    if NOT text.IsEmpty then
+      Parameters.Add('text', text);
+    if show_alert then
+      Parameters.Add('show_alert', show_alert);
     Result := API<Boolean>('forwardMessage', Parameters);
   finally
     Parameters.Free;
@@ -339,7 +356,6 @@ begin
 end;
 
 function TTelegramBot.API<T>(const Method: String;
-
   Const Parameters: TDictionary<String, TValue>): T;
 var
   Http: THTTPClient;
@@ -360,7 +376,6 @@ begin
         begin
           { TODO -oOwner -cGeneral : Проверить че за херня тут твориться }
           if parameter.Value.AsType<TtgReplyKeyboardMarkup> <> nil then
-
             Form.AddField(parameter.Key, parameter.Value.AsType<TtgReplyKeyboardMarkup>.AsJSON);
         end
         else if parameter.Value.IsType<TtgFileToSend> then
@@ -383,12 +398,12 @@ begin
           else if parameter.Value.IsType<Boolean> then
           Begin
             if parameter.Value.AsBoolean = True then
-              Form.AddField(parameter.Key, IfThen(parameter.Value.AsBoolean, 'true', 'false'))
+              Form.AddField(parameter.Key, TuaUtils.IfThen<String>(parameter.Value.AsBoolean,
+                'true', 'false'))
           End;
         end;
       end;
     End;
-
     content := Http.Post('https://api.telegram.org/bot' + FToken + '/' + Method, Form)
       .ContentAsString(TEncoding.UTF8);
     if Pos('502 Bad Gateway', content) > 0 then
@@ -552,14 +567,6 @@ begin
   finally
     Parameters.Free;
   end;
-end;
-
-function TTelegramBot.IfThen(Value: Boolean; IfTrue, IfFalse: String): String;
-begin
-  if Value then
-    Result := IfTrue
-  else
-    Result := IfFalse;
 end;
 
 function TTelegramBot.kickChatMember(chat_id: TValue; user_id: Integer): Boolean;
@@ -838,6 +845,20 @@ begin
       end;
     end);
   Task.Start;
+end;
+
+procedure TTelegramBot.setWebhook(url: String; certificate: TtgFileToSend);
+var
+  Parameters: TDictionary<String, TValue>;
+begin
+  Parameters := TDictionary<String, TValue>.Create;
+  try
+    Parameters.Add('url', url);
+    Parameters.Add('certificate', certificate);
+    API<Boolean>('setWebhook', Parameters);
+  finally
+    Parameters.Free;
+  end;
 end;
 
 function TTelegramBot.unbanChatMember(chat_id: TValue; user_id: Integer): Boolean;

@@ -39,6 +39,7 @@ requires
 contains
   TelegAPI.Bot in '..\Source\TelegAPI.Bot.pas',
   TelegAPi.Types in '..\Source\TelegAPi.Types.pas',
-  TelegAPi.RegisterIDE in '..\Source\TelegAPi.RegisterIDE.pas';
+  TelegAPi.RegisterIDE in '..\Source\TelegAPi.RegisterIDE.pas',
+  TelegAPi.Utils in '..\Source\TelegAPi.Utils.pas';
 
 end.
