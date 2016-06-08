@@ -9,19 +9,19 @@ uses
 Type
 {$SCOPEDENUMS ON}
   /// <summary>The type of a Message</summary>
-  TtgMessageType = (UnknownMessage = 0, TextMessage, PhotoMessage, AudioMessage, VideoMessage,
-    VoiceMessage, DocumentMessage, StickerMessage, LocationMessage, ContactMessage, ServiceMessage,
-    VenueMessage);
+  TtgMessageType = (UnknownMessage = 0, TextMessage, PhotoMessage, AudioMessage,
+    VideoMessage, VoiceMessage, DocumentMessage, StickerMessage,
+    LocationMessage, ContactMessage, ServiceMessage, VenueMessage);
   /// <summary>Text parsing mode</summary>
   TtgParseMode = (Default = 0, Markdown, Html);
   /// <summary>The type of an Update</summary>
-  TtgUpdateType = (UnkownUpdate = 0, MessageUpdate, InlineQueryUpdate, ChosenInlineResultUpdate,
-    CallbackQueryUpdate);
+  TtgUpdateType = (UnkownUpdate = 0, MessageUpdate, InlineQueryUpdate,
+    ChosenInlineResultUpdate, CallbackQueryUpdate);
 {$SCOPEDENUMS OFF}
 {$M+}
 
-  /// <summary> This object represents a Telegram user or bot.</summary>
   [Alias('User')]
+  /// <summary> This object represents a Telegram user or bot.</summary>
   TtgUser = Class
   private
     FID: Integer;
@@ -41,6 +41,21 @@ Type
     /// <summary>Optional. User‘s or bot’s username</summary>
     [Alias('username')]
     property Username: String read FUsername write FUsername;
+  End;
+
+  /// <summary>This object contains information about one member of the chat.</summary>
+  [Alias('ChatMember')]
+  TtgChatMember = Class
+  private
+    Fstatus: String;
+    Fuser: TtgUser;
+  published
+    /// <summary>Information about the user</summary>
+    [Alias('user')]
+    property user: TtgUser read Fuser write Fuser;
+    /// <summary>The member's status in the chat. Can be “creator”, “administrator”, “member”, “left” or “kicked”</summary>
+    [Alias('status')]
+    property status: String read Fstatus write Fstatus;
   End;
 
   /// <summary>This object represents a chat.</summary>
@@ -82,8 +97,9 @@ Type
     Foffset: Integer;
     Flength: Integer;
     Furl: String;
+    Fuser: TtgUser;
   published
-    /// <summary>Type of the entity. One of mention (@username), hashtag, bot_command, url, email, bold (bold text), italic (italic text), code (monowidth string), pre (monowidth block), text_link (for clickable text URLs)</summary>
+    /// <summary>Type of the entity. One of mention (@username), hashtag, bot_command, url, email, bold (bold text), italic (italic text), code (monowidth string), pre (monowidth block), text_link (for clickable text URLs), text_mention (for users without usernames)</summary>
     [Alias('type')]
     property &type: String read Ftype write Ftype;
     /// <summary>Offset in UTF-16 code units to the start of the entity</summary>
@@ -95,6 +111,11 @@ Type
     /// <summary>Optional. For “text_link” only, url that will be opened after user taps on the text</summary>
     [Alias('url')]
     property url: String read Furl write Furl;
+    /// <summary>
+    /// Optional. For “text_mention” only, the mentioned user
+    /// </summary>
+    [Alias('user')]
+    property user: TtgUser read Fuser write Fuser;
   End;
 
   /// <summary>This object represents a file ready to be downloaded. The file can be downloaded via the link https://api.telegram.org/file/bot<token>/<file_path>. It is guaranteed that the link will be valid for at least 1 hour. When the link expires, a new one can be requested by calling getFile. </summary>
@@ -338,6 +359,7 @@ Type
     FPinnedMessage: TtgMessage;
     Fentities: TArray<TtgMessageEntity>;
     Fforward_from_chat: TtgChat;
+    FEditDate: Integer;
   public
     /// <summary>Unique message identifier</summary>
     [Alias('message_id')]
@@ -356,13 +378,18 @@ Type
     property ForwardFrom: TtgUser read FForwardFrom write FForwardFrom;
     /// <summary>Optional. For messages forwarded from a channel, information about the original channel</summary>
     [Alias('forward_from_chat')]
-    property forward_from_chat: TtgChat read Fforward_from_chat write Fforward_from_chat;
+    property forward_from_chat: TtgChat read Fforward_from_chat
+      write Fforward_from_chat;
     /// <summary>Optional. For forwarded messages, date the original message was sent in Unix time</summary>
     [Alias('forward_date')]
     property ForwardDate: Integer read FForwardDate write FForwardDate;
     /// <summary>Optional. For replies, the original message. Note that the Message object in this field will not contain further reply_to_message fields even if it itself is a reply.</summary>
     [Alias('reply_to_message')]
-    property ReplyToMessage: TtgMessage read FReplyToMessage write FReplyToMessage;
+    property ReplyToMessage: TtgMessage read FReplyToMessage
+      write FReplyToMessage;
+    /// <summary>Optional. Date the message was last edited in Unix time.</summary>
+    [Alias('edit_date')]
+    property EditDate: Integer read FEditDate write FEditDate;
     /// <summary>Optional. For text messages, the actual UTF-8 text of the message</summary>
     [Alias('text')]
     property Text: String read FText write FText;
@@ -410,26 +437,32 @@ Type
     property NewChatTitle: String read FNewChatTitle write FNewChatTitle;
     /// <summary>Optional. A group photo was change to this value</summary>
     [Alias('new_chat_photo')]
-    property NewChatPhoto: TArray<TtgPhotoSize> read FNewChatPhoto write FNewChatPhoto;
+    property NewChatPhoto: TArray<TtgPhotoSize> read FNewChatPhoto
+      write FNewChatPhoto;
     /// <summary>Optional. Informs that the group photo was deleted</summary>
     [Alias('delete_chat_photo')]
-    property DeleteChatPhoto: Boolean read FDeleteChatPhoto write FDeleteChatPhoto;
+    property DeleteChatPhoto: Boolean read FDeleteChatPhoto
+      write FDeleteChatPhoto;
     /// <summary>Optional. Informs that the group has been created</summary>
     [Alias('group_chat_created')]
-    property GroupChatCreated: Boolean read FGroupChatCreated write FGroupChatCreated;
+    property GroupChatCreated: Boolean read FGroupChatCreated
+      write FGroupChatCreated;
     /// <summary>Optional. Service message: the supergroup has been created</summary>
     [Alias('supergroup_chat_created')]
     property SupergroupChatCreated: Boolean read FSupergroupChatCreated
       write FSupergroupChatCreated;
     /// <summary> Optional. Service message: the channel has been created </summary>
     [Alias('channel_chat_created')]
-    property ChannelChatCreated: Boolean read FChannelChatCreated write FChannelChatCreated;
+    property ChannelChatCreated: Boolean read FChannelChatCreated
+      write FChannelChatCreated;
     /// <summary> Optional. The group has been migrated to a supergroup with the specified identifier</summary>
     [Alias('migrate_to_chat_id')]
-    property MigrateToChatId: Int64 read FMigrateToChatId write FMigrateToChatId;
+    property MigrateToChatId: Int64 read FMigrateToChatId
+      write FMigrateToChatId;
     /// <summary>Optional. The supergroup has been migrated from a group with the specified identifier</summary>
     [Alias('migrate_from_chat_id')]
-    property MigrateFromChatId: Int64 read FMigrateFromChatId write FMigrateFromChatId;
+    property MigrateFromChatId: Int64 read FMigrateFromChatId
+      write FMigrateFromChatId;
     /// <summary>Optional. Specified message was pinned. Note that the Message object in this field will not contain further reply_to_message fields even if it is itself a reply</summary>
     [Alias('pinned_message')]
     property PinnedMessage: TtgMessage read FPinnedMessage write FPinnedMessage;
@@ -447,7 +480,8 @@ Type
     property total_count: Integer read Ftotal_count write Ftotal_count;
     /// <summary>Requested profile pictures (in up to 4 sizes each)</summary>
     [Alias('photos')]
-    property photos: TArray < TArray < TtgPhotoSize >> read Fphotos write Fphotos;
+    property photos: TArray < TArray < TtgPhotoSize >> read Fphotos
+      write Fphotos;
   End;
 
   /// <summary>This object represents one button of the reply keyboard. For simple text buttons String can be used instead of this object to specify text of the button. Optional fields are mutually exclusive.</summary>
@@ -467,10 +501,12 @@ Type
     property Text: String read FText write FText;
     /// <summary>Optional. If True, the user's phone number will be sent as a contact when the button is pressed. Available in private chats only</summary>
     [Alias('request_contact')]
-    property request_contact: Boolean read Frequest_contact write Frequest_contact;
+    property request_contact: Boolean read Frequest_contact
+      write Frequest_contact;
     /// <summary>Optional. If True, the user's current location will be sent when the button is pressed. Available in private chats only</summary>
     [Alias('request_location')]
-    property request_location: Boolean read Frequest_location write Frequest_location;
+    property request_location: Boolean read Frequest_location
+      write Frequest_location;
   End;
 
   /// <summary>Upon receiving a message with this object, Telegram clients will hide the current custom keyboard and display the default letter-keyboard. By default, custom keyboards are displayed until a new keyboard is sent by a bot. An exception is made for one-time keyboards that are hidden immediately after the user presses a button (see ReplyKeyboardMarkup).</summary>
@@ -500,13 +536,16 @@ Type
   published
     /// <summary>Array of button rows, each represented by an Array of KeyboardButton objects</summary>
     [Alias('keyboard')]
-    property KeyBoard: TArray < TArray < TtgKeyboardButton >> read FKeyBoard write FKeyBoard;
+    property KeyBoard: TArray < TArray < TtgKeyboardButton >> read FKeyBoard
+      write FKeyBoard;
     /// <summary>Optional. Requests clients to resize the keyboard vertically for optimal fit (e.g., make the keyboard smaller if there are just two rows of buttons). Defaults to false, in which case the custom keyboard is always of the same height as the app's standard keyboard.</summary>
     [Alias('resize_keyboard')]
-    property resize_keyboard: Boolean read Fresize_keyboard write Fresize_keyboard;
+    property resize_keyboard: Boolean read Fresize_keyboard
+      write Fresize_keyboard;
     /// <summary>Optional. Requests clients to hide the keyboard as soon as it's been used. The keyboard will still be available, but clients will automatically display the usual letter-keyboard in the chat – the user can press a special button in the input field to see the custom keyboard again. Defaults to false.</summary>
     [Alias('one_time_keyboard')]
-    property one_time_keyboard: Boolean read Fone_time_keyboard write Fone_time_keyboard;
+    property one_time_keyboard: Boolean read Fone_time_keyboard
+      write Fone_time_keyboard;
     /// <summary>Optional. Use this parameter if you want to show the keyboard to specific users only. Targets: 1) users that are @mentioned in the text of the Message object; 2) if the bot's message is a reply (has reply_to_message_id), sender of the original message.</summary>
     [Alias('selective')]
     property selective: Boolean read Fselective write Fselective;
@@ -533,7 +572,8 @@ Type
     /// <summary>Optional. If set, pressing the button will prompt the user to select one of their chats, open that chat and insert the bot‘s username and the specified inline query in the input field. Can be empty, in which case just the bot’s username will be inserted.</summary>
     /// <remarks>Note: This offers an easy way for users to start using your bot in inline mode when they are currently in a private chat with it. Especially useful when combined with switch_pm… actions – in this case the user will be automatically returned to the chat they switched from, skipping the chat selection screen.</remarks>
     [Alias('switch_inline_query')]
-    property switch_inline_query: String read Fswitch_inline_query write Fswitch_inline_query;
+    property switch_inline_query: String read Fswitch_inline_query
+      write Fswitch_inline_query;
   End;
 
   /// <summary>This object represents an inline keyboard that appears right next to the message it belongs to.</summary>
@@ -545,8 +585,8 @@ Type
   published
     /// <summary>Array of button rows, each represented by an Array of InlineKeyboardButton objects</summary>
     [Alias('inline_keyboard')]
-    property inline_keyboard: TArray < TArray < TtgInlineKeyboardButton >> read Finline_keyboard
-      write Finline_keyboard;
+    property inline_keyboard: TArray < TArray < TtgInlineKeyboardButton >>
+      read Finline_keyboard write Finline_keyboard;
   End;
 
   [Alias('')]
@@ -632,7 +672,8 @@ Type
     property Location: TtgLocation read FLocation write FLocation;
     /// <summary>Optional. Identifier of the sent inline message. Available only if there is an inline keyboard attached to the message. Will be also received in callback queries and can be used to edit the message.</summary>
     [Alias('inline_message_id')]
-    property inline_message_id: String read Finline_message_id write Finline_message_id;
+    property inline_message_id: String read Finline_message_id
+      write Finline_message_id;
     /// <summary>The query that was used to obtain the result.</summary>
     [Alias('query')]
     property Query: String read FQuery write FQuery;
@@ -658,7 +699,8 @@ Type
     property Message: TtgMessage read FMessage write FMessage;
     /// <summary>Optional. Identifier of the message sent via the bot in inline mode, that originated the query</summary>
     [Alias('inline_message_id')]
-    property InlineMessageId: String read FInlineMessageId write FInlineMessageId;
+    property InlineMessageId: String read FInlineMessageId
+      write FInlineMessageId;
     /// <summary>Data associated with the callback button. Be aware that a bad client can send arbitrary data in this field</summary>
     [Alias('data')]
     property Data: String read FData write FData;
@@ -689,6 +731,7 @@ Type
     FInlineQuery: TtgInlineQuery;
     FChosenInlineResult: TtgChosenInlineResult;
     FCallbackQuery: TtgCallbackQuery;
+    FEditedMessage: TtgMessage;
     function Get: TtgUpdateType;
   public
   published
@@ -698,6 +741,9 @@ Type
     /// <summary>Optional. New incoming message of any kind — text, photo, sticker, etc.</summary>
     [Alias('message')]
     property Message: TtgMessage read FMessage write FMessage;
+    /// <summary>Optional. New version of a message that is known to the bot and was edited</summary>
+    [Alias('edited_message')]
+    property EditedMessage: TtgMessage read FEditedMessage write FEditedMessage;
     /// <summary>Optional. New incoming inline query</summary>
     [Alias('inline_query')]
     property InlineQuery: TtgInlineQuery read FInlineQuery write FInlineQuery;
@@ -707,7 +753,8 @@ Type
       write FChosenInlineResult;
     /// <summary>Optional. New incoming callback query</summary>
     [Alias('callback_query')]
-    property CallbackQuery: TtgCallbackQuery read FCallbackQuery write FCallbackQuery;
+    property CallbackQuery: TtgCallbackQuery read FCallbackQuery
+      write FCallbackQuery;
     property &type: TtgUpdateType read Get;
   End;
 
@@ -816,10 +863,12 @@ Type
     property ID: String read FID write FID;
     /// <summary>Optional. Inline keyboard attached to the message</summary>
     [Alias('reply_markup')]
-    property reply_markup: TtgInlineKeyboardMarkup read Freply_markup write Freply_markup;
+    property reply_markup: TtgInlineKeyboardMarkup read Freply_markup
+      write Freply_markup;
     /// <summary>Optional. Inline keyboard attached to the message</summary>
     [Alias('reply_markup')]
-    property input_message_content: TtgInlineKeyboardMarkup read Freply_markup write Freply_markup;
+    property input_message_content: TtgInlineKeyboardMarkup read Freply_markup
+      write Freply_markup;
 
   End;
 
@@ -1255,7 +1304,8 @@ Type
   published
     /// <summary>A valid file identifier of the sticker</summary>
     [Alias('sticker_file_id')]
-    property sticker_file_id: String read Fsticker_file_id write Fsticker_file_id;
+    property sticker_file_id: String read Fsticker_file_id
+      write Fsticker_file_id;
   End;
 
   /// <summary>Represents a link to a file stored on the Telegram servers. By default, this file will be sent by the user with an optional caption. Alternatively, you can use input_message_content to send a message with the specified content instead of the file. Currently, only pdf-files and zip archives can be sent using this method.</summary>
@@ -1272,7 +1322,8 @@ Type
     property title: String read Ftitle write Ftitle;
     /// <summary>A valid file identifier for the file</summary>
     [Alias('document_file_id')]
-    property document_file_id: String read Fdocument_file_id write Fdocument_file_id;
+    property document_file_id: String read Fdocument_file_id
+      write Fdocument_file_id;
     /// <summary>Optional. Short description of the result</summary>
     [Alias('description')]
     property description: String read Fdescription write Fdescription;
@@ -1337,7 +1388,8 @@ uses
 
 { TtgApiFileToSend }
 
-constructor TtgFileToSend.Create(const FileName: String; const Content: TStream);
+constructor TtgFileToSend.Create(const FileName: String;
+  const Content: TStream);
 begin
   Self.FFileName := FileName;
   Self.FContent := Content;
@@ -1366,7 +1418,8 @@ end;
 
 { TtgKeyboardButton }
 
-constructor TtgKeyboardButton.Create(Text: String; request_contact, request_location: Boolean);
+constructor TtgKeyboardButton.Create(Text: String;
+  request_contact, request_location: Boolean);
 begin
   FText := Text;
   Frequest_contact := request_contact;

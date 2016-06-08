@@ -3,3 +3,9 @@ Test/telegaToken.inc
 Install/AndroidManifest.template.xml
 Test/Android/
 telegaToken.inc
+Source/__history/
+*.dcu
+*.stat
+*.local
+examples/TelegaPingPong/__history/
+__history/

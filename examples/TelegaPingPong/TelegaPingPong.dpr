@@ -41,8 +41,10 @@ End;
 
 begin
   WriteLn('Telegram Bot Ping-Pong Sample');
-  TelegramBot := TTelegramBot.Create( {$I ..\telegaToken.inc}{ Here you Api key } );
+  { Here you Api key }
+  TelegramBot := TTelegramBot.Create({$I ..\telegaToken.inc} );
   try
+    WriteLn('Bot token: ', TelegramBot.getMe.ID <> -1);
     InitRecesive;
   except
     on E: Exception do
