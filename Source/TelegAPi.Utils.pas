@@ -7,11 +7,11 @@ Type
     Class Function IfThen<T>(Const Value: Boolean; IfTrue, IfFalse: T): T;
   end;
 
-  TCommandHelper = Record
+  TCommandHelper = Class
   private
     FText: TArray<String>;
   public
-    Class Function Create(Const Text: String): TCommandHelper; static;
+    Constructor Create(Const Text: String);
     Function IsCommand: Boolean;
     Function Command: String;
     Function ParamCount: Integer;
@@ -40,9 +40,9 @@ begin
   Result := FText[0].Substring(0, FText[0].IndexOf('@'));
 end;
 
-class function TCommandHelper.Create(const Text: String): TCommandHelper;
+constructor TCommandHelper.Create(const Text: String);
 begin
-  Result.FText := Text.Split([' ', ','], TStringSplitOptions.ExcludeEmpty);
+  FText := Text.Split([' ', ','], TStringSplitOptions.ExcludeEmpty);
 end;
 
 function TCommandHelper.IsCommand: Boolean;
