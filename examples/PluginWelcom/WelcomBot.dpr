@@ -34,7 +34,7 @@ Begin
 End;
 
 begin
-  WriteLn('Telegram Bot Ping-Pong Sample');
+  WriteLn('Telegram Welcome Sample');
   { Here you Api key }
   TelegramBot := TTelegramBot.Create({$I ..\telegaToken.inc} );
   TelegramWelcom := TTgWelcomeBot.Create(TelegramBot);
@@ -47,5 +47,4 @@ begin
   end;
   TelegramBot.Free;
   TelegramWelcom.Free;
-
 end.
