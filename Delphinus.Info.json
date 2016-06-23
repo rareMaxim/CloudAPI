@@ -1,0 +1,10 @@
+{
+    "id": "{97907CF0-6640-4C37-8A14-4E8F6FB2D95A}",
+    "name": "TelegAPI",
+    "picture": "Install\\pJNqeRflXYU.bmp",
+    "license_type": "MPL-1.1",
+    "platforms": "Win32;Win64",
+    "first_version": "2.0.0.0",
+    "package_compiler_min": 28,
+    "compiler_min": 28
+}
