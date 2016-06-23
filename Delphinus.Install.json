@@ -51,13 +51,6 @@
         }
 		,
         {
-            "folder": "Doc",
-            "base": "",
-            "recursive": true,
-            "filter": "*;*.*"
-        }
-		,
-        {
             "folder": "Test",
             "base": "",
             "recursive": true,
