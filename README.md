@@ -127,6 +127,5 @@ end.
 
 ```
 
-![J2WkZxZ.png](https://bitbucket.org/repo/LB69kr/images/221479400-J2WkZxZ.png)
 
 Delphinus-Support
