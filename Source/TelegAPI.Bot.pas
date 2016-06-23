@@ -32,6 +32,7 @@ Type
     FMessageOffset: Integer;
     FOnError: TtgBorOnError;
     FUpdatePool: TList<TtgBotOnUpdate>;
+    FIsEnabledUpdatePool: Boolean;
     procedure SetIsReceiving(const Value: Boolean);
   protected
     /// <summary>Мастер-функция для запросов на сервак</summary>
@@ -320,6 +321,9 @@ Type
       write FPollingTimeout default 1000;
     property MessageOffset: Integer read FMessageOffset write FMessageOffset
       default 0;
+    /// <summary>Если используете плагины - оставить включеным</summary>
+    property IsEnabledUpdatePool: Boolean read FIsEnabledUpdatePool
+      write FIsEnabledUpdatePool default True;
     /// <summary>Монитор слежки за обновлениями</summary>
     property IsReceiving: Boolean read FIsReceiving write SetIsReceiving
       default False;
@@ -491,6 +495,7 @@ begin
   UploadTimeout := 60000;
   PollingTimeout := 1000;
   MessageOffset := 0;
+  IsEnabledUpdatePool := True;
 end;
 
 destructor TTelegramBot.Destroy;
@@ -653,6 +658,8 @@ function TTelegramBot.getUpdates(const offset, limit, timeout: Integer)
   : TArray<TtgUpdate>;
 var
   Parameters: TDictionary<String, TValue>;
+  PoolUpd: TtgBotOnUpdate;
+  I: Integer;
 begin
   Parameters := TDictionary<String, TValue>.Create;
   try
@@ -660,6 +667,13 @@ begin
     Parameters.Add('limit', limit);
     Parameters.Add('timeout', timeout);
     Result := Self.API < TArray < TtgUpdate >> ('getUpdates', Parameters);
+    if IsEnabledUpdatePool then
+      if FUpdatePool.Count > 0 then
+        for PoolUpd in FUpdatePool do
+        begin
+          for I := Low(Result) to High(Result) do
+            PoolUpd(Self, Result[I]);
+        end;
   finally
     Parameters.Free;
   end;
@@ -962,11 +976,6 @@ begin
             for Update in LUpdates do
             begin
               OnUpdate(Self, Update);
-              if FUpdatePool.Count > 0 then
-                for PoolUpd in FUpdatePool do
-                begin
-                  PoolUpd(Self, Update);
-                end;
 
               MessageOffset := Update.Id + 1;
             end;

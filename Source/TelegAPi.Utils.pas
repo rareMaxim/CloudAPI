@@ -37,7 +37,9 @@ end;
 
 function TCommandHelper.Command: String;
 begin
-  Result := FText[0].Substring(0, FText[0].IndexOf('@'));
+  Result := FText[0];
+  if Result.Contains('@') then
+    Result := Result.Substring(0, FText[0].IndexOf('@'));
 end;
 
 constructor TCommandHelper.Create(const Text: String);
@@ -47,7 +49,9 @@ end;
 
 function TCommandHelper.IsCommand: Boolean;
 begin
-  Result := FText[0].StartsWith('/');
+  Result := Length(FText) > 0;
+  if Result then
+    Result := FText[0].StartsWith('/');
 end;
 
 function TCommandHelper.Param(const Index: Integer): String;
@@ -57,7 +61,7 @@ end;
 
 function TCommandHelper.ParamCount: Integer;
 begin
-  Result := Length(FText);
+  Result := Length(FText) - 1;
 end;
 
 function TCommandHelper.ParamsToString: String;

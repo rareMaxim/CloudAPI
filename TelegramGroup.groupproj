@@ -9,6 +9,9 @@
         <Projects Include="examples\TelegaPingPong\TelegaPingPong.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="examples\PluginWelcom\WelcomBot.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -35,14 +38,23 @@
     <Target Name="TelegaPingPong:Make">
         <MSBuild Projects="examples\TelegaPingPong\TelegaPingPong.dproj" Targets="Make"/>
     </Target>
+    <Target Name="WelcomBot">
+        <MSBuild Projects="examples\PluginWelcom\WelcomBot.dproj"/>
+    </Target>
+    <Target Name="WelcomBot:Clean">
+        <MSBuild Projects="examples\PluginWelcom\WelcomBot.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="WelcomBot:Make">
+        <MSBuild Projects="examples\PluginWelcom\WelcomBot.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="TelegaPiBot;TelegaPingPong"/>
+        <CallTarget Targets="TelegaPiBot;TelegaPingPong;WelcomBot"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="TelegaPiBot:Clean;TelegaPingPong:Clean"/>
+        <CallTarget Targets="TelegaPiBot:Clean;TelegaPingPong:Clean;WelcomBot:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="TelegaPiBot:Make;TelegaPingPong:Make"/>
+        <CallTarget Targets="TelegaPiBot:Make;TelegaPingPong:Make;WelcomBot:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>
