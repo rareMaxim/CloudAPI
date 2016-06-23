@@ -17,7 +17,7 @@ uses
   System.Classes;
 
 Type
-  TtgBotOnUpdate = procedure(Const Sender: TObject; Const Update: TtgUpdate)
+  TtgBotOnUpdate = procedure(Sender: TObject; Const Update: TtgUpdate)
     of Object;
   TtgBorOnError = procedure(Const Sender: TObject; Const Code: Integer;
     Const Message: String) of Object;

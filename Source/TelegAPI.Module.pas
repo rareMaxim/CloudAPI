@@ -11,7 +11,7 @@ Type
     FID: Integer;
     FBot: TTelegramBot;
   protected
-    procedure OnUpdate(Const Sender: TObject; Const Update: TtgUpdate);
+    procedure OnUpdate(Sender: TObject; Const Update: TtgUpdate);
       virtual; abstract;
   public
     Constructor Create(ABot: TTelegramBot);
