@@ -9,3 +9,6 @@ Source/__history/
 *.local
 examples/TelegaPingPong/__history/
 __history/
+Source/__recovery/
+examples/PluginWhoIs/__recovery/
+*.identcache

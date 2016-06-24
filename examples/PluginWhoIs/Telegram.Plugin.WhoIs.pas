@@ -1,4 +1,4 @@
-﻿unit Telegram.Plugin.Calculator;
+﻿unit Telegram.Plugin.WhoIs;
 
 interface
 
@@ -9,7 +9,7 @@ uses
   TelegAPI.Module;
 
 Type
-  TTgCalculatorBot = Class(TTgModule)
+  TTgBotWhoIs = Class(TTgModule)
   private
     FIsCommandWait: Boolean;
   protected
@@ -19,13 +19,15 @@ Type
 implementation
 
 uses
-  BI.Expression, System.SysUtils;
+  System.Net.WhoIs,
+  System.SysUtils;
 
 { TTgWelcomeBot }
 
-procedure TTgCalculatorBot.OnUpdate(Sender: TObject; const Update: TtgUpdate);
+procedure TTgBotWhoIs.OnUpdate(Sender: TObject; const Update: TtgUpdate);
 var
   Cmd: TCommandHelper;
+  WhoIs: TWhoIs;
   Procedure Calculation;
   var
     TextExpr: String;
@@ -36,8 +38,11 @@ var
     else
       TextExpr := Cmd.ParamsToString;
     try
+      TextExpr := WhoIs.WhoIs(TextExpr);
+      if TextExpr.IndexOf('No match for') > -1 then
+        TextExpr := 'Домен свободный!';
       (Sender as TTelegramBot).sendTextMessage(Update.Message.Chat.ID,
-        TExpression.FromString(TextExpr).Value);
+        TextExpr);
     except
       on E: Exception do
         (Sender as TTelegramBot).sendTextMessage(Update.Message.Chat.ID,
@@ -47,14 +52,15 @@ var
 
 begin
   Cmd := TCommandHelper.Create(Update.Message.Text);
+  WhoIs := TWhoIs.Create;
   try
-    if Cmd.Command = '/calc' then
+    if Cmd.Command = '/checkdomainname' then
     Begin
       if Cmd.ParamCount = 0 then
       Begin
         FIsCommandWait := true;
         (Sender as TTelegramBot).sendTextMessage(Update.Message.Chat.ID,
-          'ќжидаю выражение:');
+          'Ожидаю ввод доменов:');
       End
       else
       Begin
@@ -67,6 +73,7 @@ begin
     End;
   finally
     Cmd.Free;
+    WhoIs.Free;
   end;
 
 end;
