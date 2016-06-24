@@ -54,7 +54,7 @@ begin
       Begin
         FIsCommandWait := true;
         (Sender as TTelegramBot).sendTextMessage(Update.Message.Chat.ID,
-          'ќжидаю выражение:');
+          'ожидаю выражение:');
       End
       else
       Begin

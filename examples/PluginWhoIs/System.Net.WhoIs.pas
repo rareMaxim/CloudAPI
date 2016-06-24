@@ -3,6 +3,7 @@ unit System.Net.WhoIs;
 interface
 
 uses
+  System.SysUtils,
   System.Net.Socket;
 
 Type
@@ -23,8 +24,14 @@ begin
   LSocket := TSocket.Create(TSocketType.TCP);
   try
     LSocket.Connect('whois.internic.net', '', '', 43);
-    while LSocket.ReceiveLength = 0 do
+    LSocket.Send(Name + #13#10);
+    while true do
+    Begin
       Result := LSocket.ReceiveString;
+      if Result <> '' then
+        break;
+    End;
+  
   finally
     LSocket.Free;
   end;

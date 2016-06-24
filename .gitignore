@@ -12,3 +12,4 @@ __history/
 Source/__recovery/
 examples/PluginWhoIs/__recovery/
 *.identcache
+examples/PluginCalculator/__recovery/
