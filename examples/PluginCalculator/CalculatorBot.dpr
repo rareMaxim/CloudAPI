@@ -14,7 +14,7 @@ Const
 
 Var
   TelegramBot: TTelegramBot;
-  TelegramWelcom: TTgCalculatorBot;
+  TelegramCalc: TTgCalculatorBot;
 
 Procedure InitRecesive;
 var
@@ -29,23 +29,27 @@ Begin
     Updates := TelegramBot.getUpdates(Offset); // Get updates
     if Length(Updates) = 0 then
       Continue;
+    for Update in Updates do
+    begin
+      Writeln(Update.Message.From.Username + ': ' + Update.Message.Text);
+    end;
     Offset := Updates[High(Updates)].ID + 1;
   end;
 End;
 
 begin
-  WriteLn('Telegram Calculator Sample');
+  Writeln('Telegram Calculator Sample');
   { Here you Api key }
   TelegramBot := TTelegramBot.Create({$I ..\telegaToken.inc} );
-  TelegramWelcom := TTgCalculatorBot.Create(TelegramBot);
+  TelegramCalc := TTgCalculatorBot.Create(TelegramBot);
   try
-    WriteLn('Bot token: ', TelegramBot.getMe.ID <> -1);
+    Writeln('Bot token: ', TelegramBot.getMe.ID <> -1);
     InitRecesive;
   except
     on E: Exception do
-      WriteLn(E.ClassName, ': ', E.Message);
+      Writeln(E.ClassName, ': ', E.Message);
   end;
   TelegramBot.Free;
-  TelegramWelcom.Free;
+  TelegramCalc.Free;
 
 end.

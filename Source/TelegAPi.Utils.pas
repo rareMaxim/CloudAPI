@@ -37,6 +37,8 @@ end;
 
 function TCommandHelper.Command: String;
 begin
+  if Length(FText) = 0 then
+    Exit;
   Result := FText[0];
   if Result.Contains('@') then
     Result := Result.Substring(0, FText[0].IndexOf('@'));

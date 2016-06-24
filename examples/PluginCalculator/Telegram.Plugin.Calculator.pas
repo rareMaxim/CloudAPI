@@ -46,6 +46,8 @@ var
   End;
 
 begin
+  if NOT Assigned(Update.Message) then
+    Exit;
   Cmd := TCommandHelper.Create(Update.Message.Text);
   try
     if Cmd.Command = '/calc' then
@@ -54,7 +56,7 @@ begin
       Begin
         FIsCommandWait := true;
         (Sender as TTelegramBot).sendTextMessage(Update.Message.Chat.ID,
-          'ќжидаю выражение:');
+          'ожидаю выражение:');
       End
       else
       Begin
