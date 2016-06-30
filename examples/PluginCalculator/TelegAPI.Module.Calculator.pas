@@ -1,4 +1,4 @@
-﻿unit Telegram.Plugin.WhoIs;
+﻿unit TelegAPI.Module.Calculator;
 
 interface
 
@@ -9,25 +9,32 @@ uses
   TelegAPI.Module;
 
 Type
-  TTgBotWhoIs = Class(TTgModule)
+  TTgCalculatorBot = Class(TTgModule)
   private
     FIsCommandWait: Boolean;
   protected
     procedure OnUpdate(Sender: TObject; Const Update: TtgUpdate); override;
+    Function MyKeyBoard: TtgReplyKeyboardMarkup;
   End;
 
 implementation
 
 uses
-  System.Net.WhoIs,
-  System.SysUtils;
+  BI.Expression, System.SysUtils;
 
 { TTgWelcomeBot }
 
-procedure TTgBotWhoIs.OnUpdate(Sender: TObject; const Update: TtgUpdate);
+function TTgCalculatorBot.MyKeyBoard: TtgReplyKeyboardMarkup;
+begin
+  Result := TtgReplyKeyboardMarkup.Create;
+  Result.one_time_keyboard := true;
+  Result.KeyBoard := [[TtgKeyboardButton.Create('1'),
+    TtgKeyboardButton.Create('2')]]
+end;
+
+procedure TTgCalculatorBot.OnUpdate(Sender: TObject; const Update: TtgUpdate);
 var
   Cmd: TCommandHelper;
-  WhoIs: TWhoIs;
   Procedure Calculation;
   var
     TextExpr: String;
@@ -38,11 +45,9 @@ var
     else
       TextExpr := Cmd.ParamsToString;
     try
-      TextExpr := WhoIs.WhoIs(TextExpr);
-      if TextExpr.IndexOf('No match for') > -1 then
-        TextExpr := 'Домен свободный!';
       (Sender as TTelegramBot).sendTextMessage(Update.Message.Chat.ID,
-        TextExpr);
+        TExpression.FromString(TextExpr).Value, TtgParseMode.Default, False,
+        False, 0, MyKeyBoard);
     except
       on E: Exception do
         (Sender as TTelegramBot).sendTextMessage(Update.Message.Chat.ID,
@@ -51,16 +56,17 @@ var
   End;
 
 begin
+  if NOT Assigned(Update.Message) then
+    Exit;
   Cmd := TCommandHelper.Create(Update.Message.Text);
-  WhoIs := TWhoIs.Create;
   try
-    if Cmd.Command = '/checkdomainname' then
+    if Cmd.Command = '/calc' then
     Begin
       if Cmd.ParamCount = 0 then
       Begin
         FIsCommandWait := true;
         (Sender as TTelegramBot).sendTextMessage(Update.Message.Chat.ID,
-          'Ожидаю ввод доменов:');
+          'ожидаю выражение:');
       End
       else
       Begin
@@ -73,7 +79,6 @@ begin
     End;
   finally
     Cmd.Free;
-    WhoIs.Free;
   end;
 
 end;

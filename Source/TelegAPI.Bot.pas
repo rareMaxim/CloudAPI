@@ -13,8 +13,14 @@ uses
   System.Generics.Collections,
   System.Rtti,
   System.Threading,
+  System.Classes,
+  System.SysUtils,
+  System.Net.Mime,
+  System.Net.HttpClient,
+  System.TypInfo,
   TelegAPI.Types,
-  System.Classes;
+  TelegAPI.Utils,
+  XSuperObject;
 
 Type
   TtgBotOnUpdate = procedure(Sender: TObject; Const Update: TtgUpdate)
@@ -38,6 +44,8 @@ Type
     /// <summary>Мастер-функция для запросов на сервак</summary>
     Function API<T>(Const Method: String;
       Const Parameters: TDictionary<String, TValue>): T;
+    Function ParamsToFormData(Const Parameters: TDictionary<String, TValue>)
+      : TMultipartFormData;
   public
     /// <summary>A simple method for testing your bot's auth token.</summary>
     /// <returns>Returns basic information about the bot in form of a User object.</returns>
@@ -72,7 +80,7 @@ Type
       ParseMode: TtgParseMode = TtgParseMode.Default;
       disableWebPagePreview: Boolean = False;
       disable_notification: Boolean = False; replyToMessageId: Integer = 0;
-      replyMarkup: TtgReplyKeyboardMarkup = nil): TtgMessage;
+      replyMarkup: TtgReplyMarkup = nil): TtgMessage;
     /// <summary>Use this method to forward messages of any kind.</summary>
     /// <returns>On success, the sent Message is returned.</returns>
     /// <param name="chat_id">Unique identifier for the target chat or username of the target channel (in the format @channelusername)</param>
@@ -336,14 +344,6 @@ Type
 
 implementation
 
-uses
-  TelegAPI.Utils,
-  XSuperObject,
-  System.SysUtils,
-  System.Net.Mime,
-  System.Net.HttpClient,
-  System.TypInfo;
-
 Function ToModeString(Mode: TtgParseMode): String;
 Begin
   case Mode of
@@ -402,59 +402,82 @@ begin
   end;
 end;
 
+function TTelegramBot.ParamsToFormData(const Parameters
+  : TDictionary<String, TValue>): TMultipartFormData;
+var
+  parameter: TPair<String, TValue>;
+begin
+  Result := TMultipartFormData.Create;
+  for parameter in Parameters do
+  begin
+    if parameter.Value.IsType<TtgInlineKeyboardMarkup> then
+    begin
+      { TODO -oOwner -cGeneral : Проверить че за херня тут твориться }
+      if parameter.Value.AsType<TtgInlineKeyboardMarkup> <> nil then
+        Result.AddField(parameter.Key,
+          parameter.Value.AsType<TtgInlineKeyboardMarkup>.AsJSON);
+    end
+    else if parameter.Value.IsType<TtgReplyKeyboardMarkup> then
+    begin
+      if parameter.Value.AsType<TtgReplyKeyboardMarkup> <> nil then
+        Result.AddField(parameter.Key,
+          parameter.Value.AsType<TtgReplyKeyboardMarkup>.AsJSON);
+    end
+    else if parameter.Value.IsType<TtgReplyKeyboardHide> then
+    begin
+      if parameter.Value.AsType<TtgReplyKeyboardHide> <> nil then
+        Result.AddField(parameter.Key,
+          parameter.Value.AsType<TtgReplyKeyboardHide>.AsJSON);
+    end
+    else if parameter.Value.IsType<TtgForceReply> then
+    begin
+      if parameter.Value.AsType<TtgForceReply> <> nil then
+        Result.AddField(parameter.Key,
+          parameter.Value.AsType<TtgForceReply>.AsJSON);
+    end
+    else if parameter.Value.IsType<TtgFileToSend> then
+    Begin
+      { TODO -oOwner -cGeneral : Отправка файлов }
+      Result.AddFile(parameter.Key,
+        parameter.Value.AsType<TtgFileToSend>.FileName);
+    End
+    else
+    begin
+      if parameter.Value.IsType<string> then
+      Begin
+        if NOT parameter.Value.AsString.IsEmpty then
+          Result.AddField(parameter.Key, parameter.Value.AsString)
+      End
+      else if parameter.Value.IsType<Int64> then
+      Begin
+        if parameter.Value.AsInt64 <> 0 then
+          Result.AddField(parameter.Key, IntToStr(parameter.Value.AsInt64));
+      End
+      else if parameter.Value.IsType<Boolean> then
+      Begin
+        if parameter.Value.AsBoolean = True then
+          Result.AddField(parameter.Key,
+            TuaUtils.IfThen<String>(parameter.Value.AsBoolean, 'true', 'false'))
+      End;
+    end;
+  end;
+end;
+
 function TTelegramBot.API<T>(const Method: String;
   Const Parameters: TDictionary<String, TValue>): T;
 var
   Http: THTTPClient;
   content: String;
   Response: TtgApiResponse<T>;
-  parameter: TPair<String, TValue>;
-  Form: TMultipartFormData;
+
 begin
   Http := THTTPClient.Create;
-  Form := TMultipartFormData.Create;
   try
     // Преобразовуем параметры в строку, если нужно
     if Assigned(Parameters) then
     Begin
-      for parameter in Parameters do
-      begin
-        if parameter.Value.IsType<TtgReplyKeyboardMarkup> then
-        begin
-          { TODO -oOwner -cGeneral : Проверить че за херня тут твориться }
-          if parameter.Value.AsType<TtgReplyKeyboardMarkup> <> nil then
-            Form.AddField(parameter.Key,
-              parameter.Value.AsType<TtgReplyKeyboardMarkup>.AsJSON);
-        end
-        else if parameter.Value.IsType<TtgFileToSend> then
-        Begin
-          { TODO -oOwner -cGeneral : Отправка файлов }
-          Form.AddFile(parameter.Key,
-            parameter.Value.AsType<TtgFileToSend>.FileName);
-        End
-        else
-        begin
-          if parameter.Value.IsType<string> then
-          Begin
-            if NOT parameter.Value.AsString.IsEmpty then
-              Form.AddField(parameter.Key, parameter.Value.AsString)
-          End
-          else if parameter.Value.IsType<Int64> then
-          Begin
-            if parameter.Value.AsInt64 <> 0 then
-              Form.AddField(parameter.Key, IntToStr(parameter.Value.AsInt64));
-          End
-          else if parameter.Value.IsType<Boolean> then
-          Begin
-            if parameter.Value.AsBoolean = True then
-              Form.AddField(parameter.Key,
-                TuaUtils.IfThen<String>(parameter.Value.AsBoolean,
-                'true', 'false'))
-          End;
-        end;
-      end;
       content := Http.Post('https://api.telegram.org/bot' + FToken + '/' +
-        Method, Form).ContentAsString(TEncoding.UTF8);
+        Method, ParamsToFormData(Parameters)).ContentAsString(TEncoding.UTF8);
     End
     else
     Begin
@@ -863,7 +886,7 @@ end;
 
 function TTelegramBot.sendTextMessage(const chat_id: TValue; text: String;
   ParseMode: TtgParseMode; disableWebPagePreview, disable_notification: Boolean;
-  replyToMessageId: Integer; replyMarkup: TtgReplyKeyboardMarkup): TtgMessage;
+  replyToMessageId: Integer; replyMarkup: TtgReplyMarkup): TtgMessage;
 var
   Parameters: TDictionary<String, TValue>;
 begin

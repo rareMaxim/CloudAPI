@@ -509,30 +509,44 @@ Type
       write Frequest_location;
   End;
 
-  /// <summary>Upon receiving a message with this object, Telegram clients will hide the current custom keyboard and display the default letter-keyboard. By default, custom keyboards are displayed until a new keyboard is sent by a bot. An exception is made for one-time keyboards that are hidden immediately after the user presses a button (see ReplyKeyboardMarkup).</summary>
-  [Alias('ReplyKeyboardHide')]
-  TtgReplyKeyboardHide = Class
+  TtgReplyMarkup = Class
   private
-    Fhide_keyboard: Boolean;
     Fselective: Boolean;
   published
-    /// <summary>Requested profile pictures (in up to 4 sizes each)</summary>
-    [Alias('hide_keyboard')]
-    property hide_keyboard: Boolean read Fhide_keyboard write Fhide_keyboard;
-    /// <summary>Optional. Use this parameter if you want to hide keyboard for specific users only. Targets: 1) users that are @mentioned in the text of the Message object; 2) if the bot's message is a reply (has reply_to_message_id), sender of the original message.</summary>
-    /// <remarks>Example: A user votes in a poll, bot returns confirmation message in reply to the vote and hides keyboard for that user, while still showing the keyboard with poll options to users who haven't voted yet.</remarks>
+    /// <summary>Optional. Use this parameter if you want to force reply from specific users only. Targets: 1) users that are @mentioned in the text of the Message object; 2) if the bot's message is a reply (has reply_to_message_id), sender of the original message.</summary>
     [Alias('selective')]
     property selective: Boolean read Fselective write Fselective;
   End;
 
+  /// <summary>Upon receiving a message with this object, Telegram clients will display a reply interface to the user (act as if the user has selected the bot‘s message and tapped ’Reply'). This can be extremely useful if you want to create user-friendly step-by-step interfaces without having to sacrifice privacy mode. </summary>
+  [Alias('ForceReply')]
+  TtgForceReply = Class(TtgReplyMarkup)
+  private
+    Fforce_reply: Boolean;
+  published
+    /// <summary>Shows reply interface to the user, as if they manually selected the bot‘s message and tapped ’Reply'</summary>
+    [Alias('force_reply')]
+    property force_reply: Boolean read Fforce_reply write Fforce_reply;
+  End;
+
+  /// <summary>Upon receiving a message with this object, Telegram clients will hide the current custom keyboard and display the default letter-keyboard. By default, custom keyboards are displayed until a new keyboard is sent by a bot. An exception is made for one-time keyboards that are hidden immediately after the user presses a button (see ReplyKeyboardMarkup).</summary>
+  [Alias('ReplyKeyboardHide')]
+  TtgReplyKeyboardHide = Class (TtgReplyMarkup)
+  private
+    Fhide_keyboard: Boolean;
+  published
+    /// <summary>Requested profile pictures (in up to 4 sizes each)</summary>
+    [Alias('hide_keyboard')]
+    property hide_keyboard: Boolean read Fhide_keyboard write Fhide_keyboard;
+  End;
+
   /// <summary>This object represents a custom keyboard with reply options (see Introduction to bots for details and examples).</summary>
   [Alias('ReplyKeyboardMarkup')]
-  TtgReplyKeyboardMarkup = Class
+  TtgReplyKeyboardMarkup = Class(TtgReplyMarkup)
   private
     Fresize_keyboard: Boolean;
     FKeyBoard: TArray<TArray<TtgKeyboardButton>>;
     Fone_time_keyboard: Boolean;
-    Fselective: Boolean;
   published
     /// <summary>Array of button rows, each represented by an Array of KeyboardButton objects</summary>
     [Alias('keyboard')]
@@ -546,9 +560,6 @@ Type
     [Alias('one_time_keyboard')]
     property one_time_keyboard: Boolean read Fone_time_keyboard
       write Fone_time_keyboard;
-    /// <summary>Optional. Use this parameter if you want to show the keyboard to specific users only. Targets: 1) users that are @mentioned in the text of the Message object; 2) if the bot's message is a reply (has reply_to_message_id), sender of the original message.</summary>
-    [Alias('selective')]
-    property selective: Boolean read Fselective write Fselective;
   End;
 
   /// <summary>This object represents one button of an inline keyboard. You must use exactly one of the optional fields.</summary>
@@ -704,21 +715,6 @@ Type
     /// <summary>Data associated with the callback button. Be aware that a bad client can send arbitrary data in this field</summary>
     [Alias('data')]
     property Data: String read FData write FData;
-  End;
-
-  /// <summary>Upon receiving a message with this object, Telegram clients will display a reply interface to the user (act as if the user has selected the bot‘s message and tapped ’Reply'). This can be extremely useful if you want to create user-friendly step-by-step interfaces without having to sacrifice privacy mode. </summary>
-  [Alias('ForceReply')]
-  TtgForceReply = Class
-  private
-    Fforce_reply: Boolean;
-    Fselective: Boolean;
-  published
-    /// <summary>Shows reply interface to the user, as if they manually selected the bot‘s message and tapped ’Reply'</summary>
-    [Alias('force_reply')]
-    property force_reply: Boolean read Fforce_reply write Fforce_reply;
-    /// <summary>Optional. Use this parameter if you want to force reply from specific users only. Targets: 1) users that are @mentioned in the text of the Message object; 2) if the bot's message is a reply (has reply_to_message_id), sender of the original message.</summary>
-    [Alias('selective')]
-    property selective: Boolean read Fselective write Fselective;
   End;
 
   /// <summary>=This object represents an incoming update.</summary>

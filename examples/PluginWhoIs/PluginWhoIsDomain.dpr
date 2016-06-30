@@ -7,7 +7,7 @@ uses
   TelegaPi.Bot,
   TelegaPi.Types,
   System.SysUtils,
-  Telegram.Plugin.WhoIs in 'Telegram.Plugin.WhoIs.pas',
+  TelegAPI.Module.WhoIs in 'TelegAPI.Module.WhoIs.pas',
   System.Net.WhoIs in 'System.Net.WhoIs.pas';
 
 Const

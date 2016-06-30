@@ -7,7 +7,7 @@ uses
   TelegaPi.Bot,
   TelegaPi.Types,
   System.SysUtils,
-  Telegram.Plugin.Calculator in 'Telegram.Plugin.Calculator.pas';
+  TelegAPI.Module.Calculator in 'TelegAPI.Module.Calculator.pas';
 
 Const
   C_PAUSE_UPDATE = 1000; { 1sec. }
