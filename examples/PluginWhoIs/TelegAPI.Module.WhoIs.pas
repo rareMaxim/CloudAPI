@@ -45,10 +45,10 @@ var
       TextExpr := Cmd.ParamsToString;
     try
       TextExpr := TuaUtils.IfThen<String>(WhoIs.IsAvaible(TextExpr),
-        'Домен ' + TextExpr + ' свободный!', 'Домен ' + TextExpr +
-        ' занятый(((');
+        '😍😍😍Домен ' + TextExpr + ' свободный!😍😍😍', '😡😡😡Домен ' + TextExpr +
+        ' занятый😡😡😡');
       (Sender as TTelegramBot).sendTextMessage(Update.Message.Chat.ID, TextExpr,
-        TtgParseMode.Html, False, False, 0, KeyBoard);
+        TtgParseMode.Html, True, False, 0, KeyBoard);
     except
       on E: Exception do
         (Sender as TTelegramBot).sendTextMessage(Update.Message.Chat.ID,
@@ -77,8 +77,15 @@ begin
       with (Sender as TTelegramBot) do
       Begin
         FIsCommandWait := False;
-        sendTextMessage(Update.Message.Chat.ID, 'Поддерживаемые доменные зоны'
-          + #13#10 + string.join(' ', WhoIs.WhoIsServers.Keys.ToArray));
+        sendTextMessage(Update.Message.Chat.ID, 'Поддерживаемые доменные зоны' +
+          #13#10 + string.join(' ', WhoIs.WhoIsServers.Keys.ToArray));
+      end
+    else if Cmd.Command = '/finddomain' then
+      with (Sender as TTelegramBot) do
+      Begin
+        FIsCommandWait := False;
+        sendTextMessage(Update.Message.Chat.ID, 'Поддерживаемые доменные зоны' +
+          #13#10 + string.join(' ', WhoIs.WhoIsServers.Keys.ToArray));
       end
     else if FIsCommandWait then
     Begin

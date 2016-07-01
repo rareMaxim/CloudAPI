@@ -42,6 +42,7 @@ contains
   TelegAPi.RegisterIDE in '..\Source\TelegAPi.RegisterIDE.pas',
   TelegAPi.Utils in '..\Source\TelegAPi.Utils.pas',
   Telegram.Plugin.Welcome in '..\examples\PluginWelcom\Telegram.Plugin.Welcome.pas',
-  TelegAPI.Module in '..\Source\TelegAPI.Module.pas';
+  TelegAPI.Module in '..\Source\TelegAPI.Module.pas',
+  TelegAPi.Controls in '..\Source\TelegAPi.Controls.pas';
 
 end.

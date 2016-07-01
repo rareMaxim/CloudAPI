@@ -492,12 +492,16 @@ Type
     FText: String;
     Frequest_contact: Boolean;
     Frequest_location: Boolean;
+  protected
+    function GetFullText: String; virtual;
   Public
     constructor Create(Text: String; request_contact: Boolean = False;
       request_location: Boolean = False); overload;
   published
-    /// <summary>Text of the button. If none of the optional fields are used, it will be sent to the bot as a message when the button is pressed</summary>
     [Alias('text')]
+    property FullText: String read GetFullText;
+    /// <summary>Text of the button. If none of the optional fields are used, it will be sent to the bot as a message when the button is pressed</summary>
+    [DISABLE]
     property Text: String read FText write FText;
     /// <summary>Optional. If True, the user's phone number will be sent as a contact when the button is pressed. Available in private chats only</summary>
     [Alias('request_contact')]
@@ -531,7 +535,7 @@ Type
 
   /// <summary>Upon receiving a message with this object, Telegram clients will hide the current custom keyboard and display the default letter-keyboard. By default, custom keyboards are displayed until a new keyboard is sent by a bot. An exception is made for one-time keyboards that are hidden immediately after the user presses a button (see ReplyKeyboardMarkup).</summary>
   [Alias('ReplyKeyboardHide')]
-  TtgReplyKeyboardHide = Class (TtgReplyMarkup)
+  TtgReplyKeyboardHide = Class(TtgReplyMarkup)
   private
     Fhide_keyboard: Boolean;
   published
@@ -570,8 +574,13 @@ Type
     Furl: String;
     Fcallback_data: String;
     Fswitch_inline_query: String;
+  protected
+    Function GetFullText: String; virtual;
   published
+
+    property FullText: String read GetFullText;
     /// <summary>Label text on the button</summary>
+    // [DISABLE]
     [Alias('text')]
     property Text: String read FText write FText;
     /// <summary>Optional. HTTP url to be opened when button is pressed</summary>
@@ -590,7 +599,7 @@ Type
   /// <summary>This object represents an inline keyboard that appears right next to the message it belongs to.</summary>
   /// <remarks>Warning: Inline keyboards are currently being tested and are only available in one-on-one chats (i.e., user-bot or user-user in the case of inline bots).</remarks>
   [Alias('InlineKeyboardMarkup')]
-  TtgInlineKeyboardMarkup = Class
+  TtgInlineKeyboardMarkup = Class(TtgReplyMarkup)
   private
     Finline_keyboard: TArray<TArray<TtgInlineKeyboardButton>>;
   published
@@ -1420,6 +1429,18 @@ begin
   FText := Text;
   Frequest_contact := request_contact;
   Frequest_location := request_location;
+end;
+
+function TtgKeyboardButton.GetFullText: String;
+begin
+  Result := Text;
+end;
+
+{ TtgInlineKeyboardButton }
+
+function TtgInlineKeyboardButton.GetFullText: String;
+begin
+  Result := Text;
 end;
 
 end.

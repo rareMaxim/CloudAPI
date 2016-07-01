@@ -14,22 +14,26 @@ Type
     FIsCommandWait: Boolean;
   protected
     procedure OnUpdate(Sender: TObject; Const Update: TtgUpdate); override;
-    Function MyKeyBoard: TtgReplyKeyboardMarkup;
+    Function MyKeyBoard: TtgInlineKeyboardMarkup;
   End;
 
 implementation
 
 uses
+  TelegAPI.Controls,
   BI.Expression, System.SysUtils;
 
 { TTgWelcomeBot }
 
-function TTgCalculatorBot.MyKeyBoard: TtgReplyKeyboardMarkup;
+function TTgCalculatorBot.MyKeyBoard: TtgInlineKeyboardMarkup;
+var
+  CB: TtgInlineKeyboardButton;
 begin
-  Result := TtgReplyKeyboardMarkup.Create;
-  Result.one_time_keyboard := true;
-  Result.KeyBoard := [[TtgKeyboardButton.Create('1'),
-    TtgKeyboardButton.Create('2')]]
+  Result := TtgInlineKeyboardMarkup.Create;
+  CB := TtgInlineKeyboardButton.Create;
+  CB.Text := 'sss';
+
+  Result.inline_keyboard := [[CB]];
 end;
 
 procedure TTgCalculatorBot.OnUpdate(Sender: TObject; const Update: TtgUpdate);
@@ -47,7 +51,7 @@ var
     try
       (Sender as TTelegramBot).sendTextMessage(Update.Message.Chat.ID,
         TExpression.FromString(TextExpr).Value, TtgParseMode.Default, False,
-        False, 0, MyKeyBoard);
+        False, 0, nil);
     except
       on E: Exception do
         (Sender as TTelegramBot).sendTextMessage(Update.Message.Chat.ID,
@@ -73,6 +77,11 @@ begin
         Calculation;
       End;
     End
+    else if Cmd.Command = '/checkbox' then
+    Begin
+      (Sender as TTelegramBot).sendTextMessage(Update.Message.Chat.ID, 's',
+        TtgParseMode.Default, true, False, 0, MyKeyBoard);
+    end
     else if FIsCommandWait then
     Begin
       Calculation;

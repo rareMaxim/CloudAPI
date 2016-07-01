@@ -8,24 +8,27 @@ uses
   System.Net.Socket;
 
 Type
+  TOnCheckDomain = procedure(Const URL: String; Const IsFree: Boolean);
+
   TWhoIs = Class
+  Private Const
+    WHOIS_PORT = 43;
   private
-    FServers: TDictionary<string, TPair<String, Word>>;
-    FAvaibleDomains: TList<String>;
+    FServers: TDictionary<string, TPair<String, String>>;
   public
-    Function FullInfo(Const Domain: String): String;
-    Function IsAvaible(Const Domain: String): Boolean;
+    Function FullInfo(Const URL: String): String;
+    Function IsAvaible(Const URL: String): Boolean;
+    Procedure FindFreeZone(Const Name: String; Zones: TArray<String>;
+      OnCheck: TOnCheckDomain);
     Constructor Create;
 
     Procedure RegisterWhoIs(Const Zone: String; Const Server: String;
-      Const Port: Word = 43);
+      Const IsFreeSign: String);
     Procedure UnRegisterWhoIs(Const Zone: String);
     destructor Destroy; override;
   published
-    property AvaibleDomains: TList<String> read FAvaibleDomains
-      write FAvaibleDomains;
     property WhoIsServers: TDictionary < string, TPair < String,
-      Word >> read FServers write FServers;
+      String >> read FServers write FServers;
   End;
 
 implementation
@@ -34,35 +37,25 @@ implementation
 
 constructor TWhoIs.Create;
 begin
-  FServers := TDictionary < string, TPair < String, Word >>.Create;
-  FAvaibleDomains := TList<string>.Create;
-  FAvaibleDomains.AddRange(['No entries found', 'No match for',
-    'Nothing found for this query', 'is available for registration']);
+  FServers := TDictionary < string, TPair < String, String >>.Create;
   //
-  RegisterWhoIs('.com', 'whois.internic.net');
-  RegisterWhoIs('.net', 'whois.internic.net');
-  RegisterWhoIs('.edu', 'whois.internic.net');
+  RegisterWhoIs('.com', 'whois.internic.net', 'No match for ');
+  RegisterWhoIs('.net', 'whois.internic.net', 'No match for ');
+  RegisterWhoIs('.edu', 'whois.internic.net', 'No match for ');
   //
-  RegisterWhoIs('.ru', 'whois.r01.ru');
-  RegisterWhoIs('.πτ', 'whois.r01.ru');
+  RegisterWhoIs('.ru', 'whois.r01.ru', '');
+  RegisterWhoIs('.πτ', 'whois.r01.ru', '');
 
-  RegisterWhoIs('.tv', 'whois.nic.tv');
-  RegisterWhoIs('.click', 'whois.uniregistry.net');
-  RegisterWhoIs('.xyz', 'whois.nic.xyz');
-
+  RegisterWhoIs('.tv', 'whois.nic.tv', '');
+  RegisterWhoIs('.click', 'whois.uniregistry.net',
+    'available for registration');
+  RegisterWhoIs('.xyz', 'whois.nic.xyz', '');
 end;
 
 destructor TWhoIs.Destroy;
 begin
-  FAvaibleDomains.Free;
   FServers.Free;
   inherited;
-end;
-
-procedure TWhoIs.RegisterWhoIs(const Zone, Server: String; const Port: Word);
-begin
-  FServers.AddOrSetValue(Zone.ToLower,
-    TPair<string, Word>.Create(Server, Port));
 end;
 
 procedure TWhoIs.UnRegisterWhoIs(const Zone: String);
@@ -70,17 +63,26 @@ begin
   FServers.Remove(Zone.ToLower);
 end;
 
-function TWhoIs.FullInfo(const Domain: String): String;
+procedure TWhoIs.FindFreeZone(const Name: String; Zones: TArray<String>;
+  OnCheck: TOnCheckDomain);
+var
+  i: Integer;
+begin
+  for i := Low(Zones) to High(Zones) do
+    OnCheck(Name + '.' + Zones[i], IsAvaible(Name + '.' + Zones[i]));
+end;
+
+function TWhoIs.FullInfo(const URL: String): String;
 var
   LSocket: TSocket;
-  LServPort: TPair<String, Word>;
+  LServSign: TPair<String, String>;
 begin
   LSocket := TSocket.Create(TSocketType.TCP);
   try
-    if NOT FServers.TryGetValue(ExtractFileExt(Domain.ToLower), LServPort) then
-      Exit('no find whoIs server');
-    LSocket.Connect(LServPort.Key, '', '', LServPort.Value);
-    LSocket.Send(Domain + #13#10);
+    if NOT FServers.TryGetValue(ExtractFileExt(URL.ToLower), LServSign) then
+      raise Exception.Create('no find whoIs server');
+    LSocket.Connect(LServSign.Key, '', '', WHOIS_PORT);
+    LSocket.Send(URL + #13#10);
     while True do
     Begin
       Result := LSocket.ReceiveString;
@@ -92,14 +94,22 @@ begin
   end;
 end;
 
-function TWhoIs.IsAvaible(const Domain: String): Boolean;
+function TWhoIs.IsAvaible(const URL: String): Boolean;
 var
-  I: Integer;
+  i: Integer;
+  LServSign: TPair<String, String>;
 begin
-  Result := False;
-  for I := 0 to FAvaibleDomains.Count - 1 do
-    if FullInfo(Domain).Trim.ToLower.Contains(FAvaibleDomains[I].ToLower) then
-      Exit(True);
+  if NOT FServers.TryGetValue(ExtractFileExt(URL.ToLower), LServSign) then
+    raise Exception.Create('no find whoIs server');
+
+  if FullInfo(URL).Trim.ToLower.Contains(LServSign.Value) then
+    Exit(True);
+end;
+
+procedure TWhoIs.RegisterWhoIs(const Zone, Server, IsFreeSign: String);
+begin
+  FServers.AddOrSetValue(Zone.ToLower, TPair<string, string>.Create(Server,
+    IsFreeSign));
 end;
 
 end.
