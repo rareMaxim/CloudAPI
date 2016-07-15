@@ -38,11 +38,8 @@ requires
 
 contains
   TelegAPI.Bot in '..\Source\TelegAPI.Bot.pas',
-  TelegAPi.Types in '..\Source\TelegAPi.Types.pas',
+  TelegAPi.Classes in '..\Source\TelegAPi.Classes.pas',
   TelegAPi.RegisterIDE in '..\Source\TelegAPi.RegisterIDE.pas',
-  TelegAPi.Utils in '..\Source\TelegAPi.Utils.pas',
-  Telegram.Plugin.Welcome in '..\examples\PluginWelcom\Telegram.Plugin.Welcome.pas',
-  TelegAPI.Module in '..\Source\TelegAPI.Module.pas',
-  TelegAPi.Controls in '..\Source\TelegAPi.Controls.pas';
+  TelegAPi.Utils in '..\Source\TelegAPi.Utils.pas';
 
 end.

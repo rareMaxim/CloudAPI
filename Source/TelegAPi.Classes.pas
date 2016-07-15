@@ -1,4 +1,4 @@
-﻿unit TelegAPi.Types;
+﻿unit TelegAPi.Classes;
 
 interface
 
@@ -495,7 +495,7 @@ Type
   protected
     function GetFullText: String; virtual;
   Public
-    constructor Create(Text: String; request_contact: Boolean = False;
+    constructor Create(Const Text: String; request_contact: Boolean = False;
       request_location: Boolean = False); overload;
   published
     [Alias('text')]
@@ -737,7 +737,6 @@ Type
     FChosenInlineResult: TtgChosenInlineResult;
     FCallbackQuery: TtgCallbackQuery;
     FEditedMessage: TtgMessage;
-    function Get: TtgUpdateType;
   public
   published
     /// <summary>The update‘s unique identifier. Update identifiers start from a certain positive number and increase sequentially. This ID becomes especially handy if you’re using Webhooks, since it allows you to ignore repeated updates or to restore the correct update sequence, should they get out of order. </summary>
@@ -760,7 +759,6 @@ Type
     [Alias('callback_query')]
     property CallbackQuery: TtgCallbackQuery read FCallbackQuery
       write FCallbackQuery;
-    property &type: TtgUpdateType read Get;
   End;
 
   /// <summary>This object represents the content of a message to be sent as a result of an inline query.</summary>
@@ -1406,24 +1404,9 @@ begin
   inherited;
 end;
 
-{ TtgUpdate }
-
-function TtgUpdate.Get: TtgUpdateType;
-begin
-  if Assigned(Message) then
-    Exit(TtgUpdateType.MessageUpdate);
-  if Assigned(InlineQuery) then
-    Exit(TtgUpdateType.InlineQueryUpdate);
-  if Assigned(ChosenInlineResult) then
-    Exit(TtgUpdateType.ChosenInlineResultUpdate);
-  if Assigned(CallbackQuery) then
-    Exit(TtgUpdateType.CallbackQueryUpdate);
-  Result := TtgUpdateType.UnkownUpdate;
-end;
-
 { TtgKeyboardButton }
 
-constructor TtgKeyboardButton.Create(Text: String;
+constructor TtgKeyboardButton.Create(Const Text: String;
   request_contact, request_location: Boolean);
 begin
   FText := Text;

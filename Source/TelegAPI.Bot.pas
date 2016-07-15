@@ -18,7 +18,7 @@ uses
   System.Net.Mime,
   System.Net.HttpClient,
   System.TypInfo,
-  TelegAPI.Types,
+  TelegAPI.Classes,
   TelegAPI.Utils,
   XSuperObject;
 
@@ -66,7 +66,7 @@ Type
     /// <para>2. To use a self-signed certificate, you need to upload your public key certificate using certificate parameter. Please upload as InputFile, sending a String will not work.</para>
     /// <para>3. Ports currently supported for Webhooks: 443, 80, 88, 8443.</para>
     /// </remarks>
-    Procedure setWebhook(url: String; certificate: TtgFileToSend = nil);
+    Procedure setWebhook(const url: String; certificate: TtgFileToSend = nil);
     /// <summary>Use this method to send text messages.</summary>
     /// <param name="chat_id">Integer or String. Unique identifier for the target chat or username of the target channel (in the format @channelusername).</param>
     /// <param name="text">Text of the message to be sent</param>
@@ -76,7 +76,7 @@ Type
     /// <param name="reply_to_message_id">If the message is a reply, ID of the original message</param>
     /// <param name="reply_markup">InlineKeyboardMarkup or ReplyKeyboardMarkup or ReplyKeyboardHide or ForceReply. Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to hide reply keyboard or to force a reply from the user.</param>
     /// <returns>On success, the sent Message is returned.</returns>
-    Function sendTextMessage(Const chat_id: TValue; text: String;
+    Function sendTextMessage(Const chat_id: TValue; const text: String;
       ParseMode: TtgParseMode = TtgParseMode.Default;
       disableWebPagePreview: Boolean = False;
       disable_notification: Boolean = False; replyToMessageId: Integer = 0;
@@ -98,9 +98,10 @@ Type
     /// <param name="disable_notification">Sends the message silently. iOS users will not receive a notification, Android users will receive a notification with no sound.</param>
     /// <param name="reply_to_message_id">If the message is a reply, ID of the original message</param>
     /// <param name="reply_markup">Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to hide reply keyboard or to force a reply from the user.</param>
-    Function sendPhoto(chatId: TValue; photo: TValue; caption: string = '';
-      disable_notification: Boolean = False; replyToMessageId: Integer = 0;
-      replyMarkup: TtgReplyKeyboardMarkup = nil): TtgMessage;
+    Function sendPhoto(chatId: TValue; photo: TValue;
+      Const caption: string = ''; disable_notification: Boolean = False;
+      replyToMessageId: Integer = 0; replyMarkup: TtgReplyKeyboardMarkup = nil)
+      : TtgMessage;
     /// <summary>Use this method to send audio files, if you want Telegram clients to display them in the music player. Your audio must be in the .mp3 format.</summary>
     /// <returns>On success, the sent Message is returned.</returns>
     /// <remarks>Bots can currently send audio files of up to 50 MB in size, this limit may be changed in the future. For sending voice messages, use the sendVoice method instead.</remarks>
@@ -113,7 +114,7 @@ Type
     /// <param name="reply_to_message_id">If the message is a reply, ID of the original message</param>
     /// <param name="reply_markup">Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to hide reply keyboard or to force a reply from the user.</param>
     Function sendAudio(chat_id: TValue; audio: TValue; duration: Integer = 0;
-      performer: String = ''; title: String = '';
+      Const performer: String = ''; Const title: String = '';
       disable_notification: Boolean = False; reply_to_message_id: Integer = 0;
       replyMarkup: TtgReplyKeyboardMarkup = nil): TtgMessage;
     /// <summary>Use this method to send general files.</summary>
@@ -126,7 +127,7 @@ Type
     /// <param name="reply_to_message_id">If the message is a reply, ID of the original message</param>
     /// <param name="reply_markup">Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to hide reply keyboard or to force a reply from the user.</param>
     Function sendDocument(chat_id: TValue; document: TValue;
-      caption: String = ''; disable_notification: Boolean = False;
+      Const caption: String = ''; disable_notification: Boolean = False;
       reply_to_message_id: Integer = 0;
       reply_markup: TtgReplyKeyboardMarkup = nil): TtgMessage;
     /// <summary>Use this method to send .webp stickers.</summary>
@@ -137,8 +138,9 @@ Type
     /// <param name="disable_notification">Sends the message silently. iOS users will not receive a notification, Android users will receive a notification with no sound.</param>
     /// <param name="reply_to_message_id">If the message is a reply, ID of the original message</param>
     /// <param name="reply_markup">Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to hide reply keyboard or to force a reply from the user.</param>
-    Function sendSticker(chat_id: TValue; sticker: TValue; caption: String = '';
-      disable_notification: Boolean = False; reply_to_message_id: Integer = 0;
+    Function sendSticker(chat_id: TValue; sticker: TValue;
+      Const caption: String = ''; disable_notification: Boolean = False;
+      reply_to_message_id: Integer = 0;
       reply_markup: TtgReplyKeyboardMarkup = nil): TtgMessage;
     /// <summary>Use this method to send video files, Telegram clients support mp4 videos (other formats may be sent as Document). </summary>
     /// <returns>On success, the sent Message is returned.</returns>
@@ -153,7 +155,7 @@ Type
     /// <param name="reply_to_message_id">If the message is a reply, ID of the original message</param>
     /// <param name="reply_markup">Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to hide reply keyboard or to force a reply from the user.</param>
     function sendVideo(chat_id: TValue; video: TValue; duration: Integer = 0;
-      width: Integer = 0; height: Integer = 0; caption: String = '';
+      width: Integer = 0; height: Integer = 0; const caption: String = '';
       disable_notification: Boolean = False; reply_to_message_id: Integer = 0;
       reply_markup: TtgReplyKeyboardMarkup = nil): TtgMessage;
     /// <summary>Use this method to send audio files, if you want Telegram clients to display the file as a playable voice message. For this to work, your audio must be in an .ogg file encoded with OPUS (other formats may be sent as Audio or Document).</summary>
@@ -212,7 +214,7 @@ Type
     /// <remarks>We only recommend using this method when a response from the bot will take a noticeable amount of time to arrive.</remarks>
     /// <param name="chat_id">Unique identifier for the target chat or username of the target channel (in the format @channelusername)</param>
     /// <param name="action">Type of action to broadcast. Choose one, depending on what the user is about to receive: typing for text messages, upload_photo for photos, record_video or upload_video for videos, record_audio or upload_audio for audio files, upload_document for general files, find_location for location data</param>
-    Procedure sendChatAction(chat_id: TValue; action: String);
+    Procedure sendChatAction(chat_id: TValue; Const action: String);
     /// <summary>Use this method to get a list of profile pictures for a user.</summary>
     /// <returns>Returns a UserProfilePhotos object.</returns>
     /// <param name="user_id">Unique identifier of the target user</param>
@@ -223,7 +225,7 @@ Type
     /// <summary>Use this method to get basic info about a file and prepare it for downloading. For the moment, bots can download files of up to 20MB in size.</summary>
     /// <returns>On success, a File object is returned.</returns>
     /// <param name="file_id">File identifier to get info about</param>
-    Function getFile(file_id: String): TtgFile;
+    Function getFile(Const file_id: String): TtgFile;
     /// <summary>Use this method to kick a user from a group or a supergroup. In the case of supergroups, the user will not be able to return to the group on their own using invite links, etc., unless unbanned first. The bot must be an administrator in the group for this to work.</summary>
     /// <returns>Returns True on success.</returns>
     /// <remarks>Note: This will method only work if the ‘All Members Are Admins’ setting is off in the target group. Otherwise members may only be removed by the group's creator or by the member that added them.</remarks>
@@ -266,8 +268,8 @@ Type
     /// <param name="callback_query_id">Unique identifier for the query to be answered</param>
     /// <param name="text">Text of the notification. If not specified, nothing will be shown to the user</param>
     /// <param name="show_alert">If true, an alert will be shown by the client instead of a notification at the top of the chat screen. Defaults to false.</param>
-    Function answerCallbackQuery(callback_query_id: String; text: String = '';
-      show_alert: Boolean = False): Boolean;
+    Function answerCallbackQuery(Const callback_query_id: String;
+      Const text: String = ''; show_alert: Boolean = False): Boolean;
     /// <summary>Use this method to edit text messages sent by the bot or via the bot (for inline bots).</summary>
     /// <returns>On success, if edited message is sent by the bot, the edited Message is returned, otherwise True is returned.</returns>
     /// <remarks> </remarks>
@@ -279,7 +281,7 @@ Type
     /// <param name="disable_web_page_preview">Disables link previews for links in this message</param>
     /// <param name="reply_markup">A JSON-serialized object for an inline keyboard.</param>
     Function editMessageText(chat_id: TValue; message_id: Integer;
-      inline_message_id: String; text: String;
+      Const inline_message_id: String; Const text: String;
       parse_mode: TtgParseMode = TtgParseMode.Default;
       disable_web_page_preview: Boolean = False;
       reply_markup: TtgReplyKeyboardMarkup = nil): Boolean;
@@ -292,7 +294,7 @@ Type
     /// <param name="caption">New caption of the message</param>
     /// <param name="reply_markup">A JSON-serialized object for an inline keyboard.</param>
     Function editMessageCaption(chat_id: TValue; message_id: Integer;
-      inline_message_id: String; caption: String;
+      Const inline_message_id: String; Const caption: String;
       reply_markup: TtgReplyKeyboardMarkup = nil): Boolean;
     /// <summary>Use this method to edit only the reply markup of messages sent by the bot or via the bot (for inline bots).</summary>
     /// <returns>On success, if edited message is sent by the bot, the edited Message is returned, otherwise True is returned.</returns>
@@ -302,7 +304,7 @@ Type
     /// <param name="inline_message_id">Required if chat_id and message_id are not specified. Identifier of the inline message</param>
     /// <param name="reply_markup">A JSON-serialized object for an inline keyboard.</param>
     Function editMessageReplyMarkup(chat_id: TValue; message_id: Integer;
-      inline_message_id: String;
+      Const inline_message_id: String;
       reply_markup: TtgReplyKeyboardMarkup = nil): Boolean;
     /// <summary>Use this method to send answers to an inline query.</summary>
     /// <returns>On success, True is returned.</returns>
@@ -314,13 +316,13 @@ Type
     /// <param name="next_offset">Pass the offset that a client should send in the next query with the same text to receive more results. Pass an empty string if there are no more results or if you don‘t support pagination. Offset length can’t exceed 64 bytes.</param>
     /// <param name="switch_pm_text">If passed, clients will display a button with specified text that switches the user to a private chat with the bot and sends the bot a start message with the parameter switch_pm_parameter</param>
     /// <param name="switch_pm_parameter">Parameter for the start message sent to the bot when user presses the switch button</param>
-    Function answerInlineQuery(inline_query_id: String;
+    Function answerInlineQuery(Const inline_query_id: String;
       results: TArray<TtgInlineQueryResult>; cache_time: Integer = 300;
-      is_personal: Boolean = False; next_offset: String = '';
-      switch_pm_text: String = ''; switch_pm_parameter: String = ''): Boolean;
+      is_personal: Boolean = False; Const next_offset: String = '';
+      Const switch_pm_text: String = '';
+      Const switch_pm_parameter: String = ''): Boolean;
 
     constructor Create(AOwner: TComponent); overload; override;
-    constructor Create(Const Token: String); overload;
     destructor Destroy; override;
   published
     { x } property UploadTimeout: Integer read FUploadTimeout
@@ -357,7 +359,7 @@ Begin
 End;
 
 { TTelegram }
-function TTelegramBot.answerCallbackQuery(callback_query_id, text: String;
+function TTelegramBot.answerCallbackQuery(Const callback_query_id, text: String;
   show_alert: Boolean): Boolean;
 var
   Parameters: TDictionary<String, TValue>;
@@ -375,9 +377,9 @@ begin
   end;
 end;
 
-function TTelegramBot.answerInlineQuery(inline_query_id: String;
+function TTelegramBot.answerInlineQuery(Const inline_query_id: String;
   results: TArray<TtgInlineQueryResult>; cache_time: Integer;
-  is_personal: Boolean; next_offset, switch_pm_text, switch_pm_parameter
+  is_personal: Boolean; Const next_offset, switch_pm_text, switch_pm_parameter
   : String): Boolean;
 var
   Parameters: TDictionary<String, TValue>;
@@ -455,7 +457,7 @@ begin
       End
       else if parameter.Value.IsType<Boolean> then
       Begin
-        if parameter.Value.AsBoolean = True then
+        if parameter.Value.AsBoolean then
           Result.AddField(parameter.Key,
             TuaUtils.IfThen<String>(parameter.Value.AsBoolean, 'true', 'false'))
       End;
@@ -507,11 +509,6 @@ end;
 constructor TTelegramBot.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
-  Create('');
-end;
-
-constructor TTelegramBot.Create(const Token: String);
-begin
   FUpdatePool := TList<TtgBotOnUpdate>.Create;
   FToken := Token;
   IsReceiving := False;
@@ -528,7 +525,7 @@ begin
 end;
 
 function TTelegramBot.editMessageCaption(chat_id: TValue; message_id: Integer;
-  inline_message_id, caption: String;
+  Const inline_message_id, caption: String;
   reply_markup: TtgReplyKeyboardMarkup): Boolean;
 var
   Parameters: TDictionary<String, TValue>;
@@ -547,7 +544,7 @@ begin
 end;
 
 function TTelegramBot.editMessageReplyMarkup(chat_id: TValue;
-  message_id: Integer; inline_message_id: String;
+  message_id: Integer; Const inline_message_id: String;
   reply_markup: TtgReplyKeyboardMarkup): Boolean;
 var
   Parameters: TDictionary<String, TValue>;
@@ -565,7 +562,7 @@ begin
 end;
 
 function TTelegramBot.editMessageText(chat_id: TValue; message_id: Integer;
-  inline_message_id, text: String; parse_mode: TtgParseMode;
+  Const inline_message_id, text: String; parse_mode: TtgParseMode;
   disable_web_page_preview: Boolean;
   reply_markup: TtgReplyKeyboardMarkup): Boolean;
 var
@@ -659,7 +656,7 @@ begin
   end;
 end;
 
-function TTelegramBot.getFile(file_id: String): TtgFile;
+function TTelegramBot.getFile(Const file_id: String): TtgFile;
 var
   Parameters: TDictionary<String, TValue>;
 begin
@@ -747,7 +744,7 @@ begin
 end;
 
 function TTelegramBot.sendAudio(chat_id, audio: TValue; duration: Integer;
-  performer, title: String; disable_notification: Boolean;
+  Const performer, title: String; disable_notification: Boolean;
   reply_to_message_id: Integer; replyMarkup: TtgReplyKeyboardMarkup)
   : TtgMessage;
 var
@@ -769,7 +766,7 @@ begin
   end;
 end;
 
-procedure TTelegramBot.sendChatAction(chat_id: TValue; action: String);
+procedure TTelegramBot.sendChatAction(chat_id: TValue; Const action: String);
 var
   Parameters: TDictionary<String, TValue>;
 begin
@@ -804,9 +801,10 @@ begin
   end;
 end;
 
-function TTelegramBot.sendDocument(chat_id, document: TValue; caption: String;
-  disable_notification: Boolean; reply_to_message_id: Integer;
-  reply_markup: TtgReplyKeyboardMarkup): TtgMessage;
+function TTelegramBot.sendDocument(chat_id, document: TValue;
+  Const caption: String; disable_notification: Boolean;
+  reply_to_message_id: Integer; reply_markup: TtgReplyKeyboardMarkup)
+  : TtgMessage;
 var
   Parameters: TDictionary<String, TValue>;
 begin
@@ -844,7 +842,7 @@ begin
   end;
 end;
 
-function TTelegramBot.sendPhoto(chatId, photo: TValue; caption: string;
+function TTelegramBot.sendPhoto(chatId, photo: TValue; Const caption: string;
   disable_notification: Boolean; replyToMessageId: Integer;
   replyMarkup: TtgReplyKeyboardMarkup): TtgMessage;
 var
@@ -864,9 +862,10 @@ begin
   end;
 end;
 
-function TTelegramBot.sendSticker(chat_id, sticker: TValue; caption: String;
-  disable_notification: Boolean; reply_to_message_id: Integer;
-  reply_markup: TtgReplyKeyboardMarkup): TtgMessage;
+function TTelegramBot.sendSticker(chat_id, sticker: TValue;
+  Const caption: String; disable_notification: Boolean;
+  reply_to_message_id: Integer; reply_markup: TtgReplyKeyboardMarkup)
+  : TtgMessage;
 var
   Parameters: TDictionary<String, TValue>;
 begin
@@ -884,7 +883,7 @@ begin
   end;
 end;
 
-function TTelegramBot.sendTextMessage(const chat_id: TValue; text: String;
+function TTelegramBot.sendTextMessage(const chat_id: TValue; const text: String;
   ParseMode: TtgParseMode; disableWebPagePreview, disable_notification: Boolean;
   replyToMessageId: Integer; replyMarkup: TtgReplyMarkup): TtgMessage;
 var
@@ -929,7 +928,7 @@ begin
 end;
 
 function TTelegramBot.sendVideo(chat_id, video: TValue;
-  duration, width, height: Integer; caption: String;
+  duration, width, height: Integer; const caption: String;
   disable_notification: Boolean; reply_to_message_id: Integer;
   reply_markup: TtgReplyKeyboardMarkup): TtgMessage;
 var
@@ -1008,7 +1007,8 @@ begin
   Task.Start;
 end;
 
-procedure TTelegramBot.setWebhook(url: String; certificate: TtgFileToSend);
+procedure TTelegramBot.setWebhook(const url: String;
+certificate: TtgFileToSend);
 var
   Parameters: TDictionary<String, TValue>;
 begin
