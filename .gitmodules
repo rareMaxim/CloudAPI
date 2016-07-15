@@ -1,6 +1,3 @@
 [submodule "jedi"]
 	path = jedi
 	url = https://github.com/project-jedi/jedi.git
-[submodule "x-superobject"]
-	path = x-superobject
-url=https://github.com/ms301/x-superobject.git

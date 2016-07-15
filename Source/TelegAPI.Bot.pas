@@ -37,8 +37,6 @@ Type
     FPollingTimeout: Integer;
     FMessageOffset: Integer;
     FOnError: TtgBorOnError;
-    FUpdatePool: TList<TtgBotOnUpdate>;
-    FIsEnabledUpdatePool: Boolean;
     procedure SetIsReceiving(const Value: Boolean);
   protected
     /// <summary>Мастер-функция для запросов на сервак</summary>
@@ -331,15 +329,10 @@ Type
       write FPollingTimeout default 1000;
     property MessageOffset: Integer read FMessageOffset write FMessageOffset
       default 0;
-    /// <summary>Если используете плагины - оставить включеным</summary>
-    property IsEnabledUpdatePool: Boolean read FIsEnabledUpdatePool
-      write FIsEnabledUpdatePool default True;
     /// <summary>Монитор слежки за обновлениями</summary>
     property IsReceiving: Boolean read FIsReceiving write SetIsReceiving
       default False;
     property Token: String read FToken write FToken;
-    property UpdatePool: TList<TtgBotOnUpdate> read FUpdatePool
-      write FUpdatePool;
     property OnUpdate: TtgBotOnUpdate read FOnUpdate write FOnUpdate;
     property OnError: TtgBorOnError read FOnError write FOnError;
   End;
@@ -459,7 +452,7 @@ begin
       Begin
         if parameter.Value.AsBoolean then
           Result.AddField(parameter.Key,
-            TuaUtils.IfThen<String>(parameter.Value.AsBoolean, 'true', 'false'))
+            TtgUtils.IfThen<String>(parameter.Value.AsBoolean, 'true', 'false'))
       End;
     end;
   end;
@@ -468,59 +461,50 @@ end;
 function TTelegramBot.API<T>(const Method: String;
   Const Parameters: TDictionary<String, TValue>): T;
 var
-  Http: THTTPClient;
-  content: String;
-  Response: TtgApiResponse<T>;
-
+  lHttp: THTTPClient;
+  lHttpResponse: IHTTPResponse;
+  lApiResponse: TtgApiResponse<T>;
+  lURL_TELEG: String;
 begin
-  Http := THTTPClient.Create;
+  lHttp := THTTPClient.Create;
   try
+    lURL_TELEG := 'https://api.telegram.org/bot' + FToken + '/' + Method;
     // Преобразовуем параметры в строку, если нужно
     if Assigned(Parameters) then
-    Begin
-      content := Http.Post('https://api.telegram.org/bot' + FToken + '/' +
-        Method, ParamsToFormData(Parameters)).ContentAsString(TEncoding.UTF8);
-    End
+      lHttpResponse := lHttp.Post(lURL_TELEG, ParamsToFormData(Parameters))
     else
-    Begin
-      content := Http.Get('https://api.telegram.org/bot' + FToken + '/' +
-        Method).ContentAsString(TEncoding.UTF8);
-    End;
-
-    if Pos('502 Bad Gateway', content) > 0 then
+      lHttpResponse := lHttp.Get(lURL_TELEG);
+    if lHttpResponse.StatusCode <> 200 then
     begin
       if Assigned(OnError) then
-        OnError(Self, 502, 'Bad Gateway');
+        OnError(Self, lHttpResponse.StatusCode, lHttpResponse.StatusText);
       Exit;
     end;
-    Response := TtgApiResponse<T>.FromJSON(content);
-    if Not Response.Ok then
+    lApiResponse := TtgApiResponse<T>.FromJSON(lHttpResponse.ContentAsString);
+    if Not lApiResponse.Ok then
     begin
       if Assigned(OnError) then
-        OnError(Self, Response.Code, Response.Message);
+        OnError(Self, lApiResponse.Code, lApiResponse.Message);
       Exit;
     end;
-    Result := Response.ResultObject;
+    Result := lApiResponse.ResultObject;
   finally
-    Http.Free;
+    FreeAndNil(lHttp);
+    FreeAndNil(lApiResponse);
   end;
 end;
 
 constructor TTelegramBot.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
-  FUpdatePool := TList<TtgBotOnUpdate>.Create;
-  FToken := Token;
   IsReceiving := False;
   UploadTimeout := 60000;
   PollingTimeout := 1000;
   MessageOffset := 0;
-  IsEnabledUpdatePool := True;
 end;
 
 destructor TTelegramBot.Destroy;
 begin
-  FUpdatePool.Free;
   inherited;
 end;
 
@@ -678,8 +662,6 @@ function TTelegramBot.getUpdates(const offset, limit, timeout: Integer)
   : TArray<TtgUpdate>;
 var
   Parameters: TDictionary<String, TValue>;
-  PoolUpd: TtgBotOnUpdate;
-  I: Integer;
 begin
   Parameters := TDictionary<String, TValue>.Create;
   try
@@ -687,13 +669,6 @@ begin
     Parameters.Add('limit', limit);
     Parameters.Add('timeout', timeout);
     Result := Self.API < TArray < TtgUpdate >> ('getUpdates', Parameters);
-    if IsEnabledUpdatePool then
-      if FUpdatePool.Count > 0 then
-        for PoolUpd in FUpdatePool do
-        begin
-          for I := Low(Result) to High(Result) do
-            PoolUpd(Self, Result[I]);
-        end;
   finally
     Parameters.Free;
   end;
@@ -983,25 +958,15 @@ begin
     procedure
     var
       LUpdates: TArray<TtgUpdate>;
-
+      I: Integer;
     Begin
       while FIsReceiving do
       Begin
         Sleep(PollingTimeout);
         LUpdates := getUpdates(MessageOffset, 100, PollingTimeout);
-        TThread.Synchronize(nil,
-          procedure
-          var
-            Update: TtgUpdate;
-            PoolUpd: TtgBotOnUpdate;
-          begin
-            for Update in LUpdates do
-            begin
-              OnUpdate(Self, Update);
-
-              MessageOffset := Update.Id + 1;
-            end;
-          end);
+        for I := Low(LUpdates) to High(LUpdates) do
+          OnUpdate(Self, LUpdates[I]);
+        MessageOffset := LUpdates[I].Id + 1;
       end;
     end);
   Task.Start;
