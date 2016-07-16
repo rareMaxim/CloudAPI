@@ -469,6 +469,8 @@ Begin
   Begin
     Sleep(PollingTimeout);
     LUpdates := getUpdates(MessageOffset, 100, PollingTimeout);
+    if Length(LUpdates) = 0 then
+      Continue;
     OnUpdates(Self, LUpdates);
     MessageOffset := LUpdates[High(LUpdates)].Id + 1;
   end;

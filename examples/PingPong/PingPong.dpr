@@ -1,16 +1,16 @@
-program PingPong;
+﻿program PingPong;
 
 {$APPTYPE CONSOLE}
 {$R *.res}
 
 uses
-  XSuperObject,
+  // Telegram API BOT Library
   TelegaPI.Bot,
   TelegaPI.Classes,
   TelegaPI.Utils,
+  // Delphi Library
   System.SysUtils,
-  System.Threading,
-  SM.Console in '..\..\SM.Console.pas';
+  System.Threading;
 
 Type
   TTelegaSamplePingPongBot = Class
@@ -46,11 +46,6 @@ end;
 procedure TTelegaSamplePingPongBot.Go;
 begin
   Writeln('Starting ... ');
-  while True do
-  Begin
-    Sleep(500);
-    FBot.getMe;
-  End;
   while FBot.IsReceiving do
     Sleep(100);
 end;
@@ -58,7 +53,6 @@ end;
 procedure TTelegaSamplePingPongBot.OnError(const Sender: TObject;
   const Code: Integer; const Message: String);
 begin
-
   Writeln(string.Join(' ', ['Error', 'in', Sender.ClassName, 'Code =', Code,
     'Message =', Message]));
 end;
@@ -83,11 +77,10 @@ begin
   Cmd := TCommandHelper.Create(Update.Message.Text);
   try
     if Cmd.Command = '/ping' then
-      FBot.sendTextMessage(Update.Message.Chat.ID, 'Pong');
+      FBot.sendTextMessage(Update.Message.Chat.ID, '👑🙈😇');
   finally
     Cmd.Free;
   end;
-
 end;
 
 // ============

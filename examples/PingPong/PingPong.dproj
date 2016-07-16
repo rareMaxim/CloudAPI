@@ -133,7 +133,6 @@
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
-        <DCCReference Include="..\..\SM.Console.pas"/>
         <None Include="..\telegaToken.inc"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
