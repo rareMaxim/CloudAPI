@@ -23,7 +23,7 @@ uses
   XSuperObject;
 
 Type
-  TtgBotOnUpdate = procedure(Sender: TObject; Const Update: TtgUpdate)
+  TtgBotOnUpdates = procedure(Sender: TObject; Const Updates: TArray<TtgUpdate>)
     of Object;
   TtgBorOnError = procedure(Const Sender: TObject; Const Code: Integer;
     Const Message: String) of Object;
@@ -31,12 +31,14 @@ Type
   TTelegramBot = Class(TComponent)
   private
     FToken: String;
-    FOnUpdate: TtgBotOnUpdate;
-    FIsReceiving: Boolean;
+    FOnUpdates: TtgBotOnUpdates;
     FUploadTimeout: Integer;
     FPollingTimeout: Integer;
     FMessageOffset: Integer;
     FOnError: TtgBorOnError;
+    FRecesivTask: ITask;
+    fIsReceiving: Boolean;
+    Procedure Recesiver;
     procedure SetIsReceiving(const Value: Boolean);
   protected
     /// <summary>Мастер-функция для запросов на сервак</summary>
@@ -330,10 +332,10 @@ Type
     property MessageOffset: Integer read FMessageOffset write FMessageOffset
       default 0;
     /// <summary>Монитор слежки за обновлениями</summary>
-    property IsReceiving: Boolean read FIsReceiving write SetIsReceiving
+    property IsReceiving: Boolean read fIsReceiving write SetIsReceiving
       default False;
     property Token: String read FToken write FToken;
-    property OnUpdate: TtgBotOnUpdate read FOnUpdate write FOnUpdate;
+    property OnUpdates: TtgBotOnUpdates read FOnUpdates write FOnUpdates;
     property OnError: TtgBorOnError read FOnError write FOnError;
   End;
 
@@ -458,6 +460,20 @@ begin
   end;
 end;
 
+procedure TTelegramBot.Recesiver;
+var
+  LUpdates: TArray<TtgUpdate>;
+  I: Integer;
+Begin
+  while fIsReceiving do
+  Begin
+    Sleep(PollingTimeout);
+    LUpdates := getUpdates(MessageOffset, 100, PollingTimeout);
+    OnUpdates(Self, LUpdates);
+    MessageOffset := LUpdates[High(LUpdates)].Id + 1;
+  end;
+end;
+
 function TTelegramBot.API<T>(const Method: String;
   Const Parameters: TDictionary<String, TValue>): T;
 var
@@ -497,14 +513,18 @@ end;
 constructor TTelegramBot.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
-  IsReceiving := False;
+  FRecesivTask := TTask.Create(Recesiver);
+  fIsReceiving := False;
   UploadTimeout := 60000;
   PollingTimeout := 1000;
   MessageOffset := 0;
+
 end;
 
 destructor TTelegramBot.Destroy;
 begin
+  if IsReceiving then
+    IsReceiving := False;
   inherited;
 end;
 
@@ -948,32 +968,16 @@ begin
 end;
 
 procedure TTelegramBot.SetIsReceiving(const Value: Boolean);
-var
-  Task: ITask;
 begin
-  FIsReceiving := Value;
-  if (NOT Assigned(OnUpdate)) or (NOT FIsReceiving) then
-    Exit;
-  Task := TTask.Create(
-    procedure
-    var
-      LUpdates: TArray<TtgUpdate>;
-      I: Integer;
-    Begin
-      while FIsReceiving do
-      Begin
-        Sleep(PollingTimeout);
-        LUpdates := getUpdates(MessageOffset, 100, PollingTimeout);
-        for I := Low(LUpdates) to High(LUpdates) do
-          OnUpdate(Self, LUpdates[I]);
-        MessageOffset := LUpdates[I].Id + 1;
-      end;
-    end);
-  Task.Start;
+  if Value then
+    FRecesivTask.Start
+  else
+    FRecesivTask.Cancel;
+  fIsReceiving := Value;
 end;
 
 procedure TTelegramBot.setWebhook(const url: String;
-certificate: TtgFileToSend);
+  certificate: TtgFileToSend);
 var
   Parameters: TDictionary<String, TValue>;
 begin
@@ -988,7 +992,7 @@ begin
 end;
 
 function TTelegramBot.unbanChatMember(chat_id: TValue;
-user_id: Integer): Boolean;
+  user_id: Integer): Boolean;
 var
   Parameters: TDictionary<String, TValue>;
 begin

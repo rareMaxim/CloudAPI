@@ -6,7 +6,7 @@
         <Projects Include="Install\TelegaPiBot.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="C:\Users\Maxim\Documents\Embarcadero\Studio\Projects\Project9.dproj">
+        <Projects Include="examples\PingPong\PingPong.dproj">
             <Dependencies/>
         </Projects>
     </ItemGroup>
@@ -26,23 +26,23 @@
     <Target Name="TelegaPiBot:Make">
         <MSBuild Projects="Install\TelegaPiBot.dproj" Targets="Make"/>
     </Target>
-    <Target Name="Project9">
-        <MSBuild Projects="C:\Users\Maxim\Documents\Embarcadero\Studio\Projects\Project9.dproj"/>
+    <Target Name="PingPong">
+        <MSBuild Projects="examples\PingPong\PingPong.dproj"/>
     </Target>
-    <Target Name="Project9:Clean">
-        <MSBuild Projects="C:\Users\Maxim\Documents\Embarcadero\Studio\Projects\Project9.dproj" Targets="Clean"/>
+    <Target Name="PingPong:Clean">
+        <MSBuild Projects="examples\PingPong\PingPong.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="Project9:Make">
-        <MSBuild Projects="C:\Users\Maxim\Documents\Embarcadero\Studio\Projects\Project9.dproj" Targets="Make"/>
+    <Target Name="PingPong:Make">
+        <MSBuild Projects="examples\PingPong\PingPong.dproj" Targets="Make"/>
     </Target>
     <Target Name="Build">
-        <CallTarget Targets="TelegaPiBot;Project9"/>
+        <CallTarget Targets="TelegaPiBot;PingPong"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="TelegaPiBot:Clean;Project9:Clean"/>
+        <CallTarget Targets="TelegaPiBot:Clean;PingPong:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="TelegaPiBot:Make;Project9:Make"/>
+        <CallTarget Targets="TelegaPiBot:Make;PingPong:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>
