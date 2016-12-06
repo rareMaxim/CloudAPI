@@ -9,6 +9,9 @@
         <Projects Include="examples\PingPong\PingPong.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="examples\FMX\Project1.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -35,14 +38,23 @@
     <Target Name="PingPong:Make">
         <MSBuild Projects="examples\PingPong\PingPong.dproj" Targets="Make"/>
     </Target>
+    <Target Name="Project1">
+        <MSBuild Projects="examples\FMX\Project1.dproj"/>
+    </Target>
+    <Target Name="Project1:Clean">
+        <MSBuild Projects="examples\FMX\Project1.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Project1:Make">
+        <MSBuild Projects="examples\FMX\Project1.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="TelegaPiBot;PingPong"/>
+        <CallTarget Targets="TelegaPiBot;PingPong;Project1"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="TelegaPiBot:Clean;PingPong:Clean"/>
+        <CallTarget Targets="TelegaPiBot:Clean;PingPong:Clean;Project1:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="TelegaPiBot:Make;PingPong:Make"/>
+        <CallTarget Targets="TelegaPiBot:Make;PingPong:Make;Project1:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

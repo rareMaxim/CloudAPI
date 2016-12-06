@@ -4,6 +4,7 @@
 {$R *.res}
 
 uses
+  WinAPI.Windows,
   // Telegram API BOT Library
   TelegaPI.Bot,
   TelegaPI.Classes,
@@ -70,6 +71,7 @@ end;
 procedure TTelegaSamplePingPongBot.UpdateManager(const Update: TtgUpdate);
 var
   Cmd: TCommandHelper;
+  LMessage: TtgMessage;
 begin
   if NOT Assigned(Update.Message) then
     Exit;
@@ -77,9 +79,10 @@ begin
   Cmd := TCommandHelper.Create(Update.Message.Text);
   try
     if Cmd.Command = '/ping' then
-      FBot.sendTextMessage(Update.Message.Chat.ID, '👑🙈😇');
+      LMessage := FBot.sendTextMessage(Update.Message.Chat.ID, '👑🙈😇');
   finally
     Cmd.Free;
+    LMessage.Free;
   end;
 end;
 
@@ -90,6 +93,7 @@ var
 begin
   try
     { TODO -oUser -cConsole Main : Insert code here }
+    ReportMemoryLeaksOnShutdown := True;
     Bot := TTelegaSamplePingPongBot.Create;
     Bot.Go;
     Bot.Free;

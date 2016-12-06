@@ -483,13 +483,17 @@ var
   lHttpResponse: IHTTPResponse;
   lApiResponse: TtgApiResponse<T>;
   lURL_TELEG: String;
+  LParamToDate: TMultipartFormData;
 begin
   lHttp := THTTPClient.Create;
   try
     lURL_TELEG := 'https://api.telegram.org/bot' + FToken + '/' + Method;
     // Преобразовуем параметры в строку, если нужно
     if Assigned(Parameters) then
-      lHttpResponse := lHttp.Post(lURL_TELEG, ParamsToFormData(Parameters))
+    Begin
+      LParamToDate := ParamsToFormData(Parameters);
+      lHttpResponse := lHttp.Post(lURL_TELEG, LParamToDate);
+    End
     else
       lHttpResponse := lHttp.Get(lURL_TELEG);
     if lHttpResponse.StatusCode <> 200 then
@@ -506,7 +510,9 @@ begin
       Exit;
     end;
     Result := lApiResponse.ResultObject;
+    lAPIResponse.ResultObject := Default(T);
   finally
+    FreeAndNil(LParamToDate);
     FreeAndNil(lHttp);
     FreeAndNil(lApiResponse);
   end;

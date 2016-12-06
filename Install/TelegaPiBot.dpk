@@ -30,7 +30,11 @@ package TelegaPiBot;
 {$IMPLICITBUILD ON}
 
 requires
-  rtl;
+  rtl,
+  dbrtl,
+  IndySystem,
+  IndyProtocols,
+  IndyCore;
 
 contains
   TelegAPI.Bot in '..\Source\TelegAPI.Bot.pas',

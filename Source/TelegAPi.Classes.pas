@@ -49,6 +49,8 @@ Type
   private
     Fstatus: String;
     Fuser: TtgUser;
+  public
+    destructor Destroy; override;
   published
     /// <summary>Information about the user</summary>
     [Alias('user')]
@@ -98,6 +100,8 @@ Type
     Flength: Integer;
     Furl: String;
     Fuser: TtgUser;
+  public
+    destructor Destroy; override;
   published
     /// <summary>Type of the entity. One of mention (@username), hashtag, bot_command, url, email, bold (bold text), italic (italic text), code (monowidth string), pre (monowidth block), text_link (for clickable text URLs), text_mention (for users without usernames)</summary>
     [Alias('type')]
@@ -127,6 +131,8 @@ Type
     FFileSize: Integer;
     FFilePath: String;
     FFileStream: TStream;
+  public
+    destructor Destroy; override;
   published
     /// <summary>Unique identifier for this file</summary>
     [Alias('file_id')]
@@ -186,6 +192,8 @@ Type
     FThumb: TtgPhotoSize;
     FFileName: String;
     FMimeType: String;
+  public
+    destructor Destroy; override;
   published
     /// <summary>Document thumbnail as defined by sender</summary>
     [Alias('thumb')]
@@ -206,6 +214,8 @@ Type
     FHeight: Integer;
     FThumb: TtgPhotoSize;
     Femoji: String;
+  public
+    destructor Destroy; override;
   published
     /// <summary>Sticker width</summary>
     [Alias('width')]
@@ -230,6 +240,8 @@ Type
     FDuration: Integer;
     FThumb: TtgPhotoSize;
     FMimeType: String;
+  public
+    destructor Destroy; override;
   published
     /// <summary>Video width as defined by sender</summary>
     [Alias('width')]
@@ -309,6 +321,8 @@ Type
     Ftitle: String;
     FAddress: String;
     FFoursquareId: String;
+  public
+    destructor Destroy; override;
   published
     /// <summary>Venue location</summary>
     [Alias('location')]
@@ -361,6 +375,8 @@ Type
     Fforward_from_chat: TtgChat;
     FEditDate: Integer;
   public
+    destructor Destroy; override;
+  published
     /// <summary>Unique message identifier</summary>
     [Alias('message_id')]
     property MessageId: Integer read FMessageId write FMessageId;
@@ -740,6 +756,7 @@ Type
     FCallbackQuery: TtgCallbackQuery;
     FEditedMessage: TtgMessage;
   public
+    destructor Destroy; override;
   published
     /// <summary>The update‘s unique identifier. Update identifiers start from a certain positive number and increase sequentially. This ID becomes especially handy if you’re using Webhooks, since it allows you to ignore repeated updates or to restore the correct update sequence, should they get out of order. </summary>
     [Alias('update_id')]
@@ -1436,6 +1453,99 @@ begin
 {$IFNDEF AUTOREFCOUNT}
     FreeAndNil(FResultObject);
 {$ENDIF}
+  inherited;
+end;
+
+{ TtgChatMember }
+
+destructor TtgChatMember.Destroy;
+begin
+  if Assigned(Fuser) then FreeAndNil(Fuser);
+  inherited;
+end;
+
+{ TtgMessageEntity }
+
+destructor TtgMessageEntity.Destroy;
+begin
+  if Assigned(Fuser) then FreeAndNil(Fuser);
+  inherited;
+end;
+
+{ TtgFile }
+
+destructor TtgFile.Destroy;
+begin
+  if Assigned(FFileStream) then FreeAndNil(FFileStream);
+  inherited;
+end;
+
+{ TtgDocument }
+
+destructor TtgDocument.Destroy;
+begin
+  if Assigned(FThumb) then FreeAndNil(FThumb);
+  inherited;
+end;
+
+{ TtgSticker }
+
+destructor TtgSticker.Destroy;
+begin
+  if Assigned(FThumb) then FreeAndNil(FThumb);
+  inherited;
+end;
+
+{ TtgVideo }
+
+destructor TtgVideo.Destroy;
+begin
+  if Assigned(FThumb) then FreeAndNil(FThumb);
+  inherited;
+end;
+
+{ TtgVenue }
+
+destructor TtgVenue.Destroy;
+begin
+  if Assigned(FLocation) then FreeAndNil(FLocation);
+  inherited;
+end;
+
+{ TtgMessage }
+
+destructor TtgMessage.Destroy;
+var
+  I: Integer;
+begin
+  if Assigned(FFrom) then FreeAndNil(FFrom);
+  if Assigned(FChat) then FreeAndNil(FChat);
+  if Assigned(FForwardFrom) then FreeAndNil(FForwardFrom);
+  if Assigned(Fforward_from_chat) then FreeAndNil(Fforward_from_chat);
+  if Assigned(FReplyToMessage) then FreeAndNil(FReplyToMessage);
+  if Assigned(FAudio) then FreeAndNil(FAudio);
+  if Assigned(FDocument) then FreeAndNil(FDocument);
+  if Assigned(FSticker) then FreeAndNil(FSticker);
+  if Assigned(FVideo) then FreeAndNil(FVideo);
+  if Assigned(FVoice) then FreeAndNil(FVoice);
+  if Assigned(FContact) then FreeAndNil(FContact);
+  if Assigned(FLocation) then FreeAndNil(FLocation);
+  if Assigned(FVenue) then FreeAndNil(FVenue);
+  for I := Low(Fentities) to High(Fentities) do
+    FreeAndNil(Fentities[i]);
+  SetLength(Fentities, 0);
+  inherited;
+end;
+
+{ TtgUpdate }
+
+destructor TtgUpdate.Destroy;
+begin
+  if Assigned(FMessage) then FreeAndNil(FMessage);
+  if Assigned(FInlineQuery) then FreeAndNil(FInlineQuery);
+  if Assigned(FChosenInlineResult) then FreeAndNil(FChosenInlineResult);
+  if Assigned(FCallbackQuery) then FreeAndNil(FCallbackQuery);
+  if Assigned(FEditedMessage) then FreeAndNil(FEditedMessage);
   inherited;
 end;
 
