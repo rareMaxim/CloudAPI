@@ -6,6 +6,7 @@ uses
   TelegAPI.Bot,
   TelegAPI.Classes,
   TelegAPI.Utils,
+  dwsComp, dwsExprs, dwsStringResult, dwsFunctions, dwsSymbols, dwsMagicExprs, dwsExprList,
   System.Threading,
   System.SysUtils, System.Types, System.UITypes, System.Classes,
   System.Variants,
@@ -13,6 +14,7 @@ uses
   FMX.Controls.Presentation, FMX.ScrollBox, FMX.Memo, FMX.StdCtrls;
 
 type
+
   TForm1 = class(TForm)
     Memo1: TMemo;
     Button1: TButton;
@@ -25,6 +27,7 @@ type
   private
     { Private declarations }
     FBot: TTelegramBot;
+    FID:Int64;
     Procedure OnError(Const Sender: TObject; Const Code: Integer;
       Const Message: String);
     Procedure OnUpdates(Sender: TObject; Const Updates: TArray<TtgUpdate>);
@@ -33,6 +36,9 @@ type
     { Public declarations }
   end;
 
+   TSendTg = class (TInternalMagicProcedure)
+      procedure DoEvalProc(const args : TExprBaseListExec); override;
+   end;
 var
   Form1: TForm1;
 
@@ -84,19 +90,46 @@ end;
 
 procedure TForm1.UpdateManager(const AUpdate: TtgUpdate);
 var
-  Cmd: TCommandHelper;
   LMessage: TtgMessage;
+var
+  dws : TDelphiWebScript;
+  prog : IdwsProgram;
 begin
   if NOT Assigned(AUpdate.Message) then
     Exit;
   Memo1.Lines.Add(AUpdate.Message.From.Username + ': ' + AUpdate.Message.Text);
-  Cmd := TCommandHelper.Create(AUpdate.Message.Text);
+  dws:=TDelphiWebScript.Create(nil);
   try
-    if Cmd.Command = '/ping' then
-      LMessage := FBot.sendTextMessage(AUpdate.Message.Chat.ID, '👑🙈😇');
+    prog:=dws.Compile(AUpdate.Message.Text);
+    RegisterInternalProcedure(TSendTg, 'SendTg', ['msg', 'String']);
+    FID:= AUpdate.Message.From.ID;
+    if prog.Msgs.Count=0 then
+    begin
+      prog.Execute;
+    end
+    else
+    begin
+      LMessage:= FBot.sendTextMessage(fid, prog.Msgs.AsInfo);
+    end;
   finally
-    Cmd.Free;
     LMessage.Free;
+    dws.Free;
+   //prog:=nil;
+  end;
+end;
+
+
+{ TSendTg }
+
+procedure TSendTg.DoEvalProc(const args: TExprBaseListExec);
+var
+  LMsg : TtgMessage;
+begin
+  LMsg := TtgMessage.Create;
+  try
+    LMsg := Form1.FBot.sendTextMessage(form1.FID, args.AsString[0]);;
+  finally
+    LMsg.Free;
   end;
 end;
 

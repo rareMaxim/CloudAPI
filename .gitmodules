@@ -4,3 +4,6 @@
 [submodule "x-superobject"]
 	path = x-superobject
 	url = https://github.com/onryldz/x-superobject.git
+[submodule "examples/FMX/dwscript"]
+	path = examples/FMX/dwscript
+	url = https://maks4a@bitbucket.org/egrange/dwscript.git

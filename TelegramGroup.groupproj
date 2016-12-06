@@ -9,7 +9,7 @@
         <Projects Include="examples\PingPong\PingPong.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="examples\FMX\Project1.dproj">
+        <Projects Include="examples\FMX\PiDWS.dproj">
             <Dependencies/>
         </Projects>
     </ItemGroup>
@@ -38,23 +38,23 @@
     <Target Name="PingPong:Make">
         <MSBuild Projects="examples\PingPong\PingPong.dproj" Targets="Make"/>
     </Target>
-    <Target Name="Project1">
-        <MSBuild Projects="examples\FMX\Project1.dproj"/>
+    <Target Name="PiDWS">
+        <MSBuild Projects="examples\FMX\PiDWS.dproj"/>
     </Target>
-    <Target Name="Project1:Clean">
-        <MSBuild Projects="examples\FMX\Project1.dproj" Targets="Clean"/>
+    <Target Name="PiDWS:Clean">
+        <MSBuild Projects="examples\FMX\PiDWS.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="Project1:Make">
-        <MSBuild Projects="examples\FMX\Project1.dproj" Targets="Make"/>
+    <Target Name="PiDWS:Make">
+        <MSBuild Projects="examples\FMX\PiDWS.dproj" Targets="Make"/>
     </Target>
     <Target Name="Build">
-        <CallTarget Targets="TelegaPiBot;PingPong;Project1"/>
+        <CallTarget Targets="TelegaPiBot;PingPong;PiDWS"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="TelegaPiBot:Clean;PingPong:Clean;Project1:Clean"/>
+        <CallTarget Targets="TelegaPiBot:Clean;PingPong:Clean;PiDWS:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="TelegaPiBot:Make;PingPong:Make;Project1:Make"/>
+        <CallTarget Targets="TelegaPiBot:Make;PingPong:Make;PiDWS:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>
