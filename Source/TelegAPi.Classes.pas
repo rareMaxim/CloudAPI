@@ -876,6 +876,8 @@ Type
     Ftype: String;
     FID: String;
     Freply_markup: TtgInlineKeyboardMarkup;
+  public
+    destructor Destroy; override;
   published
     /// <summary>Type of the result</summary>
     [Alias('type')]
@@ -1546,6 +1548,14 @@ begin
   if Assigned(FChosenInlineResult) then FreeAndNil(FChosenInlineResult);
   if Assigned(FCallbackQuery) then FreeAndNil(FCallbackQuery);
   if Assigned(FEditedMessage) then FreeAndNil(FEditedMessage);
+  inherited;
+end;
+
+{ TtgInlineQueryResult }
+
+destructor TtgInlineQueryResult.Destroy;
+begin
+  if Assigned(Freply_markup) then FreeAndNil(Freply_markup);
   inherited;
 end;
 

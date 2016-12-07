@@ -40,7 +40,6 @@ contains
   TelegAPI.Bot in '..\Source\TelegAPI.Bot.pas',
   TelegAPi.Classes in '..\Source\TelegAPi.Classes.pas',
   TelegAPi.RegisterIDE in '..\Source\TelegAPi.RegisterIDE.pas',
-  TelegAPi.Utils in '..\Source\TelegAPi.Utils.pas',
-  XSuperObject in '..\x-superobject\XSuperObject.pas';
+  TelegAPi.Utils in '..\Source\TelegAPi.Utils.pas';
 
 end.
