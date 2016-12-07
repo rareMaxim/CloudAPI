@@ -27,18 +27,18 @@ type
   private
     { Private declarations }
     FBot: TTelegramBot;
-    FID:Int64;
-    Procedure OnError(Const Sender: TObject; Const Code: Integer;
-      Const Message: String);
-    Procedure OnUpdates(Sender: TObject; Const Updates: TArray<TtgUpdate>);
-    Procedure UpdateManager(Const AUpdate: TtgUpdate);
+    FID: Int64;
+    Procedure OnError(Sender: TObject; Const Code: Integer; Const Message: String);
+    Procedure OnUpdates(Sender: TObject; Updates: TArray<TtgUpdate>);
+    Procedure UpdateManager(AUpdate: TtgUpdate);
   public
     { Public declarations }
   end;
 
-   TSendTg = class (TInternalMagicProcedure)
-      procedure DoEvalProc(const args : TExprBaseListExec); override;
-   end;
+  TSendTg = class(TInternalMagicProcedure)
+    procedure DoEvalProc(const args: TExprBaseListExec); override;
+  end;
+
 var
   Form1: TForm1;
 
@@ -71,14 +71,13 @@ begin
   FBot.Free;
 end;
 
-procedure TForm1.OnError(const Sender: TObject; const Code: Integer;
-  const Message: String);
+procedure TForm1.OnError(Sender: TObject; const Code: Integer; const Message: String);
 begin
-  Memo1.Lines.Add(string.Join(' ', ['Error', 'in', Sender.ClassName, 'Code =', Code,
-    'Message =', Message]));
+  Memo1.Lines.Add(string.Join(' ', ['Error', 'in', Sender.ClassName, 'Code =', Code, 'Message =',
+    Message]));
 end;
 
-procedure TForm1.OnUpdates(Sender: TObject; const Updates: TArray<TtgUpdate>);
+procedure TForm1.OnUpdates(Sender: TObject; Updates: TArray<TtgUpdate>);
 begin
   TParallel.&For(low(Updates), High(Updates),
     Procedure(I: Integer)
@@ -88,44 +87,43 @@ begin
     End);
 end;
 
-procedure TForm1.UpdateManager(const AUpdate: TtgUpdate);
+procedure TForm1.UpdateManager(AUpdate: TtgUpdate);
 var
   LMessage: TtgMessage;
 var
-  dws : TDelphiWebScript;
-  prog : IdwsProgram;
+  dws: TDelphiWebScript;
+  prog: IdwsProgram;
 begin
   if NOT Assigned(AUpdate.Message) then
     Exit;
   Memo1.Lines.Add(AUpdate.Message.From.Username + ': ' + AUpdate.Message.Text);
-  dws:=TDelphiWebScript.Create(nil);
+  dws := TDelphiWebScript.Create(nil);
   try
-    prog:=dws.Compile(AUpdate.Message.Text);
+    prog := dws.Compile(AUpdate.Message.Text);
     RegisterInternalProcedure(TSendTg, 'SendTg', ['msg', 'String']);
-    FID:= AUpdate.Message.From.ID;
-    if prog.Msgs.Count=0 then
+    FID := AUpdate.Message.From.ID;
+    if prog.Msgs.Count = 0 then
     begin
       prog.Execute;
     end
     else
     begin
-      LMessage:= FBot.sendTextMessage(fid, prog.Msgs.AsInfo);
+      LMessage := FBot.sendTextMessage(FID, prog.Msgs.AsInfo);
     end;
   finally
     LMessage.Free;
     dws.Free;
-   //prog:=nil;
+    // prog:=nil;
   end;
 end;
-
 
 { TSendTg }
 
 procedure TSendTg.DoEvalProc(const args: TExprBaseListExec);
 var
-  LMsg : TtgMessage;
+  LMsg: TtgMessage;
 begin
-  LMsg := Form1.FBot.sendTextMessage(form1.FID, args.AsString[0]);
+  LMsg := Form1.FBot.sendTextMessage(Form1.FID, args.AsString[0]);
   LMsg.Free;
 end;
 
