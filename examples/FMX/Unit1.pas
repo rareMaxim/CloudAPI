@@ -125,12 +125,8 @@ procedure TSendTg.DoEvalProc(const args: TExprBaseListExec);
 var
   LMsg : TtgMessage;
 begin
-  LMsg := TtgMessage.Create;
-  try
-    LMsg := Form1.FBot.sendTextMessage(form1.FID, args.AsString[0]);;
-  finally
-    LMsg.Free;
-  end;
+  LMsg := Form1.FBot.sendTextMessage(form1.FID, args.AsString[0]);
+  LMsg.Free;
 end;
 
 end.

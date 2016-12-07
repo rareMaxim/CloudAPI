@@ -1533,9 +1533,21 @@ begin
   if Assigned(FContact) then FreeAndNil(FContact);
   if Assigned(FLocation) then FreeAndNil(FLocation);
   if Assigned(FVenue) then FreeAndNil(FVenue);
+  if Assigned(FNewChatMember) then FreeAndNil(FNewChatMember);
+  if Assigned(FLeftChatMember) then FreeAndNil(FLeftChatMember);
+  if Assigned(FPinnedMessage) then FreeAndNil(FPinnedMessage);
+  if Assigned(Fforward_from_chat) then FreeAndNil(Fforward_from_chat);
+  if Assigned(FNewChatMember) then FreeAndNil(FNewChatMember);
+  if Assigned(FNewChatMember) then FreeAndNil(FNewChatMember);
+  if Assigned(FNewChatMember) then FreeAndNil(FNewChatMember);
+  if Assigned(FNewChatMember) then FreeAndNil(FNewChatMember);
+  if Assigned(FNewChatMember) then FreeAndNil(FNewChatMember);
   for I := Low(Fentities) to High(Fentities) do
     FreeAndNil(Fentities[i]);
   SetLength(Fentities, 0);
+  for I := Low(FNewChatPhoto) to High(NewChatPhoto) do
+    FreeAndNil(FNewChatPhoto[i]);
+  SetLength(FNewChatPhoto, 0);
   inherited;
 end;
 
