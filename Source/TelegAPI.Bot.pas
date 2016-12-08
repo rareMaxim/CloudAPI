@@ -36,10 +36,12 @@ Type
     fIsReceiving: Boolean;
     Procedure Recesiver;
     procedure SetIsReceiving(const Value: Boolean);
+    function GetVersionAPI: String;
   protected
     /// <summary>Мастер-функция для запросов на сервак</summary>
     Function API<T>(Const Method: String; Parameters: TDictionary<String, TValue>): T;
     Function ParamsToFormData(Parameters: TDictionary<String, TValue>): TMultipartFormData;
+    Function AllowedUpdatesToString(allowed_updates: TAllowedUpdates):String;
   public
     /// <summary>A simple method for testing your bot's auth token.</summary>
     /// <returns>Returns basic information about the bot in form of a User object.</returns>
@@ -49,7 +51,7 @@ Type
     /// <param name="limit">Limits the number of updates to be retrieved. Values between 1—100 are accepted. Defaults to 100. </param>
     /// <param name="timeout">Timeout in seconds for long polling. Defaults to 0, i.e. usual short polling</param>
     /// <remarks>1. This method will not work if an outgoing webhook is set up. 2. In order to avoid getting duplicate updates, recalculate offset after each server response.</remarks>
-    Function getUpdates(Const offset: Integer = 0; Const limit: Integer = 100; Const timeout: Integer = 0): TArray<TtgUpdate>;
+    Function getUpdates(Const offset: Integer = 0; Const limit: Integer = 100; Const timeout: Integer = 0; allowed_updates: TAllowedUpdates = []): TArray<TtgUpdate>;
     /// <summary>Use this method to specify a url and receive incoming updates via an outgoing webhook. Whenever there is an update for the bot, we will send an HTTPS POST request to the specified url, containing a JSON-serialized Update. In case of an unsuccessful request, we will give up after a reasonable amount of attempts.</summary>
     /// <param name="url">HTTPS url to send updates to. Use an empty string to remove webhook integration</param>
     /// <param name="certificate">Upload your public key certificate so that the root certificate in use can be checked. See our self-signed guide for details.</param>
@@ -59,7 +61,7 @@ Type
     /// <para>2. To use a self-signed certificate, you need to upload your public key certificate using certificate parameter. Please upload as InputFile, sending a String will not work.</para>
     /// <para>3. Ports currently supported for Webhooks: 443, 80, 88, 8443.</para>
     /// </remarks>
-    Procedure setWebhook(const url: String; certificate: TtgFileToSend = nil);
+    Procedure setWebhook(const url: String; certificate: TtgFileToSend = nil; allowed_updates: TAllowedUpdates = []);
     /// <summary>Use this method to send text messages.</summary>
     /// <param name="chat_id">Integer or String. Unique identifier for the target chat or username of the target channel (in the format @channelusername).</param>
     /// <param name="text">Text of the message to be sent</param>
@@ -313,6 +315,7 @@ Type
     property Token: String read FToken write FToken;
     property OnUpdates: TtgBotOnUpdates read FOnUpdates write FOnUpdates;
     property OnError: TtgBorOnError read FOnError write FOnError;
+    property VersionAPI:String read GetVersionAPI;
   End;
 
 implementation
@@ -329,7 +332,32 @@ Begin
   end;
 End;
 
+
 { TTelegram }
+function TTelegramBot.AllowedUpdatesToString(allowed_updates: TAllowedUpdates): String;
+begin
+  Result := '[';
+  if TAllowedUpdate.message in allowed_updates then
+    Result := Result + '"message"';
+  if TAllowedUpdate.edited_message in allowed_updates then
+    Result := Result + '"edited_message"';
+  if TAllowedUpdate.channel_post in allowed_updates then
+    Result := Result + '"channel_post"';
+  if TAllowedUpdate.edited_channel_post in allowed_updates then
+    Result := Result + '"edited_channel_post"';
+  if TAllowedUpdate.inline_query in allowed_updates then
+    Result := Result + '"inline_query"';
+  if TAllowedUpdate.chosen_inline_result in allowed_updates then
+    Result := Result + '"chosen_inline_result"';
+  if TAllowedUpdate.callback_query in allowed_updates then
+    Result := Result + '"callback_query"';
+//  if TAllowedUpdate.callback_query in allowed_updates then
+//    Result := Result + '"edited_message"';
+//  if TAllowedUpdate.edited_message in allowed_updates then
+//    Result := Result + '"edited_message"';
+  Result := Result +']';
+end;
+
 function TTelegramBot.answerCallbackQuery(Const callback_query_id, text: String;
   show_alert: Boolean): Boolean;
 var
@@ -648,7 +676,7 @@ begin
   Result := Self.API<TtgUser>('getMe', nil);
 end;
 
-function TTelegramBot.getUpdates(const offset, limit, timeout: Integer): TArray<TtgUpdate>;
+function TTelegramBot.getUpdates(const offset, limit, timeout: Integer; allowed_updates: TAllowedUpdates): TArray<TtgUpdate>;
 var
   Parameters: TDictionary<String, TValue>;
 begin
@@ -657,7 +685,8 @@ begin
     Parameters.Add('offset', offset);
     Parameters.Add('limit', limit);
     Parameters.Add('timeout', timeout);
-    Result := Self.API < TArray < TtgUpdate >> ('getUpdates', Parameters);
+    Parameters.Add('allowed_updates', AllowedUpdatesToString(allowed_updates));
+    Result := API<TArray<TtgUpdate>>('getUpdates', Parameters);
   finally
     Parameters.Free;
   end;
@@ -677,6 +706,11 @@ begin
   finally
     Parameters.Free;
   end;
+end;
+
+function TTelegramBot.GetVersionAPI: String;
+begin
+  Result := '2.2';
 end;
 
 function TTelegramBot.kickChatMember(chat_id: TValue; user_id: Integer): Boolean;
@@ -939,7 +973,7 @@ begin
   fIsReceiving := Value;
 end;
 
-procedure TTelegramBot.setWebhook(const url: String; certificate: TtgFileToSend);
+procedure TTelegramBot.setWebhook(const url: String; certificate: TtgFileToSend; allowed_updates: TAllowedUpdates);
 var
   Parameters: TDictionary<String, TValue>;
 begin
@@ -947,6 +981,7 @@ begin
   try
     Parameters.Add('url', url);
     Parameters.Add('certificate', certificate);
+    Parameters.Add('allowed_updates', AllowedUpdatesToString(allowed_updates));
     API<Boolean>('setWebhook', Parameters);
   finally
     Parameters.Free;

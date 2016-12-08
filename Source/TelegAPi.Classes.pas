@@ -17,6 +17,8 @@ Type
   /// <summary>The type of an Update</summary>
   TtgUpdateType = (UnkownUpdate = 0, MessageUpdate, InlineQueryUpdate, ChosenInlineResultUpdate,
     CallbackQueryUpdate);
+  TAllowedUpdate = (message, edited_message, channel_post, edited_channel_post, inline_query, chosen_inline_result, callback_query);
+  TAllowedUpdates = set of TAllowedUpdate;
 {$SCOPEDENUMS OFF}
 {$M+}
 
@@ -70,6 +72,7 @@ Type
     FUsername: String;
     Ffirst_name: String;
     Flast_name: String;
+    Fall_members_are_administrators: Boolean;
   published
     /// <summary>Unique identifier for this chat, not exceeding 1e13 by absolute value</summary>
     [Alias('id')]
@@ -89,6 +92,9 @@ Type
     /// <summary>Optional. Last name of the other party in a private chat </summary>
     [Alias('last_name')]
     property last_name: String read Flast_name write Flast_name;
+    /// <summary>Optional. True if a group has ‘All Members Are Admins’ enabled.</summary>
+    [Alias('all_members_are_administrators')]
+    property all_members_are_administrators: Boolean read Fall_members_are_administrators write Fall_members_are_administrators;
   End;
 
   /// <summary>This object represents one special entity in a text message. For example, hashtags, usernames, URLs, etc.</summary>
@@ -115,9 +121,7 @@ Type
     /// <summary>Optional. For “text_link” only, url that will be opened after user taps on the text</summary>
     [Alias('url')]
     property url: String read Furl write Furl;
-    /// <summary>
-    /// Optional. For “text_mention” only, the mentioned user
-    /// </summary>
+    /// <summary>Optional. For “text_mention” only, the mentioned user</summary>
     [Alias('user')]
     property user: TtgUser read Fuser write Fuser;
   End;
@@ -130,7 +134,7 @@ Type
     FFileId: String;
     FFileSize: Integer;
     FFilePath: String;
-    FFileStream: TStream;
+    function GetFullUrl: String;
   public
     destructor Destroy; override;
   published
@@ -143,7 +147,6 @@ Type
     /// <summary>File path. Use https://api.telegram.org/file/bot{token}/{file_path} to get the file.</summary>
     [Alias('file_path')]
     property FilePath: String read FFilePath write FFilePath;
-    property FileStream: TStream read FFileStream write FFileStream;
   End;
 
   /// <summary>This object represents an audio file to be treated as music by the Telegram clients.</summary>
@@ -338,6 +341,68 @@ Type
     property FoursquareId: String read FFoursquareId write FFoursquareId;
   End;
 
+  /// <summary>You can provide an animation for your game so that it looks stylish in chats (check out Lumberjack for an example). This object represents an animation file to be displayed in the message containing a game.</summary>
+  [Alias('Animation')]
+  TtgAnimation = Class
+  private
+    Ffile_id: String;
+    Fthumb: TtgPhotoSize;
+    Ffile_name: String;
+    Fmime_type: String;
+    Ffile_size: Integer;
+  public
+    destructor Destroy; override;
+  published
+    /// <summary>Unique file identifier</summary>
+    [Alias('file_id')]
+    property file_id: String read Ffile_id write Ffile_id;
+    /// <summary>Optional. Animation thumbnail as defined by sender</summary>
+    [Alias('thumb')]
+    property thumb: TtgPhotoSize read Fthumb write Fthumb;
+    /// <summary>Optional. Original animation filename as defined by sender</summary>
+    [Alias('file_name')]
+    property file_name: String read Ffile_name write Ffile_name;
+    /// <summary>Optional. MIME type of the file as defined by sender</summary>
+    [Alias('mime_type')]
+    property mime_type: String read Fmime_type write Fmime_type;
+    /// <summary>Optional. File size</summary>
+    [Alias('file_size')]
+    property file_size: Integer read Ffile_size write Ffile_size;
+  End;
+
+  /// <summary>This object represents a game. Use BotFather to create and edit games, their short names will act as unique identifiers.</summary>
+  [Alias('Game')]
+  TtgGame = Class
+  private
+    Ftitle: String;
+    Fdescription: String;
+    Fphoto: TArray<TtgPhotoSize>;
+    Ftext: String;
+    Ftext_entities: TArray<TtgMessageEntity>;
+    Fanimation: TtgAnimation;
+  public
+    destructor Destroy; override;
+  published
+    /// <summary>Title of the game</summary>
+    [Alias('title')]
+    property title: String read Ftitle write Ftitle;
+    /// <summary>Description of the game</summary>
+    [Alias('description')]
+    property description: String read Fdescription write Fdescription;
+    /// <summary>Photo that will be displayed in the game message in chats.</summary>
+    [Alias('photo')]
+    property photo: TArray<TtgPhotoSize> read Fphoto write Fphoto;
+    /// <summary>Optional. Brief description of the game or high scores included in the game message. Can be automatically edited to include current high scores for the game when the bot calls setGameScore, or manually edited using editMessageText. 0-4096 characters.</summary>
+    [Alias('text')]
+    property text: String read Ftext write Ftext;
+    /// <summary>Optional. Special entities that appear in text, such as usernames, URLs, bot commands, etc.</summary>
+    [Alias('text_entities')]
+    property text_entities: TArray<TtgMessageEntity> read Ftext_entities write Ftext_entities;
+    /// <summary>Optional. Animation that will be displayed in the game message in chats. Upload via BotFather</summary>
+    [Alias('animation')]
+    property animation: TtgAnimation read Fanimation write Fanimation;
+  End;
+
   /// <summary>This object represents a message.</summary>
   [Alias('Message')]
   TtgMessage = Class
@@ -374,6 +439,7 @@ Type
     Fentities: TArray<TtgMessageEntity>;
     Fforward_from_chat: TtgChat;
     FEditDate: Integer;
+    Fgame: TtgGame;
   public
     destructor Destroy; override;
   published
@@ -416,6 +482,9 @@ Type
     /// <summary>Optional. Message is a general file, information about the file</summary>
     [Alias('document')]
     property Document: TtgDocument read FDocument write FDocument;
+    /// <summary>Optional. Message is a game, information about the game. </summary>
+    [Alias('game')]
+    property game: TtgGame read Fgame write Fgame;
     /// <summary>Optional. Message is a photo, available sizes of the photo</summary>
     [Alias('photo')]
     property Photo: TArray<TtgPhotoSize> read FPhoto write FPhoto;
@@ -735,6 +804,8 @@ Type
     FChosenInlineResult: TtgChosenInlineResult;
     FCallbackQuery: TtgCallbackQuery;
     FEditedMessage: TtgMessage;
+    Fchannel_post: TtgMessage;
+    Fedited_channel_post: TtgMessage;
   public
     destructor Destroy; override;
   published
@@ -747,6 +818,12 @@ Type
     /// <summary>Optional. New version of a message that is known to the bot and was edited</summary>
     [Alias('edited_message')]
     property EditedMessage: TtgMessage read FEditedMessage write FEditedMessage;
+    /// <summary>Optional. New incoming channel post of any kind — text, photo, sticker, etc.</summary>
+    [Alias('channel_post')]
+    property channel_post: TtgMessage read Fchannel_post write Fchannel_post;
+    /// <summary>Optional. New version of a channel post that is known to the bot and was edited</summary>
+    [Alias('edited_channel_post')]
+    property edited_channel_post: TtgMessage read Fedited_channel_post write Fedited_channel_post;
     /// <summary>Optional. New incoming inline query</summary>
     [Alias('inline_query')]
     property InlineQuery: TtgInlineQuery read FInlineQuery write FInlineQuery;
@@ -1444,14 +1521,6 @@ begin
   inherited;
 end;
 
-{ TtgFile }
-
-destructor TtgFile.Destroy;
-begin
-  if Assigned(FFileStream) then FreeAndNil(FFileStream);
-  inherited;
-end;
-
 { TtgDocument }
 
 destructor TtgDocument.Destroy;
@@ -1514,6 +1583,7 @@ begin
   for I := Low(FNewChatPhoto) to High(NewChatPhoto) do
     FreeAndNil(FNewChatPhoto[I]);
   SetLength(FNewChatPhoto, 0);
+  if Assigned(Fgame) then FreeAndNil(Fgame);
   inherited;
 end;
 
@@ -1522,10 +1592,12 @@ end;
 destructor TtgUpdate.Destroy;
 begin
   if Assigned(FMessage) then FreeAndNil(FMessage);
+  if Assigned(FEditedMessage) then FreeAndNil(FEditedMessage);
+  if Assigned(Fchannel_post) then FreeAndNil(Fchannel_post);
+  if Assigned(Fedited_channel_post) then FreeAndNil(Fedited_channel_post);
   if Assigned(FInlineQuery) then FreeAndNil(FInlineQuery);
   if Assigned(FChosenInlineResult) then FreeAndNil(FChosenInlineResult);
   if Assigned(FCallbackQuery) then FreeAndNil(FCallbackQuery);
-  if Assigned(FEditedMessage) then FreeAndNil(FEditedMessage);
   inherited;
 end;
 
@@ -1534,6 +1606,28 @@ end;
 destructor TtgInlineQueryResult.Destroy;
 begin
   if Assigned(Freply_markup) then FreeAndNil(Freply_markup);
+  inherited;
+end;
+
+{ TtgAnimation }
+
+destructor TtgAnimation.Destroy;
+begin
+  if Assigned(Fthumb) then FreeAndNil(Fthumb);
+  inherited;
+end;
+
+{ TtgGame }
+
+destructor TtgGame.Destroy;
+var
+  I: Integer;
+begin
+  for I := Low(Fphoto) to High(Fphoto) do
+    if Assigned(Fphoto[i]) then FreeAndNil(Fphoto[i]);
+  for I := Low(Ftext_entities) to High(Ftext_entities) do
+    if Assigned(Ftext_entities[i]) then FreeAndNil(Ftext_entities[i]);
+  if Assigned(Fanimation) then FreeAndNil(Fanimation);
   inherited;
 end;
 

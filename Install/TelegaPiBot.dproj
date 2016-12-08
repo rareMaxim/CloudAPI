@@ -103,6 +103,10 @@ $(PreBuildEvent)]]></PreBuildEvent>
         </DelphiCompile>
         <DCCReference Include="TTelegramBot.dcr"/>
         <DCCReference Include="rtl.dcp"/>
+        <DCCReference Include="dbrtl.dcp"/>
+        <DCCReference Include="IndySystem.dcp"/>
+        <DCCReference Include="IndyProtocols.dcp"/>
+        <DCCReference Include="IndyCore.dcp"/>
         <DCCReference Include="..\Source\TelegAPI.Bot.pas"/>
         <DCCReference Include="..\Source\TelegAPi.Classes.pas"/>
         <DCCReference Include="..\Source\TelegAPi.RegisterIDE.pas"/>
