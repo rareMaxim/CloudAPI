@@ -12,8 +12,40 @@ Type
   TtgMessageType = (UnknownMessage = 0, TextMessage, PhotoMessage, AudioMessage, VideoMessage,
     VoiceMessage, DocumentMessage, StickerMessage, LocationMessage, ContactMessage, ServiceMessage,
     VenueMessage);
-  /// <summary>Text parsing mode</summary>
-  TtgParseMode = (Default = 0, Markdown, Html);
+  /// <summary>
+  ///   Text parsing mode
+  /// </summary>
+  /// <example>
+  ///   <para>
+  ///     Markdown style
+  ///   </para>
+  ///   <para>
+  ///     *bold text* <br />_italic text_ <br />
+  ///     [text](http://www.example.com/) <br />`inline fixed-width code` <br />
+  ///     ```text <br />pre-formatted fixed-width code block <br />```
+  ///   </para>
+  ///   <para>
+  ///     Html:
+  ///   </para>
+  ///   <para>
+  ///     &lt;b&gt;bold&lt;/b&gt;, &lt;strong&gt;bold&lt;/strong&gt; <br />
+  ///     &lt;i&gt;italic&lt;/i&gt;, &lt;em&gt;italic&lt;/em&gt; <br />&lt;a
+  ///     href="http://www.example.com/"&gt;inline URL&lt;/a&gt; <br />
+  ///     &lt;code&gt;inline fixed-width code&lt;/code&gt; <br />
+  ///     &lt;pre&gt;pre-formatted fixed-width code block&lt;/pre&gt; <br /><br />
+  ///   </para>
+  /// </example>
+  TtgParseMode = (Default = 0,
+    /// <summary>
+    ///   To use this mode, pass Markdown in the parse_mode field when using
+    ///   sendMessage
+    /// </summary>
+    Markdown,
+    /// <summary>
+    ///   To use this mode, pass HTML in the parse_mode field when using
+    ///   sendMessage
+    /// </summary>
+    Html);
   /// <summary>The type of an Update</summary>
   TtgUpdateType = (UnkownUpdate = 0, MessageUpdate, InlineQueryUpdate, ChosenInlineResultUpdate,
     CallbackQueryUpdate);
@@ -134,9 +166,7 @@ Type
     FFileId: String;
     FFileSize: Integer;
     FFilePath: String;
-    function GetFullUrl: String;
   public
-    destructor Destroy; override;
   published
     /// <summary>Unique identifier for this file</summary>
     [Alias('file_id')]
@@ -369,7 +399,31 @@ Type
     [Alias('file_size')]
     property file_size: Integer read Ffile_size write Ffile_size;
   End;
-
+  /// <summary>
+  ///   This object represents one row of the high scores table for a game.
+  /// </summary>
+  [Alias('Game')]
+  TtgGameHighScore = Class
+  private
+    Fposition: Integer;
+    Fuser: TtgUser;
+    Fscore: Integer;
+  public
+    destructor Destroy; override;
+  published
+    /// <summary>
+    ///   Position in high score table for the game
+    /// </summary>
+    property position: Integer read Fposition write Fposition;
+    /// <summary>
+    ///   User
+    /// </summary>
+    property user: TtgUser read Fuser write Fuser;
+    /// <summary>
+    ///   Score
+    /// </summary>
+    property score: Integer read Fscore write Fscore;
+  End;
   /// <summary>This object represents a game. Use BotFather to create and edit games, their short names will act as unique identifiers.</summary>
   [Alias('Game')]
   TtgGame = Class
@@ -1453,6 +1507,60 @@ Type
     property audio_file_id: String read Faudio_file_id write Faudio_file_id;
   End;
 
+  /// <summary>
+  ///   Contains information about the current status of a webhook.
+  /// </summary>
+  TtgWebhookInfo = Class
+  private
+    Furl: String;
+    Fhas_custom_certificate: Boolean;
+    Fpending_update_count: Integer;
+    Flast_error_date: Integer;
+    Flast_error_message: String;
+    Fmax_connections: Integer;
+    Fallowed_updates: TArray<String>;
+  published
+    /// <summary>
+    ///   Webhook URL, may be empty if webhook is not set up
+    /// </summary>
+    [Alias('url')]
+    property url: String read Furl write Furl;
+    /// <summary>
+    ///   True, if a custom certificate was provided for webhook certificate
+    ///   checks
+    /// </summary>
+    [Alias('has_custom_certificate')]
+    property has_custom_certificate: Boolean read Fhas_custom_certificate write Fhas_custom_certificate;
+    /// <summary>
+    ///   Number of updates awaiting delivery
+    /// </summary>
+    [Alias('pending_update_count')]
+    property pending_update_count: Integer read Fpending_update_count write Fpending_update_count;
+    /// <summary>
+    ///   Optional. Unix time for the most recent error that happened when
+    ///   trying to deliver an update via webhook
+    /// </summary>
+    [Alias('last_error_date')]
+    property last_error_date: Integer read Flast_error_date write Flast_error_date;
+    /// <summary>
+    ///   Optional. Error message in human-readable format for the most recent
+    ///   error that happened when trying to deliver an update via webhook
+    /// </summary>
+    [Alias('last_error_message')]
+    property last_error_message: String read Flast_error_message write Flast_error_message;
+    /// <summary>
+    ///   Optional. Maximum allowed number of simultaneous HTTPS connections to
+    ///   the webhook for update delivery
+    /// </summary>
+    [Alias('max_connections')]
+    property max_connections: Integer read Fmax_connections write Fmax_connections;
+    /// <summary>
+    ///   Optional. A list of update types the bot is subscribed to. Defaults
+    ///   to all update types
+    /// </summary>
+    [Alias('allowed_updates')]
+    property allowed_updates: TArray<String> read Fallowed_updates write Fallowed_updates;
+  End;
 implementation
 
 uses
@@ -1628,6 +1736,14 @@ begin
   for I := Low(Ftext_entities) to High(Ftext_entities) do
     if Assigned(Ftext_entities[i]) then FreeAndNil(Ftext_entities[i]);
   if Assigned(Fanimation) then FreeAndNil(Fanimation);
+  inherited;
+end;
+
+{ TtgGameHighScore }
+
+destructor TtgGameHighScore.Destroy;
+begin
+  if Assigned(Fuser) then FreeAndNil(Fuser);
   inherited;
 end;
 

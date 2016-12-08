@@ -108,7 +108,7 @@ begin
     end
     else
     begin
-      LMessage := FBot.sendTextMessage(FID, prog.Msgs.AsInfo);
+      LMessage := FBot.sendMessage(FID, prog.Msgs.AsInfo);
     end;
   finally
     LMessage.Free;
@@ -123,7 +123,7 @@ procedure TSendTg.DoEvalProc(const args: TExprBaseListExec);
 var
   LMsg: TtgMessage;
 begin
-  LMsg := Form1.FBot.sendTextMessage(Form1.FID, args.AsString[0]);
+  LMsg := Form1.FBot.sendMessage(Form1.FID, args.AsString[0]);
   LMsg.Free;
 end;
 

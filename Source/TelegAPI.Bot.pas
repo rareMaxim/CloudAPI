@@ -62,6 +62,29 @@ Type
     /// <para>3. Ports currently supported for Webhooks: 443, 80, 88, 8443.</para>
     /// </remarks>
     Procedure setWebhook(const url: String; certificate: TtgFileToSend = nil; allowed_updates: TAllowedUpdates = []);
+    /// <summary>
+    ///   Use this method to remove webhook integration if you decide to switch
+    ///   back to getUpdates.
+    /// </summary>
+    /// <returns>
+    ///   Returns True on success.
+    /// </returns>
+    /// <seealso cref="TelegAPI.Bot|TTelegramBot.setWebhook(string,TtgFileToSend,TAllowedUpdates)">
+    ///   getUpdates
+    /// </seealso>
+    Function deleteWebhook: Boolean;
+    /// <summary>
+    ///   Use this method to get current webhook status. Requires no
+    ///   parameters.
+    /// </summary>
+    /// <returns>
+    ///   On success, returns a WebhookInfo object
+    /// </returns>
+    /// <remarks>
+    ///   If the bot is using getUpdates, will return an object with the url
+    ///   field empty
+    /// </remarks>
+    Function getWebhookInfo: TtgWebhookInfo;
     /// <summary>Use this method to send text messages.</summary>
     /// <param name="chat_id">Integer or String. Unique identifier for the target chat or username of the target channel (in the format @channelusername).</param>
     /// <param name="text">Text of the message to be sent</param>
@@ -71,7 +94,7 @@ Type
     /// <param name="reply_to_message_id">If the message is a reply, ID of the original message</param>
     /// <param name="reply_markup">InlineKeyboardMarkup or ReplyKeyboardMarkup or ReplyKeyboardHide or ForceReply. Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to hide reply keyboard or to force a reply from the user.</param>
     /// <returns>On success, the sent Message is returned.</returns>
-    Function sendTextMessage(Const chat_id: TValue; const text: String;
+    Function sendMessage(Const chat_id: TValue; const text: String;
       ParseMode: TtgParseMode = TtgParseMode.Default; disableWebPagePreview: Boolean = False;
       disable_notification: Boolean = False; replyToMessageId: Integer = 0;
       replyMarkup: TtgReplyMarkup = nil): TtgMessage;
@@ -83,14 +106,45 @@ Type
     /// <param name="message_id">Unique message identifier</param>
     Function forwardMessage(chat_id: TValue; from_chat_id: TValue;
       disable_notification: Boolean = False; message_id: Integer = 0): TtgMessage;
-    /// <summary>Use this method to send photos.</summary>
-    /// <returns>On success, the sent Message is returned.</returns>
-    /// <param name="chat_id">Unique identifier for the target chat or username of the target channel (in the format @channelusername)</param>
-    /// <param name="photo">Photo to send. You can either pass a file_id as String to resend a photo that is already on the Telegram servers, or upload a new photo using multipart/form-data.</param>
-    /// <param name="caption">Photo caption (may also be used when resending photos by file_id), 0-200 characters</param>
-    /// <param name="disable_notification">Sends the message silently. iOS users will not receive a notification, Android users will receive a notification with no sound.</param>
-    /// <param name="reply_to_message_id">If the message is a reply, ID of the original message</param>
-    /// <param name="reply_markup">Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to hide reply keyboard or to force a reply from the user.</param>
+    /// <summary>
+    ///   Use this method to send photos.
+    /// </summary>
+    /// <param name="chatId">
+    ///   Unique identifier for the target chat or username of the target
+    ///   channel (in the format @channelusername)
+    /// </param>
+    /// <param name="photo">
+    ///   Photo to send. You can either pass a file_id as String to resend a
+    ///   photo that is already on the Telegram servers, or upload a new photo
+    ///   using multipart/form-data.
+    /// </param>
+    /// <param name="caption">
+    ///   Photo caption (may also be used when resending photos by file_id),
+    ///   0-200 characters
+    /// </param>
+    /// <param name="disable_notification">
+    ///   Sends the message silently. iOS users will not receive a
+    ///   notification, Android users will receive a notification with no
+    ///   sound.
+    /// </param>
+    /// <param name="replyToMessageId">
+    ///   If the message is a reply, ID of the original message
+    /// </param>
+    /// <param name="replyMarkup">
+    ///   Additional interface options. A JSON-serialized object for an inline
+    ///   keyboard, custom reply keyboard, instructions to remove reply
+    ///   keyboard or to force a reply from the user.
+    /// </param>
+    /// <returns>
+    ///   On success, the sent Message is returned.
+    /// </returns>
+    /// <example>
+    ///   var <br />LMessage: TtgMessage; <br />Begin <br />//Если не известен
+    ///   ИД файла <br />LMessage := sendPhoto(chatId,
+    ///   TtgFileToSend.Create('Путь к файлу'), nil); <br />//Если известен ИД
+    ///   файла <br />LMessage := sendPhoto(chatId, 'ИД Файла'); <br />... <br />
+    ///   LMessage.Free; <br />End;
+    /// </example>
     Function sendPhoto(chatId: TValue; photo: TValue; Const caption: string = '';
       disable_notification: Boolean = False; replyToMessageId: Integer = 0;
       replyMarkup: TtgReplyKeyboardMarkup = nil): TtgMessage;
@@ -202,11 +256,23 @@ Type
     /// <param name="chat_id">Unique identifier for the target chat or username of the target channel (in the format @channelusername)</param>
     /// <param name="action">Type of action to broadcast. Choose one, depending on what the user is about to receive: typing for text messages, upload_photo for photos, record_video or upload_video for videos, record_audio or upload_audio for audio files, upload_document for general files, find_location for location data</param>
     Procedure sendChatAction(chat_id: TValue; Const action: String);
-    /// <summary>Use this method to get a list of profile pictures for a user.</summary>
-    /// <returns>Returns a UserProfilePhotos object.</returns>
-    /// <param name="user_id">Unique identifier of the target user</param>
-    /// <param name="offset">Sequential number of the first photo to be returned. By default, all photos are returned.</param>
-    /// <param name="limit">Limits the number of photos to be retrieved. Values between 1—100 are accepted. Defaults to 100.</param>
+    /// <summary>
+    ///   Use this method to get a list of profile pictures for a user.
+    /// </summary>
+    /// <param name="chat_id">
+    ///   Unique identifier of the target user <br />
+    /// </param>
+    /// <param name="offset">
+    ///   Sequential number of the first photo to be returned. By default, all
+    ///   photos are returned.
+    /// </param>
+    /// <param name="limit">
+    ///   Limits the number of photos to be retrieved. Values between 1—100 are
+    ///   accepted. Defaults to 100.
+    /// </param>
+    /// <returns>
+    ///   Returns a UserProfilePhotos object.
+    /// </returns>
     Function getUserProfilePhotos(chat_id: TValue; offset: Integer; limit: Integer = 100)
       : TtgUserProfilePhotos;
     /// <summary>Use this method to get basic info about a file and prepare it for downloading. For the moment, bots can download files of up to 20MB in size.</summary>
@@ -233,15 +299,30 @@ Type
     /// <param name="chat_id">Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername)</param>
     /// <returns>Returns a Chat object on success.</returns>
     function getChat(Const chat_id: TValue): TtgChat;
-    /// <summary>Use this method to get a list of administrators in a chat</summary>
-    /// <returns>On success, returns an Array of ChatMember objects that contains information about all chat administrators except other bots. If the chat is a group or a supergroup and no administrators were appointed, only the creator will be returned.</returns>
+    /// <summary>
+    ///   Use this method to get a list of administrators in a chat
+    /// </summary>
+    /// <param name="chat_id">
+    ///   Unique identifier for the target chat or username of the target
+    ///   supergroup or channel (in the format @channelusername)
+    /// </param>
+    /// <returns>
+    ///   On success, returns an Array of ChatMember objects that contains
+    ///   information about all chat administrators except other bots. If the
+    ///   chat is a group or a supergroup and no administrators were appointed,
+    ///   only the creator will be returned.
+    /// </returns>
     function getChatAdministrators(Const chat_id: TValue): TArray<TtgChatMember>;
-    /// <summary></summary>
-    /// <returns></returns>
-
-    /// <summary>Use this method to get the number of members in a chat.</summary>
-    /// <param name="chat_id">Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername)</param>
-    /// <returns>Returns Int on success.</returns>
+    /// <summary>
+    ///   Use this method to get the number of members in a chat.
+    /// </summary>
+    /// <param name="chat_id">
+    ///   Unique identifier for the target chat or username of the target
+    ///   supergroup or channel (in the format @channelusername)
+    /// </param>
+    /// <returns>
+    ///   Returns Int on success.
+    /// </returns>
     function getChatMembersCount(Const chat_id: TValue): Integer;
     /// <summary>Use this method to get information about a member of a chat.</summary>
     /// <returns>Returns a ChatMember object on success.</returns>
@@ -303,7 +384,102 @@ Type
     Function answerInlineQuery(Const inline_query_id: String; results: TArray<TtgInlineQueryResult>;
       cache_time: Integer = 300; is_personal: Boolean = False; Const next_offset: String = '';
       Const switch_pm_text: String = ''; Const switch_pm_parameter: String = ''): Boolean;
-
+    /// <summary>
+    ///   Use this method to send a game.
+    /// </summary>
+    /// <param name="chat_id">
+    ///   Unique identifier for the target chat
+    /// </param>
+    /// <param name="game_short_name">
+    ///   Short name of the game, serves as the unique identifier for the game.
+    ///   Set up your games via Botfather.
+    /// </param>
+    /// <param name="disable_notification">
+    ///   Sends the message silently. iOS users will not receive a
+    ///   notification, Android users will receive a notification with no
+    ///   sound.
+    /// </param>
+    /// <param name="reply_to_message_id">
+    ///   If the message is a reply, ID of the original message
+    /// </param>
+    /// <param name="reply_markup">
+    ///   A JSON-serialized object for an inline keyboard. If empty, one ‘Play
+    ///   game_title’ button will be shown. If not empty, the first button must
+    ///   launch the game.
+    /// </param>
+    /// <returns>
+    ///   On success, the sent Message is returned.
+    /// </returns>
+    Function sendGame(chat_id:Integer; game_short_name:String; disable_notification:Boolean = False;
+    reply_to_message_id:Integer = 0; reply_markup: TtgReplyKeyboardMarkup = nil): TtgMessage;
+    /// <summary>
+    ///   Use this method to set the score of the specified user in a game.
+    /// </summary>
+    /// <param name="user_id">
+    ///   User identifier
+    /// </param>
+    /// <param name="score">
+    ///   New score, must be non-negative
+    /// </param>
+    /// <param name="force">
+    ///   Pass True, if the high score is allowed to decrease. This can be
+    ///   useful when fixing mistakes or banning cheaters
+    /// </param>
+    /// <param name="disable_edit_message">
+    ///   Pass True, if the game message should not be automatically edited to
+    ///   include the current scoreboard
+    /// </param>
+    /// <param name="chat_id">
+    ///   Required if inline_message_id is not specified. Unique identifier for
+    ///   the target chat
+    /// </param>
+    /// <param name="message_id">
+    ///   Required if inline_message_id is not specified. Identifier of the
+    ///   sent message
+    /// </param>
+    /// <param name="inline_message_id">
+    ///   Required if chat_id and message_id are not specified. Identifier of
+    ///   the inline message
+    /// </param>
+    /// <returns>
+    ///   On success, if the message was sent by the bot, returns the edited
+    ///   Message, otherwise returns True. Returns an error, if the new score
+    ///   is not greater than the user's current score in the chat and force is
+    ///   False.
+    /// </returns>
+    Function setGameScore(user_id: Integer; score:Integer; force: Boolean = False;
+    disable_edit_message: Boolean = False; chat_id: Integer = 0; message_id: integer = 0;
+    inline_message_id: String = ''): TtgMessage;
+    /// <summary>
+    ///   Use this method to get data for high score tables. Will return the
+    ///   score of the specified user and several of his neighbors in a game.
+    /// </summary>
+    /// <param name="user_id">
+    ///   Target user id
+    /// </param>
+    /// <param name="chat_id">
+    ///   Required if inline_message_id is not specified. Unique identifier for
+    ///   the target chat
+    /// </param>
+    /// <param name="message_id">
+    ///   Required if inline_message_id is not specified. Identifier of the
+    ///   sent message
+    /// </param>
+    /// <param name="inline_message_id">
+    ///   Required if chat_id and message_id are not specified. Identifier of
+    ///   the inline message
+    /// </param>
+    /// <returns>
+    ///   On success, returns an Array of GameHighScore objects.
+    /// </returns>
+    /// <remarks>
+    ///   This method will currently return scores for the target user, plus
+    ///   two of his closest neighbors on each side. Will also return the top
+    ///   three users if the user and his neighbors are not among them. Please
+    ///   note that this behavior is subject to change.
+    /// </remarks>
+    Function getGameHighScores(user_id:Integer; chat_id:Integer = 0;
+    message_id:Integer = 0; inline_message_id: string = ''):TArray<TtgGameHighScore>;
     constructor Create(AOwner: TComponent); overload; override;
     destructor Destroy; override;
   published
@@ -525,6 +701,18 @@ begin
 
 end;
 
+function TTelegramBot.deleteWebhook: Boolean;
+var
+  Parameters: TDictionary<String, TValue>;
+begin
+  Parameters := TDictionary<String, TValue>.Create;
+  try
+    Result := API<Boolean>('deleteWebhook', nil);
+  finally
+    Parameters.Free;
+  end;
+end;
+
 destructor TTelegramBot.Destroy;
 begin
   if IsReceiving then
@@ -671,6 +859,23 @@ begin
   end;
 end;
 
+function TTelegramBot.getGameHighScores(user_id, chat_id, message_id: Integer;
+  inline_message_id: string): TArray<TtgGameHighScore>;
+var
+  Parameters: TDictionary<String, TValue>;
+begin
+  Parameters := TDictionary<String, TValue>.Create;
+  try
+    Parameters.Add('user_id', user_id);
+    Parameters.Add('chat_id', chat_id);
+    Parameters.Add('message_id', message_id);
+    Parameters.Add('inline_message_id', inline_message_id);
+    Result := API<TArray<TtgGameHighScore>>('getGameHighScores', Parameters);
+  finally
+    Parameters.Free;
+  end;
+end;
+
 function TTelegramBot.getMe: TtgUser;
 begin
   Result := Self.API<TtgUser>('getMe', nil);
@@ -710,7 +915,19 @@ end;
 
 function TTelegramBot.GetVersionAPI: String;
 begin
-  Result := '2.2';
+  Result := '2.3.1';
+end;
+
+function TTelegramBot.getWebhookInfo: TtgWebhookInfo;
+var
+  Parameters: TDictionary<String, TValue>;
+begin
+  Parameters := TDictionary<String, TValue>.Create;
+  try
+    Result := API<TtgWebhookInfo>('getWebhookInfo', nil);
+  finally
+    Parameters.Free;
+  end;
 end;
 
 function TTelegramBot.kickChatMember(chat_id: TValue; user_id: Integer): Boolean;
@@ -817,6 +1034,26 @@ begin
   end;
 end;
 
+function TTelegramBot.sendGame(chat_id: Integer; game_short_name: String;
+  disable_notification: Boolean; reply_to_message_id: Integer;
+  reply_markup: TtgReplyKeyboardMarkup): TtgMessage;
+var
+  Parameters: TDictionary<String, TValue>;
+begin
+  Parameters := TDictionary<String, TValue>.Create;
+  try
+    Parameters.Add('chat_id', chat_id);
+    Parameters.Add('game_short_name', game_short_name);
+    Parameters.Add('disable_notification', disable_notification);
+    Parameters.Add('reply_to_message_id', reply_to_message_id);
+    Parameters.Add('reply_markup', reply_markup);
+    Result := API<TtgMessage>('sendGame', Parameters);
+  finally
+    Parameters.Free;
+  end;
+
+end;
+
 function TTelegramBot.sendLocation(chat_id: TValue; Location: TtgLocation;
   disable_notification: Boolean; reply_to_message_id: Integer; reply_markup: TtgReplyKeyboardMarkup)
   : TtgMessage;
@@ -877,7 +1114,7 @@ begin
   end;
 end;
 
-function TTelegramBot.sendTextMessage(const chat_id: TValue; const text: String;
+function TTelegramBot.sendMessage(const chat_id: TValue; const text: String;
   ParseMode: TtgParseMode; disableWebPagePreview, disable_notification: Boolean;
   replyToMessageId: Integer; replyMarkup: TtgReplyMarkup): TtgMessage;
 var
@@ -961,6 +1198,13 @@ begin
   finally
     Parameters.Free;
   end;
+
+end;
+
+function TTelegramBot.setGameScore(user_id, score: Integer; force,
+  disable_edit_message: Boolean; chat_id, message_id: integer;
+  inline_message_id: String): TtgMessage;
+begin
 
 end;
 
