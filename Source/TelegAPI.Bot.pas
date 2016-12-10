@@ -410,7 +410,7 @@ Type
     /// <returns>
     ///   On success, the sent Message is returned.
     /// </returns>
-    Function sendGame(chat_id:Integer; game_short_name:String; disable_notification:Boolean = False;
+    Function sendGame(chat_id:Integer; Const game_short_name:String; disable_notification:Boolean = False;
     reply_to_message_id:Integer = 0; reply_markup: TtgReplyKeyboardMarkup = nil): TtgMessage;
     /// <summary>
     ///   Use this method to set the score of the specified user in a game.
@@ -449,7 +449,7 @@ Type
     /// </returns>
     Function setGameScore(user_id: Integer; score:Integer; force: Boolean = False;
     disable_edit_message: Boolean = False; chat_id: Integer = 0; message_id: integer = 0;
-    inline_message_id: String = ''): TtgMessage;
+    Const inline_message_id: String = ''): TtgMessage;
     /// <summary>
     ///   Use this method to get data for high score tables. Will return the
     ///   score of the specified user and several of his neighbors in a game.
@@ -479,7 +479,7 @@ Type
     ///   note that this behavior is subject to change.
     /// </remarks>
     Function getGameHighScores(user_id:Integer; chat_id:Integer = 0;
-    message_id:Integer = 0; inline_message_id: string = ''):TArray<TtgGameHighScore>;
+    message_id:Integer = 0; Const inline_message_id: string = ''):TArray<TtgGameHighScore>;
     constructor Create(AOwner: TComponent); overload; override;
     destructor Destroy; override;
   published
@@ -860,7 +860,7 @@ begin
 end;
 
 function TTelegramBot.getGameHighScores(user_id, chat_id, message_id: Integer;
-  inline_message_id: string): TArray<TtgGameHighScore>;
+ Const inline_message_id: string): TArray<TtgGameHighScore>;
 var
   Parameters: TDictionary<String, TValue>;
 begin
@@ -1034,7 +1034,7 @@ begin
   end;
 end;
 
-function TTelegramBot.sendGame(chat_id: Integer; game_short_name: String;
+function TTelegramBot.sendGame(chat_id: Integer; Const game_short_name: String;
   disable_notification: Boolean; reply_to_message_id: Integer;
   reply_markup: TtgReplyKeyboardMarkup): TtgMessage;
 var
@@ -1198,14 +1198,27 @@ begin
   finally
     Parameters.Free;
   end;
-
 end;
 
 function TTelegramBot.setGameScore(user_id, score: Integer; force,
   disable_edit_message: Boolean; chat_id, message_id: integer;
-  inline_message_id: String): TtgMessage;
+  Const inline_message_id: String): TtgMessage;
+var
+  Parameters: TDictionary<String, TValue>;
 begin
-
+  Parameters := TDictionary<String, TValue>.Create;
+  try
+    Parameters.Add('user_id', user_id);
+    Parameters.Add('score', score);
+    Parameters.Add('force', force);
+    Parameters.Add('disable_edit_message', disable_edit_message);
+    Parameters.Add('chat_id', chat_id);
+    Parameters.Add('message_id', message_id);
+    Parameters.Add('inline_message_id', inline_message_id);
+    Result := API<TtgMessage>('setGameScore', Parameters);
+  finally
+    Parameters.Free;
+  end;
 end;
 
 procedure TTelegramBot.SetIsReceiving(const Value: Boolean);
