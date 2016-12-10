@@ -1,10 +1,5 @@
 ﻿unit TelegAPI.Bot;
 
-{$I ../jedi/jedi.inc}
-{$IFNDEF DELPHIXE8_UP}
-  Поддерживается только RAD Studio XE8 и выше !
-{$ENDIF}
-
 interface
 
 uses
