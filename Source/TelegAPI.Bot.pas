@@ -2,7 +2,7 @@
 
 interface
 
-{/$DEFINE TG_AUTOLib}
+{$DEFINE TG_AUTOLib}
 
 {$IF Defined(TG_AUTOLib)}
   {$I jedi.inc}
@@ -13,7 +13,6 @@ interface
   {$ENDIF}
 {$ENDIF}
 
-{$DEFINE TG_INDY}
 uses
   System.Generics.Collections,
   System.Rtti,
@@ -706,7 +705,6 @@ end;
 procedure TTelegramBot.Recesiver;
 var
   LUpdates: TArray<TtgUpdate>;
-  I: Integer;
 Begin
   while fIsReceiving do
   Begin
@@ -727,7 +725,6 @@ begin
   UploadTimeout := 60000;
   PollingTimeout := 1000;
   MessageOffset := 0;
-
 end;
 
 function TTelegramBot.deleteWebhook: Boolean;
