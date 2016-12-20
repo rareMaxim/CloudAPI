@@ -2,20 +2,49 @@
 
 interface
 
+{$DEFINE TG_AUTOLib}
+
+{$IF Defined(TG_AUTOLib)}
+  {$I jedi.inc}
+  {$IF Defined(DELPHIXE8_UP)}
+    {$DEFINE TG_NetHttpClient}
+  {$ELSE}
+    {$DEFINE TG_INDY}
+  {$ENDIF}
+{$ENDIF}
+
 uses
   System.Generics.Collections,
   System.Rtti,
   System.Threading,
   System.Classes,
   System.SysUtils,
+  System.TypInfo,
+{$IF Defined(TG_NetHttpClient)}
   System.Net.Mime,
   System.Net.HttpClient,
-  System.TypInfo,
+{$ELSEIF Defined(TG_INDY)}
+  IdMultiPartFormData,
+  IdHttp,
+{$ELSEIF Defined(TG_ICS)}
+{$ELSE}
+    ААААА сложна
+{$ENDIF}
   TelegAPI.Classes,
   TelegAPI.Utils,
   XSuperObject;
 
 Type
+{$IF Defined(TG_NetHttpClient)}
+{$ELSEIF Defined(TG_INDY)}
+  TMultipartFormData = TIdMultiPartFormDataStream;
+
+  TMultipartFormDataHelper = Class Helper for TIdMultiPartFormDataStream
+    procedure AddField(const AField, AValue: string);
+  End;
+{$ELSE}
+    ААААА сложна
+{$ENDIF}
   TtgBotOnUpdates = procedure(Sender: TObject; Updates: TArray<TtgUpdate>) of Object;
   TtgBorOnError = procedure(Sender: TObject; Const Code: Integer; Const Message: String) of Object;
 
@@ -503,6 +532,106 @@ Begin
   end;
 End;
 
+{$IFDEF TG_NetHttpClient}
+{ TTelegramBotNetHttp }
+
+function TTelegramBot.API<T>(const Method: String;
+  Parameters: TDictionary<String, TValue>): T;
+var
+  lHttp: THTTPClient;
+  lHttpResponse: IHTTPResponse;
+  lApiResponse: TtgApiResponse<T>;
+  lURL_TELEG: String;
+  LParamToDate: TMultipartFormData;
+begin
+  lHttp := THTTPClient.Create;
+  try
+    lURL_TELEG := 'https://api.telegram.org/bot' + FToken + '/' + Method;
+    // Преобразовуем параметры в строку, если нужно
+    if Assigned(Parameters) then
+    Begin
+      LParamToDate := ParamsToFormData(Parameters);
+      lHttpResponse := lHttp.Post(lURL_TELEG, LParamToDate);
+    End
+    else
+      lHttpResponse := lHttp.Get(lURL_TELEG);
+    if lHttpResponse.StatusCode <> 200 then
+    begin
+      if Assigned(OnError) then
+        OnError(Self, lHttpResponse.StatusCode, lHttpResponse.StatusText);
+      Exit;
+    end;
+    lApiResponse := TtgApiResponse<T>.FromJSON(lHttpResponse.ContentAsString);
+    if Not lApiResponse.Ok then
+    begin
+      if Assigned(OnError) then
+        OnError(Self, lApiResponse.Code, lApiResponse.Message);
+      Exit;
+    end;
+    Result := lApiResponse.ResultObject;
+    lApiResponse.ResultObject := Default (T);
+  finally
+    FreeAndNil(LParamToDate);
+    FreeAndNil(lHttp);
+    FreeAndNil(lApiResponse);
+  end;
+end;
+{$ELSEIF Defined(TG_INDY)}
+
+
+{ TMultipartFormDataHelper }
+
+procedure TMultipartFormDataHelper.AddField(const AField, AValue: string);
+begin
+  AddFormField(AField, AValue);
+end;
+
+{ TTelegramBotIndy }
+
+function TTelegramBot.API<T>(const Method: String;
+  Parameters: TDictionary<String, TValue>): T;
+var
+  lHttp: TIdHTTP;
+  lHttpResponse: String;
+  lApiResponse: TtgApiResponse<T>;
+  lURL_TELEG: String;
+  LParamToDate: TMultipartFormData;
+begin
+  lHttp := TIdHTTP.Create(Self);
+  try
+    lURL_TELEG := 'https://api.telegram.org/bot' + FToken + '/' + Method;
+    // Преобразовуем параметры в строку, если нужно
+    if Assigned(Parameters) then
+    Begin
+      LParamToDate := ParamsToFormData(Parameters);
+      lHttpResponse := lHttp.Post(lURL_TELEG, LParamToDate);
+    End
+    else
+      lHttpResponse := lHttp.Get(lURL_TELEG);
+    if lHttp.ResponseCode <> 200 then
+    begin
+      if Assigned(OnError) then
+        OnError(Self, lHttp.ResponseCode, lHttp.ResponseText);
+      Exit;
+    end;
+    lApiResponse := TtgApiResponse<T>.FromJSON(lHttpResponse);
+    if Not lApiResponse.Ok then
+    begin
+      if Assigned(OnError) then
+        OnError(Self, lApiResponse.Code, lApiResponse.Message);
+      Exit;
+    end;
+    Result := lApiResponse.ResultObject;
+    lApiResponse.ResultObject := Default (T);
+  finally
+    FreeAndNil(LParamToDate);
+    FreeAndNil(lHttp);
+    FreeAndNil(lApiResponse);
+  end;
+end;
+{$ELSE}
+    ААААА сложна
+{$EndIF}
 
 { TTelegram }
 function TTelegramBot.AllowedUpdatesToString(allowed_updates: TAllowedUpdates): String;
@@ -573,65 +702,9 @@ begin
   end;
 end;
 
-function TTelegramBot.ParamsToFormData(Parameters: TDictionary<String, TValue>): TMultipartFormData;
-var
-  parameter: TPair<String, TValue>;
-begin
-  Result := TMultipartFormData.Create;
-  for parameter in Parameters do
-  begin
-    if parameter.Value.IsType<TtgInlineKeyboardMarkup> then
-    begin
-      { TODO -oOwner -cGeneral : Проверить че за херня тут твориться }
-      if parameter.Value.AsType<TtgInlineKeyboardMarkup> <> nil then
-        Result.AddField(parameter.Key, parameter.Value.AsType<TtgInlineKeyboardMarkup>.AsJSON);
-    end
-    else if parameter.Value.IsType<TtgReplyKeyboardMarkup> then
-    begin
-      if parameter.Value.AsType<TtgReplyKeyboardMarkup> <> nil then
-        Result.AddField(parameter.Key, parameter.Value.AsType<TtgReplyKeyboardMarkup>.AsJSON);
-    end
-    else if parameter.Value.IsType<TtgReplyKeyboardHide> then
-    begin
-      if parameter.Value.AsType<TtgReplyKeyboardHide> <> nil then
-        Result.AddField(parameter.Key, parameter.Value.AsType<TtgReplyKeyboardHide>.AsJSON);
-    end
-    else if parameter.Value.IsType<TtgForceReply> then
-    begin
-      if parameter.Value.AsType<TtgForceReply> <> nil then
-        Result.AddField(parameter.Key, parameter.Value.AsType<TtgForceReply>.AsJSON);
-    end
-    else if parameter.Value.IsType<TtgFileToSend> then
-    Begin
-      { TODO -oOwner -cGeneral : Отправка файлов }
-      Result.AddFile(parameter.Key, parameter.Value.AsType<TtgFileToSend>.FileName);
-    End
-    else
-    begin
-      if parameter.Value.IsType<string> then
-      Begin
-        if NOT parameter.Value.AsString.IsEmpty then
-          Result.AddField(parameter.Key, parameter.Value.AsString)
-      End
-      else if parameter.Value.IsType<Int64> then
-      Begin
-        if parameter.Value.AsInt64 <> 0 then
-          Result.AddField(parameter.Key, IntToStr(parameter.Value.AsInt64));
-      End
-      else if parameter.Value.IsType<Boolean> then
-      Begin
-        if parameter.Value.AsBoolean then
-          Result.AddField(parameter.Key, TtgUtils.IfThen<String>(parameter.Value.AsBoolean,
-            'true', 'false'))
-      End;
-    end;
-  end;
-end;
-
 procedure TTelegramBot.Recesiver;
 var
   LUpdates: TArray<TtgUpdate>;
-  I: Integer;
 Begin
   while fIsReceiving do
   Begin
@@ -644,47 +717,6 @@ Begin
   end;
 end;
 
-function TTelegramBot.API<T>(const Method: String; Parameters: TDictionary<String, TValue>): T;
-var
-  lHttp: THTTPClient;
-  lHttpResponse: IHTTPResponse;
-  lApiResponse: TtgApiResponse<T>;
-  lURL_TELEG: String;
-  LParamToDate: TMultipartFormData;
-begin
-  lHttp := THTTPClient.Create;
-  try
-    lURL_TELEG := 'https://api.telegram.org/bot' + FToken + '/' + Method;
-    // Преобразовуем параметры в строку, если нужно
-    if Assigned(Parameters) then
-    Begin
-      LParamToDate := ParamsToFormData(Parameters);
-      lHttpResponse := lHttp.Post(lURL_TELEG, LParamToDate);
-    End
-    else
-      lHttpResponse := lHttp.Get(lURL_TELEG);
-    if lHttpResponse.StatusCode <> 200 then
-    begin
-      if Assigned(OnError) then
-        OnError(Self, lHttpResponse.StatusCode, lHttpResponse.StatusText);
-      Exit;
-    end;
-    lApiResponse := TtgApiResponse<T>.FromJSON(lHttpResponse.ContentAsString);
-    if Not lApiResponse.Ok then
-    begin
-      if Assigned(OnError) then
-        OnError(Self, lApiResponse.Code, lApiResponse.Message);
-      Exit;
-    end;
-    Result := lApiResponse.ResultObject;
-    lApiResponse.ResultObject := Default (T);
-  finally
-    FreeAndNil(LParamToDate);
-    FreeAndNil(lHttp);
-    FreeAndNil(lApiResponse);
-  end;
-end;
-
 constructor TTelegramBot.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
@@ -693,7 +725,6 @@ begin
   UploadTimeout := 60000;
   PollingTimeout := 1000;
   MessageOffset := 0;
-
 end;
 
 function TTelegramBot.deleteWebhook: Boolean;
@@ -949,6 +980,62 @@ begin
     Result := API<Boolean>('leaveChat', Parameters);
   finally
     Parameters.Free;
+  end;
+end;
+
+function TTelegramBot.ParamsToFormData(
+  Parameters: TDictionary<String, TValue>): TMultipartFormData;
+var
+  parameter: TPair<String, TValue>;
+begin
+  Result := TMultipartFormData.Create;
+  for parameter in Parameters do
+  begin
+    if parameter.Value.IsType<TtgInlineKeyboardMarkup> then
+    begin
+      { TODO -oOwner -cGeneral : Проверить че за херня тут твориться }
+      if parameter.Value.AsType<TtgInlineKeyboardMarkup> <> nil then
+        Result.AddField(parameter.Key, parameter.Value.AsType<TtgInlineKeyboardMarkup>.AsJSON);
+    end
+    else if parameter.Value.IsType<TtgReplyKeyboardMarkup> then
+    begin
+      if parameter.Value.AsType<TtgReplyKeyboardMarkup> <> nil then
+        Result.AddField(parameter.Key, parameter.Value.AsType<TtgReplyKeyboardMarkup>.AsJSON);
+    end
+    else if parameter.Value.IsType<TtgReplyKeyboardHide> then
+    begin
+      if parameter.Value.AsType<TtgReplyKeyboardHide> <> nil then
+        Result.AddField(parameter.Key, parameter.Value.AsType<TtgReplyKeyboardHide>.AsJSON);
+    end
+    else if parameter.Value.IsType<TtgForceReply> then
+    begin
+      if parameter.Value.AsType<TtgForceReply> <> nil then
+        Result.AddField(parameter.Key, parameter.Value.AsType<TtgForceReply>.AsJSON);
+    end
+    else if parameter.Value.IsType<TtgFileToSend> then
+    Begin
+      { TODO -oOwner -cGeneral : Отправка файлов }
+      Result.AddFile(parameter.Key, parameter.Value.AsType<TtgFileToSend>.FileName);
+    End
+    else
+    begin
+      if parameter.Value.IsType<string> then
+      Begin
+        if NOT parameter.Value.AsString.IsEmpty then
+          Result.AddField(parameter.Key, parameter.Value.AsString)
+      End
+      else if parameter.Value.IsType<Int64> then
+      Begin
+        if parameter.Value.AsInt64 <> 0 then
+          Result.AddField(parameter.Key, IntToStr(parameter.Value.AsInt64));
+      End
+      else if parameter.Value.IsType<Boolean> then
+      Begin
+        if parameter.Value.AsBoolean then
+          Result.AddField(parameter.Key, TtgUtils.IfThen<String>(parameter.Value.AsBoolean,
+            'true', 'false'))
+      End;
+    end;
   end;
 end;
 
