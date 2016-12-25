@@ -739,7 +739,6 @@ Type
     FMessage: String;
     FCode: Integer;
   public
-    destructor Destroy; override;
   published
     /// <summary> Gets a value indicating whether the request was successful.</summary>
     [Alias('ok')]
@@ -1600,17 +1599,6 @@ end;
 function TtgInlineKeyboardButton.GetFullText: String;
 begin
   Result := Text;
-end;
-
-{ TtgApiResponse<T> }
-
-destructor TtgApiResponse<T>.Destroy;
-begin
-  if System.GetTypeKind(FResultObject) = tkClass then
-{$IFNDEF AUTOREFCOUNT}
-    FreeAndNil(FResultObject);
-{$ENDIF}
-  inherited;
 end;
 
 { TtgChatMember }
