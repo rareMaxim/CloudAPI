@@ -5,18 +5,23 @@ interface
 {$DEFINE TG_AUTOLib}
 
 {$IF Defined(TG_AUTOLib)}
-  {$I jedi.inc}
-  {$IF Defined(DELPHIXE8_UP)}
+  {$IF CompilerVersion >= 22.0}
     {$DEFINE TG_NetHttpClient}
   {$ELSE}
     {$DEFINE TG_INDY}
   {$ENDIF}
+  {$IF CompilerVersion >= 21.0}
+    {$DEFINE TG_SysThread}
+  {$ENDIF}
 {$ENDIF}
 
+{$UNDEF TG_SysThread}
 uses
   System.Generics.Collections,
   System.Rtti,
+{$IF Defined(TG_SysThread)}
   System.Threading,
+{$ENDIF}
   System.Classes,
   System.SysUtils,
   System.TypInfo,
@@ -56,10 +61,12 @@ Type
     FPollingTimeout: Integer;
     FMessageOffset: Integer;
     FOnError: TtgBorOnError;
+{$IF Defined(TG_SysThread)}
     FRecesivTask: ITask;
     fIsReceiving: Boolean;
     Procedure Recesiver;
     procedure SetIsReceiving(const Value: Boolean);
+{$ENDIF}
     function GetVersionAPI: String;
   protected
     /// <summary>Мастер-функция для запросов на сервак</summary>
@@ -510,8 +517,10 @@ Type
     { x } property UploadTimeout: Integer read FUploadTimeout write FUploadTimeout default 60000;
     { x } property PollingTimeout: Integer read FPollingTimeout write FPollingTimeout default 1000;
     property MessageOffset: Integer read FMessageOffset write FMessageOffset default 0;
+{$IF Defined(TG_SysThread)}
     /// <summary>Монитор слежки за обновлениями</summary>
     property IsReceiving: Boolean read fIsReceiving write SetIsReceiving default False;
+{$ENDIF}
     property Token: String read FToken write FToken;
     property OnUpdates: TtgBotOnUpdates read FOnUpdates write FOnUpdates;
     property OnError: TtgBorOnError read FOnError write FOnError;
@@ -701,7 +710,7 @@ begin
     Parameters.Free;
   end;
 end;
-
+{$IF Defined(TG_SysThread)}
 procedure TTelegramBot.Recesiver;
 var
   LUpdates: TArray<TtgUpdate>;
@@ -716,12 +725,14 @@ Begin
     MessageOffset := LUpdates[High(LUpdates)].Id + 1;
   end;
 end;
-
+{$ENDIF}
 constructor TTelegramBot.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
+{$IF Drfined(TG_SysThread)}
   FRecesivTask := TTask.Create(Recesiver);
   fIsReceiving := False;
+{$ENDIF}
   UploadTimeout := 60000;
   PollingTimeout := 1000;
   MessageOffset := 0;
@@ -741,8 +752,10 @@ end;
 
 destructor TTelegramBot.Destroy;
 begin
+{$IF Drfined(TG_SysThread)}
   if IsReceiving then
     IsReceiving := False;
+{$ENDIF}
   inherited;
 end;
 
@@ -1302,7 +1315,7 @@ begin
     Parameters.Free;
   end;
 end;
-
+{$IF Drfined(TG_SysThread)}
 procedure TTelegramBot.SetIsReceiving(const Value: Boolean);
 begin
   if Value then
@@ -1311,7 +1324,7 @@ begin
     FRecesivTask.Cancel;
   fIsReceiving := Value;
 end;
-
+{$ENDIF}
 procedure TTelegramBot.setWebhook(const url: String; certificate: TtgFileToSend; allowed_updates: TAllowedUpdates);
 var
   Parameters: TDictionary<String, TValue>;
