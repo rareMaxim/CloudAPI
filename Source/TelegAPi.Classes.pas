@@ -816,43 +816,33 @@ type
   /// <remarks>Only one of the optional parameters can be present in any given update.</remarks>
   [Alias('Update')]
   TtgUpdate = Class
-  private
-    FID: Integer;
-    FMessage: TtgMessage;
-    FInlineQuery: TtgInlineQuery;
-    FChosenInlineResult: TtgChosenInlineResult;
-    FCallbackQuery: TtgCallbackQuery;
-    FEditedMessage: TtgMessage;
-    Fchannel_post: TtgMessage;
-    Fedited_channel_post: TtgMessage;
   public
     destructor Destroy; override;
-  published
+  public
     /// <summary>The update‘s unique identifier. Update identifiers start from a certain positive number and increase sequentially. This ID becomes especially handy if you’re using Webhooks, since it allows you to ignore repeated updates or to restore the correct update sequence, should they get out of order. </summary>
     [Alias('update_id')]
-    property ID: Integer read FID write FID;
+    ID: Integer;
     /// <summary>Optional. New incoming message of any kind — text, photo, sticker, etc.</summary>
     [Alias('message')]
-    property Message: TtgMessage read FMessage write FMessage;
+    Message: TtgMessage;
     /// <summary>Optional. New version of a message that is known to the bot and was edited</summary>
     [Alias('edited_message')]
-    property EditedMessage: TtgMessage read FEditedMessage write FEditedMessage;
+    EditedMessage: TtgMessage;
     /// <summary>Optional. New incoming channel post of any kind — text, photo, sticker, etc.</summary>
     [Alias('channel_post')]
-    property channel_post: TtgMessage read Fchannel_post write Fchannel_post;
+    channel_post: TtgMessage;
     /// <summary>Optional. New version of a channel post that is known to the bot and was edited</summary>
     [Alias('edited_channel_post')]
-    property edited_channel_post: TtgMessage read Fedited_channel_post write Fedited_channel_post;
+    edited_channel_post: TtgMessage;
     /// <summary>Optional. New incoming inline query</summary>
     [Alias('inline_query')]
-    property InlineQuery: TtgInlineQuery read FInlineQuery write FInlineQuery;
+    InlineQuery: TtgInlineQuery;
     /// <summary>Optional. The result of a inline query that was chosen by a user and sent to their chat partner</summary>
     [Alias('chosen_inline_result')]
-    property ChosenInlineResult: TtgChosenInlineResult read FChosenInlineResult
-      write FChosenInlineResult;
+    ChosenInlineResult: TtgChosenInlineResult;
     /// <summary>Optional. New incoming callback query</summary>
     [Alias('callback_query')]
-    property CallbackQuery: TtgCallbackQuery read FCallbackQuery write FCallbackQuery;
+    CallbackQuery: TtgCallbackQuery;
   End;
 
   /// <summary>This object represents the content of a message to be sent as a result of an inline query.</summary>
@@ -1681,20 +1671,20 @@ end;
 
 destructor TtgUpdate.Destroy;
 begin
-  if Assigned(FMessage) then
-    FreeAndNil(FMessage);
-  if Assigned(FEditedMessage) then
-    FreeAndNil(FEditedMessage);
-  if Assigned(Fchannel_post) then
-    FreeAndNil(Fchannel_post);
-  if Assigned(Fedited_channel_post) then
-    FreeAndNil(Fedited_channel_post);
-  if Assigned(FInlineQuery) then
-    FreeAndNil(FInlineQuery);
-  if Assigned(FChosenInlineResult) then
-    FreeAndNil(FChosenInlineResult);
-  if Assigned(FCallbackQuery) then
-    FreeAndNil(FCallbackQuery);
+  if Assigned(Message) then
+    FreeAndNil(Message);
+  if Assigned(EditedMessage) then
+    FreeAndNil(EditedMessage);
+  if Assigned(channel_post) then
+    FreeAndNil(channel_post);
+  if Assigned(edited_channel_post) then
+    FreeAndNil(edited_channel_post);
+  if Assigned(InlineQuery) then
+    FreeAndNil(InlineQuery);
+  if Assigned(ChosenInlineResult) then
+    FreeAndNil(ChosenInlineResult);
+  if Assigned(CallbackQuery) then
+    FreeAndNil(CallbackQuery);
   inherited;
 end;
 
