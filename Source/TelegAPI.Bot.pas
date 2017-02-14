@@ -581,7 +581,8 @@ begin
     Result := lApiResponse.ResultObject;
     lApiResponse.ResultObject := Default (T);
   finally
-    FreeAndNil(LParamToDate);
+    if Assigned(Parameters) then
+      FreeAndNil(LParamToDate);
     FreeAndNil(lHttp);
     FreeAndNil(lApiResponse);
   end;
