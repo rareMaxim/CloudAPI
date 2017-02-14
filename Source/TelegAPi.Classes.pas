@@ -13,45 +13,51 @@ Type
     VoiceMessage, DocumentMessage, StickerMessage, LocationMessage, ContactMessage, ServiceMessage,
     VenueMessage);
   /// <summary>
-  ///   Text parsing mode
+  /// Text parsing mode
   /// </summary>
   /// <example>
-  ///   <para>
-  ///     Markdown style
-  ///   </para>
-  ///   <para>
-  ///     *bold text* <br />_italic text_ <br />
-  ///     [text](http://www.example.com/) <br />`inline fixed-width code` <br />
-  ///     ```text <br />pre-formatted fixed-width code block <br />```
-  ///   </para>
-  ///   <para>
-  ///     Html:
-  ///   </para>
-  ///   <para>
-  ///     &lt;b&gt;bold&lt;/b&gt;, &lt;strong&gt;bold&lt;/strong&gt; <br />
-  ///     &lt;i&gt;italic&lt;/i&gt;, &lt;em&gt;italic&lt;/em&gt; <br />&lt;a
-  ///     href="http://www.example.com/"&gt;inline URL&lt;/a&gt; <br />
-  ///     &lt;code&gt;inline fixed-width code&lt;/code&gt; <br />
-  ///     &lt;pre&gt;pre-formatted fixed-width code block&lt;/pre&gt; <br /><br />
-  ///   </para>
+  /// <para>
+  /// Markdown style
+  /// </para>
+  /// <para>
+  /// *bold text* <br />_italic text_ <br />
+  /// [text](http://www.example.com/) <br />`inline fixed-width code` <br />
+  /// ```text <br />pre-formatted fixed-width code block <br />```
+  /// </para>
+  /// <para>
+  /// Html:
+  /// </para>
+  /// <para>
+  /// &lt;b&gt;bold&lt;/b&gt;, &lt;strong&gt;bold&lt;/strong&gt; <br />
+  /// &lt;i&gt;italic&lt;/i&gt;, &lt;em&gt;italic&lt;/em&gt; <br />&lt;a
+  /// href="http://www.example.com/"&gt;inline URL&lt;/a&gt; <br />
+  /// &lt;code&gt;inline fixed-width code&lt;/code&gt; <br />
+  /// &lt;pre&gt;pre-formatted fixed-width code block&lt;/pre&gt; <br /><br />
+  /// </para>
   /// </example>
   TtgParseMode = (Default = 0,
     /// <summary>
-    ///   To use this mode, pass Markdown in the parse_mode field when using
-    ///   sendMessage
+    /// To use this mode, pass Markdown in the parse_mode field when using
+    /// sendMessage
     /// </summary>
     Markdown,
     /// <summary>
-    ///   To use this mode, pass HTML in the parse_mode field when using
-    ///   sendMessage
+    /// To use this mode, pass HTML in the parse_mode field when using
+    /// sendMessage
     /// </summary>
     Html);
   /// <summary>The type of an Update</summary>
   TtgUpdateType = (UnkownUpdate = 0, MessageUpdate, InlineQueryUpdate, ChosenInlineResultUpdate,
     CallbackQueryUpdate);
-  TAllowedUpdate = (message, edited_message, channel_post, edited_channel_post, inline_query, chosen_inline_result, callback_query);
+  TAllowedUpdate = (message, edited_message, channel_post, edited_channel_post, inline_query,
+    chosen_inline_result, callback_query);
   TAllowedUpdates = set of TAllowedUpdate;
+
+const
+  UPDATES_ALLOWED_ALL = [Low(TAllowedUpdate) .. High(TAllowedUpdate)];
 {$SCOPEDENUMS OFF}
+
+type
 {$M+}
 
   [Alias('User')]
@@ -126,7 +132,8 @@ Type
     property last_name: String read Flast_name write Flast_name;
     /// <summary>Optional. True if a group has ‘All Members Are Admins’ enabled.</summary>
     [Alias('all_members_are_administrators')]
-    property all_members_are_administrators: Boolean read Fall_members_are_administrators write Fall_members_are_administrators;
+    property all_members_are_administrators: Boolean read Fall_members_are_administrators
+      write Fall_members_are_administrators;
   End;
 
   /// <summary>This object represents one special entity in a text message. For example, hashtags, usernames, URLs, etc.</summary>
@@ -376,7 +383,7 @@ Type
   TtgAnimation = Class
   private
     Ffile_id: String;
-    Fthumb: TtgPhotoSize;
+    FThumb: TtgPhotoSize;
     Ffile_name: String;
     Fmime_type: String;
     Ffile_size: Integer;
@@ -388,7 +395,7 @@ Type
     property file_id: String read Ffile_id write Ffile_id;
     /// <summary>Optional. Animation thumbnail as defined by sender</summary>
     [Alias('thumb')]
-    property thumb: TtgPhotoSize read Fthumb write Fthumb;
+    property Thumb: TtgPhotoSize read FThumb write FThumb;
     /// <summary>Optional. Original animation filename as defined by sender</summary>
     [Alias('file_name')]
     property file_name: String read Ffile_name write Ffile_name;
@@ -399,8 +406,9 @@ Type
     [Alias('file_size')]
     property file_size: Integer read Ffile_size write Ffile_size;
   End;
+
   /// <summary>
-  ///   This object represents one row of the high scores table for a game.
+  /// This object represents one row of the high scores table for a game.
   /// </summary>
   [Alias('Game')]
   TtgGameHighScore = Class
@@ -412,18 +420,19 @@ Type
     destructor Destroy; override;
   published
     /// <summary>
-    ///   Position in high score table for the game
+    /// Position in high score table for the game
     /// </summary>
     property position: Integer read Fposition write Fposition;
     /// <summary>
-    ///   User
+    /// User
     /// </summary>
     property user: TtgUser read Fuser write Fuser;
     /// <summary>
-    ///   Score
+    /// Score
     /// </summary>
     property score: Integer read Fscore write Fscore;
   End;
+
   /// <summary>This object represents a game. Use BotFather to create and edit games, their short names will act as unique identifiers.</summary>
   [Alias('Game')]
   TtgGame = Class
@@ -468,10 +477,10 @@ Type
     FForwardFrom: TtgUser;
     FForwardDate: Integer;
     FReplyToMessage: TtgMessage;
-    FText: String;
+    Ftext: String;
     FAudio: TtgAudio;
     FDocument: TtgDocument;
-    FPhoto: TArray<TtgPhotoSize>;
+    Fphoto: TArray<TtgPhotoSize>;
     FSticker: TtgSticker;
     FVideo: TtgVideo;
     FVoice: TtgVoice;
@@ -526,7 +535,7 @@ Type
     property EditDate: Integer read FEditDate write FEditDate;
     /// <summary>Optional. For text messages, the actual UTF-8 text of the message</summary>
     [Alias('text')]
-    property Text: String read FText write FText;
+    property text: String read Ftext write Ftext;
     /// <summary>Optional. For text messages, special entities like usernames, URLs, bot commands, etc. that appear in the text</summary>
     [Alias('entities')]
     property entities: TArray<TtgMessageEntity> read Fentities write Fentities;
@@ -541,7 +550,7 @@ Type
     property game: TtgGame read Fgame write Fgame;
     /// <summary>Optional. Message is a photo, available sizes of the photo</summary>
     [Alias('photo')]
-    property Photo: TArray<TtgPhotoSize> read FPhoto write FPhoto;
+    property photo: TArray<TtgPhotoSize> read Fphoto write Fphoto;
     /// <summary>Optional. Message is a sticker, information about the sticker</summary>
     [Alias('sticker')]
     property Sticker: TtgSticker read FSticker write FSticker;
@@ -619,20 +628,20 @@ Type
   [Alias('KeyboardButton')]
   TtgKeyboardButton = Class
   private
-    FText: String;
+    Ftext: String;
     Frequest_contact: Boolean;
     Frequest_location: Boolean;
   protected
     function GetFullText: String; virtual;
   Public
-    constructor Create(Const Text: String; request_contact: Boolean = False;
+    constructor Create(Const text: String; request_contact: Boolean = False;
       request_location: Boolean = False); overload;
   published
     [Alias('text')]
     property FullText: String read GetFullText;
     /// <summary>Text of the button. If none of the optional fields are used, it will be sent to the bot as a message when the button is pressed</summary>
     [DISABLE]
-    property Text: String read FText write FText;
+    property text: String read Ftext write Ftext;
     /// <summary>Optional. If True, the user's phone number will be sent as a contact when the button is pressed. Available in private chats only</summary>
     [Alias('request_contact')]
     property request_contact: Boolean read Frequest_contact write Frequest_contact;
@@ -695,7 +704,7 @@ Type
   [Alias('InlineKeyboardButton')]
   TtgInlineKeyboardButton = Class
   private
-    FText: String;
+    Ftext: String;
     Furl: String;
     Fcallback_data: String;
     Fswitch_inline_query: String;
@@ -706,7 +715,7 @@ Type
     /// <summary>Label text on the button</summary>
     // [DISABLE]
     [Alias('text')]
-    property Text: String read FText write FText;
+    property text: String read Ftext write Ftext;
     /// <summary>Optional. HTTP url to be opened when button is pressed</summary>
     [Alias('url')]
     property url: String read Furl write Furl;
@@ -728,7 +737,8 @@ Type
   published
     /// <summary>Array of button rows, each represented by an Array of InlineKeyboardButton objects</summary>
     [Alias('inline_keyboard')]
-    property inline_keyboard: TArray <TArray<TtgInlineKeyboardButton>> read Finline_keyboard write Finline_keyboard;
+    property inline_keyboard: TArray < TArray < TtgInlineKeyboardButton >> read Finline_keyboard
+      write Finline_keyboard;
   End;
 
   [Alias('')]
@@ -911,7 +921,8 @@ Type
     property parse_mode: String read Fparse_mode write Fparse_mode;
     /// <summary>Optional. Disables link previews for links in the sent message</summary>
     [Alias('disable_web_page_preview')]
-    property disable_web_page_preview: Boolean read Fdisable_web_page_preview write Fdisable_web_page_preview;
+    property disable_web_page_preview: Boolean read Fdisable_web_page_preview
+      write Fdisable_web_page_preview;
   End;
 
   /// <summary>Represents the content of a location message to be sent as the result of an inline query.</summary>
@@ -1507,7 +1518,7 @@ Type
   End;
 
   /// <summary>
-  ///   Contains information about the current status of a webhook.
+  /// Contains information about the current status of a webhook.
   /// </summary>
   TtgWebhookInfo = Class
   private
@@ -1520,46 +1531,48 @@ Type
     Fallowed_updates: TArray<String>;
   published
     /// <summary>
-    ///   Webhook URL, may be empty if webhook is not set up
+    /// Webhook URL, may be empty if webhook is not set up
     /// </summary>
     [Alias('url')]
     property url: String read Furl write Furl;
     /// <summary>
-    ///   True, if a custom certificate was provided for webhook certificate
-    ///   checks
+    /// True, if a custom certificate was provided for webhook certificate
+    /// checks
     /// </summary>
     [Alias('has_custom_certificate')]
-    property has_custom_certificate: Boolean read Fhas_custom_certificate write Fhas_custom_certificate;
+    property has_custom_certificate: Boolean read Fhas_custom_certificate
+      write Fhas_custom_certificate;
     /// <summary>
-    ///   Number of updates awaiting delivery
+    /// Number of updates awaiting delivery
     /// </summary>
     [Alias('pending_update_count')]
     property pending_update_count: Integer read Fpending_update_count write Fpending_update_count;
     /// <summary>
-    ///   Optional. Unix time for the most recent error that happened when
-    ///   trying to deliver an update via webhook
+    /// Optional. Unix time for the most recent error that happened when
+    /// trying to deliver an update via webhook
     /// </summary>
     [Alias('last_error_date')]
     property last_error_date: Integer read Flast_error_date write Flast_error_date;
     /// <summary>
-    ///   Optional. Error message in human-readable format for the most recent
-    ///   error that happened when trying to deliver an update via webhook
+    /// Optional. Error message in human-readable format for the most recent
+    /// error that happened when trying to deliver an update via webhook
     /// </summary>
     [Alias('last_error_message')]
     property last_error_message: String read Flast_error_message write Flast_error_message;
     /// <summary>
-    ///   Optional. Maximum allowed number of simultaneous HTTPS connections to
-    ///   the webhook for update delivery
+    /// Optional. Maximum allowed number of simultaneous HTTPS connections to
+    /// the webhook for update delivery
     /// </summary>
     [Alias('max_connections')]
     property max_connections: Integer read Fmax_connections write Fmax_connections;
     /// <summary>
-    ///   Optional. A list of update types the bot is subscribed to. Defaults
-    ///   to all update types
+    /// Optional. A list of update types the bot is subscribed to. Defaults
+    /// to all update types
     /// </summary>
     [Alias('allowed_updates')]
     property allowed_updates: TArray<String> read Fallowed_updates write Fallowed_updates;
   End;
+
 implementation
 
 uses
@@ -1581,31 +1594,32 @@ end;
 
 { TtgKeyboardButton }
 
-constructor TtgKeyboardButton.Create(Const Text: String;
+constructor TtgKeyboardButton.Create(Const text: String;
   request_contact, request_location: Boolean);
 begin
-  FText := Text;
+  Ftext := text;
   Frequest_contact := request_contact;
   Frequest_location := request_location;
 end;
 
 function TtgKeyboardButton.GetFullText: String;
 begin
-  Result := Text;
+  Result := text;
 end;
 
 { TtgInlineKeyboardButton }
 
 function TtgInlineKeyboardButton.GetFullText: String;
 begin
-  Result := Text;
+  Result := text;
 end;
 
 { TtgChatMember }
 
 destructor TtgChatMember.Destroy;
 begin
-  if Assigned(Fuser) then FreeAndNil(Fuser);
+  if Assigned(Fuser) then
+    FreeAndNil(Fuser);
   inherited;
 end;
 
@@ -1613,7 +1627,8 @@ end;
 
 destructor TtgMessageEntity.Destroy;
 begin
-  if Assigned(Fuser) then FreeAndNil(Fuser);
+  if Assigned(Fuser) then
+    FreeAndNil(Fuser);
   inherited;
 end;
 
@@ -1621,7 +1636,8 @@ end;
 
 destructor TtgDocument.Destroy;
 begin
-  if Assigned(FThumb) then FreeAndNil(FThumb);
+  if Assigned(FThumb) then
+    FreeAndNil(FThumb);
   inherited;
 end;
 
@@ -1629,7 +1645,8 @@ end;
 
 destructor TtgSticker.Destroy;
 begin
-  if Assigned(FThumb) then FreeAndNil(FThumb);
+  if Assigned(FThumb) then
+    FreeAndNil(FThumb);
   inherited;
 end;
 
@@ -1637,7 +1654,8 @@ end;
 
 destructor TtgVideo.Destroy;
 begin
-  if Assigned(FThumb) then FreeAndNil(FThumb);
+  if Assigned(FThumb) then
+    FreeAndNil(FThumb);
   inherited;
 end;
 
@@ -1645,7 +1663,8 @@ end;
 
 destructor TtgVenue.Destroy;
 begin
-  if Assigned(FLocation) then FreeAndNil(FLocation);
+  if Assigned(FLocation) then
+    FreeAndNil(FLocation);
   inherited;
 end;
 
@@ -1655,31 +1674,50 @@ destructor TtgMessage.Destroy;
 var
   I: Integer;
 begin
-  if Assigned(FFrom) then FreeAndNil(FFrom);
-  if Assigned(FChat) then FreeAndNil(FChat);
-  if Assigned(FForwardFrom) then FreeAndNil(FForwardFrom);
-  if Assigned(Fforward_from_chat) then FreeAndNil(Fforward_from_chat);
-  if Assigned(FReplyToMessage) then FreeAndNil(FReplyToMessage);
-  if Assigned(FAudio) then FreeAndNil(FAudio);
-  if Assigned(FDocument) then FreeAndNil(FDocument);
-  if Assigned(FSticker) then FreeAndNil(FSticker);
-  if Assigned(FVideo) then FreeAndNil(FVideo);
-  if Assigned(FVoice) then FreeAndNil(FVoice);
-  if Assigned(FContact) then FreeAndNil(FContact);
-  if Assigned(FLocation) then FreeAndNil(FLocation);
-  if Assigned(FVenue) then FreeAndNil(FVenue);
-  if Assigned(FNewChatMember) then FreeAndNil(FNewChatMember);
-  if Assigned(FLeftChatMember) then FreeAndNil(FLeftChatMember);
-  if Assigned(FPinnedMessage) then FreeAndNil(FPinnedMessage);
-  if Assigned(Fforward_from_chat) then FreeAndNil(Fforward_from_chat);
-  if Assigned(FNewChatMember) then FreeAndNil(FNewChatMember);
+  if Assigned(FFrom) then
+    FreeAndNil(FFrom);
+  if Assigned(FChat) then
+    FreeAndNil(FChat);
+  if Assigned(FForwardFrom) then
+    FreeAndNil(FForwardFrom);
+  if Assigned(Fforward_from_chat) then
+    FreeAndNil(Fforward_from_chat);
+  if Assigned(FReplyToMessage) then
+    FreeAndNil(FReplyToMessage);
+  if Assigned(FAudio) then
+    FreeAndNil(FAudio);
+  if Assigned(FDocument) then
+    FreeAndNil(FDocument);
+  if Assigned(FSticker) then
+    FreeAndNil(FSticker);
+  if Assigned(FVideo) then
+    FreeAndNil(FVideo);
+  if Assigned(FVoice) then
+    FreeAndNil(FVoice);
+  if Assigned(FContact) then
+    FreeAndNil(FContact);
+  if Assigned(FLocation) then
+    FreeAndNil(FLocation);
+  if Assigned(FVenue) then
+    FreeAndNil(FVenue);
+  if Assigned(FNewChatMember) then
+    FreeAndNil(FNewChatMember);
+  if Assigned(FLeftChatMember) then
+    FreeAndNil(FLeftChatMember);
+  if Assigned(FPinnedMessage) then
+    FreeAndNil(FPinnedMessage);
+  if Assigned(Fforward_from_chat) then
+    FreeAndNil(Fforward_from_chat);
+  if Assigned(FNewChatMember) then
+    FreeAndNil(FNewChatMember);
   for I := Low(Fentities) to High(Fentities) do
     FreeAndNil(Fentities[I]);
   SetLength(Fentities, 0);
   for I := Low(FNewChatPhoto) to High(NewChatPhoto) do
     FreeAndNil(FNewChatPhoto[I]);
   SetLength(FNewChatPhoto, 0);
-  if Assigned(Fgame) then FreeAndNil(Fgame);
+  if Assigned(Fgame) then
+    FreeAndNil(Fgame);
   inherited;
 end;
 
@@ -1687,13 +1725,20 @@ end;
 
 destructor TtgUpdate.Destroy;
 begin
-  if Assigned(FMessage) then FreeAndNil(FMessage);
-  if Assigned(FEditedMessage) then FreeAndNil(FEditedMessage);
-  if Assigned(Fchannel_post) then FreeAndNil(Fchannel_post);
-  if Assigned(Fedited_channel_post) then FreeAndNil(Fedited_channel_post);
-  if Assigned(FInlineQuery) then FreeAndNil(FInlineQuery);
-  if Assigned(FChosenInlineResult) then FreeAndNil(FChosenInlineResult);
-  if Assigned(FCallbackQuery) then FreeAndNil(FCallbackQuery);
+  if Assigned(FMessage) then
+    FreeAndNil(FMessage);
+  if Assigned(FEditedMessage) then
+    FreeAndNil(FEditedMessage);
+  if Assigned(Fchannel_post) then
+    FreeAndNil(Fchannel_post);
+  if Assigned(Fedited_channel_post) then
+    FreeAndNil(Fedited_channel_post);
+  if Assigned(FInlineQuery) then
+    FreeAndNil(FInlineQuery);
+  if Assigned(FChosenInlineResult) then
+    FreeAndNil(FChosenInlineResult);
+  if Assigned(FCallbackQuery) then
+    FreeAndNil(FCallbackQuery);
   inherited;
 end;
 
@@ -1701,7 +1746,8 @@ end;
 
 destructor TtgInlineQueryResult.Destroy;
 begin
-  if Assigned(Freply_markup) then FreeAndNil(Freply_markup);
+  if Assigned(Freply_markup) then
+    FreeAndNil(Freply_markup);
   inherited;
 end;
 
@@ -1709,7 +1755,8 @@ end;
 
 destructor TtgAnimation.Destroy;
 begin
-  if Assigned(Fthumb) then FreeAndNil(Fthumb);
+  if Assigned(FThumb) then
+    FreeAndNil(FThumb);
   inherited;
 end;
 
@@ -1720,10 +1767,13 @@ var
   I: Integer;
 begin
   for I := Low(Fphoto) to High(Fphoto) do
-    if Assigned(Fphoto[i]) then FreeAndNil(Fphoto[i]);
+    if Assigned(Fphoto[I]) then
+      FreeAndNil(Fphoto[I]);
   for I := Low(Ftext_entities) to High(Ftext_entities) do
-    if Assigned(Ftext_entities[i]) then FreeAndNil(Ftext_entities[i]);
-  if Assigned(Fanimation) then FreeAndNil(Fanimation);
+    if Assigned(Ftext_entities[I]) then
+      FreeAndNil(Ftext_entities[I]);
+  if Assigned(Fanimation) then
+    FreeAndNil(Fanimation);
   inherited;
 end;
 
@@ -1731,7 +1781,8 @@ end;
 
 destructor TtgGameHighScore.Destroy;
 begin
-  if Assigned(Fuser) then FreeAndNil(Fuser);
+  if Assigned(Fuser) then
+    FreeAndNil(Fuser);
   inherited;
 end;
 

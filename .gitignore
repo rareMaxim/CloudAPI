@@ -67,3 +67,4 @@ __recovery/
 *.smap
 bin/Win32-Debug/Data/Логи/
 bin/Win32-Debug/Data/Готовые бланки/
+*.filog

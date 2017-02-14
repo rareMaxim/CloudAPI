@@ -35,7 +35,6 @@ begin
   FBot.Token := {$I ..\token.inc};
   FBot.IsReceiving := True;
   FBot.OnUpdates := OnGiveMsg;
-
 end;
 
 procedure TForm1.OnGiveMsg(Sender: TObject; Updates: TArray<TtgUpdate>);
@@ -46,8 +45,8 @@ begin
   try
     for I := Low(Updates) to High(Updates) do
     Begin
-      mmo1.Lines.Add(Updates[I].Message.Text);
-      Updates[I].Free;
+      if assigned(Updates[I].Message) then
+        mmo1.Lines.Add(Updates[I].Message.Text);
     End;
   finally
     mmo1.EndUpdate;

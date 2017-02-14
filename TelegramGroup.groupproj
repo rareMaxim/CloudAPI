@@ -3,10 +3,10 @@
         <ProjectGuid>{809737FD-0D71-4E50-8CB8-B2DBE83926B2}</ProjectGuid>
     </PropertyGroup>
     <ItemGroup>
-        <Projects Include="Install\TelegaPiBot.dproj">
+        <Projects Include="Demo\AutoRecesiveMsg\Project1.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="Demo\AutoRecesiveMsg\Project1.dproj">
+        <Projects Include="C:\Users\maks4\Documents\Embarcadero\Studio\Projects\Project2.dproj">
             <Dependencies/>
         </Projects>
     </ItemGroup>
@@ -17,15 +17,6 @@
             <Default.Personality/>
         </BorlandProject>
     </ProjectExtensions>
-    <Target Name="TelegaPiBot">
-        <MSBuild Projects="Install\TelegaPiBot.dproj"/>
-    </Target>
-    <Target Name="TelegaPiBot:Clean">
-        <MSBuild Projects="Install\TelegaPiBot.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="TelegaPiBot:Make">
-        <MSBuild Projects="Install\TelegaPiBot.dproj" Targets="Make"/>
-    </Target>
     <Target Name="Project1">
         <MSBuild Projects="Demo\AutoRecesiveMsg\Project1.dproj"/>
     </Target>
@@ -35,14 +26,23 @@
     <Target Name="Project1:Make">
         <MSBuild Projects="Demo\AutoRecesiveMsg\Project1.dproj" Targets="Make"/>
     </Target>
+    <Target Name="Project2">
+        <MSBuild Projects="C:\Users\maks4\Documents\Embarcadero\Studio\Projects\Project2.dproj"/>
+    </Target>
+    <Target Name="Project2:Clean">
+        <MSBuild Projects="C:\Users\maks4\Documents\Embarcadero\Studio\Projects\Project2.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Project2:Make">
+        <MSBuild Projects="C:\Users\maks4\Documents\Embarcadero\Studio\Projects\Project2.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="TelegaPiBot;Project1"/>
+        <CallTarget Targets="Project1;Project2"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="TelegaPiBot:Clean;Project1:Clean"/>
+        <CallTarget Targets="Project1:Clean;Project2:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="TelegaPiBot:Make;Project1:Make"/>
+        <CallTarget Targets="Project1:Make;Project2:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

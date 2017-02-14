@@ -15,7 +15,6 @@ interface
 uses
   System.Generics.Collections,
   System.Rtti,
-  System.Threading,
   System.Classes,
   System.SysUtils,
   System.TypInfo,
@@ -65,6 +64,7 @@ type
     FOnError: TtgBorOnError;
     FRecesiver: TtgRecesiver;
     fIsReceiving: Boolean;
+    fAllowedUpdates: TAllowedUpdates;
     procedure SetIsReceiving(const Value: Boolean);
     function GetVersionAPI: String;
   protected
@@ -521,6 +521,8 @@ type
     property MessageOffset: Integer read FMessageOffset write FMessageOffset default 0;
     /// <summary>Монитор слежки за обновлениями</summary>
     property IsReceiving: Boolean read fIsReceiving write SetIsReceiving default False;
+    property AllowedUpdates: TAllowedUpdates read fAllowedUpdates write fAllowedUpdates
+      default UPDATES_ALLOWED_ALL;
     property Token: String read FToken write FToken;
     property OnUpdates: TtgBotOnUpdates read FOnUpdates write FOnUpdates;
     property OnError: TtgBorOnError read FOnError write FOnError;
@@ -710,6 +712,7 @@ constructor TTelegramBot.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
   FRecesiver := TtgRecesiver.Create(True);
+  AllowedUpdates := UPDATES_ALLOWED_ALL;
   FRecesiver.Bot := Self;
   fIsReceiving := False;
   UploadTimeout := 60000;
@@ -735,7 +738,7 @@ begin
 
   if IsReceiving then
     IsReceiving := False;
- // FRecesiver.WaitFor;
+  FRecesiver.WaitFor;
   FRecesiver.Free;
   inherited;
 end;
@@ -1338,21 +1341,31 @@ end;
 procedure TtgRecesiver.Execute;
 var
   LUpdates: TArray<TtgUpdate>;
+  LLastUpdateID: Int64;
 Begin
-  while (not Terminated) and (fBot.IsReceiving) do
-  Begin
+  repeat
     Sleep(fBot.PollingTimeout);
-    LUpdates := fBot.getUpdates(fBot.MessageOffset, 100, fBot.PollingTimeout);
+    if (Terminated) or (NOT fBot.IsReceiving) then
+      Break;
+    LUpdates := fBot.getUpdates(Bot.MessageOffset, 100, 0, Bot.AllowedUpdates);
     if Length(LUpdates) = 0 then
       Continue;
+    Bot.MessageOffset := LUpdates[High(LUpdates)].Id + 1;
     TThread.Queue(Self,
       procedure
+      var
+        I: Integer;
       begin
-        if Assigned(fBot.OnUpdates) then
+        if Assigned(Bot.OnUpdates) and Assigned(LUpdates) then
           fBot.OnUpdates(Self, LUpdates);
-        fBot.MessageOffset := LUpdates[High(LUpdates)].Id + 1;
+        if Assigned(LUpdates) then
+        Begin
+          for I := Low(LUpdates) to High(LUpdates) do
+            FreeAndNil(LUpdates[I]) { .Free };
+          LUpdates := nil;
+        end;
       end);
-  end;
+  until (Terminated) or (NOT Bot.IsReceiving);
 end;
 
 end.
