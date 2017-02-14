@@ -58,192 +58,148 @@ const
 {$SCOPEDENUMS OFF}
 
 type
-{$M+}
 
   [Alias('User')]
   /// <summary> This object represents a Telegram user or bot.</summary>
   TtgUser = Class
-  private
-    FID: Integer;
-    FFirstName: String;
-    FLastName: String;
-    FUsername: String;
-  published
+  public
     /// <summary> Unique identifier for this user or bot </summary>
     [Alias('id')]
-    property ID: Integer read FID write FID;
+    ID: Integer;
     /// <summary>User‘s or bot’s first name</summary>
     [Alias('first_name')]
-    property FirstName: String read FFirstName write FFirstName;
+    FirstName: String;
     /// <summary>Optional. User‘s or bot’s last name</summary>
     [Alias('last_name')]
-    property LastName: String read FLastName write FLastName;
+    LastName: String;
     /// <summary>Optional. User‘s or bot’s username</summary>
     [Alias('username')]
-    property Username: String read FUsername write FUsername;
+    Username: String;
   End;
 
   /// <summary>This object contains information about one member of the chat.</summary>
   [Alias('ChatMember')]
   TtgChatMember = Class
-  private
-    Fstatus: String;
-    Fuser: TtgUser;
   public
-    destructor Destroy; override;
-  published
     /// <summary>Information about the user</summary>
     [Alias('user')]
-    property user: TtgUser read Fuser write Fuser;
+    user: TtgUser;
     /// <summary>The member's status in the chat. Can be “creator”, “administrator”, “member”, “left” or “kicked”</summary>
     [Alias('status')]
-    property status: String read Fstatus write Fstatus;
+    status: String;
+    destructor Destroy; override;
   End;
 
   /// <summary>This object represents a chat.</summary>
   [Alias('Chat')]
   TtgChat = Class
-  private
-    FID: Int64;
-    Ftype: String;
-    Ftitle: String;
-    FUsername: String;
-    Ffirst_name: String;
-    Flast_name: String;
-    Fall_members_are_administrators: Boolean;
-  published
+  public
     /// <summary>Unique identifier for this chat, not exceeding 1e13 by absolute value</summary>
     [Alias('id')]
-    property ID: Int64 read FID write FID;
+    ID: Int64;
     /// <summary> Type of chat, can be either “private”, “group”, “supergroup” or “channel”</summary>
     [Alias('type')]
-    property &type: String read Ftype write Ftype;
+    &type: String;
     /// <summary>Optional. Title, for channels and group chats </summary>
     [Alias('title')]
-    property title: String read Ftitle write Ftitle;
+    title: String;
     /// <summary>Optional. Username, for private chats and channels if available </summary>
     [Alias('username')]
-    property Username: String read FUsername write FUsername;
+    Username: String;
     /// <summary>Optional. First name of the other party in a private chat </summary>
     [Alias('first_name')]
-    property first_name: String read Ffirst_name write Ffirst_name;
+    first_name: String;
     /// <summary>Optional. Last name of the other party in a private chat </summary>
     [Alias('last_name')]
-    property last_name: String read Flast_name write Flast_name;
+    last_name: String;
     /// <summary>Optional. True if a group has ‘All Members Are Admins’ enabled.</summary>
     [Alias('all_members_are_administrators')]
-    property all_members_are_administrators: Boolean read Fall_members_are_administrators
-      write Fall_members_are_administrators;
+    all_members_are_administrators: Boolean;
   End;
 
   /// <summary>This object represents one special entity in a text message. For example, hashtags, usernames, URLs, etc.</summary>
   [Alias('MessageEntity')]
   TtgMessageEntity = Class
-  private
-    Ftype: String;
-    Foffset: Integer;
-    Flength: Integer;
-    Furl: String;
-    Fuser: TtgUser;
   public
-    destructor Destroy; override;
-  published
     /// <summary>Type of the entity. One of mention (@username), hashtag, bot_command, url, email, bold (bold text), italic (italic text), code (monowidth string), pre (monowidth block), text_link (for clickable text URLs), text_mention (for users without usernames)</summary>
     [Alias('type')]
-    property &type: String read Ftype write Ftype;
+    &type: String;
     /// <summary>Offset in UTF-16 code units to the start of the entity</summary>
     [Alias('offset')]
-    property offset: Integer read Foffset write Foffset;
+    offset: Integer;
     /// <summary>Length of the entity in UTF-16 code units</summary>
     [Alias('length')]
-    property length: Integer read Flength write Flength;
+    length: Integer;
     /// <summary>Optional. For “text_link” only, url that will be opened after user taps on the text</summary>
     [Alias('url')]
-    property url: String read Furl write Furl;
+    url: String;
     /// <summary>Optional. For “text_mention” only, the mentioned user</summary>
     [Alias('user')]
-    property user: TtgUser read Fuser write Fuser;
+    user: TtgUser;
+    destructor Destroy; override;
   End;
 
   /// <summary>This object represents a file ready to be downloaded. The file can be downloaded via the link https://api.telegram.org/file/bot<token>/<file_path>. It is guaranteed that the link will be valid for at least 1 hour. When the link expires, a new one can be requested by calling getFile. </summary>
   /// <remarks>Maximum file size to download is 20 MB </remarks>
   [Alias('File')]
   TtgFile = Class
-  private
-    FFileId: String;
-    FFileSize: Integer;
-    FFilePath: String;
   public
-  published
     /// <summary>Unique identifier for this file</summary>
     [Alias('file_id')]
-    property FileId: String read FFileId write FFileId;
+    FileId: String;
     /// <summary>Optional. File size, if known</summary>
     [Alias('file_size')]
-    property FileSize: Integer read FFileSize write FFileSize;
+    FileSize: Integer;
     /// <summary>File path. Use https://api.telegram.org/file/bot{token}/{file_path} to get the file.</summary>
     [Alias('file_path')]
-    property FilePath: String read FFilePath write FFilePath;
+    FilePath: String;
   End;
 
   /// <summary>This object represents an audio file to be treated as music by the Telegram clients.</summary>
   [Alias('Audio')]
   TtgAudio = Class(TtgFile)
-  private
-    FDuration: Integer;
-    FPerformer: String;
-    Ftitle: String;
-    FMimeType: String;
-  published
+  public
     /// <summary>Duration of the audio in seconds as defined by sender</summary>
     [Alias('duration')]
-    property Duration: Integer read FDuration write FDuration;
+    Duration: Integer;
     /// <summary>Performer of the audio as defined by sender or by audio tags</summary>
     [Alias('performer')]
-    property Performer: String read FPerformer write FPerformer;
+    Performer: String;
     /// <summary>Title of the audio as defined by sender or by audio tags</summary>
     [Alias('title')]
-    property title: String read Ftitle write Ftitle;
+    title: String;
     /// <summary>Optional. MIME type of the file as defined by sender</summary>
     [Alias('mime_type')]
-    property MimeType: String read FMimeType write FMimeType;
+    MimeType: String;
   End;
 
   /// <summary>This object represents one size of a photo or a file/sticker thumbnail.</summary>
   /// <remarks>A missing thumbnail for a file (or sticker) is presented as an empty object.</remarks>
   [Alias('PhotoSize')]
   TtgPhotoSize = Class(TtgFile)
-  private
-    FWidth: Integer;
-    FHeight: Integer;
-  published
+  public
     /// <summary>Photo width</summary>
     [Alias('width')]
-    property Width: Integer read FWidth write FWidth;
+    Width: Integer;
     /// <summary>Photo height</summary>
     [Alias('Height')]
-    property Height: Integer read FHeight write FHeight;
+    Height: Integer;
   End;
 
   /// <summary>This object represents a general file (as opposed to photos, voice messages and audio files).</summary>
   [Alias('Document')]
   TtgDocument = Class(TtgFile)
-  private
-    FThumb: TtgPhotoSize;
-    FFileName: String;
-    FMimeType: String;
   public
-    destructor Destroy; override;
-  published
     /// <summary>Document thumbnail as defined by sender</summary>
     [Alias('thumb')]
-    property Thumb: TtgPhotoSize read FThumb write FThumb;
+    Thumb: TtgPhotoSize;
     /// <summary>Optional. Original filename as defined by sender</summary>
     [Alias('file_name')]
-    property FileName: String read FFileName write FFileName;
+    FileName: String;
     /// <summary>Optional. MIME type of the file as defined by sender</summary>
     [Alias('mime_type')]
-    property MimeType: String read FMimeType write FMimeType;
+    MimeType: String;
+    destructor Destroy; override;
   End;
 
   /// <summary>This object represents a sticker.</summary>
@@ -1618,8 +1574,8 @@ end;
 
 destructor TtgChatMember.Destroy;
 begin
-  if Assigned(Fuser) then
-    FreeAndNil(Fuser);
+  if Assigned(user) then
+    FreeAndNil(user);
   inherited;
 end;
 
@@ -1627,8 +1583,8 @@ end;
 
 destructor TtgMessageEntity.Destroy;
 begin
-  if Assigned(Fuser) then
-    FreeAndNil(Fuser);
+  if Assigned(user) then
+    FreeAndNil(user);
   inherited;
 end;
 
@@ -1636,8 +1592,8 @@ end;
 
 destructor TtgDocument.Destroy;
 begin
-  if Assigned(FThumb) then
-    FreeAndNil(FThumb);
+  if Assigned(Thumb) then
+    FreeAndNil(Thumb);
   inherited;
 end;
 
