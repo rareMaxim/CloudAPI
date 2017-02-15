@@ -2,10 +2,18 @@ unit TelegAPi.Utils;
 
 interface
 
+uses
+  System.Net.Mime, System.Classes;
+
 Type
   TtgUtils = class
     Class Function IfThen<T>(Const Value: Boolean; IfTrue, IfFalse: T): T;
   end;
+
+  TtgTMultipartFormDataHelper = Class helper for TMultipartFormData
+    /// <summary>Add a form data Stream</summary>
+    procedure AddStream(const AFieldName: string; Data: TStream);
+  End;
 
   TCommandHelper = Class
   private
@@ -69,6 +77,13 @@ end;
 function TCommandHelper.ParamsToString: String;
 begin
   Result := string.Join(' ', Copy(FText, 1, Length(FText)));
+end;
+
+{ TtgTMultipartFormDataHelper }
+
+procedure TtgTMultipartFormDataHelper.AddStream(const AFieldName: string; Data: TStream);
+begin
+
 end;
 
 end.
