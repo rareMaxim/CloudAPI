@@ -544,12 +544,12 @@ type
       Const inline_message_id: string = ''): TArray<TtgGameHighScore>;
     constructor Create(AOwner: TComponent); overload; override;
     destructor Destroy; override;
+    property IsReceiving: Boolean read fIsReceiving write SetIsReceiving default False;
   published
     { x } property UploadTimeout: Integer read FUploadTimeout write FUploadTimeout default 60000;
     { x } property PollingTimeout: Integer read FPollingTimeout write FPollingTimeout default 1000;
     property MessageOffset: Integer read FMessageOffset write FMessageOffset default 0;
     /// <summary>Монитор слежки за обновлениями</summary>
-    property IsReceiving: Boolean read fIsReceiving write SetIsReceiving default False;
     property AllowedUpdates: TAllowedUpdates read fAllowedUpdates write fAllowedUpdates
       default UPDATES_ALLOWED_ALL;
     property Token: String read FToken write FToken;
@@ -768,7 +768,6 @@ begin
 
   if IsReceiving then
     IsReceiving := False;
-  FRecesiver.WaitFor;
   FRecesiver.Free;
   inherited;
 end;
@@ -1331,6 +1330,8 @@ end;
 
 procedure TTelegramBot.SetIsReceiving(const Value: Boolean);
 begin
+  if (csDesigning in ComponentState) then
+    Exit;
   if Value then
     FRecesiver.Start
   else
