@@ -58,353 +58,272 @@ const
 {$SCOPEDENUMS OFF}
 
 type
-{$M+}
 
   [Alias('User')]
   /// <summary> This object represents a Telegram user or bot.</summary>
   TtgUser = Class
-  private
-    FID: Integer;
-    FFirstName: String;
-    FLastName: String;
-    FUsername: String;
-  published
+  public
     /// <summary> Unique identifier for this user or bot </summary>
     [Alias('id')]
-    property ID: Integer read FID write FID;
+    ID: Integer;
     /// <summary>User‘s or bot’s first name</summary>
     [Alias('first_name')]
-    property FirstName: String read FFirstName write FFirstName;
+    FirstName: String;
     /// <summary>Optional. User‘s or bot’s last name</summary>
     [Alias('last_name')]
-    property LastName: String read FLastName write FLastName;
+    LastName: String;
     /// <summary>Optional. User‘s or bot’s username</summary>
     [Alias('username')]
-    property Username: String read FUsername write FUsername;
+    Username: String;
   End;
 
   /// <summary>This object contains information about one member of the chat.</summary>
   [Alias('ChatMember')]
   TtgChatMember = Class
-  private
-    Fstatus: String;
-    Fuser: TtgUser;
   public
-    destructor Destroy; override;
-  published
     /// <summary>Information about the user</summary>
     [Alias('user')]
-    property user: TtgUser read Fuser write Fuser;
+    user: TtgUser;
     /// <summary>The member's status in the chat. Can be “creator”, “administrator”, “member”, “left” or “kicked”</summary>
     [Alias('status')]
-    property status: String read Fstatus write Fstatus;
+    status: String;
+    destructor Destroy; override;
   End;
 
   /// <summary>This object represents a chat.</summary>
   [Alias('Chat')]
   TtgChat = Class
-  private
-    FID: Int64;
-    Ftype: String;
-    Ftitle: String;
-    FUsername: String;
-    Ffirst_name: String;
-    Flast_name: String;
-    Fall_members_are_administrators: Boolean;
-  published
+  public
     /// <summary>Unique identifier for this chat, not exceeding 1e13 by absolute value</summary>
     [Alias('id')]
-    property ID: Int64 read FID write FID;
+    ID: Int64;
     /// <summary> Type of chat, can be either “private”, “group”, “supergroup” or “channel”</summary>
     [Alias('type')]
-    property &type: String read Ftype write Ftype;
+    &type: String;
     /// <summary>Optional. Title, for channels and group chats </summary>
     [Alias('title')]
-    property title: String read Ftitle write Ftitle;
+    title: String;
     /// <summary>Optional. Username, for private chats and channels if available </summary>
     [Alias('username')]
-    property Username: String read FUsername write FUsername;
+    Username: String;
     /// <summary>Optional. First name of the other party in a private chat </summary>
     [Alias('first_name')]
-    property first_name: String read Ffirst_name write Ffirst_name;
+    first_name: String;
     /// <summary>Optional. Last name of the other party in a private chat </summary>
     [Alias('last_name')]
-    property last_name: String read Flast_name write Flast_name;
+    last_name: String;
     /// <summary>Optional. True if a group has ‘All Members Are Admins’ enabled.</summary>
     [Alias('all_members_are_administrators')]
-    property all_members_are_administrators: Boolean read Fall_members_are_administrators
-      write Fall_members_are_administrators;
+    all_members_are_administrators: Boolean;
   End;
 
   /// <summary>This object represents one special entity in a text message. For example, hashtags, usernames, URLs, etc.</summary>
   [Alias('MessageEntity')]
   TtgMessageEntity = Class
-  private
-    Ftype: String;
-    Foffset: Integer;
-    Flength: Integer;
-    Furl: String;
-    Fuser: TtgUser;
   public
-    destructor Destroy; override;
-  published
     /// <summary>Type of the entity. One of mention (@username), hashtag, bot_command, url, email, bold (bold text), italic (italic text), code (monowidth string), pre (monowidth block), text_link (for clickable text URLs), text_mention (for users without usernames)</summary>
     [Alias('type')]
-    property &type: String read Ftype write Ftype;
+    &type: String;
     /// <summary>Offset in UTF-16 code units to the start of the entity</summary>
     [Alias('offset')]
-    property offset: Integer read Foffset write Foffset;
+    offset: Integer;
     /// <summary>Length of the entity in UTF-16 code units</summary>
     [Alias('length')]
-    property length: Integer read Flength write Flength;
+    length: Integer;
     /// <summary>Optional. For “text_link” only, url that will be opened after user taps on the text</summary>
     [Alias('url')]
-    property url: String read Furl write Furl;
+    url: String;
     /// <summary>Optional. For “text_mention” only, the mentioned user</summary>
     [Alias('user')]
-    property user: TtgUser read Fuser write Fuser;
+    user: TtgUser;
+    destructor Destroy; override;
   End;
 
   /// <summary>This object represents a file ready to be downloaded. The file can be downloaded via the link https://api.telegram.org/file/bot<token>/<file_path>. It is guaranteed that the link will be valid for at least 1 hour. When the link expires, a new one can be requested by calling getFile. </summary>
   /// <remarks>Maximum file size to download is 20 MB </remarks>
   [Alias('File')]
   TtgFile = Class
-  private
-    FFileId: String;
-    FFileSize: Integer;
-    FFilePath: String;
   public
-  published
     /// <summary>Unique identifier for this file</summary>
     [Alias('file_id')]
-    property FileId: String read FFileId write FFileId;
+    FileId: String;
     /// <summary>Optional. File size, if known</summary>
     [Alias('file_size')]
-    property FileSize: Integer read FFileSize write FFileSize;
+    FileSize: Integer;
     /// <summary>File path. Use https://api.telegram.org/file/bot{token}/{file_path} to get the file.</summary>
     [Alias('file_path')]
-    property FilePath: String read FFilePath write FFilePath;
+    FilePath: String;
   End;
 
   /// <summary>This object represents an audio file to be treated as music by the Telegram clients.</summary>
   [Alias('Audio')]
   TtgAudio = Class(TtgFile)
-  private
-    FDuration: Integer;
-    FPerformer: String;
-    Ftitle: String;
-    FMimeType: String;
-  published
+  public
     /// <summary>Duration of the audio in seconds as defined by sender</summary>
     [Alias('duration')]
-    property Duration: Integer read FDuration write FDuration;
+    Duration: Integer;
     /// <summary>Performer of the audio as defined by sender or by audio tags</summary>
     [Alias('performer')]
-    property Performer: String read FPerformer write FPerformer;
+    Performer: String;
     /// <summary>Title of the audio as defined by sender or by audio tags</summary>
     [Alias('title')]
-    property title: String read Ftitle write Ftitle;
+    title: String;
     /// <summary>Optional. MIME type of the file as defined by sender</summary>
     [Alias('mime_type')]
-    property MimeType: String read FMimeType write FMimeType;
+    MimeType: String;
   End;
 
   /// <summary>This object represents one size of a photo or a file/sticker thumbnail.</summary>
   /// <remarks>A missing thumbnail for a file (or sticker) is presented as an empty object.</remarks>
   [Alias('PhotoSize')]
   TtgPhotoSize = Class(TtgFile)
-  private
-    FWidth: Integer;
-    FHeight: Integer;
-  published
+  public
     /// <summary>Photo width</summary>
     [Alias('width')]
-    property Width: Integer read FWidth write FWidth;
+    Width: Integer;
     /// <summary>Photo height</summary>
     [Alias('Height')]
-    property Height: Integer read FHeight write FHeight;
+    Height: Integer;
   End;
 
   /// <summary>This object represents a general file (as opposed to photos, voice messages and audio files).</summary>
   [Alias('Document')]
   TtgDocument = Class(TtgFile)
-  private
-    FThumb: TtgPhotoSize;
-    FFileName: String;
-    FMimeType: String;
   public
-    destructor Destroy; override;
-  published
     /// <summary>Document thumbnail as defined by sender</summary>
     [Alias('thumb')]
-    property Thumb: TtgPhotoSize read FThumb write FThumb;
+    Thumb: TtgPhotoSize;
     /// <summary>Optional. Original filename as defined by sender</summary>
     [Alias('file_name')]
-    property FileName: String read FFileName write FFileName;
+    FileName: String;
     /// <summary>Optional. MIME type of the file as defined by sender</summary>
     [Alias('mime_type')]
-    property MimeType: String read FMimeType write FMimeType;
+    MimeType: String;
+    destructor Destroy; override;
   End;
 
   /// <summary>This object represents a sticker.</summary>
   [Alias('Sticker')]
   TtgSticker = Class(TtgFile)
-  private
-    FWidth: Integer;
-    FHeight: Integer;
-    FThumb: TtgPhotoSize;
-    Femoji: String;
   public
-    destructor Destroy; override;
-  published
     /// <summary>Sticker width</summary>
     [Alias('width')]
-    property Width: Integer read FWidth write FWidth;
+    Width: Integer;
     /// <summary>Sticker height</summary>
     [Alias('width')]
-    property Height: Integer read FHeight write FHeight;
+    Height: Integer;
     /// <summary>Sticker thumbnail in .webp or .jpg format</summary>
     [Alias('thumb')]
-    property Thumb: TtgPhotoSize read FThumb write FThumb;
+    Thumb: TtgPhotoSize;
     /// <summary>Optional. Emoji associated with the sticker</summary>
     [Alias('emoji')]
-    property emoji: String read Femoji write Femoji;
+    emoji: String;
+    destructor Destroy; override;
   End;
 
   /// <summary>This object represents a video file.</summary>
   [Alias('Video')]
   TtgVideo = Class(TtgFile)
-  private
-    FWidth: Integer;
-    FHeight: Integer;
-    FDuration: Integer;
-    FThumb: TtgPhotoSize;
-    FMimeType: String;
   public
-    destructor Destroy; override;
-  published
     /// <summary>Video width as defined by sender</summary>
     [Alias('width')]
-    property Width: Integer read FWidth write FWidth;
+    Width: Integer;
     /// <summary>Video height as defined by sender</summary>
     [Alias('height')]
-    property Height: Integer read FHeight write FHeight;
+    Height: Integer;
     /// <summary>Duration of the video in seconds as defined by sender</summary>
     [Alias('duration')]
-    property Duration: Integer read FDuration write FDuration;
+    Duration: Integer;
     /// <summary>Video thumbnail</summary>
     [Alias('thumb')]
-    property Thumb: TtgPhotoSize read FThumb write FThumb;
+    Thumb: TtgPhotoSize;
     /// <summary>Optional. Mime type of a file as defined by sender</summary>
     [Alias('mime_type')]
-    property MimeType: String read FMimeType write FMimeType;
+    MimeType: String;
+    destructor Destroy; override;
   End;
 
   /// <summary>This object represents a voice note.</summary>
   [Alias('Voice')]
   TtgVoice = Class(TtgFile)
-  private
-    FDuration: Integer;
-    FMimeType: String;
-  published
+  public
     /// <summary>Duration of the audio in seconds as defined by sender</summary>
     [Alias('duration')]
-    property Duration: Integer read FDuration write FDuration;
+    Duration: Integer;
     /// <summary>Optional. MIME type of the file as defined by sender</summary>
     [Alias('mime_type')]
-    property MimeType: String read FMimeType write FMimeType;
+    MimeType: String;
   End;
 
   /// <summary>This object represents a phone contact.</summary>
   [Alias('Contact')]
   TtgContact = Class
-  private
-    FPhoneNumber: String;
-    FFirstName: String;
-    FLastName: String;
-    FUserId: Integer;
-  published
+  public
     /// <summary>Contact's phone number</summary>
     [Alias('phone_number')]
-    property PhoneNumber: String read FPhoneNumber write FPhoneNumber;
+    PhoneNumber: String;
     /// <summary>Contact's first name </summary>
     [Alias('first_name')]
-    property FirstName: String read FFirstName write FFirstName;
+    FirstName: String;
     /// <summary>Optional. Contact's last name</summary>
     [Alias('last_name')]
-    property LastName: String read FLastName write FLastName;
+    LastName: String;
     /// <summary>Optional. Contact's user identifier in Telegram </summary>
     [Alias('user_id')]
-    property UserId: Integer read FUserId write FUserId;
+    UserId: Integer;
   End;
 
   /// <summary>This object represents a point on the map.</summary>
   [Alias('Location')]
   TtgLocation = Class
-  private
-    FLongitude: Single;
-    FLatitude: Single;
-  published
+  public
     /// <summary>Longitude as defined by sender</summary>
     [Alias('longitude')]
-    property Longitude: Single read FLongitude write FLongitude;
+    Longitude: Single;
     /// <summary>Latitude as defined by sender</summary>
     [Alias('latitude')]
-    property Latitude: Single read FLatitude write FLatitude;
+    Latitude: Single;
   End;
 
   /// <summary>This object represents a venue.</summary>
   [Alias('Venue')]
   TtgVenue = Class
-  private
-    FLocation: TtgLocation;
-    Ftitle: String;
-    FAddress: String;
-    FFoursquareId: String;
   public
-    destructor Destroy; override;
-  published
     /// <summary>Venue location</summary>
     [Alias('location')]
-    property Location: TtgLocation read FLocation write FLocation;
+    Location: TtgLocation;
     /// <summary>Title of the result</summary>
     [Alias('title')]
-    property title: String read Ftitle write Ftitle;
+    title: String;
     /// <summary>Address of the venue </summary>
     [Alias('address')]
-    property Address: String read FAddress write FAddress;
+    Address: String;
     /// <summary> Optional. Foursquare identifier of the venue</summary>
     [Alias('foursquare_id')]
-    property FoursquareId: String read FFoursquareId write FFoursquareId;
+    FoursquareId: String;
+    destructor Destroy; override;
   End;
 
   /// <summary>You can provide an animation for your game so that it looks stylish in chats (check out Lumberjack for an example). This object represents an animation file to be displayed in the message containing a game.</summary>
   [Alias('Animation')]
   TtgAnimation = Class
-  private
-    Ffile_id: String;
-    FThumb: TtgPhotoSize;
-    Ffile_name: String;
-    Fmime_type: String;
-    Ffile_size: Integer;
   public
-    destructor Destroy; override;
-  published
     /// <summary>Unique file identifier</summary>
     [Alias('file_id')]
-    property file_id: String read Ffile_id write Ffile_id;
+    file_id: String;
     /// <summary>Optional. Animation thumbnail as defined by sender</summary>
     [Alias('thumb')]
-    property Thumb: TtgPhotoSize read FThumb write FThumb;
+    Thumb: TtgPhotoSize;
     /// <summary>Optional. Original animation filename as defined by sender</summary>
     [Alias('file_name')]
-    property file_name: String read Ffile_name write Ffile_name;
+    file_name: String;
     /// <summary>Optional. MIME type of the file as defined by sender</summary>
     [Alias('mime_type')]
-    property mime_type: String read Fmime_type write Fmime_type;
+    mime_type: String;
     /// <summary>Optional. File size</summary>
     [Alias('file_size')]
-    property file_size: Integer read Ffile_size write Ffile_size;
+    file_size: Integer;
+    destructor Destroy; override;
   End;
 
   /// <summary>
@@ -412,372 +331,280 @@ type
   /// </summary>
   [Alias('Game')]
   TtgGameHighScore = Class
-  private
-    Fposition: Integer;
-    Fuser: TtgUser;
-    Fscore: Integer;
   public
-    destructor Destroy; override;
-  published
     /// <summary>
     /// Position in high score table for the game
     /// </summary>
-    property position: Integer read Fposition write Fposition;
+    position: Integer;
     /// <summary>
     /// User
     /// </summary>
-    property user: TtgUser read Fuser write Fuser;
+    user: TtgUser;
     /// <summary>
     /// Score
     /// </summary>
-    property score: Integer read Fscore write Fscore;
+    score: Integer;
+    destructor Destroy; override;
   End;
 
   /// <summary>This object represents a game. Use BotFather to create and edit games, their short names will act as unique identifiers.</summary>
   [Alias('Game')]
   TtgGame = Class
-  private
-    Ftitle: String;
-    Fdescription: String;
-    Fphoto: TArray<TtgPhotoSize>;
-    Ftext: String;
-    Ftext_entities: TArray<TtgMessageEntity>;
-    Fanimation: TtgAnimation;
   public
-    destructor Destroy; override;
-  published
     /// <summary>Title of the game</summary>
     [Alias('title')]
-    property title: String read Ftitle write Ftitle;
+    title: String;
     /// <summary>Description of the game</summary>
     [Alias('description')]
-    property description: String read Fdescription write Fdescription;
+    description: String;
     /// <summary>Photo that will be displayed in the game message in chats.</summary>
     [Alias('photo')]
-    property photo: TArray<TtgPhotoSize> read Fphoto write Fphoto;
+    photo: TArray<TtgPhotoSize>;
     /// <summary>Optional. Brief description of the game or high scores included in the game message. Can be automatically edited to include current high scores for the game when the bot calls setGameScore, or manually edited using editMessageText. 0-4096 characters.</summary>
     [Alias('text')]
-    property text: String read Ftext write Ftext;
+    text: String;
     /// <summary>Optional. Special entities that appear in text, such as usernames, URLs, bot commands, etc.</summary>
     [Alias('text_entities')]
-    property text_entities: TArray<TtgMessageEntity> read Ftext_entities write Ftext_entities;
+    text_entities: TArray<TtgMessageEntity>;
     /// <summary>Optional. Animation that will be displayed in the game message in chats. Upload via BotFather</summary>
     [Alias('animation')]
-    property animation: TtgAnimation read Fanimation write Fanimation;
+    animation: TtgAnimation;
+    destructor Destroy; override;
   End;
 
   /// <summary>This object represents a message.</summary>
   [Alias('Message')]
   TtgMessage = Class
-  private
-    FMessageId: Integer;
-    FFrom: TtgUser;
-    FDate: Integer;
-    FChat: TtgChat;
-    FForwardFrom: TtgUser;
-    FForwardDate: Integer;
-    FReplyToMessage: TtgMessage;
-    Ftext: String;
-    FAudio: TtgAudio;
-    FDocument: TtgDocument;
-    Fphoto: TArray<TtgPhotoSize>;
-    FSticker: TtgSticker;
-    FVideo: TtgVideo;
-    FVoice: TtgVoice;
-    FCaption: String;
-    FContact: TtgContact;
-    FLocation: TtgLocation;
-    FVenue: TtgVenue;
-    FNewChatMember: TtgUser;
-    FLeftChatMember: TtgUser;
-    FNewChatTitle: String;
-    FNewChatPhoto: TArray<TtgPhotoSize>;
-    FDeleteChatPhoto: Boolean;
-    FGroupChatCreated: Boolean;
-    FSupergroupChatCreated: Boolean;
-    FChannelChatCreated: Boolean;
-    FMigrateToChatId: Int64;
-    FMigrateFromChatId: Int64;
-    FPinnedMessage: TtgMessage;
-    Fentities: TArray<TtgMessageEntity>;
-    Fforward_from_chat: TtgChat;
-    FEditDate: Integer;
-    Fgame: TtgGame;
   public
-    destructor Destroy; override;
-  published
     /// <summary>Unique message identifier</summary>
     [Alias('message_id')]
-    property MessageId: Integer read FMessageId write FMessageId;
+    MessageId: Integer;
     /// <summary>Sender</summary>
     [Alias('from')]
-    property From: TtgUser read FFrom write FFrom;
+    From: TtgUser;
     /// <summary>Date the message was sent in Unix time</summary>
     [Alias('date')]
-    property Date: Integer read FDate write FDate;
+    Date: Integer;
     /// <summary>Conversation the message belongs to</summary>
     [Alias('chat')]
-    property Chat: TtgChat read FChat write FChat;
+    Chat: TtgChat;
     /// <summary>Optional. For forwarded messages, sender of the original message</summary>
     [Alias('forward_from')]
-    property ForwardFrom: TtgUser read FForwardFrom write FForwardFrom;
+    ForwardFrom: TtgUser;
     /// <summary>Optional. For messages forwarded from a channel, information about the original channel</summary>
     [Alias('forward_from_chat')]
-    property forward_from_chat: TtgChat read Fforward_from_chat write Fforward_from_chat;
+    forward_from_chat: TtgChat;
     /// <summary>Optional. For forwarded messages, date the original message was sent in Unix time</summary>
     [Alias('forward_date')]
-    property ForwardDate: Integer read FForwardDate write FForwardDate;
+    ForwardDate: Integer;
     /// <summary>Optional. For replies, the original message. Note that the Message object in this field will not contain further reply_to_message fields even if it itself is a reply.</summary>
     [Alias('reply_to_message')]
-    property ReplyToMessage: TtgMessage read FReplyToMessage write FReplyToMessage;
+    ReplyToMessage: TtgMessage;
     /// <summary>Optional. Date the message was last edited in Unix time.</summary>
     [Alias('edit_date')]
-    property EditDate: Integer read FEditDate write FEditDate;
+    EditDate: Integer;
     /// <summary>Optional. For text messages, the actual UTF-8 text of the message</summary>
     [Alias('text')]
-    property text: String read Ftext write Ftext;
+    text: String;
     /// <summary>Optional. For text messages, special entities like usernames, URLs, bot commands, etc. that appear in the text</summary>
     [Alias('entities')]
-    property entities: TArray<TtgMessageEntity> read Fentities write Fentities;
+    entities: TArray<TtgMessageEntity>;
     /// <summary>Optional. Message is an audio file, information about the file</summary>
     [Alias('audio')]
-    property Audio: TtgAudio read FAudio write FAudio;
+    Audio: TtgAudio;
     /// <summary>Optional. Message is a general file, information about the file</summary>
     [Alias('document')]
-    property Document: TtgDocument read FDocument write FDocument;
+    Document: TtgDocument;
     /// <summary>Optional. Message is a game, information about the game. </summary>
     [Alias('game')]
-    property game: TtgGame read Fgame write Fgame;
+    game: TtgGame;
     /// <summary>Optional. Message is a photo, available sizes of the photo</summary>
     [Alias('photo')]
-    property photo: TArray<TtgPhotoSize> read Fphoto write Fphoto;
+    photo: TArray<TtgPhotoSize>;
     /// <summary>Optional. Message is a sticker, information about the sticker</summary>
     [Alias('sticker')]
-    property Sticker: TtgSticker read FSticker write FSticker;
+    Sticker: TtgSticker;
     /// <summary>Optional. Message is a video, information about the video</summary>
     [Alias('video')]
-    property Video: TtgVideo read FVideo write FVideo;
+    Video: TtgVideo;
     /// <summary>Message is a voice message, information about the file</summary>
     [Alias('voice')]
-    property Voice: TtgVoice read FVoice write FVoice;
+    Voice: TtgVoice;
     /// <summary>Optional. Caption for the document, photo or video, 0-200 characters</summary>
     [Alias('caption')]
-    property Caption: String read FCaption write FCaption;
+    Caption: String;
     /// <summary>Optional. Message is a shared contact, information about the contact</summary>
     [Alias('contact')]
-    property Contact: TtgContact read FContact write FContact;
+    Contact: TtgContact;
     /// <summary>Optional. Message is a shared location, information about the location</summary>
     [Alias('location')]
-    property Location: TtgLocation read FLocation write FLocation;
+    Location: TtgLocation;
     /// <summary>Optional. Message is a venue, information about the venue</summary>
     [Alias('venue')]
-    property Venue: TtgVenue read FVenue write FVenue;
+    Venue: TtgVenue;
     /// <summary>Optional. A new member was added to the group, information about them (this member may be bot itself)</summary>
     [Alias('new_chat_member')]
-    property NewChatMember: TtgUser read FNewChatMember write FNewChatMember;
+    NewChatMember: TtgUser;
     /// <summary>Optional. A member was removed from the group, information about them (this member may be bot itself)</summary>
     [Alias('left_chat_member')]
-    property LeftChatMember: TtgUser read FLeftChatMember write FLeftChatMember;
+    LeftChatMember: TtgUser;
     /// <summary>Optional. A group title was changed to this value</summary>
     [Alias('new_chat_title')]
-    property NewChatTitle: String read FNewChatTitle write FNewChatTitle;
+    NewChatTitle: String;
     /// <summary>Optional. A group photo was change to this value</summary>
     [Alias('new_chat_photo')]
-    property NewChatPhoto: TArray<TtgPhotoSize> read FNewChatPhoto write FNewChatPhoto;
+    NewChatPhoto: TArray<TtgPhotoSize>;
     /// <summary>Optional. Informs that the group photo was deleted</summary>
     [Alias('delete_chat_photo')]
-    property DeleteChatPhoto: Boolean read FDeleteChatPhoto write FDeleteChatPhoto;
+    DeleteChatPhoto: Boolean;
     /// <summary>Optional. Informs that the group has been created</summary>
     [Alias('group_chat_created')]
-    property GroupChatCreated: Boolean read FGroupChatCreated write FGroupChatCreated;
+    GroupChatCreated: Boolean;
     /// <summary>Optional. Service message: the supergroup has been created</summary>
     [Alias('supergroup_chat_created')]
-    property SupergroupChatCreated: Boolean read FSupergroupChatCreated
-      write FSupergroupChatCreated;
+    SupergroupChatCreated: Boolean;
     /// <summary> Optional. Service message: the channel has been created </summary>
     [Alias('channel_chat_created')]
-    property ChannelChatCreated: Boolean read FChannelChatCreated write FChannelChatCreated;
+    ChannelChatCreated: Boolean;
     /// <summary> Optional. The group has been migrated to a supergroup with the specified identifier</summary>
     [Alias('migrate_to_chat_id')]
-    property MigrateToChatId: Int64 read FMigrateToChatId write FMigrateToChatId;
+    MigrateToChatId: Int64;
     /// <summary>Optional. The supergroup has been migrated from a group with the specified identifier</summary>
     [Alias('migrate_from_chat_id')]
-    property MigrateFromChatId: Int64 read FMigrateFromChatId write FMigrateFromChatId;
+    MigrateFromChatId: Int64;
     /// <summary>Optional. Specified message was pinned. Note that the Message object in this field will not contain further reply_to_message fields even if it is itself a reply</summary>
     [Alias('pinned_message')]
-    property PinnedMessage: TtgMessage read FPinnedMessage write FPinnedMessage;
+    PinnedMessage: TtgMessage;
+    destructor Destroy; override;
   End;
 
   /// <summary>This object represent a user's profile pictures.</summary>
   [Alias('UserProfilePhotos')]
   TtgUserProfilePhotos = Class
-  private
-    Ftotal_count: Integer;
-    Fphotos: TArray<TArray<TtgPhotoSize>>;
-  published
+  public
     /// <summary>Total number of profile pictures the target user has</summary>
     [Alias('total_count')]
-    property total_count: Integer read Ftotal_count write Ftotal_count;
+    total_count: Integer;
     /// <summary>Requested profile pictures (in up to 4 sizes each)</summary>
     [Alias('photos')]
-    property photos: TArray < TArray < TtgPhotoSize >> read Fphotos write Fphotos;
+    photos: TArray<TArray<TtgPhotoSize>>;
   End;
 
   /// <summary>This object represents one button of the reply keyboard. For simple text buttons String can be used instead of this object to specify text of the button. Optional fields are mutually exclusive.</summary>
   /// <remarks>request_contact and request_location options will only work in Telegram versions released after 9 April, 2016. Older clients will ignore them.</remarks>
   [Alias('KeyboardButton')]
   TtgKeyboardButton = Class
-  private
-    Ftext: String;
-    Frequest_contact: Boolean;
-    Frequest_location: Boolean;
-  protected
-    function GetFullText: String; virtual;
   Public
-    constructor Create(Const text: String; request_contact: Boolean = False;
-      request_location: Boolean = False); overload;
-  published
-    [Alias('text')]
-    property FullText: String read GetFullText;
     /// <summary>Text of the button. If none of the optional fields are used, it will be sent to the bot as a message when the button is pressed</summary>
-    [DISABLE]
-    property text: String read Ftext write Ftext;
+    [Alias('text')]
+    text: String;
     /// <summary>Optional. If True, the user's phone number will be sent as a contact when the button is pressed. Available in private chats only</summary>
     [Alias('request_contact')]
-    property request_contact: Boolean read Frequest_contact write Frequest_contact;
+    request_contact: Boolean;
     /// <summary>Optional. If True, the user's current location will be sent when the button is pressed. Available in private chats only</summary>
     [Alias('request_location')]
-    property request_location: Boolean read Frequest_location write Frequest_location;
+    request_location: Boolean;
+    constructor Create(Const text: String; request_contact: Boolean = False;
+      request_location: Boolean = False); overload;
   End;
 
   TtgReplyMarkup = Class
-  private
-    Fselective: Boolean;
-  published
+  Public
     /// <summary>Optional. Use this parameter if you want to force reply from specific users only. Targets: 1) users that are @mentioned in the text of the Message object; 2) if the bot's message is a reply (has reply_to_message_id), sender of the original message.</summary>
     [Alias('selective')]
-    property selective: Boolean read Fselective write Fselective;
+    selective: Boolean;
   End;
 
   /// <summary>Upon receiving a message with this object, Telegram clients will display a reply interface to the user (act as if the user has selected the bot‘s message and tapped ’Reply'). This can be extremely useful if you want to create user-friendly step-by-step interfaces without having to sacrifice privacy mode. </summary>
   [Alias('ForceReply')]
   TtgForceReply = Class(TtgReplyMarkup)
-  private
-    Fforce_reply: Boolean;
-  published
+  Public
     /// <summary>Shows reply interface to the user, as if they manually selected the bot‘s message and tapped ’Reply'</summary>
     [Alias('force_reply')]
-    property force_reply: Boolean read Fforce_reply write Fforce_reply;
+    force_reply: Boolean;
   End;
 
   /// <summary>Upon receiving a message with this object, Telegram clients will hide the current custom keyboard and display the default letter-keyboard. By default, custom keyboards are displayed until a new keyboard is sent by a bot. An exception is made for one-time keyboards that are hidden immediately after the user presses a button (see ReplyKeyboardMarkup).</summary>
   [Alias('ReplyKeyboardHide')]
   TtgReplyKeyboardHide = Class(TtgReplyMarkup)
-  private
-    Fhide_keyboard: Boolean;
-  published
+  Public
     /// <summary>Requested profile pictures (in up to 4 sizes each)</summary>
     [Alias('hide_keyboard')]
-    property hide_keyboard: Boolean read Fhide_keyboard write Fhide_keyboard;
+    hide_keyboard: Boolean;
   End;
 
   /// <summary>This object represents a custom keyboard with reply options (see Introduction to bots for details and examples).</summary>
   [Alias('ReplyKeyboardMarkup')]
   TtgReplyKeyboardMarkup = Class(TtgReplyMarkup)
-  private
-    Fresize_keyboard: Boolean;
-    FKeyBoard: TArray<TArray<TtgKeyboardButton>>;
-    Fone_time_keyboard: Boolean;
-  published
+  Public
     /// <summary>Array of button rows, each represented by an Array of KeyboardButton objects</summary>
     [Alias('keyboard')]
-    property KeyBoard: TArray < TArray < TtgKeyboardButton >> read FKeyBoard write FKeyBoard;
+    KeyBoard: TArray<TArray<TtgKeyboardButton>>;
     /// <summary>Optional. Requests clients to resize the keyboard vertically for optimal fit (e.g., make the keyboard smaller if there are just two rows of buttons). Defaults to false, in which case the custom keyboard is always of the same height as the app's standard keyboard.</summary>
     [Alias('resize_keyboard')]
-    property resize_keyboard: Boolean read Fresize_keyboard write Fresize_keyboard;
+    resize_keyboard: Boolean;
     /// <summary>Optional. Requests clients to hide the keyboard as soon as it's been used. The keyboard will still be available, but clients will automatically display the usual letter-keyboard in the chat – the user can press a special button in the input field to see the custom keyboard again. Defaults to false.</summary>
     [Alias('one_time_keyboard')]
-    property one_time_keyboard: Boolean read Fone_time_keyboard write Fone_time_keyboard;
+    one_time_keyboard: Boolean;
   End;
 
   /// <summary>This object represents one button of an inline keyboard. You must use exactly one of the optional fields.</summary>
   [Alias('InlineKeyboardButton')]
   TtgInlineKeyboardButton = Class
-  private
-    Ftext: String;
-    Furl: String;
-    Fcallback_data: String;
-    Fswitch_inline_query: String;
-  protected
-    Function GetFullText: String; virtual;
-  published
-    property FullText: String read GetFullText;
+  public
     /// <summary>Label text on the button</summary>
     // [DISABLE]
     [Alias('text')]
-    property text: String read Ftext write Ftext;
+    text: String;
     /// <summary>Optional. HTTP url to be opened when button is pressed</summary>
     [Alias('url')]
-    property url: String read Furl write Furl;
+    url: String;
     /// <summary>Optional. Data to be sent in a callback query to the bot when button is pressed, 1-64 bytes</summary>
     [Alias('callback_data')]
-    property callback_data: String read Fcallback_data write Fcallback_data;
+    callback_data: String;
     /// <summary>Optional. If set, pressing the button will prompt the user to select one of their chats, open that chat and insert the bot‘s username and the specified inline query in the input field. Can be empty, in which case just the bot’s username will be inserted.</summary>
     /// <remarks>Note: This offers an easy way for users to start using your bot in inline mode when they are currently in a private chat with it. Especially useful when combined with switch_pm… actions – in this case the user will be automatically returned to the chat they switched from, skipping the chat selection screen.</remarks>
     [Alias('switch_inline_query')]
-    property switch_inline_query: String read Fswitch_inline_query write Fswitch_inline_query;
+    switch_inline_query: String;
   End;
 
   /// <summary>This object represents an inline keyboard that appears right next to the message it belongs to.</summary>
   /// <remarks>Warning: Inline keyboards are currently being tested and are only available in one-on-one chats (i.e., user-bot or user-user in the case of inline bots).</remarks>
   [Alias('InlineKeyboardMarkup')]
   TtgInlineKeyboardMarkup = Class(TtgReplyMarkup)
-  private
-    Finline_keyboard: TArray<TArray<TtgInlineKeyboardButton>>;
-  published
+  public
     /// <summary>Array of button rows, each represented by an Array of InlineKeyboardButton objects</summary>
     [Alias('inline_keyboard')]
-    property inline_keyboard: TArray < TArray < TtgInlineKeyboardButton >> read Finline_keyboard
-      write Finline_keyboard;
+    inline_keyboard: TArray<TArray<TtgInlineKeyboardButton>>;
   End;
 
   [Alias('')]
   TtgApiResponse<T> = Class
-  private
-    FOk: Boolean;
-    FResultObject: T;
-    FMessage: String;
-    FCode: Integer;
   public
-  published
     /// <summary> Gets a value indicating whether the request was successful.</summary>
     [Alias('ok')]
-    property Ok: Boolean read FOk write FOk;
+    Ok: Boolean;
     /// <summary>Gets the result object.</summary>
     /// <value>The result object.</value>
     [Alias('result')]
-    property ResultObject: T read FResultObject write FResultObject;
+    ResultObject: T;
     /// <summary>Gets the error message.</summary>
     /// <value>The error message.</value>
     [Alias('description')]
-    property Message: String read FMessage write FMessage;
+    Message: String;
     /// <summary>Gets the error code.</summary>
     /// <value>The error code</value>
     [Alias('error_code')]
-    property Code: Integer read FCode write FCode;
+    Code: Integer;
   End;
 
   [Alias('FileToSend')]
   TtgFileToSend = Class
-  private
-    FFileName: String;
-    FContent: TStream;
   public
+    FileName: String;
+    Content: TStream;
     constructor Create(Const FileName: String; Const Content: TStream);
     destructor Destroy; override;
-  published
-    property FileName: String read FFileName write FFileName;
-    property Content: TStream read FContent write FContent;
   end;
 
   /// <summary>This object represents an incoming inline query. When the user sends an empty query, your bot could return some default or trending results.</summary>
@@ -860,43 +687,33 @@ type
   /// <remarks>Only one of the optional parameters can be present in any given update.</remarks>
   [Alias('Update')]
   TtgUpdate = Class
-  private
-    FID: Integer;
-    FMessage: TtgMessage;
-    FInlineQuery: TtgInlineQuery;
-    FChosenInlineResult: TtgChosenInlineResult;
-    FCallbackQuery: TtgCallbackQuery;
-    FEditedMessage: TtgMessage;
-    Fchannel_post: TtgMessage;
-    Fedited_channel_post: TtgMessage;
   public
     destructor Destroy; override;
-  published
+  public
     /// <summary>The update‘s unique identifier. Update identifiers start from a certain positive number and increase sequentially. This ID becomes especially handy if you’re using Webhooks, since it allows you to ignore repeated updates or to restore the correct update sequence, should they get out of order. </summary>
     [Alias('update_id')]
-    property ID: Integer read FID write FID;
+    ID: Integer;
     /// <summary>Optional. New incoming message of any kind — text, photo, sticker, etc.</summary>
     [Alias('message')]
-    property Message: TtgMessage read FMessage write FMessage;
+    Message: TtgMessage;
     /// <summary>Optional. New version of a message that is known to the bot and was edited</summary>
     [Alias('edited_message')]
-    property EditedMessage: TtgMessage read FEditedMessage write FEditedMessage;
+    EditedMessage: TtgMessage;
     /// <summary>Optional. New incoming channel post of any kind — text, photo, sticker, etc.</summary>
     [Alias('channel_post')]
-    property channel_post: TtgMessage read Fchannel_post write Fchannel_post;
+    channel_post: TtgMessage;
     /// <summary>Optional. New version of a channel post that is known to the bot and was edited</summary>
     [Alias('edited_channel_post')]
-    property edited_channel_post: TtgMessage read Fedited_channel_post write Fedited_channel_post;
+    edited_channel_post: TtgMessage;
     /// <summary>Optional. New incoming inline query</summary>
     [Alias('inline_query')]
-    property InlineQuery: TtgInlineQuery read FInlineQuery write FInlineQuery;
+    InlineQuery: TtgInlineQuery;
     /// <summary>Optional. The result of a inline query that was chosen by a user and sent to their chat partner</summary>
     [Alias('chosen_inline_result')]
-    property ChosenInlineResult: TtgChosenInlineResult read FChosenInlineResult
-      write FChosenInlineResult;
+    ChosenInlineResult: TtgChosenInlineResult;
     /// <summary>Optional. New incoming callback query</summary>
     [Alias('callback_query')]
-    property CallbackQuery: TtgCallbackQuery read FCallbackQuery write FCallbackQuery;
+    CallbackQuery: TtgCallbackQuery;
   End;
 
   /// <summary>This object represents the content of a message to be sent as a result of an inline query.</summary>
@@ -1342,32 +1159,25 @@ type
   /// <summary>Represents a contact with a phone number. By default, this contact will be sent by the user. Alternatively, you can use input_message_content to send a message with the specified content instead of the contact.</summary>
   [Alias('InlineQueryResultContact')]
   TtgInlineQueryResultContact = Class
-  private
-    Fthumb_width: Integer;
-    Fthumb_url: String;
-    Fthumb_height: Integer;
-    Fphone_number: String;
-    Ffirst_name: String;
-    Flast_name: String;
-  published
+  public
     /// <summary>Contact's phone number</summary>
     [Alias('phone_number')]
-    property phone_number: String read Fphone_number write Fphone_number;
+    phone_number: String;
     /// <summary>Contact's first name</summary>
     [Alias('first_name')]
-    property first_name: String read Ffirst_name write Ffirst_name;
+    first_name: String;
     /// <summary>Optional. Contact's last name</summary>
     [Alias('last_name')]
-    property last_name: String read Flast_name write Flast_name;
+    last_name: String;
     /// <summary>Optional. Url of the thumbnail for the result</summary>
     [Alias('thumb_url')]
-    property thumb_url: String read Fthumb_url write Fthumb_url;
+    thumb_url: String;
     /// <summary>Optional. Thumbnail width</summary>
     [Alias('thumb_width')]
-    property thumb_width: Integer read Fthumb_width write Fthumb_width;
+    thumb_width: Integer;
     /// <summary>Optional. Thumbnail height</summary>
     [Alias('thumb_height')]
-    property thumb_height: Integer read Fthumb_height write Fthumb_height;
+    thumb_height: Integer;
   End;
 
   TtgInlineQueryResultCached = Class(TtgInlineQueryResult)
@@ -1376,201 +1186,162 @@ type
   /// <summary>Represents a link to a photo stored on the Telegram servers. By default, this photo will be sent by the user with an optional caption. Alternatively, you can use input_message_content to send a message with the specified content instead of the photo.</summary>
   [Alias('InlineQueryResultCachedPhoto')]
   TtgInlineQueryResultCachedPhoto = Class(TtgInlineQueryResultCached)
-  private
-    Fphoto_file_id: String;
-    Ftitle: String;
-    Fdescription: String;
-    FCaption: String;
-  published
+  public
     /// <summary>A valid file identifier of the photo</summary>
     [Alias('photo_file_id')]
-    property photo_file_id: String read Fphoto_file_id write Fphoto_file_id;
+    photo_file_id: String;
     /// <summary>Optional. Title for the result</summary>
     [Alias('title')]
-    property title: String read Ftitle write Ftitle;
+    title: String;
     /// <summary>Optional. Short description of the result</summary>
     [Alias('description')]
-    property description: String read Fdescription write Fdescription;
+    description: String;
     /// <summary>Optional. Caption of the photo to be sent, 0-200 characters</summary>
     [Alias('caption')]
-    property Caption: String read FCaption write FCaption;
+    Caption: String;
   End;
 
   /// <summary>Represents a link to an animated GIF file stored on the Telegram servers. By default, this animated GIF file will be sent by the user with an optional caption. Alternatively, you can use input_message_content to send a message with specified content instead of the animation.</summary>
   [Alias('InlineQueryResultCachedGif')]
   TtgInlineQueryResultCachedGif = Class(TtgInlineQueryResultCached)
-  private
-    Fgif_file_id: String;
-    Ftitle: String;
-    FCaption: String;
-  published
+  public
     /// <summary>A valid file identifier for the GIF file</summary>
     [Alias('gif_file_id')]
-    property gif_file_id: String read Fgif_file_id write Fgif_file_id;
+    gif_file_id: String;
     /// <summary>Optional. Title for the result</summary>
     [Alias('title')]
-    property title: String read Ftitle write Ftitle;
+    title: String;
     /// <summary>Optional. Caption of the GIF file to be sent, 0-200 characters</summary>
     [Alias('caption')]
-    property Caption: String read FCaption write FCaption;
+    Caption: String;
   End;
 
   /// <summary>Represents a link to a video animation (H.264/MPEG-4 AVC video without sound) stored on the Telegram servers. By default, this animated MPEG-4 file will be sent by the user with an optional caption. Alternatively, you can use input_message_content to send a message with the specified content instead of the animation.</summary>
   [Alias('InlineQueryResultCachedMpeg4Gif')]
   TtgInlineQueryResultCachedMpeg4Gif = Class(TtgInlineQueryResultCached)
-  private
-    Fmpeg4_file_id: String;
-    Ftitle: String;
-    FCaption: String;
-  published
+  public
     /// <summary>A valid file identifier for the MP4 file</summary>
     [Alias('mpeg4_file_id')]
-    property mpeg4_file_id: String read Fmpeg4_file_id write Fmpeg4_file_id;
+    mpeg4_file_id: String;
     /// <summary>Optional. Title for the result</summary>
     [Alias('title')]
-    property title: String read Ftitle write Ftitle;
+    title: String;
     /// <summary>Optional. Caption of the MPEG-4 file to be sent, 0-200 characters</summary>
     [Alias('caption')]
-    property Caption: String read FCaption write FCaption;
+    Caption: String;
   End;
 
   /// <summary>Represents a link to a sticker stored on the Telegram servers. By default, this sticker will be sent by the user. Alternatively, you can use input_message_content to send a message with the specified content instead of the sticker.</summary>
   [Alias('InlineQueryResultCachedSticker')]
   TtgInlineQueryResultCachedSticker = Class(TtgInlineQueryResultCached)
-  private
-    Fsticker_file_id: String;
-  published
+  public
     /// <summary>A valid file identifier of the sticker</summary>
     [Alias('sticker_file_id')]
-    property sticker_file_id: String read Fsticker_file_id write Fsticker_file_id;
+    sticker_file_id: String;
   End;
 
   /// <summary>Represents a link to a file stored on the Telegram servers. By default, this file will be sent by the user with an optional caption. Alternatively, you can use input_message_content to send a message with the specified content instead of the file. Currently, only pdf-files and zip archives can be sent using this method.</summary>
   [Alias('InlineQueryResultCachedDocument')]
   TTgInlineQueryResultCachedDocument = Class(TtgInlineQueryResultCached)
-  private
-    Ftitle: String;
-    Fdocument_file_id: String;
-    Fdescription: String;
-    FCaption: String;
-  published
+  public
     /// <summary>Title for the result</summary>
     [Alias('title')]
-    property title: String read Ftitle write Ftitle;
+    title: String;
     /// <summary>A valid file identifier for the file</summary>
     [Alias('document_file_id')]
-    property document_file_id: String read Fdocument_file_id write Fdocument_file_id;
+    document_file_id: String;
     /// <summary>Optional. Short description of the result</summary>
     [Alias('description')]
-    property description: String read Fdescription write Fdescription;
+    description: String;
     /// <summary>Optional. Caption of the document to be sent, 0-200 characters</summary>
     [Alias('caption')]
-    property Caption: String read FCaption write FCaption;
+    Caption: String;
   End;
 
   /// <summary>Represents a link to a video file stored on the Telegram servers. By default, this video file will be sent by the user with an optional caption. Alternatively, you can use input_message_content to send a message with the specified content instead of the video.</summary>
   [Alias('InlineQueryResultCachedVideo')]
   TtgInlineQueryResultCachedVideo = Class(TtgInlineQueryResultCached)
-  private
-    FCaption: String;
-    Fdescription: String;
-    Fvideo_file_id: String;
-    Ftitle: String;
-  published
+  public
     /// <summary>Title for the result</summary>
     [Alias('title')]
-    property title: String read Ftitle write Ftitle;
+    title: String;
     /// <summary>A valid file identifier for the video</summary>
     [Alias('video_file_id')]
-    property video_file_id: String read Fvideo_file_id write Fvideo_file_id;
+    video_file_id: String;
     /// <summary>Optional. Short description of the result</summary>
     [Alias('description')]
-    property description: String read Fdescription write Fdescription;
+    description: String;
     /// <summary>Optional. Caption of the video to be sent, 0-200 characters</summary>
     [Alias('caption')]
-    property Caption: String read FCaption write FCaption;
+    Caption: String;
   End;
 
   /// <summary>Represents a link to a voice message stored on the Telegram servers. By default, this voice message will be sent by the user. Alternatively, you can use input_message_content to send a message with the specified content instead of the voice message.</summary>
   [Alias('InlineQueryResultCachedVoice')]
   TtgInlineQueryResultCachedVoice = Class(TtgInlineQueryResultCached)
-  private
-    Fvoice_file_id: String;
-    Ftitle: String;
-  published
+  public
     /// <summary>A valid file identifier for the voice message</summary>
     [Alias('voice_file_id')]
-    property voice_file_id: String read Fvoice_file_id write Fvoice_file_id;
+    voice_file_id: String;
     /// <summary>Voice message title</summary>
     [Alias('title')]
-    property title: String read Ftitle write Ftitle;
+    title: String;
   End;
 
   /// <summary>Represents a link to an mp3 audio file stored on the Telegram servers. By default, this audio file will be sent by the user. Alternatively, you can use input_message_content to send a message with the specified content instead of the audio.</summary>
   [Alias('InlineQueryResultCachedAudio')]
   TtgInlineQueryResultCachedAudio = Class(TtgInlineQueryResultCached)
-  private
-    Faudio_file_id: String;
-  published
+  public
     /// <summary>A valid file identifier for the audio file</summary>
     [Alias('audio_file_id')]
-    property audio_file_id: String read Faudio_file_id write Faudio_file_id;
+    audio_file_id: String;
   End;
 
   /// <summary>
   /// Contains information about the current status of a webhook.
   /// </summary>
   TtgWebhookInfo = Class
-  private
-    Furl: String;
-    Fhas_custom_certificate: Boolean;
-    Fpending_update_count: Integer;
-    Flast_error_date: Integer;
-    Flast_error_message: String;
-    Fmax_connections: Integer;
-    Fallowed_updates: TArray<String>;
-  published
+  public
     /// <summary>
     /// Webhook URL, may be empty if webhook is not set up
     /// </summary>
     [Alias('url')]
-    property url: String read Furl write Furl;
+    url: String;
     /// <summary>
     /// True, if a custom certificate was provided for webhook certificate
     /// checks
     /// </summary>
     [Alias('has_custom_certificate')]
-    property has_custom_certificate: Boolean read Fhas_custom_certificate
-      write Fhas_custom_certificate;
+    has_custom_certificate: Boolean;
     /// <summary>
     /// Number of updates awaiting delivery
     /// </summary>
     [Alias('pending_update_count')]
-    property pending_update_count: Integer read Fpending_update_count write Fpending_update_count;
+    pending_update_count: Integer;
     /// <summary>
     /// Optional. Unix time for the most recent error that happened when
     /// trying to deliver an update via webhook
     /// </summary>
     [Alias('last_error_date')]
-    property last_error_date: Integer read Flast_error_date write Flast_error_date;
+    last_error_date: Integer;
     /// <summary>
     /// Optional. Error message in human-readable format for the most recent
     /// error that happened when trying to deliver an update via webhook
     /// </summary>
     [Alias('last_error_message')]
-    property last_error_message: String read Flast_error_message write Flast_error_message;
+    last_error_message: String;
     /// <summary>
     /// Optional. Maximum allowed number of simultaneous HTTPS connections to
     /// the webhook for update delivery
     /// </summary>
     [Alias('max_connections')]
-    property max_connections: Integer read Fmax_connections write Fmax_connections;
+    max_connections: Integer;
     /// <summary>
     /// Optional. A list of update types the bot is subscribed to. Defaults
     /// to all update types
     /// </summary>
     [Alias('allowed_updates')]
-    property allowed_updates: TArray<String> read Fallowed_updates write Fallowed_updates;
+    allowed_updates: TArray<String>;
   End;
 
 implementation
@@ -1582,13 +1353,13 @@ uses
 
 constructor TtgFileToSend.Create(const FileName: String; const Content: TStream);
 begin
-  Self.FFileName := FileName;
-  Self.FContent := Content;
+  Self.FileName := FileName;
+  Self.Content := Content;
 end;
 
 destructor TtgFileToSend.Destroy;
 begin
-  FContent.Free;
+  Content.Free;
   inherited;
 end;
 
@@ -1597,29 +1368,17 @@ end;
 constructor TtgKeyboardButton.Create(Const text: String;
   request_contact, request_location: Boolean);
 begin
-  Ftext := text;
-  Frequest_contact := request_contact;
-  Frequest_location := request_location;
-end;
-
-function TtgKeyboardButton.GetFullText: String;
-begin
-  Result := text;
-end;
-
-{ TtgInlineKeyboardButton }
-
-function TtgInlineKeyboardButton.GetFullText: String;
-begin
-  Result := text;
+  Self.text := text;
+  Self.request_contact := request_contact;
+  Self.request_location := request_location;
 end;
 
 { TtgChatMember }
 
 destructor TtgChatMember.Destroy;
 begin
-  if Assigned(Fuser) then
-    FreeAndNil(Fuser);
+  if Assigned(user) then
+    FreeAndNil(user);
   inherited;
 end;
 
@@ -1627,8 +1386,8 @@ end;
 
 destructor TtgMessageEntity.Destroy;
 begin
-  if Assigned(Fuser) then
-    FreeAndNil(Fuser);
+  if Assigned(user) then
+    FreeAndNil(user);
   inherited;
 end;
 
@@ -1636,8 +1395,8 @@ end;
 
 destructor TtgDocument.Destroy;
 begin
-  if Assigned(FThumb) then
-    FreeAndNil(FThumb);
+  if Assigned(Thumb) then
+    FreeAndNil(Thumb);
   inherited;
 end;
 
@@ -1645,8 +1404,8 @@ end;
 
 destructor TtgSticker.Destroy;
 begin
-  if Assigned(FThumb) then
-    FreeAndNil(FThumb);
+  if Assigned(Thumb) then
+    FreeAndNil(Thumb);
   inherited;
 end;
 
@@ -1654,8 +1413,8 @@ end;
 
 destructor TtgVideo.Destroy;
 begin
-  if Assigned(FThumb) then
-    FreeAndNil(FThumb);
+  if Assigned(Thumb) then
+    FreeAndNil(Thumb);
   inherited;
 end;
 
@@ -1663,8 +1422,8 @@ end;
 
 destructor TtgVenue.Destroy;
 begin
-  if Assigned(FLocation) then
-    FreeAndNil(FLocation);
+  if Assigned(Location) then
+    FreeAndNil(Location);
   inherited;
 end;
 
@@ -1674,50 +1433,50 @@ destructor TtgMessage.Destroy;
 var
   I: Integer;
 begin
-  if Assigned(FFrom) then
-    FreeAndNil(FFrom);
-  if Assigned(FChat) then
-    FreeAndNil(FChat);
-  if Assigned(FForwardFrom) then
-    FreeAndNil(FForwardFrom);
-  if Assigned(Fforward_from_chat) then
-    FreeAndNil(Fforward_from_chat);
-  if Assigned(FReplyToMessage) then
-    FreeAndNil(FReplyToMessage);
-  if Assigned(FAudio) then
-    FreeAndNil(FAudio);
-  if Assigned(FDocument) then
-    FreeAndNil(FDocument);
-  if Assigned(FSticker) then
-    FreeAndNil(FSticker);
-  if Assigned(FVideo) then
-    FreeAndNil(FVideo);
-  if Assigned(FVoice) then
-    FreeAndNil(FVoice);
-  if Assigned(FContact) then
-    FreeAndNil(FContact);
-  if Assigned(FLocation) then
-    FreeAndNil(FLocation);
-  if Assigned(FVenue) then
-    FreeAndNil(FVenue);
-  if Assigned(FNewChatMember) then
-    FreeAndNil(FNewChatMember);
-  if Assigned(FLeftChatMember) then
-    FreeAndNil(FLeftChatMember);
-  if Assigned(FPinnedMessage) then
-    FreeAndNil(FPinnedMessage);
-  if Assigned(Fforward_from_chat) then
-    FreeAndNil(Fforward_from_chat);
-  if Assigned(FNewChatMember) then
-    FreeAndNil(FNewChatMember);
-  for I := Low(Fentities) to High(Fentities) do
-    FreeAndNil(Fentities[I]);
-  SetLength(Fentities, 0);
-  for I := Low(FNewChatPhoto) to High(NewChatPhoto) do
-    FreeAndNil(FNewChatPhoto[I]);
-  SetLength(FNewChatPhoto, 0);
-  if Assigned(Fgame) then
-    FreeAndNil(Fgame);
+  if Assigned(From) then
+    FreeAndNil(From);
+  if Assigned(Chat) then
+    FreeAndNil(Chat);
+  if Assigned(ForwardFrom) then
+    FreeAndNil(ForwardFrom);
+  if Assigned(forward_from_chat) then
+    FreeAndNil(forward_from_chat);
+  if Assigned(ReplyToMessage) then
+    FreeAndNil(ReplyToMessage);
+  if Assigned(Audio) then
+    FreeAndNil(Audio);
+  if Assigned(Document) then
+    FreeAndNil(Document);
+  if Assigned(Sticker) then
+    FreeAndNil(Sticker);
+  if Assigned(Video) then
+    FreeAndNil(Video);
+  if Assigned(Voice) then
+    FreeAndNil(Voice);
+  if Assigned(Contact) then
+    FreeAndNil(Contact);
+  if Assigned(Location) then
+    FreeAndNil(Location);
+  if Assigned(Venue) then
+    FreeAndNil(Venue);
+  if Assigned(NewChatMember) then
+    FreeAndNil(NewChatMember);
+  if Assigned(LeftChatMember) then
+    FreeAndNil(LeftChatMember);
+  if Assigned(PinnedMessage) then
+    FreeAndNil(PinnedMessage);
+  if Assigned(forward_from_chat) then
+    FreeAndNil(forward_from_chat);
+  if Assigned(NewChatMember) then
+    FreeAndNil(NewChatMember);
+  for I := Low(entities) to High(entities) do
+    FreeAndNil(entities[I]);
+  SetLength(entities, 0);
+  for I := Low(NewChatPhoto) to High(NewChatPhoto) do
+    FreeAndNil(NewChatPhoto[I]);
+  SetLength(NewChatPhoto, 0);
+  if Assigned(game) then
+    FreeAndNil(game);
   inherited;
 end;
 
@@ -1725,20 +1484,20 @@ end;
 
 destructor TtgUpdate.Destroy;
 begin
-  if Assigned(FMessage) then
-    FreeAndNil(FMessage);
-  if Assigned(FEditedMessage) then
-    FreeAndNil(FEditedMessage);
-  if Assigned(Fchannel_post) then
-    FreeAndNil(Fchannel_post);
-  if Assigned(Fedited_channel_post) then
-    FreeAndNil(Fedited_channel_post);
-  if Assigned(FInlineQuery) then
-    FreeAndNil(FInlineQuery);
-  if Assigned(FChosenInlineResult) then
-    FreeAndNil(FChosenInlineResult);
-  if Assigned(FCallbackQuery) then
-    FreeAndNil(FCallbackQuery);
+  if Assigned(Message) then
+    FreeAndNil(Message);
+  if Assigned(EditedMessage) then
+    FreeAndNil(EditedMessage);
+  if Assigned(channel_post) then
+    FreeAndNil(channel_post);
+  if Assigned(edited_channel_post) then
+    FreeAndNil(edited_channel_post);
+  if Assigned(InlineQuery) then
+    FreeAndNil(InlineQuery);
+  if Assigned(ChosenInlineResult) then
+    FreeAndNil(ChosenInlineResult);
+  if Assigned(CallbackQuery) then
+    FreeAndNil(CallbackQuery);
   inherited;
 end;
 
@@ -1755,8 +1514,8 @@ end;
 
 destructor TtgAnimation.Destroy;
 begin
-  if Assigned(FThumb) then
-    FreeAndNil(FThumb);
+  if Assigned(Thumb) then
+    FreeAndNil(Thumb);
   inherited;
 end;
 
@@ -1766,14 +1525,14 @@ destructor TtgGame.Destroy;
 var
   I: Integer;
 begin
-  for I := Low(Fphoto) to High(Fphoto) do
-    if Assigned(Fphoto[I]) then
-      FreeAndNil(Fphoto[I]);
-  for I := Low(Ftext_entities) to High(Ftext_entities) do
-    if Assigned(Ftext_entities[I]) then
-      FreeAndNil(Ftext_entities[I]);
-  if Assigned(Fanimation) then
-    FreeAndNil(Fanimation);
+  for I := Low(photo) to High(photo) do
+    if Assigned(photo[I]) then
+      FreeAndNil(photo[I]);
+  for I := Low(text_entities) to High(text_entities) do
+    if Assigned(text_entities[I]) then
+      FreeAndNil(text_entities[I]);
+  if Assigned(animation) then
+    FreeAndNil(animation);
   inherited;
 end;
 
@@ -1781,8 +1540,8 @@ end;
 
 destructor TtgGameHighScore.Destroy;
 begin
-  if Assigned(Fuser) then
-    FreeAndNil(Fuser);
+  if Assigned(user) then
+    FreeAndNil(user);
   inherited;
 end;
 

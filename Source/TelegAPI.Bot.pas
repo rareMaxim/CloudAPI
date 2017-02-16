@@ -83,17 +83,46 @@ type
     /// <remarks>1. This method will not work if an outgoing webhook is set up. 2. In order to avoid getting duplicate updates, recalculate offset after each server response.</remarks>
     Function getUpdates(Const offset: Integer = 0; Const limit: Integer = 100;
       Const timeout: Integer = 0; allowed_updates: TAllowedUpdates = []): TArray<TtgUpdate>;
-    /// <summary>Use this method to specify a url and receive incoming updates via an outgoing webhook. Whenever there is an update for the bot, we will send an HTTPS POST request to the specified url, containing a JSON-serialized Update. In case of an unsuccessful request, we will give up after a reasonable amount of attempts.</summary>
-    /// <param name="url">HTTPS url to send updates to. Use an empty string to remove webhook integration</param>
-    /// <param name="certificate">Upload your public key certificate so that the root certificate in use can be checked. See our self-signed guide for details.</param>
+    /// <summary>
+    /// Use this method to specify a url and receive incoming updates via an
+    /// outgoing webhook. Whenever there is an update for the bot, we will
+    /// send an HTTPS POST request to the specified url, containing a
+    /// JSON-serialized Update. In case of an unsuccessful request, we will
+    /// give up after a reasonable amount of attempts.
+    /// </summary>
+    /// <param name="url">
+    /// HTTPS url to send updates to. Use an empty string to remove webhook
+    /// integration
+    /// </param>
+    /// <param name="certificate">
+    /// Upload your public key certificate so that the root certificate in
+    /// use can be checked. See our self-signed guide for details.
+    /// </param>
+    /// <param name="max_connections">
+    /// Maximum allowed number of simultaneous HTTPS connections to the
+    /// webhook for update delivery, 1-100. Defaults to 40. Use lower values
+    /// to limit the load on your bot‘s server, and higher values to increase
+    /// your bot’s throughput.
+    /// </param>
     /// <remarks>
-    /// <para>Notes</para>
-    /// <para>1. You will not be able to receive updates using getUpdates for as long as an outgoing webhook is set up.</para>
-    /// <para>2. To use a self-signed certificate, you need to upload your public key certificate using certificate parameter. Please upload as InputFile, sending a String will not work.</para>
-    /// <para>3. Ports currently supported for Webhooks: 443, 80, 88, 8443.</para>
+    /// <para>
+    /// Notes
+    /// </para>
+    /// <para>
+    /// 1. You will not be able to receive updates using getUpdates for
+    /// as long as an outgoing webhook is set up.
+    /// </para>
+    /// <para>
+    /// 2. To use a self-signed certificate, you need to upload your
+    /// public key certificate using certificate parameter. Please upload
+    /// as InputFile, sending a String will not work.
+    /// </para>
+    /// <para>
+    /// 3. Ports currently supported for Webhooks: 443, 80, 88, 8443.
+    /// </para>
     /// </remarks>
     Procedure setWebhook(const url: String; certificate: TtgFileToSend = nil;
-      allowed_updates: TAllowedUpdates = []);
+      max_connections: Integer = 40; allowed_updates: TAllowedUpdates = UPDATES_ALLOWED_ALL);
     /// <summary>
     /// Use this method to remove webhook integration if you decide to switch
     /// back to getUpdates.
@@ -515,12 +544,12 @@ type
       Const inline_message_id: string = ''): TArray<TtgGameHighScore>;
     constructor Create(AOwner: TComponent); overload; override;
     destructor Destroy; override;
+    property IsReceiving: Boolean read fIsReceiving write SetIsReceiving default False;
   published
     { x } property UploadTimeout: Integer read FUploadTimeout write FUploadTimeout default 60000;
     { x } property PollingTimeout: Integer read FPollingTimeout write FPollingTimeout default 1000;
     property MessageOffset: Integer read FMessageOffset write FMessageOffset default 0;
     /// <summary>Монитор слежки за обновлениями</summary>
-    property IsReceiving: Boolean read fIsReceiving write SetIsReceiving default False;
     property AllowedUpdates: TAllowedUpdates read fAllowedUpdates write fAllowedUpdates
       default UPDATES_ALLOWED_ALL;
     property Token: String read FToken write FToken;
@@ -739,7 +768,6 @@ begin
 
   if IsReceiving then
     IsReceiving := False;
-  FRecesiver.WaitFor;
   FRecesiver.Free;
   inherited;
 end;
@@ -1302,6 +1330,8 @@ end;
 
 procedure TTelegramBot.SetIsReceiving(const Value: Boolean);
 begin
+  if (csDesigning in ComponentState) then
+    Exit;
   if Value then
     FRecesiver.Start
   else
@@ -1310,7 +1340,7 @@ begin
 end;
 
 procedure TTelegramBot.setWebhook(const url: String; certificate: TtgFileToSend;
-  allowed_updates: TAllowedUpdates);
+  max_connections: Integer; allowed_updates: TAllowedUpdates);
 var
   Parameters: TDictionary<String, TValue>;
 begin
@@ -1318,6 +1348,7 @@ begin
   try
     Parameters.Add('url', url);
     Parameters.Add('certificate', certificate);
+    Parameters.Add('max_connections', max_connections);
     Parameters.Add('allowed_updates', AllowedUpdatesToString(allowed_updates));
     API<Boolean>('setWebhook', Parameters);
   finally
