@@ -50,8 +50,10 @@ begin
       Begin
         mmo1.Lines.Add(Updates[I].Message.text);
         if Updates[I].Message.text = 'Hi' then
+        Begin
           LMessage := FBot.sendMessage(Updates[I].Message.Chat.ID, '😍😘😊😁😂😬😀😜😠😡');
-        FreeAndNil(LMessage);
+          FreeAndNil(LMessage);
+        End;
       End;
     End;
   finally

@@ -82,7 +82,8 @@ type
     /// <param name="timeout">Timeout in seconds for long polling. Defaults to 0, i.e. usual short polling</param>
     /// <remarks>1. This method will not work if an outgoing webhook is set up. 2. In order to avoid getting duplicate updates, recalculate offset after each server response.</remarks>
     Function getUpdates(Const offset: Integer = 0; Const limit: Integer = 100;
-      Const timeout: Integer = 0; allowed_updates: TAllowedUpdates = []): TArray<TtgUpdate>;
+      Const timeout: Integer = 0; allowed_updates: TAllowedUpdates = UPDATES_ALLOWED_ALL)
+      : TArray<TtgUpdate>;
     /// <summary>
     /// Use this method to specify a url and receive incoming updates via an
     /// outgoing webhook. Whenever there is an update for the bot, we will
@@ -769,6 +770,7 @@ begin
   Self.PollingTimeout := 0;
   if IsReceiving then
     IsReceiving := False;
+  FRecesiver.WaitFor;
   FRecesiver.Free; // Ну почему так долго?!
   inherited;
 end;
@@ -1379,7 +1381,7 @@ Begin
     Sleep(fBot.PollingTimeout);
     if (Terminated) or (NOT fBot.IsReceiving) then
       Break;
-    LUpdates := fBot.getUpdates(Bot.MessageOffset, 100, Bot.PollingTimeout, Bot.AllowedUpdates);
+    LUpdates := fBot.getUpdates(Bot.MessageOffset);
     if Length(LUpdates) = 0 then
       Continue;
     Bot.MessageOffset := LUpdates[High(LUpdates)].Id + 1;
