@@ -4,7 +4,7 @@ interface
 
 uses
   XSuperObject,
-  System.Classes;
+  System.Classes, System.SysUtils;
 
 Type
 {$SCOPEDENUMS ON}
@@ -58,6 +58,8 @@ const
 {$SCOPEDENUMS OFF}
 
 type
+  ETelegramException = class(Exception);
+  ETelegramTokenEmpty = class(ETelegramException);
 
   [Alias('User')]
   /// <summary> This object represents a Telegram user or bot.</summary>
@@ -1345,9 +1347,6 @@ type
   End;
 
 implementation
-
-uses
-  System.SysUtils;
 
 { TtgApiFileToSend }
 

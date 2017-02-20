@@ -583,6 +583,8 @@ var
   lURL_TELEG: String;
   LParamToDate: TMultipartFormData;
 begin
+  if Self.Token.IsEmpty then
+    raise ETelegramTokenEmpty.Create('Token is Empty!');
   lHttp := THTTPClient.Create;
   try
     lURL_TELEG := 'https://api.telegram.org/bot' + FToken + '/' + Method;
@@ -765,10 +767,9 @@ end;
 destructor TTelegramBot.Destroy;
 begin
   Self.PollingTimeout := 0;
-
   if IsReceiving then
     IsReceiving := False;
-  FRecesiver.Free;
+  FRecesiver.Free; // Ну почему так долго?!
   inherited;
 end;
 
@@ -1373,13 +1374,12 @@ end;
 procedure TtgRecesiver.Execute;
 var
   LUpdates: TArray<TtgUpdate>;
-  LLastUpdateID: Int64;
 Begin
   repeat
     Sleep(fBot.PollingTimeout);
     if (Terminated) or (NOT fBot.IsReceiving) then
       Break;
-    LUpdates := fBot.getUpdates(Bot.MessageOffset, 100, 0, Bot.AllowedUpdates);
+    LUpdates := fBot.getUpdates(Bot.MessageOffset, 100, Bot.PollingTimeout, Bot.AllowedUpdates);
     if Length(LUpdates) = 0 then
       Continue;
     Bot.MessageOffset := LUpdates[High(LUpdates)].Id + 1;
