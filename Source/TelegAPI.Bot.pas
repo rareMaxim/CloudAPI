@@ -1333,11 +1333,11 @@ procedure TTelegramBot.SetIsReceiving(const Value: Boolean);
 begin
   if (csDesigning in ComponentState) then
     Exit;
+  fIsReceiving := Value;
   if Value then
     FRecesiver.Start
   else
     FRecesiver.Terminate;
-  fIsReceiving := Value;
 end;
 
 procedure TTelegramBot.setWebhook(const url: String; certificate: TtgFileToSend;
