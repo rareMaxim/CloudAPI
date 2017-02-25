@@ -1046,25 +1046,24 @@ begin
       { TODO -oOwner -cGeneral : Отправка файлов }
       Result.AddFile(parameter.Key, parameter.Value.AsType<TtgFileToSend>.FileName);
     End
+    else if parameter.Value.IsType<string> then
+    Begin
+      if NOT parameter.Value.AsString.IsEmpty then
+        Result.AddField(parameter.Key, parameter.Value.AsString)
+    End
+    else if parameter.Value.IsType<Int64> then
+    Begin
+      if parameter.Value.AsInt64 <> 0 then
+        Result.AddField(parameter.Key, IntToStr(parameter.Value.AsInt64));
+    End
+    else if parameter.Value.IsType<Boolean> then
+    Begin
+      if parameter.Value.AsBoolean then
+        Result.AddField(parameter.Key, TtgUtils.IfThen<String>(parameter.Value.AsBoolean,
+          'true', 'false'))
+    End
     else
-    begin
-      if parameter.Value.IsType<string> then
-      Begin
-        if NOT parameter.Value.AsString.IsEmpty then
-          Result.AddField(parameter.Key, parameter.Value.AsString)
-      End
-      else if parameter.Value.IsType<Int64> then
-      Begin
-        if parameter.Value.AsInt64 <> 0 then
-          Result.AddField(parameter.Key, IntToStr(parameter.Value.AsInt64));
-      End
-      else if parameter.Value.IsType<Boolean> then
-      Begin
-        if parameter.Value.AsBoolean then
-          Result.AddField(parameter.Key, TtgUtils.IfThen<String>(parameter.Value.AsBoolean,
-            'true', 'false'))
-      End;
-    end;
+      raise ETelegramUnknownData.Create('Check parametr type ' + parameter.Value.ToString);
   end;
 end;
 

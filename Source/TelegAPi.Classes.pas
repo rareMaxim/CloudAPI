@@ -60,6 +60,8 @@ const
 type
   ETelegramException = class(Exception);
   ETelegramTokenEmpty = class(ETelegramException);
+  ETelegramDataConvert = class(ETelegramException);
+  ETelegramUnknownData = class(ETelegramDataConvert);
 
   [Alias('User')]
   /// <summary> This object represents a Telegram user or bot.</summary>
@@ -131,7 +133,7 @@ type
     offset: Integer;
     /// <summary>Length of the entity in UTF-16 code units</summary>
     [Alias('length')]
-    length: Integer;
+    Length: Integer;
     /// <summary>Optional. For “text_link” only, url that will be opened after user taps on the text</summary>
     [Alias('url')]
     url: String;
@@ -548,6 +550,15 @@ type
     /// <summary>Optional. Requests clients to hide the keyboard as soon as it's been used. The keyboard will still be available, but clients will automatically display the usual letter-keyboard in the chat – the user can press a special button in the input field to see the custom keyboard again. Defaults to false.</summary>
     [Alias('one_time_keyboard')]
     one_time_keyboard: Boolean;
+  private
+    function GetRowCount: Integer;
+    procedure SetRowCount(const Value: Integer);
+    function GetColCount: Integer;
+    procedure SetColCount(const Value: Integer);
+  public
+    destructor Destroy; override;
+    property RowCount: Integer read GetRowCount write SetRowCount;
+    property ColCount: Integer read GetColCount write SetColCount;
   End;
 
   /// <summary>This object represents one button of an inline keyboard. You must use exactly one of the optional fields.</summary>
@@ -1542,6 +1553,43 @@ begin
   if Assigned(user) then
     FreeAndNil(user);
   inherited;
+end;
+
+{ TtgReplyKeyboardMarkup }
+
+destructor TtgReplyKeyboardMarkup.Destroy;
+var
+  I, J: Integer;
+begin
+  for I := Low(KeyBoard) to High(KeyBoard) do
+    for J := Low(KeyBoard[I]) to High(KeyBoard[I]) do
+      KeyBoard[I, J].Free;
+  inherited;
+end;
+
+function TtgReplyKeyboardMarkup.GetColCount: Integer;
+begin
+  Result := 0;
+  if RowCount > 0 then
+    Result := Length(KeyBoard[0]);
+end;
+
+function TtgReplyKeyboardMarkup.GetRowCount: Integer;
+begin
+  Result := Length(KeyBoard)
+end;
+
+procedure TtgReplyKeyboardMarkup.SetColCount(const Value: Integer);
+var
+  I: Integer;
+begin
+  for I := Low(KeyBoard) to High(KeyBoard) do
+    SetLength(KeyBoard[I], Value);
+end;
+
+procedure TtgReplyKeyboardMarkup.SetRowCount(const Value: Integer);
+begin
+  SetLength(KeyBoard, Value);
 end;
 
 end.
