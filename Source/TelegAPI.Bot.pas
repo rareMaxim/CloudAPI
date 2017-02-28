@@ -1375,6 +1375,7 @@ end;
 procedure TtgRecesiver.Execute;
 var
   LUpdates: TArray<TtgUpdate>;
+  I: Integer;
 Begin
   repeat
     Sleep(fBot.PollingTimeout);
@@ -1384,11 +1385,14 @@ Begin
     if Length(LUpdates) = 0 then
       Continue;
     Bot.MessageOffset := LUpdates[High(LUpdates)].Id + 1;
+{$IFDEF NO_QUEUE}
+{$ELSE}
     TThread.Queue(Self,
       procedure
       var
         I: Integer;
       begin
+{$ENDIF}
         if Assigned(Bot.OnUpdates) and Assigned(LUpdates) then
           fBot.OnUpdates(Self, LUpdates);
         if Assigned(LUpdates) then
@@ -1397,7 +1401,10 @@ Begin
             FreeAndNil(LUpdates[I]) { .Free };
           LUpdates := nil;
         end;
+{$IFDEF NO_QUEUE}
+{$ELSE}
       end);
+{$ENDIF}
   until (Terminated) or (NOT Bot.IsReceiving);
 end;
 

@@ -1576,7 +1576,7 @@ end;
 
 function TtgReplyKeyboardMarkup.GetRowCount: Integer;
 begin
-  Result := Length(KeyBoard)
+  Result := Length(KeyBoard);
 end;
 
 procedure TtgReplyKeyboardMarkup.SetColCount(const Value: Integer);
