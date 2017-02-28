@@ -67,6 +67,7 @@ type
     fAllowedUpdates: TAllowedUpdates;
     procedure SetIsReceiving(const Value: Boolean);
     function GetVersionAPI: String;
+    procedure SetToken(const Value: String);
   protected
     /// <summary>Мастер-функция для запросов на сервак</summary>
     Function API<T>(Const Method: String; Parameters: TDictionary<String, TValue>): T;
@@ -553,7 +554,7 @@ type
     /// <summary>Монитор слежки за обновлениями</summary>
     property AllowedUpdates: TAllowedUpdates read fAllowedUpdates write fAllowedUpdates
       default UPDATES_ALLOWED_ALL;
-    property Token: String read FToken write FToken;
+    property Token: String read FToken write SetToken;
     property OnUpdates: TtgBotOnUpdates read FOnUpdates write FOnUpdates;
     property OnError: TtgBorOnError read FOnError write FOnError;
     property VersionAPI: String read GetVersionAPI;
@@ -597,18 +598,18 @@ begin
     End
     else
       lHttpResponse := lHttp.Get(lURL_TELEG);
-    if lHttpResponse.StatusCode <> 200 then
-    begin
-      if Assigned(OnError) then
-        OnError(Self, lHttpResponse.StatusCode, lHttpResponse.StatusText);
-      Exit;
-    end;
+    // if lHttpResponse.StatusCode <> 200 then
+    // begin
+    // if Assigned(OnError) then
+    // OnError(Self, lHttpResponse.StatusCode, lHttpResponse.StatusText);
+    // Exit;
+    // end;
     lApiResponse := TtgApiResponse<T>.FromJSON(lHttpResponse.ContentAsString);
     if Not lApiResponse.Ok then
     begin
       if Assigned(OnError) then
         OnError(Self, lApiResponse.Code, lApiResponse.Message);
-      Exit;
+      // Exit;
     end;
     Result := lApiResponse.ResultObject;
     lApiResponse.ResultObject := Default (T);
@@ -669,9 +670,8 @@ begin
     FreeAndNil(lApiResponse);
   end;
 end;
-{$ELSE}
-ААААА сложна
 {$ENDIF}
+
 { TTelegram }
 function TTelegramBot.AllowedUpdatesToString(allowed_updates: TAllowedUpdates): String;
 begin
@@ -690,10 +690,6 @@ begin
     Result := Result + '"chosen_inline_result"';
   if TAllowedUpdate.callback_query in allowed_updates then
     Result := Result + '"callback_query"';
-  // if TAllowedUpdate.callback_query in allowed_updates then
-  // Result := Result + '"edited_message"';
-  // if TAllowedUpdate.edited_message in allowed_updates then
-  // Result := Result + '"edited_message"';
   Result := Result + ']';
 end;
 
@@ -771,7 +767,7 @@ begin
   if IsReceiving then
     IsReceiving := False;
   FRecesiver.WaitFor;
-  FRecesiver.Free; // Ну почему так долго?!
+  FRecesiver.Free;
   inherited;
 end;
 
@@ -1341,6 +1337,11 @@ begin
     FRecesiver.Terminate;
 end;
 
+procedure TTelegramBot.SetToken(const Value: String);
+begin
+  FToken := Value;
+end;
+
 procedure TTelegramBot.setWebhook(const url: String; certificate: TtgFileToSend;
   max_connections: Integer; allowed_updates: TAllowedUpdates);
 var
@@ -1375,6 +1376,7 @@ end;
 procedure TtgRecesiver.Execute;
 var
   LUpdates: TArray<TtgUpdate>;
+  I: Integer;
 Begin
   repeat
     Sleep(fBot.PollingTimeout);
@@ -1384,11 +1386,14 @@ Begin
     if Length(LUpdates) = 0 then
       Continue;
     Bot.MessageOffset := LUpdates[High(LUpdates)].Id + 1;
+{$IFDEF NO_QUEUE}
+{$ELSE}
     TThread.Queue(Self,
       procedure
       var
         I: Integer;
       begin
+{$ENDIF}
         if Assigned(Bot.OnUpdates) and Assigned(LUpdates) then
           fBot.OnUpdates(Self, LUpdates);
         if Assigned(LUpdates) then
@@ -1397,7 +1402,10 @@ Begin
             FreeAndNil(LUpdates[I]) { .Free };
           LUpdates := nil;
         end;
+{$IFDEF NO_QUEUE}
+{$ELSE}
       end);
+{$ENDIF}
   until (Terminated) or (NOT Bot.IsReceiving);
 end;
 
