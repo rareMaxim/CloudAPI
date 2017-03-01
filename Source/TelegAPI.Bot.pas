@@ -39,10 +39,6 @@ Type
   End;
 {$ENDIF}
 
-  TtgBotOnUpdates = procedure(Sender: TObject; Updates: TArray<TtgUpdate>) of Object;
-  TtgBorOnError = procedure(Sender: TObject; Const Code: Integer; Const Message: String) of Object;
-
-type
   TTelegramBot = class;
 
   TtgRecesiver = Class(TThread)
@@ -53,6 +49,10 @@ type
   public
     property Bot: TTelegramBot read fBot write fBot;
   End;
+
+  TtgBotOnUpdates = procedure(Sender: TTelegramBot; Updates: TArray<TtgUpdate>) of Object;
+  TtgBorOnError = procedure(Sender: TTelegramBot; Const Code: Integer; Const Message: String)
+    of Object;
 
   TTelegramBot = Class(TComponent)
   private
@@ -740,9 +740,7 @@ end;
 constructor TTelegramBot.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
-  FRecesiver := TtgRecesiver.Create(True);
   AllowedUpdates := UPDATES_ALLOWED_ALL;
-  FRecesiver.Bot := Self;
   fIsReceiving := False;
   UploadTimeout := 60000;
   PollingTimeout := 1000;
@@ -766,8 +764,6 @@ begin
   Self.PollingTimeout := 0;
   if IsReceiving then
     IsReceiving := False;
-  FRecesiver.WaitFor;
-  FRecesiver.Free;
   inherited;
 end;
 
@@ -1332,9 +1328,16 @@ begin
     Exit;
   fIsReceiving := Value;
   if Value then
-    FRecesiver.Start
+  Begin
+    FRecesiver := TtgRecesiver.Create(True);
+    FRecesiver.Bot := Self;
+    FRecesiver.Start;
+  End
   else
+  Begin
     FRecesiver.Terminate;
+    FreeAndNil(FRecesiver);
+  End;
 end;
 
 procedure TTelegramBot.SetToken(const Value: String);
@@ -1379,8 +1382,8 @@ var
   I: Integer;
 Begin
   repeat
-    Sleep(fBot.PollingTimeout);
-    if (Terminated) or (NOT fBot.IsReceiving) then
+    Sleep(Bot.PollingTimeout);
+    if (Terminated) or (NOT Bot.IsReceiving) then
       Break;
     LUpdates := fBot.getUpdates(Bot.MessageOffset);
     if Length(LUpdates) = 0 then
@@ -1395,11 +1398,11 @@ Begin
       begin
 {$ENDIF}
         if Assigned(Bot.OnUpdates) and Assigned(LUpdates) then
-          fBot.OnUpdates(Self, LUpdates);
+          Bot.OnUpdates(Bot, LUpdates);
         if Assigned(LUpdates) then
         Begin
           for I := Low(LUpdates) to High(LUpdates) do
-            FreeAndNil(LUpdates[I]) { .Free };
+            FreeAndNil(LUpdates[I]);
           LUpdates := nil;
         end;
 {$IFDEF NO_QUEUE}
