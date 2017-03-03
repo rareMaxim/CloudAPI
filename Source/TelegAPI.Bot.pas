@@ -598,18 +598,11 @@ begin
     End
     else
       lHttpResponse := lHttp.Get(lURL_TELEG);
-    // if lHttpResponse.StatusCode <> 200 then
-    // begin
-    // if Assigned(OnError) then
-    // OnError(Self, lHttpResponse.StatusCode, lHttpResponse.StatusText);
-    // Exit;
-    // end;
     lApiResponse := TtgApiResponse<T>.FromJSON(lHttpResponse.ContentAsString);
     if Not lApiResponse.Ok then
     begin
       if Assigned(OnError) then
         OnError(Self, lApiResponse.Code, lApiResponse.Message);
-      // Exit;
     end;
     Result := lApiResponse.ResultObject;
     lApiResponse.ResultObject := Default (T);
@@ -1385,7 +1378,7 @@ Begin
     Sleep(Bot.PollingTimeout);
     if (Terminated) or (NOT Bot.IsReceiving) then
       Break;
-    LUpdates := fBot.getUpdates(Bot.MessageOffset);
+    LUpdates := fBot.getUpdates(Bot.MessageOffset, 100, 0, UPDATES_ALLOWED_ALL);
     if Length(LUpdates) = 0 then
       Continue;
     Bot.MessageOffset := LUpdates[High(LUpdates)].Id + 1;

@@ -16,8 +16,8 @@ type
   private
     { Private declarations }
     FBot: TTelegramBot;
-    procedure OnGiveMsg(Sender: TObject; Updates: TArray<TtgUpdate>);
-    procedure OnTgError(Sender: TObject; Const Code: Integer; Const Message: String);
+    procedure OnGiveMsg(Sender: TTelegramBot; Updates: TArray<TtgUpdate>);
+    procedure OnTgError(Sender: TTelegramBot; Const Code: Integer; Const Message: String);
   public
     { Public declarations }
     procedure DoSendKeyboard(Const ID: Int64);
@@ -51,7 +51,8 @@ Begin
     kb.RowCount := 2; // Кол-во рядов в клавиатуре
     kb.ColCount := 2; // Кол-во Столбцов в клавиатуре
     kb.KeyBoard[0] := [TtgKeyboardButton.Create('☺ Да'), TtgKeyboardButton.Create('😠 Нет')];
-    kb.KeyBoard[1] := [TtgKeyboardButton.Create('❤️Красный'), TtgKeyboardButton.Create('💚 Зеленый')];
+    kb.KeyBoard[1] := [TtgKeyboardButton.Create('❤️Красный'),
+      TtgKeyboardButton.Create('💚 Зеленый')];
     LMessage := FBot.sendMessage(ID, '1', TtgParseMode.Default, False, False, 0, kb);
     FreeAndNil(LMessage);
   finally
@@ -69,7 +70,7 @@ begin
   FBot.OnError := OnTgError;
 end;
 
-procedure TForm1.OnGiveMsg(Sender: TObject; Updates: TArray<TtgUpdate>);
+procedure TForm1.OnGiveMsg(Sender: TTelegramBot; Updates: TArray<TtgUpdate>);
 var
   I: Integer;
 begin
@@ -95,7 +96,7 @@ begin
   end;
 end;
 
-procedure TForm1.OnTgError(Sender: TObject; const Code: Integer; const Message: String);
+procedure TForm1.OnTgError(Sender: TTelegramBot; const Code: Integer; const Message: String);
 begin
   mmo1.Lines.Add('Error: ' + Code.ToString + ' ' + Message);
 end;
