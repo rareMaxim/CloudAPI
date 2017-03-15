@@ -13,10 +13,9 @@ Telega π - Библиотека для работы с Telegram Bot API в Delp
 
 Вы можете помочь проекту:
 
-* ** Созданием баг-репортов и запросов новых возможностей **
-
+* [Созданием баг-репортов и запросов новых возможностей](https://github.com/ms301/TelegAPI/issues)
 * Рекламой проекта
-* Жертвоприношения в виде денег
+* [**Donate**](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=5ASFXPC68MS2U)
 
 # Зависимости #
 
