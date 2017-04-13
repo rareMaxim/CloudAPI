@@ -628,6 +628,8 @@ type
     FFrom: TtgUser;
     FQuery: String;
     Foffset: String;
+  public
+    destructor Destroy; override;
   published
     /// <summary>Unique identifier for this query</summary>
     [Alias('id')]
@@ -1590,6 +1592,14 @@ end;
 procedure TtgReplyKeyboardMarkup.SetRowCount(const Value: Integer);
 begin
   SetLength(KeyBoard, Value);
+end;
+
+{ TtgInlineQuery }
+
+destructor TtgInlineQuery.Destroy;
+begin
+  FreeAndNil(FFrom);
+  inherited;
 end;
 
 end.
