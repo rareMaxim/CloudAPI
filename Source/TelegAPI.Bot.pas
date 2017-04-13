@@ -667,22 +667,30 @@ end;
 
 { TTelegram }
 function TTelegramBot.AllowedUpdatesToString(allowed_updates: TAllowedUpdates): String;
+var
+  LAllowed: TList<String>;
 begin
   Result := '[';
-  if TAllowedUpdate.Message in allowed_updates then
-    Result := Result + '"message"';
-  if TAllowedUpdate.edited_message in allowed_updates then
-    Result := Result + '"edited_message"';
-  if TAllowedUpdate.channel_post in allowed_updates then
-    Result := Result + '"channel_post"';
-  if TAllowedUpdate.edited_channel_post in allowed_updates then
-    Result := Result + '"edited_channel_post"';
-  if TAllowedUpdate.inline_query in allowed_updates then
-    Result := Result + '"inline_query"';
-  if TAllowedUpdate.chosen_inline_result in allowed_updates then
-    Result := Result + '"chosen_inline_result"';
-  if TAllowedUpdate.callback_query in allowed_updates then
-    Result := Result + '"callback_query"';
+  LAllowed := TList<String>.Create;
+  try
+    if TAllowedUpdate.Message in allowed_updates then
+      LAllowed.Add('"message"');
+    if TAllowedUpdate.edited_message in allowed_updates then
+      LAllowed.Add('"edited_message"');
+    if TAllowedUpdate.channel_post in allowed_updates then
+      LAllowed.Add('"channel_post"');
+    if TAllowedUpdate.edited_channel_post in allowed_updates then
+      LAllowed.Add('"edited_channel_post"');
+    if TAllowedUpdate.inline_query in allowed_updates then
+      LAllowed.Add('"inline_query"');
+    if TAllowedUpdate.chosen_inline_result in allowed_updates then
+      LAllowed.Add('"chosen_inline_result"');
+    if TAllowedUpdate.callback_query in allowed_updates then
+      LAllowed.Add('"callback_query"');
+    Result := Result + Result.Join(',', LAllowed.ToArray);
+  finally
+    LAllowed.Free;
+  end;
   Result := Result + ']';
 end;
 
