@@ -15,6 +15,9 @@
         <Projects Include="MethodExplorer\MethodExplorer.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="InlineMode\InlineMode.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -59,14 +62,23 @@
     <Target Name="MethodExplorer:Make">
         <MSBuild Projects="MethodExplorer\MethodExplorer.dproj" Targets="Make"/>
     </Target>
+    <Target Name="InlineMode">
+        <MSBuild Projects="InlineMode\InlineMode.dproj"/>
+    </Target>
+    <Target Name="InlineMode:Clean">
+        <MSBuild Projects="InlineMode\InlineMode.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="InlineMode:Make">
+        <MSBuild Projects="InlineMode\InlineMode.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="AutoRecesiveMessage;Dialog;Keyboard;MethodExplorer"/>
+        <CallTarget Targets="AutoRecesiveMessage;Dialog;Keyboard;MethodExplorer;InlineMode"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="AutoRecesiveMessage:Clean;Dialog:Clean;Keyboard:Clean;MethodExplorer:Clean"/>
+        <CallTarget Targets="AutoRecesiveMessage:Clean;Dialog:Clean;Keyboard:Clean;MethodExplorer:Clean;InlineMode:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="AutoRecesiveMessage:Make;Dialog:Make;Keyboard:Make;MethodExplorer:Make"/>
+        <CallTarget Targets="AutoRecesiveMessage:Make;Dialog:Make;Keyboard:Make;MethodExplorer:Make;InlineMode:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

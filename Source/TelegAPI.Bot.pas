@@ -73,6 +73,7 @@ Type
     Function API<T>(Const Method: String; Parameters: TDictionary<String, TValue>): T;
     Function ParamsToFormData(Parameters: TDictionary<String, TValue>): TMultipartFormData;
     Function AllowedUpdatesToString(allowed_updates: TAllowedUpdates): String;
+    Function ArrayToString<T: Class, Constructor>(LArray: TArray<T>): String;
   public
     /// <summary>A simple method for testing your bot's auth token.</summary>
     /// <returns>Returns basic information about the bot in form of a User object.</returns>
@@ -717,16 +718,12 @@ function TTelegramBot.answerInlineQuery(Const inline_query_id: String;
   Const next_offset, switch_pm_text, switch_pm_parameter: String): Boolean;
 var
   Parameters: TDictionary<String, TValue>;
-  TestArr: Array of TValue;
   I: Integer;
 begin
   Parameters := TDictionary<String, TValue>.Create;
   try
     Parameters.Add('inline_query_id', inline_query_id);
-    SetLength(TestArr, Length(results));
-    for I := Low(results) to High(results) do
-      TestArr[I] := results[I];
-    Parameters.Add('results', TValue.FromArray(PTypeInfo(TestArr), TestArr));
+    Parameters.Add('results', ArrayToString<TtgInlineQueryResult>(results));
     Parameters.Add('cache_time', cache_time);
     Parameters.Add('is_personal', is_personal);
     Parameters.Add('next_offset', next_offset);
@@ -736,6 +733,18 @@ begin
   finally
     Parameters.Free;
   end;
+end;
+
+function TTelegramBot.ArrayToString<T>(LArray: TArray<T>): String;
+var
+  SA: ISuperArray;
+  I: Integer;
+  x: TtgInlineQueryResult;
+begin
+  SA := TSuperArray.Create();
+  for I := Low(LArray) to High(LArray) do
+    SA.Add(T(LArray[I]).AsJSONObject);
+  Result := SA.AsJSON();
 end;
 
 constructor TTelegramBot.Create(AOwner: TComponent);

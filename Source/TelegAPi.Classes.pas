@@ -492,6 +492,7 @@ type
     /// <summary>Requested profile pictures (in up to 4 sizes each)</summary>
     [Alias('photos')]
     photos: TArray<TArray<TtgPhotoSize>>;
+    destructor Destroy; override;
   End;
 
   /// <summary>This object represents one button of the reply keyboard. For simple text buttons String can be used instead of this object to specify text of the button. Optional fields are mutually exclusive.</summary>
@@ -827,6 +828,7 @@ type
     Ftype: String;
     FID: String;
     Freply_markup: TtgInlineKeyboardMarkup;
+    Finput_message_content: TtgInputMessageContent;
   public
     destructor Destroy; override;
   published
@@ -840,8 +842,9 @@ type
     [Alias('reply_markup')]
     property reply_markup: TtgInlineKeyboardMarkup read Freply_markup write Freply_markup;
     /// <summary>Optional. Inline keyboard attached to the message</summary>
-    [Alias('reply_markup')]
-    property input_message_content: TtgInlineKeyboardMarkup read Freply_markup write Freply_markup;
+    [Alias('input_message_content')]
+    property input_message_content: TtgInputMessageContent read Finput_message_content
+      write Finput_message_content;
   End;
 
   /// <summary>Represents a link to an article or web page.</summary>
@@ -855,6 +858,8 @@ type
     Fthumb_url: String;
     Fthumb_width: Integer;
     Fthumb_height: Integer;
+  public
+    constructor Create;
   published
     /// <summary>Title of the result</summary>
     [Alias('title')]
@@ -1407,8 +1412,7 @@ end;
 
 destructor TtgDocument.Destroy;
 begin
-  if Assigned(Thumb) then
-    FreeAndNil(Thumb);
+  FreeAndNil(Thumb);
   inherited;
 end;
 
@@ -1416,8 +1420,7 @@ end;
 
 destructor TtgSticker.Destroy;
 begin
-  if Assigned(Thumb) then
-    FreeAndNil(Thumb);
+  FreeAndNil(Thumb);
   inherited;
 end;
 
@@ -1517,8 +1520,8 @@ end;
 
 destructor TtgInlineQueryResult.Destroy;
 begin
-  if Assigned(Freply_markup) then
-    FreeAndNil(Freply_markup);
+  FreeAndNil(Freply_markup);
+  FreeAndNil(Finput_message_content);
   inherited;
 end;
 
@@ -1598,7 +1601,28 @@ end;
 
 destructor TtgInlineQuery.Destroy;
 begin
-  FreeAndNil(FFrom);
+  if Assigned(FFrom) then
+    FreeAndNil(FFrom);
+  inherited;
+end;
+
+{ TtgInlineQueryResultArticle }
+
+constructor TtgInlineQueryResultArticle.Create;
+begin
+  Ftype := 'article';
+end;
+
+{ TtgUserProfilePhotos }
+
+destructor TtgUserProfilePhotos.Destroy;
+var
+  I: Integer;
+  J: Integer;
+begin
+  for I := Low(photos) to High(photos) do
+    for J := Low(photos[I]) to High(photos[I]) do
+      FreeAndNil(photos[I, J]);
   inherited;
 end;
 
