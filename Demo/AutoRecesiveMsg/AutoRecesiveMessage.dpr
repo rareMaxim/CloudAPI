@@ -1,9 +1,9 @@
-program HelloWorld;
+program AutoRecesiveMessage;
 
 uses
   System.StartUpCopy,
   FMX.Forms,
-  Unit1 in 'Unit1.pas' {Form1};
+  AutoRecesiveMessage.Main in 'AutoRecesiveMessage.Main.pas' {Form1};
 
 {$R *.res}
 

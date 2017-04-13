@@ -1,4 +1,4 @@
-unit Unit1;
+﻿unit Dialog.Main;
 
 interface
 
@@ -18,7 +18,7 @@ type
     FBot: TTelegramBot;
   public
     { Public declarations }
-    procedure OnGiveMsg(Sender: TObject; Updates: TArray<TtgUpdate>);
+    procedure OnGiveMsg(Sender: TTelegramBot; Updates: TArray<TtgUpdate>);
   end;
 
 var
@@ -37,16 +37,24 @@ begin
   FBot.OnUpdates := OnGiveMsg;
 end;
 
-procedure TForm1.OnGiveMsg(Sender: TObject; Updates: TArray<TtgUpdate>);
+procedure TForm1.OnGiveMsg(Sender: TTelegramBot; Updates: TArray<TtgUpdate>);
 var
   I: Integer;
+  LMessage: TtgMessage;
 begin
   mmo1.BeginUpdate;
   try
     for I := Low(Updates) to High(Updates) do
     Begin
       if assigned(Updates[I].Message) then
-        mmo1.Lines.Add(Updates[I].Message.Text);
+      Begin
+        mmo1.Lines.Add(Updates[I].Message.text);
+        if Updates[I].Message.text = 'Hi' then
+        Begin
+          LMessage := FBot.sendMessage(Updates[I].Message.Chat.ID, '😍😘😊😁😂😬😀😜😠😡');
+          FreeAndNil(LMessage);
+        End;
+      End;
     End;
   finally
     mmo1.EndUpdate;

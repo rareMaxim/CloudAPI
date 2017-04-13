@@ -1,4 +1,4 @@
-unit Unit1;
+unit MethodExplorer.Main;
 
 interface
 
@@ -16,9 +16,8 @@ type
     btnGetMe: TButton;
     btnSendMessage: TButton;
     procedure FormCreate(Sender: TObject);
-    procedure TelegramBotUpdates(Sender: TObject; Updates: TArray<TelegAPI.Classes.TtgUpdate>);
+    procedure TelegramBotUpdates(Sender: TTelegramBot; Updates: TArray<TelegAPI.Classes.TtgUpdate>);
     procedure btnGetMeClick(Sender: TObject);
-    procedure btnSendMessageClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -41,11 +40,6 @@ begin
   LUser.Free;
 end;
 
-procedure TForm1.btnSendMessageClick(Sender: TObject);
-begin
-   TelegramBot.sendMessage()
-end;
-
 procedure TForm1.FormCreate(Sender: TObject);
 begin
   ReportMemoryLeaksOnShutdown := True;
@@ -53,7 +47,7 @@ begin
   TelegramBot.IsReceiving := True;
 end;
 
-procedure TForm1.TelegramBotUpdates(Sender: TObject; Updates: TArray<TelegAPI.Classes.TtgUpdate>);
+procedure TForm1.TelegramBotUpdates(Sender: TTelegramBot; Updates: TArray<TelegAPI.Classes.TtgUpdate>);
 var
   I: Integer;
 begin

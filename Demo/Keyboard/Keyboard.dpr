@@ -1,9 +1,9 @@
-program HelloWorld;
+program Keyboard;
 
 uses
   System.StartUpCopy,
   FMX.Forms,
-  Unit1 in 'Unit1.pas' {Form1};
+  Keyboard.Main in 'Keyboard.Main.pas' {Form1};
 
 {$R *.res}
 
