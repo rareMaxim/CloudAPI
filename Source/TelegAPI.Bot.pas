@@ -2,43 +2,19 @@
 
 interface
 
-{ } {$DEFINE TG_AUTOLib}
-{ }   {$IF Defined(TG_AUTOLib)}
-{ }   {$I jedi.inc}
-{ }   {$IF Defined(DELPHIXE8_UP)}
-{ }     {$DEFINE TG_NetHttpClient}
-{ }   {$ELSE}
-{ }     {$DEFINE TG_INDY}
-{ }   {$ENDIF}
-{ } {$ENDIF}
-
 uses
   System.Generics.Collections,
   System.Rtti,
   System.Classes,
   System.SysUtils,
   System.TypInfo,
-{$IF Defined(TG_NetHttpClient)}
   System.Net.Mime,
   System.Net.HttpClient,
-{$ELSEIF Defined(TG_INDY)}
-  IdMultiPartFormData,
-  IdHttp,
-{$ENDIF}
   TelegAPI.Classes,
   TelegAPI.Utils,
   XSuperObject;
 
 Type
-{$IF Defined(TG_NetHttpClient)}
-{$ELSEIF Defined(TG_INDY)}
-  TMultipartFormData = TIdMultiPartFormDataStream;
-
-  TMultipartFormDataHelper = Class Helper for TIdMultiPartFormDataStream
-    procedure AddField(const AField, AValue: string);
-  End;
-{$ENDIF}
-
   TTelegramBot = class;
 
   TtgRecesiver = Class(TThread)
@@ -573,7 +549,6 @@ Begin
   end;
 End;
 
-{$IFDEF TG_NetHttpClient}
 { TTelegramBotNetHttp }
 
 function TTelegramBot.API<T>(const Method: String; Parameters: TDictionary<String, TValue>): T;
@@ -612,57 +587,6 @@ begin
     FreeAndNil(lApiResponse);
   end;
 end;
-{$ELSEIF Defined(TG_INDY)}
-{ TMultipartFormDataHelper }
-
-procedure TMultipartFormDataHelper.AddField(const AField, AValue: string);
-begin
-  AddFormField(AField, AValue);
-end;
-
-{ TTelegramBotIndy }
-
-function TTelegramBot.API<T>(const Method: String; Parameters: TDictionary<String, TValue>): T;
-var
-  lHttp: TIdHTTP;
-  lHttpResponse: String;
-  lApiResponse: TtgApiResponse<T>;
-  lURL_TELEG: String;
-  LParamToDate: TMultipartFormData;
-begin
-  lHttp := TIdHTTP.Create(Self);
-  try
-    lURL_TELEG := 'https://api.telegram.org/bot' + FToken + '/' + Method;
-    // Преобразовуем параметры в строку, если нужно
-    if Assigned(Parameters) then
-    Begin
-      LParamToDate := ParamsToFormData(Parameters);
-      lHttpResponse := lHttp.Post(lURL_TELEG, LParamToDate);
-    End
-    else
-      lHttpResponse := lHttp.Get(lURL_TELEG);
-    if lHttp.ResponseCode <> 200 then
-    begin
-      if Assigned(OnError) then
-        OnError(Self, lHttp.ResponseCode, lHttp.ResponseText);
-      Exit;
-    end;
-    lApiResponse := TtgApiResponse<T>.FromJSON(lHttpResponse);
-    if Not lApiResponse.Ok then
-    begin
-      if Assigned(OnError) then
-        OnError(Self, lApiResponse.Code, lApiResponse.Message);
-      Exit;
-    end;
-    Result := lApiResponse.ResultObject;
-    lApiResponse.ResultObject := Default (T);
-  finally
-    FreeAndNil(LParamToDate);
-    FreeAndNil(lHttp);
-    FreeAndNil(lApiResponse);
-  end;
-end;
-{$ENDIF}
 
 { TTelegram }
 function TTelegramBot.AllowedUpdatesToString(allowed_updates: TAllowedUpdates): String;
@@ -716,7 +640,6 @@ function TTelegramBot.answerInlineQuery(Const inline_query_id: String;
   Const next_offset, switch_pm_text, switch_pm_parameter: String): Boolean;
 var
   Parameters: TDictionary<String, TValue>;
-  I: Integer;
 begin
   Parameters := TDictionary<String, TValue>.Create;
   try
@@ -1386,7 +1309,6 @@ end;
 procedure TtgRecesiver.Execute;
 var
   LUpdates: TArray<TtgUpdate>;
-  I: Integer;
 Begin
   repeat
     Sleep(Bot.PollingTimeout);
