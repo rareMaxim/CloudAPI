@@ -4,9 +4,15 @@ interface
 
 uses
   XSuperObject,
-  System.Classes, System.SysUtils;
+  System.Classes,
+  System.SysUtils;
 
 Type
+  /// <summary>
+  /// Type of action to broadcast.
+  /// </summary>
+  TSendChatAction = (typing, upload_photo, record_video, upload_video, record_audio, upload_audio,
+    upload_document, find_location, record_video_note, upload_video_note);
 {$SCOPEDENUMS ON}
   /// <summary>The type of a Message</summary>
   TtgMessageType = (UnknownMessage = 0, TextMessage, PhotoMessage, AudioMessage, VideoMessage,
@@ -55,7 +61,6 @@ Type
 
 const
   UPDATES_ALLOWED_ALL = [Low(TAllowedUpdate) .. High(TAllowedUpdate)];
-{$SCOPEDENUMS OFF}
 
 type
   ETelegramException = class(Exception);
@@ -63,8 +68,8 @@ type
   ETelegramDataConvert = class(ETelegramException);
   ETelegramUnknownData = class(ETelegramDataConvert);
 
-  [Alias('User')]
   /// <summary> This object represents a Telegram user or bot.</summary>
+  [Alias('User')]
   TtgUser = Class
   public
     /// <summary> Unique identifier for this user or bot </summary>
@@ -79,6 +84,11 @@ type
     /// <summary>Optional. User‘s or bot’s username</summary>
     [Alias('username')]
     Username: String;
+    /// <summary>
+    /// Optional. IETF language tag of the user's language
+    /// </summary>
+    [Alias('language_code')]
+    LanguageCode: String;
   End;
 
   /// <summary>This object contains information about one member of the chat.</summary>
@@ -87,10 +97,10 @@ type
   public
     /// <summary>Information about the user</summary>
     [Alias('user')]
-    user: TtgUser;
+    User: TtgUser;
     /// <summary>The member's status in the chat. Can be “creator”, “administrator”, “member”, “left” or “kicked”</summary>
     [Alias('status')]
-    status: String;
+    Status: String;
     destructor Destroy; override;
   End;
 
@@ -103,22 +113,22 @@ type
     ID: Int64;
     /// <summary> Type of chat, can be either “private”, “group”, “supergroup” or “channel”</summary>
     [Alias('type')]
-    &type: String;
+    &Type: String;
     /// <summary>Optional. Title, for channels and group chats </summary>
     [Alias('title')]
-    title: String;
+    Title: String;
     /// <summary>Optional. Username, for private chats and channels if available </summary>
     [Alias('username')]
     Username: String;
     /// <summary>Optional. First name of the other party in a private chat </summary>
     [Alias('first_name')]
-    first_name: String;
+    FirstName: String;
     /// <summary>Optional. Last name of the other party in a private chat </summary>
     [Alias('last_name')]
-    last_name: String;
+    LastName: String;
     /// <summary>Optional. True if a group has ‘All Members Are Admins’ enabled.</summary>
     [Alias('all_members_are_administrators')]
-    all_members_are_administrators: Boolean;
+    AllMembersAreAdministrators: Boolean;
   End;
 
   /// <summary>This object represents one special entity in a text message. For example, hashtags, usernames, URLs, etc.</summary>
@@ -127,19 +137,19 @@ type
   public
     /// <summary>Type of the entity. One of mention (@username), hashtag, bot_command, url, email, bold (bold text), italic (italic text), code (monowidth string), pre (monowidth block), text_link (for clickable text URLs), text_mention (for users without usernames)</summary>
     [Alias('type')]
-    &type: String;
+    &Type: String;
     /// <summary>Offset in UTF-16 code units to the start of the entity</summary>
     [Alias('offset')]
-    offset: Integer;
+    Offset: Integer;
     /// <summary>Length of the entity in UTF-16 code units</summary>
     [Alias('length')]
     Length: Integer;
     /// <summary>Optional. For “text_link” only, url that will be opened after user taps on the text</summary>
     [Alias('url')]
-    url: String;
+    Url: String;
     /// <summary>Optional. For “text_mention” only, the mentioned user</summary>
     [Alias('user')]
-    user: TtgUser;
+    User: TtgUser;
     destructor Destroy; override;
   End;
 
@@ -171,7 +181,7 @@ type
     Performer: String;
     /// <summary>Title of the audio as defined by sender or by audio tags</summary>
     [Alias('title')]
-    title: String;
+    Title: String;
     /// <summary>Optional. MIME type of the file as defined by sender</summary>
     [Alias('mime_type')]
     MimeType: String;
@@ -247,6 +257,42 @@ type
     destructor Destroy; override;
   End;
 
+  /// <summary>
+  /// This object represents a video message
+  /// </summary>
+  /// <remarks>
+  /// available in Telegram apps as of v.4.0
+  /// </remarks>
+  [Alias('VideoNote')]
+  TtgVideoNote = class
+  public
+    /// <summary>
+    /// Unique identifier for this file
+    /// </summary>
+    [Alias('file_id')]
+    file_id: String;
+    /// <summary>
+    /// Video width and height as defined by sender
+    /// </summary>
+    [Alias('length')]
+    Length: Integer;
+    /// <summary>
+    /// Duration of the video in seconds as defined by sender
+    /// </summary>
+    [Alias('duration')]
+    Duration: Integer;
+    /// <summary>
+    /// Optional. Video thumbnail
+    /// </summary>
+    [Alias('thumb')]
+    Thumb: TtgPhotoSize;
+    /// <summary>
+    /// Optional. File size
+    /// </summary>
+    [Alias('file_size')]
+    file_size: Integer;
+  end;
+
   /// <summary>This object represents a voice note.</summary>
   [Alias('Voice')]
   TtgVoice = Class(TtgFile)
@@ -298,7 +344,7 @@ type
     Location: TtgLocation;
     /// <summary>Title of the result</summary>
     [Alias('title')]
-    title: String;
+    Title: String;
     /// <summary>Address of the venue </summary>
     [Alias('address')]
     Address: String;
@@ -314,19 +360,19 @@ type
   public
     /// <summary>Unique file identifier</summary>
     [Alias('file_id')]
-    file_id: String;
+    FileId: String;
     /// <summary>Optional. Animation thumbnail as defined by sender</summary>
     [Alias('thumb')]
     Thumb: TtgPhotoSize;
     /// <summary>Optional. Original animation filename as defined by sender</summary>
     [Alias('file_name')]
-    file_name: String;
+    FileName: String;
     /// <summary>Optional. MIME type of the file as defined by sender</summary>
     [Alias('mime_type')]
-    mime_type: String;
+    MimeType: String;
     /// <summary>Optional. File size</summary>
     [Alias('file_size')]
-    file_size: Integer;
+    FileSize: Integer;
     destructor Destroy; override;
   End;
 
@@ -339,15 +385,15 @@ type
     /// <summary>
     /// Position in high score table for the game
     /// </summary>
-    position: Integer;
+    Position: Integer;
     /// <summary>
     /// User
     /// </summary>
-    user: TtgUser;
+    User: TtgUser;
     /// <summary>
     /// Score
     /// </summary>
-    score: Integer;
+    Score: Integer;
     destructor Destroy; override;
   End;
 
@@ -357,7 +403,7 @@ type
   public
     /// <summary>Title of the game</summary>
     [Alias('title')]
-    title: String;
+    Title: String;
     /// <summary>Description of the game</summary>
     [Alias('description')]
     description: String;
@@ -397,7 +443,7 @@ type
     ForwardFrom: TtgUser;
     /// <summary>Optional. For messages forwarded from a channel, information about the original channel</summary>
     [Alias('forward_from_chat')]
-    forward_from_chat: TtgChat;
+    ForwardFromChat: TtgChat;
     /// <summary>Optional. For forwarded messages, date the original message was sent in Unix time</summary>
     [Alias('forward_date')]
     ForwardDate: Integer;
@@ -434,6 +480,14 @@ type
     /// <summary>Message is a voice message, information about the file</summary>
     [Alias('voice')]
     Voice: TtgVoice;
+
+    /// <summary>
+    /// Optional. Message is a video note, information about the video
+    /// message
+    /// </summary>
+    [Alias('video_note')]
+    video_note: TtgVideoNote;
+
     /// <summary>Optional. Caption for the document, photo or video, 0-200 characters</summary>
     [Alias('caption')]
     Caption: String;
@@ -446,9 +500,9 @@ type
     /// <summary>Optional. Message is a venue, information about the venue</summary>
     [Alias('venue')]
     Venue: TtgVenue;
-    /// <summary>Optional. A new member was added to the group, information about them (this member may be bot itself)</summary>
-    [Alias('new_chat_member')]
-    NewChatMember: TtgUser;
+    /// <summary>Optional. New members that were added to the group or supergroup and information about them (the bot itself may be one of these members)</summary>
+    [Alias('new_chat_members')]
+    NewChatMembers: TArray<TtgUser>;
     /// <summary>Optional. A member was removed from the group, information about them (this member may be bot itself)</summary>
     [Alias('left_chat_member')]
     LeftChatMember: TtgUser;
@@ -488,10 +542,10 @@ type
   public
     /// <summary>Total number of profile pictures the target user has</summary>
     [Alias('total_count')]
-    total_count: Integer;
+    TotalCount: Integer;
     /// <summary>Requested profile pictures (in up to 4 sizes each)</summary>
     [Alias('photos')]
-    photos: TArray<TArray<TtgPhotoSize>>;
+    Photos: TArray<TArray<TtgPhotoSize>>;
     destructor Destroy; override;
   End;
 
@@ -541,6 +595,15 @@ type
   /// <summary>This object represents a custom keyboard with reply options (see Introduction to bots for details and examples).</summary>
   [Alias('ReplyKeyboardMarkup')]
   TtgReplyKeyboardMarkup = Class(TtgReplyMarkup)
+  private
+    function GetRowCount: Integer;
+    procedure SetRowCount(const Value: Integer);
+    function GetColCount: Integer;
+    procedure SetColCount(const Value: Integer);
+  public
+    destructor Destroy; override;
+    property RowCount: Integer read GetRowCount write SetRowCount;
+    property ColCount: Integer read GetColCount write SetColCount;
   Public
     /// <summary>Array of button rows, each represented by an Array of KeyboardButton objects</summary>
     [Alias('keyboard')]
@@ -551,15 +614,6 @@ type
     /// <summary>Optional. Requests clients to hide the keyboard as soon as it's been used. The keyboard will still be available, but clients will automatically display the usual letter-keyboard in the chat – the user can press a special button in the input field to see the custom keyboard again. Defaults to false.</summary>
     [Alias('one_time_keyboard')]
     one_time_keyboard: Boolean;
-  private
-    function GetRowCount: Integer;
-    procedure SetRowCount(const Value: Integer);
-    function GetColCount: Integer;
-    procedure SetColCount(const Value: Integer);
-  public
-    destructor Destroy; override;
-    property RowCount: Integer read GetRowCount write SetRowCount;
-    property ColCount: Integer read GetColCount write SetColCount;
   End;
 
   /// <summary>This object represents one button of an inline keyboard. You must use exactly one of the optional fields.</summary>
@@ -572,7 +626,7 @@ type
     text: String;
     /// <summary>Optional. HTTP url to be opened when button is pressed</summary>
     [Alias('url')]
-    url: String;
+    Url: String;
     /// <summary>Optional. Data to be sent in a callback query to the bot when button is pressed, 1-64 bytes</summary>
     [Alias('callback_data')]
     callback_data: String;
@@ -643,7 +697,7 @@ type
     property Query: String read FQuery write FQuery;
     /// <summary>Offset of the results to be returned, can be controlled by the bot</summary>
     [Alias('offset')]
-    property offset: String read Foffset write Foffset;
+    property Offset: String read Foffset write Foffset;
   End;
 
   /// <summary>Represents a result of an inline query that was chosen by the user and sent to their chat partner.</summary>
@@ -791,7 +845,7 @@ type
     property Longitude: Single read FLongitude write FLongitude;
     /// <summary>Name of the venue</summary>
     [Alias('title')]
-    property title: String read Ftitle write Ftitle;
+    property Title: String read Ftitle write Ftitle;
     /// <summary>Address of the venue</summary>
     [Alias('address')]
     property Address: String read FAddress write FAddress;
@@ -834,7 +888,7 @@ type
   published
     /// <summary>Type of the result</summary>
     [Alias('type')]
-    property &type: String read Ftype write Ftype;
+    property &Type: String read Ftype write Ftype;
     /// <summary>Unique identifier for this result, 1-64 bytes</summary>
     [Alias('id')]
     property ID: String read FID write FID;
@@ -863,10 +917,10 @@ type
   published
     /// <summary>Title of the result</summary>
     [Alias('title')]
-    property title: String read Ftitle write Ftitle;
+    property Title: String read Ftitle write Ftitle;
     /// <summary>Optional. URL of the result</summary>
     [Alias('url')]
-    property url: String read Furl write Furl;
+    property Url: String read Furl write Furl;
     /// <summary>Optional. Pass True, if you don't want the URL to be shown in the message</summary>
     [Alias('hide_url')]
     property hide_url: Boolean read Fhide_url write Fhide_url;
@@ -910,7 +964,7 @@ type
     property photo_height: Integer read Fphoto_height write Fphoto_height;
     /// <summary>Optional. Title for the result</summary>
     [Alias('title')]
-    property title: String read Ftitle write Ftitle;
+    property Title: String read Ftitle write Ftitle;
     /// <summary>	Optional. Short description of the result</summary>
     [Alias('description')]
     property description: String read Fdescription write Fdescription;
@@ -929,6 +983,7 @@ type
     Fthumb_url: String;
     Ftitle: String;
     FCaption: String;
+    Fgif_duration: Integer;
   published
     /// <summary>A valid URL for the GIF file. File size must not exceed 1MB</summary>
     [Alias('gif_url')]
@@ -939,12 +994,17 @@ type
     /// <summary>Optional. Height of the GIF</summary>
     [Alias('gif_height')]
     property gif_height: Integer read Fgif_height write Fgif_height;
+
+    /// <summary>Optional. Duration of the GIF</summary>
+    [Alias('gif_duration')]
+    property gif_duration: Integer read Fgif_duration write Fgif_duration;
+
     /// <summary>URL of the static thumbnail for the result (jpeg or gif)</summary>
     [Alias('thumb_url')]
     property thumb_url: String read Fthumb_url write Fthumb_url;
     /// <summary>Optional. Title for the result</summary>
     [Alias('title')]
-    property title: String read Ftitle write Ftitle;
+    property Title: String read Ftitle write Ftitle;
     /// <summary>Optional. Caption of the GIF file to be sent, 0-200 characters</summary>
     [Alias('caption')]
     property Caption: String read FCaption write FCaption;
@@ -960,6 +1020,7 @@ type
     Fthumb_url: String;
     Ftitle: String;
     FCaption: string;
+    Fmpeg4_duration: Integer;
   published
     /// <summary>A valid URL for the MP4 file. File size must not exceed 1MB</summary>
     [Alias('mpeg4_url')]
@@ -970,12 +1031,15 @@ type
     /// <summary>Optional. Video height</summary>
     [Alias('mpeg4_height')]
     property mpeg4_height: Integer read Fmpeg4_height write Fmpeg4_height;
+    /// <summary>Optional. Video height</summary>
+    [Alias('mpeg4_duration')]
+    property mpeg4_duration: Integer read Fmpeg4_duration write Fmpeg4_duration;
     /// <summary>URL of the static thumbnail (jpeg or gif) for the result</summary>
     [Alias('thumb_url')]
     property thumb_url: String read Fthumb_url write Fthumb_url;
     /// <summary>Optional. Title for the result</summary>
     [Alias('title')]
-    property title: String read Ftitle write Ftitle;
+    property Title: String read Ftitle write Ftitle;
     /// <summary>Optional. Caption of the MPEG-4 file to be sent, 0-200 characters</summary>
     [Alias('caption')]
     property Caption: string read FCaption write FCaption;
@@ -1007,7 +1071,7 @@ type
     property thumb_url: String read Fthumb_url write Fthumb_url;
     /// <summary>Title for the result</summary>
     [Alias('title')]
-    property title: String read Ftitle write Ftitle;
+    property Title: String read Ftitle write Ftitle;
     /// <summary>Optional. Caption of the video to be sent, 0-200 characters</summary>
     [Alias('caption')]
     property Caption: String read FCaption write FCaption;
@@ -1039,7 +1103,7 @@ type
     property audio_url: String read Faudio_url write Faudio_url;
     /// <summary>Title</summary>
     [Alias('title')]
-    property title: String read Ftitle write Ftitle;
+    property Title: String read Ftitle write Ftitle;
     /// <summary>Optional. Performer</summary>
     [Alias('performer')]
     property Performer: String read FPerformer write FPerformer;
@@ -1061,7 +1125,7 @@ type
     property voice_url: String read Fvoice_url write Fvoice_url;
     /// <summary>Recording title</summary>
     [Alias('title')]
-    property title: String read Ftitle write Ftitle;
+    property Title: String read Ftitle write Ftitle;
     /// <summary>Optional. Recording duration in seconds</summary>
     [Alias('voice_duration')]
     property voice_duration: Integer read Fvoice_duration write Fvoice_duration;
@@ -1082,7 +1146,7 @@ type
   published
     /// <summary>Title for the result</summary>
     [Alias('title')]
-    property title: String read Ftitle write Ftitle;
+    property Title: String read Ftitle write Ftitle;
     /// <summary>Optional. Caption of the document to be sent, 0-200 characters</summary>
     [Alias('caption')]
     property Caption: String read FCaption write FCaption;
@@ -1125,7 +1189,7 @@ type
     property Longitude: Single read FLongitude write FLongitude;
     /// <summary>Location title</summary>
     [Alias('title')]
-    property title: String read Ftitle write Ftitle;
+    property Title: String read Ftitle write Ftitle;
     /// <summary>Optional. Url of the thumbnail for the result</summary>
     [Alias('thumb_url')]
     property thumb_url: String read Fthumb_url write Fthumb_url;
@@ -1158,7 +1222,7 @@ type
     property Longitude: Single read FLongitude write FLongitude;
     /// <summary>Title of the venue</summary>
     [Alias('title')]
-    property title: String read Ftitle write Ftitle;
+    property Title: String read Ftitle write Ftitle;
     /// <summary>Address of the venue</summary>
     [Alias('address')]
     property Address: String read FAddress write FAddress;
@@ -1212,7 +1276,7 @@ type
     photo_file_id: String;
     /// <summary>Optional. Title for the result</summary>
     [Alias('title')]
-    title: String;
+    Title: String;
     /// <summary>Optional. Short description of the result</summary>
     [Alias('description')]
     description: String;
@@ -1230,7 +1294,7 @@ type
     gif_file_id: String;
     /// <summary>Optional. Title for the result</summary>
     [Alias('title')]
-    title: String;
+    Title: String;
     /// <summary>Optional. Caption of the GIF file to be sent, 0-200 characters</summary>
     [Alias('caption')]
     Caption: String;
@@ -1245,7 +1309,7 @@ type
     mpeg4_file_id: String;
     /// <summary>Optional. Title for the result</summary>
     [Alias('title')]
-    title: String;
+    Title: String;
     /// <summary>Optional. Caption of the MPEG-4 file to be sent, 0-200 characters</summary>
     [Alias('caption')]
     Caption: String;
@@ -1266,7 +1330,7 @@ type
   public
     /// <summary>Title for the result</summary>
     [Alias('title')]
-    title: String;
+    Title: String;
     /// <summary>A valid file identifier for the file</summary>
     [Alias('document_file_id')]
     document_file_id: String;
@@ -1284,7 +1348,7 @@ type
   public
     /// <summary>Title for the result</summary>
     [Alias('title')]
-    title: String;
+    Title: String;
     /// <summary>A valid file identifier for the video</summary>
     [Alias('video_file_id')]
     video_file_id: String;
@@ -1305,7 +1369,7 @@ type
     voice_file_id: String;
     /// <summary>Voice message title</summary>
     [Alias('title')]
-    title: String;
+    Title: String;
   End;
 
   /// <summary>Represents a link to an mp3 audio file stored on the Telegram servers. By default, this audio file will be sent by the user. Alternatively, you can use input_message_content to send a message with the specified content instead of the audio.</summary>
@@ -1326,7 +1390,7 @@ type
     /// Webhook URL, may be empty if webhook is not set up
     /// </summary>
     [Alias('url')]
-    url: String;
+    Url: String;
     /// <summary>
     /// True, if a custom certificate was provided for webhook certificate
     /// checks
@@ -1394,8 +1458,8 @@ end;
 
 destructor TtgChatMember.Destroy;
 begin
-  if Assigned(user) then
-    FreeAndNil(user);
+  if Assigned(User) then
+    FreeAndNil(User);
   inherited;
 end;
 
@@ -1403,8 +1467,8 @@ end;
 
 destructor TtgMessageEntity.Destroy;
 begin
-  if Assigned(user) then
-    FreeAndNil(user);
+  if Assigned(User) then
+    FreeAndNil(User);
   inherited;
 end;
 
@@ -1454,8 +1518,8 @@ begin
     FreeAndNil(Chat);
   if Assigned(ForwardFrom) then
     FreeAndNil(ForwardFrom);
-  if Assigned(forward_from_chat) then
-    FreeAndNil(forward_from_chat);
+  if Assigned(Forward_from_chat) then
+    FreeAndNil(Forward_from_chat);
   if Assigned(ReplyToMessage) then
     FreeAndNil(ReplyToMessage);
   if Assigned(Audio) then
@@ -1474,16 +1538,20 @@ begin
     FreeAndNil(Location);
   if Assigned(Venue) then
     FreeAndNil(Venue);
-  if Assigned(NewChatMember) then
-    FreeAndNil(NewChatMember);
+
   if Assigned(LeftChatMember) then
     FreeAndNil(LeftChatMember);
   if Assigned(PinnedMessage) then
     FreeAndNil(PinnedMessage);
-  if Assigned(forward_from_chat) then
-    FreeAndNil(forward_from_chat);
-  if Assigned(NewChatMember) then
-    FreeAndNil(NewChatMember);
+  if Assigned(Forward_from_chat) then
+    FreeAndNil(Forward_from_chat);
+  if Assigned(NewChatMembers) then
+  Begin
+    if Length(NewChatMembers) > 0 then
+      for I := Low(NewChatMembers) to High(NewChatMembers) do
+        FreeAndNil(NewChatMembers[I]);
+    FreeAndNil(NewChatMembers);
+  End;
   for I := Low(entities) to High(entities) do
     FreeAndNil(entities[I]);
   SetLength(entities, 0);
@@ -1555,8 +1623,8 @@ end;
 
 destructor TtgGameHighScore.Destroy;
 begin
-  if Assigned(user) then
-    FreeAndNil(user);
+  if Assigned(User) then
+    FreeAndNil(User);
   inherited;
 end;
 
@@ -1620,9 +1688,9 @@ var
   I: Integer;
   J: Integer;
 begin
-  for I := Low(photos) to High(photos) do
-    for J := Low(photos[I]) to High(photos[I]) do
-      FreeAndNil(photos[I, J]);
+  for I := Low(Photos) to High(Photos) do
+    for J := Low(Photos[I]) to High(Photos[I]) do
+      FreeAndNil(Photos[I, J]);
   inherited;
 end;
 

@@ -239,6 +239,51 @@ Type
     function sendVideo(chat_id: TValue; video: TValue; duration: Integer = 0; width: Integer = 0;
       height: Integer = 0; const caption: String = ''; disable_notification: Boolean = False;
       reply_to_message_id: Integer = 0; reply_markup: TtgReplyKeyboardMarkup = nil): TtgMessage;
+
+    /// <summary>
+    /// As of <see href="https://telegram.org/blog/video-messages-and-telescope">
+    /// v.4.0</see>, Telegram clients support rounded square mp4 videos of up
+    /// to 1 minute long.
+    /// </summary>
+    /// <param name="chat_id">
+    /// Unique identifier for the target chat or username of the target
+    /// channel (in the format @channelusername)
+    /// </param>
+    /// <param name="video_note">
+    /// Video note to send. Pass a file_id as String to send a video note
+    /// that exists on the Telegram servers (recommended) or upload a new
+    /// video using multipart/form-data. More info on Sending Files ».
+    /// Sending video notes by a URL is currently unsupported
+    /// </param>
+    /// <param name="duration">
+    /// Duration of sent video in seconds
+    /// </param>
+    /// <param name="length">
+    /// Video width and height
+    /// </param>
+    /// <param name="disable_notification">
+    /// Sends the message silently. iOS users will not receive a
+    /// notification, Android users will receive a notification with no
+    /// sound.
+    /// </param>
+    /// <param name="reply_to_message_id">
+    /// If the message is a reply, ID of the original message
+    /// </param>
+    /// <param name="reply_markup">
+    /// Additional interface options. A JSON-serialized object for an inline
+    /// keyboard, custom reply keyboard, instructions to remove reply
+    /// keyboard or to force a reply from the user.
+    /// </param>
+    /// <returns>
+    /// On success, the sent Message is returned.
+    /// </returns>
+    /// <remarks>
+    /// Use this method to send video messages.
+    /// </remarks>
+    function sendVideoNote(chat_id: TValue; video_note: TValue; duration: Integer = 0;
+      length: Integer = 0; disable_notification: Boolean = False; reply_to_message_id: Integer = 0;
+      reply_markup: TtgReplyKeyboardMarkup = nil): TtgMessage;
+
     /// <summary>Use this method to send audio files, if you want Telegram clients to display the file as a playable voice message. For this to work, your audio must be in an .ogg file encoded with OPUS (other formats may be sent as Audio or Document).</summary>
     /// <returns>On success, the sent Message is returned</returns>
     /// <remarks>Bots can currently send voice messages of up to 50 MB in size, this limit may be changed in the future.</remarks>
@@ -520,11 +565,36 @@ Type
     /// </remarks>
     Function getGameHighScores(user_id: Integer; chat_id: Integer = 0; message_id: Integer = 0;
       Const inline_message_id: string = ''): TArray<TtgGameHighScore>;
+
+    /// <summary>
+    /// Use this method to delete a message.
+    /// </summary>
+    /// <param name="chat_id">
+    /// Unique identifier for the target chat or username of the target
+    /// channel (in the format @channelusername)
+    /// </param>
+    /// <param name="message_id">
+    /// Identifier of the message to delete
+    /// </param>
+    /// <returns>
+    /// Returns True on success.
+    /// </returns>
+    /// <remarks>
+    /// A message can only be deleted if it was sent less than 48 hours ago.
+    /// Any such recently sent outgoing message may be deleted. Additionally,
+    /// if the bot is an administrator in a group chat, it can delete any
+    /// message. If the bot is an administrator in a supergroup, it can
+    /// delete messages from any other user and service messages about people
+    /// joining or leaving the group (other types of service messages may
+    /// only be removed by the group creator). In channels, bots can only
+    /// remove their own messages.
+    /// </remarks>
+    function deleteMessage(chat_id: TValue; message_id: Integer): Boolean;
     constructor Create(AOwner: TComponent); overload; override;
     destructor Destroy; override;
     property IsReceiving: Boolean read fIsReceiving write SetIsReceiving default False;
   published
-    { x } property PollingTimeout: Integer read FPollingTimeout write FPollingTimeout default 1000;
+    property PollingTimeout: Integer read FPollingTimeout write FPollingTimeout default 1000;
     property MessageOffset: Integer read FMessageOffset write FMessageOffset default 0;
     /// <summary>Монитор слежки за обновлениями</summary>
     property AllowedUpdates: TAllowedUpdates read fAllowedUpdates write fAllowedUpdates
@@ -549,7 +619,7 @@ Begin
   end;
 End;
 
-{ TTelegramBotNetHttp }
+{ TTelegramBot }
 
 function TTelegramBot.API<T>(const Method: String; Parameters: TDictionary<String, TValue>): T;
 var
@@ -640,6 +710,7 @@ function TTelegramBot.answerInlineQuery(Const inline_query_id: String;
   Const next_offset, switch_pm_text, switch_pm_parameter: String): Boolean;
 var
   Parameters: TDictionary<String, TValue>;
+  I: Integer;
 begin
   Parameters := TDictionary<String, TValue>.Create;
   try
@@ -677,16 +748,23 @@ begin
   MessageOffset := 0;
 end;
 
-function TTelegramBot.deleteWebhook: Boolean;
+function TTelegramBot.deleteMessage(chat_id: TValue; message_id: Integer): Boolean;
 var
   Parameters: TDictionary<String, TValue>;
 begin
   Parameters := TDictionary<String, TValue>.Create;
   try
-    Result := API<Boolean>('deleteWebhook', nil);
+    Parameters.Add('chat_id', chat_id);
+    Parameters.Add('message_id', message_id);
+    Result := API<Boolean>('deleteMessage', Parameters);
   finally
     Parameters.Free;
   end;
+end;
+
+function TTelegramBot.deleteWebhook: Boolean;
+begin
+  Result := API<Boolean>('deleteWebhook', nil);
 end;
 
 destructor TTelegramBot.Destroy;
@@ -1309,13 +1387,14 @@ end;
 procedure TtgRecesiver.Execute;
 var
   LUpdates: TArray<TtgUpdate>;
+  I: Integer;
 Begin
   repeat
     Sleep(Bot.PollingTimeout);
     if (Terminated) or (NOT Bot.IsReceiving) then
       Break;
     LUpdates := fBot.getUpdates(Bot.MessageOffset, 100, 0, UPDATES_ALLOWED_ALL);
-    if Length(LUpdates) = 0 then
+    if length(LUpdates) = 0 then
       Continue;
     Bot.MessageOffset := LUpdates[High(LUpdates)].Id + 1;
 {$IFDEF NO_QUEUE}
