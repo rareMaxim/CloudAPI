@@ -11,8 +11,58 @@ Type
   /// <summary>
   /// Type of action to broadcast.
   /// </summary>
-  TSendChatAction = (typing, upload_photo, record_video, upload_video, record_audio, upload_audio,
-    upload_document, find_location, record_video_note, upload_video_note);
+  /// <remarks>
+  /// We only recommend using this method when a response from the bot will
+  /// take a noticeable amount of time to arrive.
+  /// </remarks>
+  /// <example>
+  /// Example: The ImageBot needs some time to process a request and upload
+  /// the image. Instead of sending a text message along the lines of
+  /// “Retrieving image, please wait…”, the bot may use sendChatAction with
+  /// action = upload_photo. The user will see a “sending photo” status for
+  /// the bot.
+  /// </example>
+  TSendChatAction = (
+    /// <summary>
+    /// for text messages
+    /// </summary>
+    typing,
+    /// <summary>
+    /// for photos
+    /// </summary>
+    upload_photo,
+    /// <summary>
+    /// for videos
+    /// </summary>
+    record_video,
+    /// <summary>
+    /// for videos
+    /// </summary>
+    upload_video,
+    /// <summary>
+    /// for audio files
+    /// </summary>
+    record_audio,
+    /// <summary>
+    /// for audio files
+    /// </summary>
+    upload_audio,
+    /// <summary>
+    /// for general files
+    /// </summary>
+    upload_document,
+    /// <summary>
+    /// for location data
+    /// </summary>
+    find_location,
+    /// <summary>
+    /// for video notes
+    /// </summary>
+    record_video_note,
+    /// <summary>
+    /// for video notes
+    /// </summary>
+    upload_video_note);
 {$SCOPEDENUMS ON}
   /// <summary>The type of a Message</summary>
   TtgMessageType = (UnknownMessage = 0, TextMessage, PhotoMessage, AudioMessage, VideoMessage,
@@ -634,6 +684,35 @@ type
     /// <remarks>Note: This offers an easy way for users to start using your bot in inline mode when they are currently in a private chat with it. Especially useful when combined with switch_pm… actions – in this case the user will be automatically returned to the chat they switched from, skipping the chat selection screen.</remarks>
     [Alias('switch_inline_query')]
     switch_inline_query: String;
+    /// <summary>
+    /// Optional. If set, pressing the button will insert the bot‘s username
+    /// and the specified inline query in the current chat's input field. Can
+    /// be empty, in which case only the bot’s username will be inserted. <br /><br />
+    /// This offers a quick way for the user to open your bot in inline mode
+    /// in the same chat – good for selecting something from multiple
+    /// options.
+    /// </summary>
+    [Alias('switch_inline_query_current_chat')]
+    switch_inline_query_current_chat: String;
+    /// <summary>
+    /// Optional. Description of the game that will be launched when the user
+    /// presses the button. <br /><br />
+    /// </summary>
+    /// <remarks>
+    /// NOTE: This type of button must always be the first button in the
+    /// first row.
+    /// </remarks>
+    [Alias('callback_game')]
+    callback_game: String;
+    /// <summary>
+    /// Optional. Specify True, to send a Pay button. <br /><br />
+    /// </summary>
+    /// <remarks>
+    /// NOTE: This type of button must always be the first button in the
+    /// first row.
+    /// </remarks>
+    [Alias('pay')]
+    pay: Boolean;
   End;
 
   /// <summary>This object represents an inline keyboard that appears right next to the message it belongs to.</summary>
