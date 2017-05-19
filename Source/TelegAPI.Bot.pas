@@ -58,7 +58,6 @@ Type
   private
     FToken: String;
     FOnUpdates: TtgBotOnUpdates;
-    FUploadTimeout: Integer;
     FPollingTimeout: Integer;
     FMessageOffset: Integer;
     FOnError: TtgBorOnError;
@@ -549,7 +548,6 @@ Type
     destructor Destroy; override;
     property IsReceiving: Boolean read fIsReceiving write SetIsReceiving default False;
   published
-    { x } property UploadTimeout: Integer read FUploadTimeout write FUploadTimeout default 60000;
     { x } property PollingTimeout: Integer read FPollingTimeout write FPollingTimeout default 1000;
     property MessageOffset: Integer read FMessageOffset write FMessageOffset default 0;
     /// <summary>Монитор слежки за обновлениями</summary>
@@ -752,7 +750,6 @@ begin
   inherited Create(AOwner);
   AllowedUpdates := UPDATES_ALLOWED_ALL;
   fIsReceiving := False;
-  UploadTimeout := 60000;
   PollingTimeout := 1000;
   MessageOffset := 0;
 end;
