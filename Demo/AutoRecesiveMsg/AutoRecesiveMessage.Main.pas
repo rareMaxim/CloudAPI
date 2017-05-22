@@ -1,4 +1,4 @@
-unit Unit1;
+unit AutoRecesiveMessage.Main;
 
 interface
 
@@ -18,7 +18,7 @@ type
     FBot: TTelegramBot;
   public
     { Public declarations }
-    procedure OnGiveMsg(Sender: TObject; Updates: TArray<TtgUpdate>);
+    procedure OnGiveMsg(Sender: TTelegramBot; Updates: TArray<TtgUpdate>);
   end;
 
 var
@@ -37,7 +37,7 @@ begin
   FBot.OnUpdates := OnGiveMsg;
 end;
 
-procedure TForm1.OnGiveMsg(Sender: TObject; Updates: TArray<TtgUpdate>);
+procedure TForm1.OnGiveMsg(Sender: TTelegramBot; Updates: TArray<TtgUpdate>);
 var
   I: Integer;
 begin

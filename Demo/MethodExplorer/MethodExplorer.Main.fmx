@@ -1,0 +1,62 @@
+object Form1: TForm1
+  Left = 0
+  Top = 0
+  Caption = 'Form1'
+  ClientHeight = 391
+  ClientWidth = 664
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnCreate = FormCreate
+  DesignerMasterStyle = 0
+  object mmo1: TMemo
+    Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
+    DataDetectorTypes = []
+    Align = Client
+    Size.Width = 567.000000000000000000
+    Size.Height = 391.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 1
+    Viewport.Width = 563.000000000000000000
+    Viewport.Height = 387.000000000000000000
+  end
+  object vrtscrlbx1: TVertScrollBox
+    Align = Left
+    Padding.Left = 5.000000000000000000
+    Padding.Top = 5.000000000000000000
+    Padding.Right = 5.000000000000000000
+    Padding.Bottom = 5.000000000000000000
+    Size.Width = 97.000000000000000000
+    Size.Height = 391.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 3
+    Viewport.Width = 97.000000000000000000
+    Viewport.Height = 391.000000000000000000
+    object btnGetMe: TButton
+      Align = Top
+      Position.X = 5.000000000000000000
+      Position.Y = 5.000000000000000000
+      Size.Width = 87.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 0
+      Text = 'getMe'
+      OnClick = btnGetMeClick
+    end
+    object btnSendMessage: TButton
+      Align = Top
+      Position.X = 5.000000000000000000
+      Position.Y = 27.000000000000000000
+      Size.Width = 87.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 1
+      Text = 'SendMessage'
+    end
+  end
+  object TelegramBot: TTelegramBot
+    OnUpdates = TelegramBotUpdates
+    Left = 608
+    Top = 48
+  end
+end

@@ -1,9 +1,9 @@
-program HelloWorld;
+program InlineMode;
 
 uses
   System.StartUpCopy,
   FMX.Forms,
-  Unit1 in 'Unit1.pas' {Form1};
+  InlineMode.Main in 'InlineMode.Main.pas' {Form1};
 
 {$R *.res}
 
