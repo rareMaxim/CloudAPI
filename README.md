@@ -4,12 +4,21 @@ Telega π - Библиотека для работы с Telegram Bot API в Delp
 
 Пошаговое создание бота: https://github.com/ms301/TelegAPI/wiki/Hello-world
 
-# Что сделано #
+Version Bot API: *3.0*
 
-* Описаны все типы (возможно что-то пропустил)
-* Реализованы все методы, кроме режима "Inline" - скоро сделаю
+## Что сделано 
 
-# Помощь проекту #
+| Раздел            | Реализация    | Тест            |
+| ------------------|:-------------:| ---------------:|
+| Getting updates   | Да            | - веб-хуков     | 
+| Базовые методы    | Да            | Не полностью    |
+| Базовые типы      | Да            | Не полностью    | 
+| Updating messages | Да            | Нет             | 
+| Inline mode       | 95-100 %      | Нет             | 
+| Payments          | Да            | Нет             |  
+| Games             | Да            | Нет             |  
+
+## Помощь проекту
 
 Вы можете помочь проекту:
 
@@ -17,9 +26,9 @@ Telega π - Библиотека для работы с Telegram Bot API в Delp
 * Рекламой проекта
 * [**Donate**](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=5ASFXPC68MS2U)
 
-# Зависимости #
+## Зависимости
 
-* [RAD Studio XE8 - Berlin](https://www.embarcadero.com/products/delphi)
+* [RAD Studio XE8, 10.0(Seattle) 10.1(Berlin) 10.2(Tokyo)](https://www.embarcadero.com/products/delphi)
 * [XSuperObject](https://github.com/onryldz/x-superobject/)
 
 
