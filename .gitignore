@@ -69,3 +69,7 @@ bin/Win32-Debug/Data/Логи/
 bin/Win32-Debug/Data/Готовые бланки/
 *.filog
 Demo/token.inc
+DocInsight.ini
+InstallAndDemo.diproj
+*.log
+Doc/
