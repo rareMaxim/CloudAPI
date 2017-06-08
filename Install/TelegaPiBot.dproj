@@ -34,6 +34,12 @@
         <CfgParent>Base</CfgParent>
         <Cfg_2>true</Cfg_2>
     </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Cfg_2)'=='true') or '$(Cfg_2_Win32)'!=''">
+        <Base>true</Base>
+        <CfgParent>Cfg_2</CfgParent>
+        <Cfg_2>true</Cfg_2>
+        <Cfg_2_Win32>true</Cfg_2_Win32>
+    </PropertyGroup>
     <PropertyGroup Condition="'$(Base)'!=''">
         <DCC_CBuilderOutput>All</DCC_CBuilderOutput>
         <DCC_DcuOutput>..\DCU\$(Platform)-$(Config)</DCC_DcuOutput>
@@ -77,7 +83,7 @@ $(PreBuildEvent)]]>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
-        <VerInfo_Build>15</VerInfo_Build>
+        <VerInfo_Build>100</VerInfo_Build>
         <VerInfo_Keys>CompanyName=;FileVersion=1.0.0.6;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName);ProductName=$(MSBuildProjectName)</VerInfo_Keys>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <VerInfo_MajorVer>1</VerInfo_MajorVer>
@@ -89,20 +95,26 @@ $(PreBuildEvent)]]>
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
         <DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
     </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
+        <VerInfo_Build>17</VerInfo_Build>
+        <VerInfo_Keys>CompanyName=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(ModuleName);FileDescription=$(ModuleName);ProductName=$(ModuleName)</VerInfo_Keys>
+    </PropertyGroup>
     <ItemGroup>
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
         <DCCReference Include="TTelegramBot.dcr"/>
         <DCCReference Include="rtl.dcp"/>
-        <DCCReference Include="IndySystem.dcp"/>
-        <DCCReference Include="IndyProtocols.dcp"/>
-        <DCCReference Include="IndyCore.dcp"/>
-        <DCCReference Include="..\Source\TelegAPi.Classes.pas"/>
+        <DCCReference Include="..\Source\TelegAPi.Types.pas"/>
         <DCCReference Include="..\Source\TelegAPi.RegisterIDE.pas"/>
         <DCCReference Include="..\Source\TelegAPi.Utils.pas"/>
         <DCCReference Include="..\Source\TelegAPI.Bot.pas"/>
         <DCCReference Include="..\Source\TelegAPi.Helpers.pas"/>
+        <DCCReference Include="..\Source\TelegaPi.Types.ReplyMarkups.pas"/>
+        <DCCReference Include="..\Source\TelegaPi.Types.InputMessageContents.pas"/>
+        <DCCReference Include="..\Source\TelegaPi.Types.InlineQueryResults.pas"/>
+        <DCCReference Include="..\Source\TelegaPi.Types.Enums.pas"/>
+        <DCCReference Include="..\Source\TelegaPi.Exceptions.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

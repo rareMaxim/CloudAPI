@@ -1,14 +1,14 @@
-program Keyboard;
+program EchoBot;
 
 uses
   System.StartUpCopy,
   FMX.Forms,
-  Keyboard.Main in 'Keyboard.Main.pas' {Form1};
+  EchoBot.Main in 'EchoBot.Main.pas' {Main};
 
 {$R *.res}
 
 begin
   Application.Initialize;
-  Application.CreateForm(TForm1, Form1);
+  Application.CreateForm(TMain, Main);
   Application.Run;
 end.

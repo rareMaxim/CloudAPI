@@ -2,56 +2,16 @@
         "search_pathes": 
     [
         {
-            "pathes": "Source;x-superobject;",
-            "platforms": "Win32;Win64"
+            "pathes": "Source",
+            "platforms": "Win32;Win64;OSX32"
         }
     ],
 	
-    "browsing_pathes": 
-    [
-        {
-            "pathes": "Source;x-superobject;",
-            "platforms": "Win32;Win64"
-        }
-    ],
 
     "source_folders":
     [
         {
-            "folder": "source",
-            "base": "",
-            "recursive": true,
-            "filter": "*;*.*"
-        },
-        {
-            "folder": "x-superobject",
-            "base": "",
-            "recursive": true,
-            "filter": "*;*.*"
-        },
-        {
-            "folder": "jedi",
-            "base": "",
-            "recursive": true,
-            "filter": "*;*.*"
-        }
-		,
-        {
-            "folder": "Install",
-            "base": "",
-            "recursive": true,
-            "filter": "*;*.*"
-        }
-		,
-        {
-            "folder": "examples",
-            "base": "",
-            "recursive": true,
-            "filter": "*;*.*"
-        }
-		,
-        {
-            "folder": "Test",
+            "folder": "",
             "base": "",
             "recursive": true,
             "filter": "*;*.*"

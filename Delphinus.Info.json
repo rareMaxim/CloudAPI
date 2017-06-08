@@ -1,10 +1,20 @@
 {
-    "id": "{97907CF0-6640-4C37-8A14-4E8F6FB2D95A}",
-    "name": "TelegAPI",
-    "picture": "Install\\pJNqeRflXYU.png",
-    "license_type": "MPL-1.1",
-    "platforms": "Win32;Win64",
-    "first_version": "2.0.0.0",
-    "package_compiler_min": 28,
-    "compiler_min": 28
+	"picture": "Install\\pJNqeRflXYU.png",
+	"id": "{97907CF0-6640-4C37-8A14-4E8F6FB2D95A}",
+	"name": "TelegAPI",
+	"license_type": "Modified MIT License (MIT), GNU GPL v2",
+	"license_file": "LICENSE.txt",
+	"first_version": "",
+	"package_compiler_max": "0",
+	"package_compiler_min": "29",
+	"compiler_min": "29",
+	"compiler_max": "0",
+	"platforms": "Win32;Win64;OSX32",
+	"dependencies": [],
+	"author": "M.E.Sysoev",
+	"description": "Telegram Bot API for Delphi",
+	"version": "3.0.0",
+	"project_url": "https://github.com/ms301/TelegAPI",
+	"homepage_url": "https://t.me/telegaPiBotTest",
+	"report_url": "https://github.com/ms301/TelegAPI/issues"
 }

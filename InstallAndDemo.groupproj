@@ -6,8 +6,8 @@
         <Projects Include="Install\TelegaPiBot.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="Demo\AutoRecesiveMsg\AutoRecesiveMessage.dproj">
-            <Dependencies/>
+        <Projects Include="Demo\EchoBot\EchoBot.dproj">
+            <Dependencies>Install\TelegaPiBot.dproj</Dependencies>
         </Projects>
     </ItemGroup>
     <ProjectExtensions>
@@ -26,23 +26,23 @@
     <Target Name="TelegaPiBot:Make">
         <MSBuild Projects="Install\TelegaPiBot.dproj" Targets="Make"/>
     </Target>
-    <Target Name="AutoRecesiveMessage">
-        <MSBuild Projects="Demo\AutoRecesiveMsg\AutoRecesiveMessage.dproj"/>
+    <Target Name="EchoBot" DependsOnTargets="TelegaPiBot">
+        <MSBuild Projects="Demo\EchoBot\EchoBot.dproj"/>
     </Target>
-    <Target Name="AutoRecesiveMessage:Clean">
-        <MSBuild Projects="Demo\AutoRecesiveMsg\AutoRecesiveMessage.dproj" Targets="Clean"/>
+    <Target Name="EchoBot:Clean" DependsOnTargets="TelegaPiBot:Clean">
+        <MSBuild Projects="Demo\EchoBot\EchoBot.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="AutoRecesiveMessage:Make">
-        <MSBuild Projects="Demo\AutoRecesiveMsg\AutoRecesiveMessage.dproj" Targets="Make"/>
+    <Target Name="EchoBot:Make" DependsOnTargets="TelegaPiBot:Make">
+        <MSBuild Projects="Demo\EchoBot\EchoBot.dproj" Targets="Make"/>
     </Target>
     <Target Name="Build">
-        <CallTarget Targets="TelegaPiBot;AutoRecesiveMessage"/>
+        <CallTarget Targets="TelegaPiBot;EchoBot"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="TelegaPiBot:Clean;AutoRecesiveMessage:Clean"/>
+        <CallTarget Targets="TelegaPiBot:Clean;EchoBot:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="TelegaPiBot:Make;AutoRecesiveMessage:Make"/>
+        <CallTarget Targets="TelegaPiBot:Make;EchoBot:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>
