@@ -13,8 +13,6 @@ type
   [Alias('InlineQueryResult')]
   TtgInlineQueryResult = class
   public
-    destructor Destroy; override;
-  public
     /// <summary>
     /// Unique identifier for this result, 1-64 bytes
     /// </summary>
@@ -40,6 +38,7 @@ type
     /// </summary>
     [Alias('reply_markup')]
     ReplyMarkup: TtgInlineKeyboardMarkup;
+    destructor Destroy; override;
   end;
 
   TtgInlineQueryResultNew = class(TtgInlineQueryResult)

@@ -506,7 +506,7 @@ type
     /// Photo that will be displayed in the game message in chats.
     /// </summary>
     [Alias('photo')]
-    Photo: TArray<TtgPhotoSize>;
+    Photo: TObjectList<TtgPhotoSize>;
     /// <summary>
     /// Optional. Brief description of the game or high scores included in
     /// the game message. Can be automatically edited to include current
@@ -520,13 +520,14 @@ type
     /// URLs, bot commands, etc.
     /// </summary>
     [Alias('text_entities')]
-    Text_entities: TArray<TtgMessageEntity>;
+    Text_entities: TObjectList<TtgMessageEntity>;
     /// <summary>
     /// Optional. Animation that will be displayed in the game message in
     /// chats. Upload via BotFather
     /// </summary>
     [Alias('animation')]
     Animation: TtgAnimation;
+    constructor Create;
     destructor Destroy; override;
   end;
 
@@ -595,7 +596,7 @@ type
     /// bot commands, etc. that appear in the text
     /// </summary>
     [Alias('entities')]
-    Entities: TArray<TtgMessageEntity>;
+    Entities: TObjectList<TtgMessageEntity>;
     /// <summary>
     /// Optional. Message is an audio file, information about the file
     /// </summary>
@@ -615,7 +616,7 @@ type
     /// Optional. Message is a photo, available sizes of the photo
     /// </summary>
     [Alias('photo')]
-    Photo: TArray<TtgPhotoSize>;
+    Photo: TObjectList<TtgPhotoSize>;
     /// <summary>
     /// Optional. Message is a sticker, information about the sticker
     /// </summary>
@@ -668,7 +669,7 @@ type
     /// members)
     /// </summary>
     [Alias('new_chat_members')]
-    NewChatMembers: TArray<TtgUser>;
+    NewChatMembers: TObjectList<TtgUser>;
     /// <summary>
     /// Optional. A member was removed from the group, information about
     /// them (this member may be bot itself)
@@ -684,7 +685,7 @@ type
     /// Optional. A group photo was change to this value
     /// </summary>
     [Alias('new_chat_photo')]
-    NewChatPhoto: TArray<TtgPhotoSize>;
+    NewChatPhoto: TObjectList<TtgPhotoSize>;
     /// <summary>
     /// Optional. Informs that the group photo was deleted
     /// </summary>
@@ -724,6 +725,7 @@ type
     /// </summary>
     [Alias('pinned_message')]
     PinnedMessage: TtgMessage;
+    constructor Create;
     destructor Destroy; override;
   end;
 
@@ -1023,7 +1025,7 @@ type
     /// available if the message is too old
     /// </summary>
     [Alias('message')]
-    message: TtgMessage;
+    Message: TtgMessage;
     /// <summary>
     /// Optional. Identifier of the message sent via the bot in inline
     /// mode, that originated the query
@@ -1235,7 +1237,9 @@ type
     /// List of price portions
     /// </summary>
     [Alias('prices')]
-    Prices: TArray<TtgLabeledPrice>;
+    Prices: TObjectList<TtgLabeledPrice>;
+    constructor Create;
+    destructor Destroy; override;
   end;
 
   /// <summary>
@@ -1446,7 +1450,9 @@ type
     /// to all update types
     /// </summary>
     [Alias('allowed_updates')]
-    Allowed_updates: TArray<string>;
+    Allowed_updates: TList<string>;
+    constructor Create;
+    destructor Destroy; override;
   end;
 
 implementation
@@ -1526,8 +1532,6 @@ end;
 { TtgMessage }
 
 destructor TtgMessage.Destroy;
-var
-  I: Integer;
 begin
   FreeAndNil(From);
   FreeAndNil(Chat);
@@ -1545,27 +1549,10 @@ begin
   FreeAndNil(LeftChatMember);
   FreeAndNil(PinnedMessage);
   FreeAndNil(ForwardFromChat);
-  if Assigned(NewChatMembers) then
-  begin
-    if Length(NewChatMembers) > 0 then
-      for I := Low(NewChatMembers) to High(NewChatMembers) do
-        FreeAndNil(NewChatMembers[I]);
-  end;
-  //Photo
-  if Assigned(Photo) then
-  begin
-    if Length(Photo) > 0 then
-      for I := Low(Photo) to High(Photo) do
-        Photo[I].Free;
-  end;
-  if Assigned(Entities) then
-  begin
-    if Length(Entities) > 0 then
-      for I := Low(Entities) to High(Entities) do
-        Entities[I].Free;
-  end;
-  for I := Low(NewChatPhoto) to High(NewChatPhoto) do
-    FreeAndNil(NewChatPhoto[I]);
+  FreeAndNil(NewChatMembers);
+  FreeAndNil(Photo);
+  FreeAndNil(Entities);
+  FreeAndNil(NewChatPhoto);
   FreeAndNil(Game);
   inherited;
 end;
@@ -1598,20 +1585,13 @@ end;
 
 destructor TtgUpdate.Destroy;
 begin
-  if Assigned(message) then
-    FreeAndNil(message);
-  if Assigned(EditedMessage) then
-    FreeAndNil(EditedMessage);
-  if Assigned(ChannelPost) then
-    FreeAndNil(ChannelPost);
-  if Assigned(EditedChannelPost) then
-    FreeAndNil(EditedChannelPost);
-  if Assigned(InlineQuery) then
-    FreeAndNil(InlineQuery);
-  if Assigned(ChosenInlineResult) then
-    FreeAndNil(ChosenInlineResult);
-  if Assigned(CallbackQuery) then
-    FreeAndNil(CallbackQuery);
+  FreeAndNil(Message);
+  FreeAndNil(EditedMessage);
+  FreeAndNil(ChannelPost);
+  FreeAndNil(EditedChannelPost);
+  FreeAndNil(InlineQuery);
+  FreeAndNil(ChosenInlineResult);
+  FreeAndNil(CallbackQuery);
   inherited;
 end;
 
@@ -1619,21 +1599,16 @@ end;
 
 destructor TtgAnimation.Destroy;
 begin
-  if Assigned(Thumb) then
-    FreeAndNil(Thumb);
+  FreeAndNil(Thumb);
   inherited;
 end;
 
 { TtgGame }
 
 destructor TtgGame.Destroy;
-var
-  I: Integer;
 begin
-  for I := Low(Photo) to High(Photo) do
-    FreeAndNil(Photo[I]);
-  for I := Low(Text_entities) to High(Text_entities) do
-    FreeAndNil(Text_entities[I]);
+  FreeAndNil(Photo);
+  FreeAndNil(Text_entities);
   FreeAndNil(Animation);
   inherited;
 end;

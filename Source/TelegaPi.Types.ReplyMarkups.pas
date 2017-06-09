@@ -4,6 +4,7 @@ interface
 
 uses
   XSuperObject,
+  System.Generics.Collections,
   TelegaPi.Types;
 
 type
@@ -52,23 +53,25 @@ type
   /// </remarks>
   [Alias('InlineKeyboardMarkup')]
   TtgInlineKeyboardMarkup = class(TInterfacedObject, IReplyMarkup)
+  private
+    constructor Create;
   public
     /// <summary>
     /// Array of <see cref="InlineKeyboardButton"/> rows, each represented by an Array of <see cref="InlineKeyboardButton"/>.
     /// </summary>
     [Alias('inline_keyboard')]
-    InlineKeyboard: TArray<TArray<TtgInlineKeyboardButton>>;
+    InlineKeyboard: TObjectList<TObjectList<TtgInlineKeyboardButton>>;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="InlineKeyboardMarkup"/> class.
     /// </summary>
     /// <param name="inlineKeyboardRow">The inline keyboard row.</param>
-    constructor Create(AInlineKeyboardRow: TArray<TtgInlineKeyboardButton>); overload;
+    constructor Create(AInlineKeyboardRow: TObjectList<TtgInlineKeyboardButton>); overload;
     /// <summary>
     /// Initializes a new instance of the <see cref="InlineKeyboardMarkup"/> class.
     /// </summary>
     /// <param name="inlineKeyboard">The inline keyboard.</param>
-    constructor Create(InlineKeyboard: TArray<TArray<TtgInlineKeyboardButton>>); overload;
+    constructor Create(InlineKeyboard: TObjectList<TObjectList<TtgInlineKeyboardButton>>); overload;
     destructor Destroy; override;
     [DISABLE]
     property RefCount;
@@ -80,22 +83,13 @@ type
   [Alias('ReplyKeyboardMarkup')]
   TtgReplyKeyboardMarkup = class(TtgReplyMarkup)
   private
-  public
-    /// <summary>
-    /// Initializes a new instance of the <see cref="ReplyKeyboardMarkup"/> class.
-    /// </summary>
-    /// <param name="keyboardRow">The keyboard row.</param>
-    /// <param name="resizeKeyboard">if set to <c>true</c> the keyboard resizes vertically for optimal fit.</param>
-    /// <param name="oneTimeKeyboard">if set to <c>true</c> the client hides the keyboard as soon as it's been used.</param>
-    constructor Create(AKeyboardRow: TArray<TtgKeyboardButton>; AResizeKeyboard: Boolean = False; AOneTimeKeyboard: Boolean = False); overload;
-    constructor Create(AKeyboard: TArray<TArray<TtgKeyboardButton>>; AResizeKeyboard: Boolean = False; AOneTimeKeyboard: Boolean = False); overload;
-    destructor Destroy; override;
+    constructor Create;
   public
     /// <summary>
     /// Array of button rows, each represented by an Array of KeyboardButton objects
     /// </summary>
     [Alias('keyboard')]
-    Keyboard: TArray<TArray<TtgKeyboardButton>>;
+    Keyboard: TObjectList<TObjectList<TtgKeyboardButton>>;
     /// <summary>
     /// Optional. Requests clients to resize the keyboard vertically for optimal fit (e.g., make the keyboard smaller if there are just two rows of <see cref="KeyboardButton"/>). Defaults to <c>false</c>, in which case the custom keyboard is always of the same height as the app's standard keyboard.
     /// </summary>
@@ -110,6 +104,15 @@ type
     [DISABLEREAD]
     [DISABLEWRITE]
     property RefCount;
+     /// <summary>
+    /// Initializes a new instance of the <see cref="ReplyKeyboardMarkup"/> class.
+    /// </summary>
+    /// <param name="keyboardRow">The keyboard row.</param>
+    /// <param name="resizeKeyboard">if set to <c>true</c> the keyboard resizes vertically for optimal fit.</param>
+    /// <param name="oneTimeKeyboard">if set to <c>true</c> the client hides the keyboard as soon as it's been used.</param>
+    constructor Create(AKeyboardRow: TObjectList<TtgKeyboardButton>; AResizeKeyboard: Boolean = False; AOneTimeKeyboard: Boolean = False); overload;
+    constructor Create(AKeyboard: TObjectList<TObjectList<TtgKeyboardButton>>; AResizeKeyboard: Boolean = False; AOneTimeKeyboard: Boolean = False); overload;
+    destructor Destroy; override;
   end;
 
   /// <summary>
@@ -148,14 +151,15 @@ implementation
 
 { TtgInlineKeyboardMarkup }
 
-constructor TtgInlineKeyboardMarkup.Create(AInlineKeyboardRow: TArray<TtgInlineKeyboardButton>);
+constructor TtgInlineKeyboardMarkup.Create(AInlineKeyboardRow: TObjectList<TtgInlineKeyboardButton>);
 begin
-  SetLength(InlineKeyboard, 1);
-  InlineKeyboard[0] := AInlineKeyboardRow;
+  self.create;
+  InlineKeyboard.add(AInlineKeyboardRow);
 end;
 
-constructor TtgInlineKeyboardMarkup.Create(InlineKeyboard: TArray<TArray<TtgInlineKeyboardButton>>);
+constructor TtgInlineKeyboardMarkup.Create(InlineKeyboard: TObjectList<TObjectList<TtgInlineKeyboardButton>>);
 begin
+  self.create;
   Self.InlineKeyboard := InlineKeyboard;
 end;
 
@@ -172,7 +176,7 @@ end;
 
 { TtgReplyKeyboardMarkup }
 
-constructor TtgReplyKeyboardMarkup.Create(AKeyboardRow: TArray<TtgKeyboardButton>; AResizeKeyboard, AOneTimeKeyboard: Boolean);
+constructor TtgReplyKeyboardMarkup.Create(AKeyboardRow: TObjectList<TtgKeyboardButton>; AResizeKeyboard, AOneTimeKeyboard: Boolean);
 begin
   inherited Create();
   SetLength(Keyboard, 1);
@@ -181,7 +185,7 @@ begin
   OneTimeKeyboard := AOneTimeKeyboard;
 end;
 
-constructor TtgReplyKeyboardMarkup.Create(AKeyboard: TArray<TArray<TtgKeyboardButton>>; AResizeKeyboard, AOneTimeKeyboard: Boolean);
+constructor TtgReplyKeyboardMarkup.Create(AKeyboard: TObjectList<TObjectList<TtgKeyboardButton>>; AResizeKeyboard, AOneTimeKeyboard: Boolean);
 begin
   inherited Create;
   Keyboard := AKeyboard;
