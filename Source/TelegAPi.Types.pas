@@ -6,6 +6,7 @@ uses
   XSuperObject,
   System.SysUtils,
   System.Classes,
+  System.Generics.Collections,
   TelegAPi.Types.Enums;
 
 type
@@ -741,7 +742,8 @@ type
     /// Requested profile pictures (in up to 4 sizes each)
     /// </summary>
     [Alias('photos')]
-    Photos: TArray<TArray<TtgPhotoSize>>;
+    Photos: TObjectList<TObjectList<TtgPhotoSize>>;
+    constructor Create;
     destructor Destroy; override;
   end;
 
@@ -1653,15 +1655,14 @@ begin
 end;
 
 { TtgUserProfilePhotos }
+constructor TtgUserProfilePhotos.Create;
+begin
+  Photos := TObjectList<TObjectList<TtgPhotoSize>>.Create();
+end;
 
 destructor TtgUserProfilePhotos.Destroy;
-var
-  I: Integer;
-  J: Integer;
 begin
-  for I := Low(Photos) to High(Photos) do
-    for J := Low(Photos[I]) to High(Photos[I]) do
-      FreeAndNil(Photos[I, J]);
+  Photos.Free;
   inherited;
 end;
 
