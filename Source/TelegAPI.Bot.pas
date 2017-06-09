@@ -3,38 +3,35 @@
 interface
 
 uses
-  {..} System.Generics.Collections
-  {} , System.Rtti
-  {} , System.Classes
-  {} , System.SysUtils
-  {} , System.TypInfo
-  {} , System.Net.Mime
-  {} , System.Net.HttpClient
-  {} , System.Net.URLClient
-
-  {} , TelegAPI.Exceptions
-  {} , TelegAPI.Types
-  {} , TelegAPI.Types.Enums
-  {} , TelegAPI.Types.ReplyMarkups
-  {} , TelegAPI.Types.InlineQueryResults
-
-  {} , XSuperObject
-  {..};
+  System.Generics.Collections,
+  System.Rtti,
+  System.Classes,
+  System.SysUtils,
+  System.TypInfo,
+  System.Net.Mime,
+  System.Net.HttpClient,
+  System.Net.URLClient,
+  TelegAPI.Exceptions,
+  TelegAPI.Types,
+  TelegAPI.Types.Enums,
+  TelegAPI.Types.ReplyMarkups,
+  TelegAPI.Types.InlineQueryResults,
+  XSuperObject;
 
 type
-
   TtgOnUpdate = procedure(ASender: TObject; AUpdate: TtgUpdate) of object;
+
   TtgOnMessage = procedure(ASender: TObject; AMessage: TtgMessage) of object;
-  TtgOnInlineQuery = procedure(ASender: TObject; AInlineQuery: TtgInlineQuery)
-    of object;
-  TtgOnInlineResultChosen = procedure(ASender: TObject;
-    AChosenInlineResult: TtgChosenInlineResult) of object;
-  TtgOnCallbackQuery = procedure(ASender: TObject;
-    ACallbackQuery: TtgCallbackQuery) of object;
-  TtgOnReceiveError = procedure(ASender: TObject;
-    AApiRequestException: EApiRequestException) of object;
-  TtgOnReceiveGeneralError = procedure(ASender: TObject; AException: Exception)
-    of object;
+
+  TtgOnInlineQuery = procedure(ASender: TObject; AInlineQuery: TtgInlineQuery) of object;
+
+  TtgOnInlineResultChosen = procedure(ASender: TObject; AChosenInlineResult: TtgChosenInlineResult) of object;
+
+  TtgOnCallbackQuery = procedure(ASender: TObject; ACallbackQuery: TtgCallbackQuery) of object;
+
+  TtgOnReceiveError = procedure(ASender: TObject; AApiRequestException: EApiRequestException) of object;
+
+  TtgOnReceiveGeneralError = procedure(ASender: TObject; AException: Exception) of object;
 
   TTelegramBot = class;
 
@@ -76,35 +73,30 @@ type
     /// <summary>
     /// Мастер-функция для запросов на сервак
     /// </summary>
-    function API<T>(const Method: string;
-      Parameters: TDictionary<string, TValue>): T;
-    function ParamsToFormData(Parameters: TDictionary<string, TValue>)
-      : TMultipartFormData;
+    function API<T>(const Method: string; Parameters: TDictionary<string, TValue>): T;
+    function ParamsToFormData(Parameters: TDictionary<string, TValue>): TMultipartFormData;
     function ArrayToString<T: class, constructor>(LArray: TArray<T>): string;
+    procedure DoDisconnect(ASender: TObject);
   public
     constructor Create(AOwner: TComponent); overload; override;
     destructor Destroy; override;
     /// <summary>
     /// Ассинхронный прием обновлений от сервера
     /// </summary>
-    property IsReceiving: Boolean read FIsReceiving write SetIsReceiving
-      default False;
+    property IsReceiving: Boolean read FIsReceiving write SetIsReceiving default False;
   published
     /// <summary>
     /// Задержка между опросами
     /// </summary>
-    property PollingTimeout: Integer read FPollingTimeout write FPollingTimeout
-      default 1000;
-    property MessageOffset: Integer read FMessageOffset write FMessageOffset
-      default 0;
+    property PollingTimeout: Integer read FPollingTimeout write FPollingTimeout default 1000;
+    property MessageOffset: Integer read FMessageOffset write FMessageOffset default 0;
     /// <summary>
     /// Типы принимаемых сообщений
     /// </summary>
     /// <example>
     /// 283107813:AAG4hEElAvIogTSHNHXI6rZtE46A7XQvIH
     /// </example>
-    property AllowedUpdates: TAllowedUpdates read FAllowedUpdates
-      write FAllowedUpdates default UPDATES_ALLOWED_ALL;
+    property AllowedUpdates: TAllowedUpdates read FAllowedUpdates write FAllowedUpdates default UPDATES_ALLOWED_ALL;
     /// <summary>
     /// Токен вашего бота.
     /// </summary>
@@ -119,8 +111,7 @@ type
     property OnConnect: TNotifyEvent read FOnConnect write FOnConnect;
     property OnDisconnect: TNotifyEvent read FOnDisconnect write FOnDisconnect;
     /// <summary> Proxy Settings to be used by the client.</summary>
-    property ProxySettings: TProxySettings read FProxySettings
-      write FProxySettings;
+    property ProxySettings: TProxySettings read FProxySettings write FProxySettings;
 
 {$REGION 'События|Events'}
     /// <summary>
@@ -152,8 +143,7 @@ type
     /// Occurs when <see cref="TelegAPi.Types|TtgMessage" /> was edited.
     /// </para>
     /// </summary>
-    property OnMessageEdited: TtgOnMessage read FOnMessageEdited
-      write FOnMessageEdited;
+    property OnMessageEdited: TtgOnMessage read FOnMessageEdited write FOnMessageEdited;
     /// <summary>
     /// <para>
     /// Возникает, когда получен <see cref="TelegAPi.Types|TtgInlineQuery" />
@@ -162,8 +152,7 @@ type
     /// Occurs when an <see cref="TelegAPi.Types|TtgInlineQuery" /> is received.
     /// </para>
     /// </summary>
-    property OnInlineQuery: TtgOnInlineQuery read FOnInlineQuery
-      write FOnInlineQuery;
+    property OnInlineQuery: TtgOnInlineQuery read FOnInlineQuery write FOnInlineQuery;
     /// <summary>
     /// <para>
     /// Возникает когда получен <see cref="TelegAPi.Types|TtgChosenInlineResult" />
@@ -173,8 +162,7 @@ type
     /// is received.
     /// </para>
     /// </summary>
-    property OnInlineResultChosen: TtgOnInlineResultChosen
-      read FOnInlineResultChosen write FOnInlineResultChosen;
+    property OnInlineResultChosen: TtgOnInlineResultChosen read FOnInlineResultChosen write FOnInlineResultChosen;
     /// <summary>
     /// <para>
     /// Возникает когда получен <see cref="TelegAPi.Types|TtgCallbackQuery" />
@@ -184,8 +172,7 @@ type
     /// received
     /// </para>
     /// </summary>
-    property OnCallbackQuery: TtgOnCallbackQuery read FOnCallbackQuery
-      write FOnCallbackQuery;
+    property OnCallbackQuery: TtgOnCallbackQuery read FOnCallbackQuery write FOnCallbackQuery;
     /// <summary>
     /// <para>
     /// Возникает при возникновении ошибки во время запроса фоновых
@@ -196,8 +183,7 @@ type
     /// pooling.
     /// </para>
     /// </summary>
-    property OnReceiveError: TtgOnReceiveError read FOnReceiveError
-      write FOnReceiveError;
+    property OnReceiveError: TtgOnReceiveError read FOnReceiveError write FOnReceiveError;
     /// <summary>
     /// <para>
     /// Возникает при возникновении ошибки во время запроса фоновых
@@ -208,8 +194,7 @@ type
     /// pooling.
     /// </para>
     /// </summary>
-    property OnReceiveGeneralError: TtgOnReceiveGeneralError
-      read FOnReceiveGeneralError write FOnReceiveGeneralError;
+    property OnReceiveGeneralError: TtgOnReceiveGeneralError read FOnReceiveGeneralError write FOnReceiveGeneralError;
 {$ENDREGION}
   end;
 
@@ -272,10 +257,7 @@ type
     /// In order to avoid getting duplicate updates, recalculate offset
     /// after each server response.
     /// </remarks>
-    function GetUpdates(const Offset: Integer = 0; const Limit: Integer = 100;
-      const Timeout: Integer = 0;
-      Allowed_updates: TAllowedUpdates = UPDATES_ALLOWED_ALL)
-      : TArray<TtgUpdate>;
+    function GetUpdates(const Offset: Integer = 0; const Limit: Integer = 100; const Timeout: Integer = 0; Allowed_updates: TAllowedUpdates = UPDATES_ALLOWED_ALL): TArray<TtgUpdate>;
     /// <summary>
     /// Use this method to specify a url and receive incoming updates via
     /// an outgoing webhook. Whenever there is an update for the bot, we
@@ -332,9 +314,7 @@ type
     /// amazing guide to Webhooks</see>.
     /// </para>
     /// </remarks>
-    procedure SetWebhook(const Url: string; Certificate: TtgFileToSend = nil;
-      Max_connections: Integer = 40;
-      Allowed_updates: TAllowedUpdates = UPDATES_ALLOWED_ALL);
+    procedure SetWebhook(const Url: string; Certificate: TtgFileToSend = nil; Max_connections: Integer = 40; Allowed_updates: TAllowedUpdates = UPDATES_ALLOWED_ALL);
     /// <summary>
     /// Use this method to remove webhook integration if you decide to
     /// switch back to <see cref="TelegAPI.Bot|TTelegramBot.GetUpdates(Integer,Integer,Integer,TAllowedUpdates)">
@@ -415,11 +395,7 @@ type
     /// <returns>
     /// On success, the sent Message is returned.
     /// </returns>
-    function SendMessage(const Chat_id: TValue; const Text: string;
-      ParseMode: TtgParseMode = TtgParseMode.Default;
-      DisableWebPagePreview: Boolean = False;
-      Disable_notification: Boolean = False; ReplyToMessageId: Integer = 0;
-      ReplyMarkup: IReplyMarkup = nil): TtgMessage;
+    function SendMessage(const Chat_id: TValue; const Text: string; ParseMode: TtgParseMode = TtgParseMode.Default; DisableWebPagePreview: Boolean = False; Disable_notification: Boolean = False; ReplyToMessageId: Integer = 0; ReplyMarkup: IReplyMarkup = nil): TtgMessage;
 
     /// <summary>
     /// Use this method to forward messages of any kind.
@@ -443,9 +419,7 @@ type
     /// <returns>
     /// On success, the sent Message is returned.
     /// </returns>
-    function ForwardMessage(Chat_id: TValue; From_chat_id: TValue;
-      Disable_notification: Boolean = False; Message_id: Integer = 0)
-      : TtgMessage;
+    function ForwardMessage(Chat_id: TValue; From_chat_id: TValue; Disable_notification: Boolean = False; Message_id: Integer = 0): TtgMessage;
     /// <summary>
     /// Use this method to send photos.
     /// </summary>
@@ -485,10 +459,7 @@ type
     /// ИД файла <br />LMessage := sendPhoto(chatId, 'ИД Файла'); <br />...
     /// <br /> LMessage.Free; <br />End;
     /// </example>
-    function SendPhoto(ChatId: TValue; Photo: TValue;
-      const Caption: string = ''; Disable_notification: Boolean = False;
-      ReplyToMessageId: Integer = 0; ReplyMarkup: TtgReplyKeyboardMarkup = nil)
-      : TtgMessage;
+    function SendPhoto(ChatId: TValue; Photo: TValue; const Caption: string = ''; Disable_notification: Boolean = False; ReplyToMessageId: Integer = 0; ReplyMarkup: TtgReplyKeyboardMarkup = nil): TtgMessage;
     /// <summary>
     /// Use this method to send audio files, if you want Telegram clients
     /// to display them in the music player. Your audio must be in the .mp3
@@ -533,10 +504,7 @@ type
     /// inline keyboard, custom reply keyboard, instructions to hide reply
     /// keyboard or to force a reply from the user.
     /// </param>
-    function SendAudio(Chat_id: TValue; Audio: TValue; Duration: Integer = 0;
-      const Performer: string = ''; const Title: string = '';
-      Disable_notification: Boolean = False; Reply_to_message_id: Integer = 0;
-      ReplyMarkup: TtgReplyKeyboardMarkup = nil): TtgMessage;
+    function SendAudio(Chat_id: TValue; Audio: TValue; Duration: Integer = 0; const Performer: string = ''; const Title: string = ''; Disable_notification: Boolean = False; Reply_to_message_id: Integer = 0; ReplyMarkup: TtgReplyKeyboardMarkup = nil): TtgMessage;
     /// <summary>
     /// Use this method to send general files.
     /// </summary>
@@ -573,10 +541,7 @@ type
     /// inline keyboard, custom reply keyboard, instructions to hide reply
     /// keyboard or to force a reply from the user.
     /// </param>
-    function SendDocument(Chat_id: TValue; Document: TValue;
-      const Caption: string = ''; Disable_notification: Boolean = False;
-      Reply_to_message_id: Integer = 0;
-      Reply_markup: TtgReplyKeyboardMarkup = nil): TtgMessage;
+    function SendDocument(Chat_id: TValue; Document: TValue; const Caption: string = ''; Disable_notification: Boolean = False; Reply_to_message_id: Integer = 0; Reply_markup: TtgReplyKeyboardMarkup = nil): TtgMessage;
     /// <summary>
     /// Use this method to send .webp stickers.
     /// </summary>
@@ -606,10 +571,7 @@ type
     /// inline keyboard, custom reply keyboard, instructions to hide reply
     /// keyboard or to force a reply from the user.
     /// </param>
-    function SendSticker(Chat_id: TValue; Sticker: TValue;
-      const Caption: string = ''; Disable_notification: Boolean = False;
-      Reply_to_message_id: Integer = 0;
-      Reply_markup: TtgReplyKeyboardMarkup = nil): TtgMessage;
+    function SendSticker(Chat_id: TValue; Sticker: TValue; const Caption: string = ''; Disable_notification: Boolean = False; Reply_to_message_id: Integer = 0; Reply_markup: TtgReplyKeyboardMarkup = nil): TtgMessage;
     /// <summary>
     /// Use this method to send video files, Telegram clients support mp4
     /// videos (other formats may be sent as Document).
@@ -656,10 +618,7 @@ type
     /// inline keyboard, custom reply keyboard, instructions to hide reply
     /// keyboard or to force a reply from the user.
     /// </param>
-    function SendVideo(Chat_id: TValue; Video: TValue; Duration: Integer = 0;
-      Width: Integer = 0; Height: Integer = 0; const Caption: string = '';
-      Disable_notification: Boolean = False; Reply_to_message_id: Integer = 0;
-      Reply_markup: TtgReplyKeyboardMarkup = nil): TtgMessage;
+    function SendVideo(Chat_id: TValue; Video: TValue; Duration: Integer = 0; Width: Integer = 0; Height: Integer = 0; const Caption: string = ''; Disable_notification: Boolean = False; Reply_to_message_id: Integer = 0; Reply_markup: TtgReplyKeyboardMarkup = nil): TtgMessage;
 
     /// <summary>
     /// Use this method to send audio files, if you want Telegram clients
@@ -699,9 +658,7 @@ type
     /// inline keyboard, custom reply keyboard, instructions to hide reply
     /// keyboard or to force a reply from the user.
     /// </param>
-    function SendVoice(Chat_id: TValue; Voice: TValue; Duration: Integer = 0;
-      Disable_notification: Boolean = False; Reply_to_message_id: Integer = 0;
-      Reply_markup: TtgReplyKeyboardMarkup = nil): TtgMessage;
+    function SendVoice(Chat_id: TValue; Voice: TValue; Duration: Integer = 0; Disable_notification: Boolean = False; Reply_to_message_id: Integer = 0; Reply_markup: TtgReplyKeyboardMarkup = nil): TtgMessage;
     /// <summary>
     /// As of <see href="https://telegram.org/blog/video-messages-and-telescope">
     /// v.4.0</see>, Telegram clients support rounded square mp4 videos of
@@ -749,7 +706,7 @@ type
       Disable_notification: Boolean = False; //
       Reply_to_message_id: Integer = 0; //
       Reply_markup: TtgReplyKeyboardMarkup = nil //
-      ): TtgMessage;
+    ): TtgMessage;
 
     /// <summary>
     /// Use this method to send point on the map.
@@ -782,9 +739,7 @@ type
     /// keyboard or to force a reply from the user.
     /// </param>
     /// <param name="" />
-    function SendLocation(Chat_id: TValue; Location: TtgLocation;
-      Disable_notification: Boolean = False; Reply_to_message_id: Integer = 0;
-      Reply_markup: TtgReplyKeyboardMarkup = nil): TtgMessage;
+    function SendLocation(Chat_id: TValue; Location: TtgLocation; Disable_notification: Boolean = False; Reply_to_message_id: Integer = 0; Reply_markup: TtgReplyKeyboardMarkup = nil): TtgMessage;
     /// <summary>
     /// Use this method to send information about a venue.
     /// </summary>
@@ -824,9 +779,7 @@ type
     /// inline keyboard, custom reply keyboard, instructions to hide reply
     /// keyboard or to force a reply from the user.
     /// </param>
-    function SendVenue(Chat_id: TValue; Venue: TtgVenue;
-      Disable_notification: Boolean = False; Reply_to_message_id: Integer = 0;
-      Reply_markup: TtgReplyKeyboardMarkup = nil): TtgMessage;
+    function SendVenue(Chat_id: TValue; Venue: TtgVenue; Disable_notification: Boolean = False; Reply_to_message_id: Integer = 0; Reply_markup: TtgReplyKeyboardMarkup = nil): TtgMessage;
     /// <summary>
     /// Use this method to send phone contacts.
     /// </summary>
@@ -859,9 +812,7 @@ type
     /// inline keyboard, custom reply keyboard, instructions to hide
     /// keyboard or to force a reply from the user.
     /// </param>
-    function SendContact(Chat_id: TValue; Contact: TtgContact;
-      Disable_notification: Boolean = False; Reply_to_message_id: Integer = 0;
-      Reply_markup: TtgReplyKeyboardMarkup = nil): TtgMessage;
+    function SendContact(Chat_id: TValue; Contact: TtgContact; Disable_notification: Boolean = False; Reply_to_message_id: Integer = 0; Reply_markup: TtgReplyKeyboardMarkup = nil): TtgMessage;
     /// <summary>
     /// Use this method when you need to tell the user that something is
     /// happening on the bot's side. The status is set for 5 seconds or
@@ -901,8 +852,7 @@ type
     /// <returns>
     /// Returns a UserProfilePhotos object.
     /// </returns>
-    function GetUserProfilePhotos(Chat_id: TValue; Offset: Integer;
-      Limit: Integer = 100): TtgUserProfilePhotos;
+    function GetUserProfilePhotos(Chat_id: TValue; Offset: Integer; Limit: Integer = 100): TtgUserProfilePhotos;
     /// <summary>
     /// Use this method to get basic info about a file and prepare it for
     /// downloading. For the moment, bots can download files of up to 20MB
@@ -995,8 +945,7 @@ type
     /// chat is a group or a supergroup and no administrators were
     /// appointed, only the creator will be returned.
     /// </returns>
-    function GetChatAdministrators(const Chat_id: TValue)
-      : TArray<TtgChatMember>;
+    function GetChatAdministrators(const Chat_id: TValue): TArray<TtgChatMember>;
     /// <summary>
     /// Use this method to get the number of members in a chat.
     /// </summary>
@@ -1042,8 +991,7 @@ type
     /// If true, an alert will be shown by the client instead of a
     /// notification at the top of the chat screen. Defaults to false.
     /// </param>
-    function AnswerCallbackQuery(const Callback_query_id: string;
-      const Text: string = ''; Show_alert: Boolean = False): Boolean;
+    function AnswerCallbackQuery(const Callback_query_id: string; const Text: string = ''; Show_alert: Boolean = False): Boolean;
 {$ENDREGION}
 {$REGION 'Updating messages'}
     /// <summary>
@@ -1081,11 +1029,7 @@ type
     /// <param name="reply_markup">
     /// A JSON-serialized object for an inline keyboard.
     /// </param>
-    function EditMessageText(Chat_id: TValue; Message_id: Integer;
-      const Inline_message_id: string; const Text: string;
-      Parse_mode: TtgParseMode = TtgParseMode.Default;
-      Disable_web_page_preview: Boolean = False;
-      Reply_markup: TtgReplyKeyboardMarkup = nil): Boolean;
+    function EditMessageText(Chat_id: TValue; Message_id: Integer; const Inline_message_id: string; const Text: string; Parse_mode: TtgParseMode = TtgParseMode.Default; Disable_web_page_preview: Boolean = False; Reply_markup: TtgReplyKeyboardMarkup = nil): Boolean;
     /// <summary>
     /// Use this method to edit captions of messages sent by the bot or via
     /// the bot (for inline bots).
@@ -1114,9 +1058,7 @@ type
     /// <param name="reply_markup">
     /// A JSON-serialized object for an inline keyboard.
     /// </param>
-    function EditMessageCaption(Chat_id: TValue; Message_id: Integer;
-      const Inline_message_id: string; const Caption: string;
-      Reply_markup: TtgReplyKeyboardMarkup = nil): Boolean;
+    function EditMessageCaption(Chat_id: TValue; Message_id: Integer; const Inline_message_id: string; const Caption: string; Reply_markup: TtgReplyKeyboardMarkup = nil): Boolean;
     /// <summary>
     /// Use this method to edit only the reply markup of messages sent by
     /// the bot or via the bot (for inline bots).
@@ -1142,9 +1084,7 @@ type
     /// <param name="reply_markup">
     /// A JSON-serialized object for an inline keyboard.
     /// </param>
-    function EditMessageReplyMarkup(Chat_id: TValue; Message_id: Integer;
-      const Inline_message_id: string;
-      Reply_markup: TtgReplyKeyboardMarkup = nil): Boolean;
+    function EditMessageReplyMarkup(Chat_id: TValue; Message_id: Integer; const Inline_message_id: string; Reply_markup: TtgReplyKeyboardMarkup = nil): Boolean;
     /// <summary>
     /// Use this method to delete a message.
     /// </summary>
@@ -1210,29 +1150,12 @@ type
     /// Parameter for the start message sent to the bot when user presses
     /// the switch button
     /// </param>
-    function AnswerInlineQuery(const Inline_query_id: string;
-      Results: TArray<TtgInlineQueryResult>; Cache_time: Integer = 300;
-      Is_personal: Boolean = False; const Next_offset: string = '';
-      const Switch_pm_text: string = '';
-      const Switch_pm_parameter: string = ''): Boolean;
+    function AnswerInlineQuery(const Inline_query_id: string; Results: TArray<TtgInlineQueryResult>; Cache_time: Integer = 300; Is_personal: Boolean = False; const Next_offset: string = ''; const Switch_pm_text: string = ''; const Switch_pm_parameter: string = ''): Boolean;
 {$ENDREGION}
 {$REGION 'Payments'}
-    function SendInvoice(Chat_id: Integer; const Title: string;
-      const Description: string; const Payload: string;
-      const Provider_token: string; const Start_parameter: string;
-      const Currency: string; Prices: TArray<TtgLabeledPrice>;
-      const Photo_url: string = ''; Photo_size: Integer = 0;
-      Photo_width: Integer = 0; Photo_height: Integer = 0;
-      Need_name: Boolean = False; Need_phone_number: Boolean = False;
-      Need_email: Boolean = False; Need_shipping_address: Boolean = False;
-      Is_flexible: Boolean = False; Disable_notification: Boolean = False;
-      Reply_to_message_id: Integer = 0;
-      Reply_markup: TtgReplyKeyboardMarkup = nil): TtgMessage;
-    function AnswerShippingQuery(const Shipping_query_id: string; Ok: Boolean;
-      Shipping_options: TArray<TtgShippingOption>;
-      const Error_message: string): Boolean;
-    function AnswerPreCheckoutQuery(const Pre_checkout_query_id: string;
-      Ok: Boolean; const Error_message: string = ''): Boolean;
+    function SendInvoice(Chat_id: Integer; const Title: string; const Description: string; const Payload: string; const Provider_token: string; const Start_parameter: string; const Currency: string; Prices: TArray<TtgLabeledPrice>; const Photo_url: string = ''; Photo_size: Integer = 0; Photo_width: Integer = 0; Photo_height: Integer = 0; Need_name: Boolean = False; Need_phone_number: Boolean = False; Need_email: Boolean = False; Need_shipping_address: Boolean = False; Is_flexible: Boolean = False; Disable_notification: Boolean = False; Reply_to_message_id: Integer = 0; Reply_markup: TtgReplyKeyboardMarkup = nil): TtgMessage;
+    function AnswerShippingQuery(const Shipping_query_id: string; Ok: Boolean; Shipping_options: TArray<TtgShippingOption>; const Error_message: string): Boolean;
+    function AnswerPreCheckoutQuery(const Pre_checkout_query_id: string; Ok: Boolean; const Error_message: string = ''): Boolean;
 {$ENDREGION}
 {$REGION 'Games'}
     /// <summary>
@@ -1261,9 +1184,7 @@ type
     /// <returns>
     /// On success, the sent Message is returned.
     /// </returns>
-    function SendGame(Chat_id: Integer; const Game_short_name: string;
-      Disable_notification: Boolean = False; Reply_to_message_id: Integer = 0;
-      Reply_markup: TtgReplyKeyboardMarkup = nil): TtgMessage;
+    function SendGame(Chat_id: Integer; const Game_short_name: string; Disable_notification: Boolean = False; Reply_to_message_id: Integer = 0; Reply_markup: TtgReplyKeyboardMarkup = nil): TtgMessage;
     /// <summary>
     /// Use this method to set the score of the specified user in a game.
     /// </summary>
@@ -1299,10 +1220,7 @@ type
     /// is not greater than the user's current score in the chat and force
     /// is False.
     /// </returns>
-    function SetGameScore(User_id: Integer; Score: Integer;
-      Force: Boolean = False; Disable_edit_message: Boolean = False;
-      Chat_id: Integer = 0; Message_id: Integer = 0;
-      const Inline_message_id: string = ''): TtgMessage;
+    function SetGameScore(User_id: Integer; Score: Integer; Force: Boolean = False; Disable_edit_message: Boolean = False; Chat_id: Integer = 0; Message_id: Integer = 0; const Inline_message_id: string = ''): TtgMessage;
     /// <summary>
     /// Use this method to get data for high score tables. Will return the
     /// score of the specified user and several of his neighbors in a game.
@@ -1331,18 +1249,15 @@ type
     /// three users if the user and his neighbors are not among them.
     /// Please note that this behavior is subject to change.
     /// </remarks>
-    function GetGameHighScores(User_id: Integer; Chat_id: Integer = 0;
-      Message_id: Integer = 0; const Inline_message_id: string = '')
-      : TArray<TtgGameHighScore>;
+    function GetGameHighScores(User_id: Integer; Chat_id: Integer = 0; Message_id: Integer = 0; const Inline_message_id: string = ''): TArray<TtgGameHighScore>;
 {$ENDREGION}
   end;
 
 implementation
 
 uses
-  {..} TelegAPI.Utils
-  {} , TelegAPI.Helpers
-  {..};
+  TelegAPI.Utils,
+  TelegAPI.Helpers;
 
 { TTelegramBotCore }
 
@@ -1362,8 +1277,30 @@ begin
   Result := '3.0.0';
 end;
 
-function TTelegramBotCore.API<T>(const Method: string;
-  Parameters: TDictionary<string, TValue>): T;
+procedure TtgRecesiver.OnUpdateReceived(AValue: TtgUpdate);
+begin
+  if Assigned(Bot.OnUpdate) then
+    Bot.OnUpdate(Bot, AValue);
+  case AValue.&Type of
+    TtgUpdateType.MessageUpdate:
+      if Assigned(Bot.OnMessage) then
+        Bot.OnMessage(Bot, AValue.Message);
+    TtgUpdateType.InlineQueryUpdate:
+      if Assigned(Bot.OnInlineQuery) then
+        Bot.OnInlineQuery(Bot, AValue.InlineQuery);
+    TtgUpdateType.ChosenInlineResultUpdate:
+      if Assigned(Bot.OnInlineResultChosen) then
+        Bot.OnInlineResultChosen(Bot, AValue.ChosenInlineResult);
+    TtgUpdateType.CallbackQueryUpdate:
+      if Assigned(Bot.OnCallbackQuery) then
+        Bot.OnCallbackQuery(Bot, AValue.CallbackQuery);
+    TtgUpdateType.EditedMessage:
+      if Assigned(Bot.OnMessageEdited) then
+        Bot.OnMessageEdited(Bot, AValue.EditedMessage);
+  end;
+end;
+
+function TTelegramBotCore.API<T>(const Method: string; Parameters: TDictionary<string, TValue>): T;
 var
   LHttp: THTTPClient;
   LHttpResponse: IHTTPResponse;
@@ -1372,11 +1309,11 @@ var
   LParamToDate: TMultipartFormData;
 begin
   if not Self.IsValidToken then
-  Begin
+  begin
     if IsReceiving then
       IsReceiving := False;
     raise EArgumentException.Create('Invalid token format');
-  End;
+  end;
   LHttp := THTTPClient.Create;
   try
     { TODO -oM.E.Sysoev -cGeneral : Error handing }
@@ -1395,8 +1332,7 @@ begin
     begin
       if Assigned(OnReceiveError) then
       begin
-        OnReceiveError(Self, EApiRequestException.FromApiResponse<T>
-          (LApiResponse));
+        OnReceiveError(Self, EApiRequestException.FromApiResponse<T>(LApiResponse));
       end
       else
       begin
@@ -1404,7 +1340,7 @@ begin
       end;
     end;
     Result := LApiResponse.ResultObject;
-    LApiResponse.ResultObject := default (T);
+    LApiResponse.ResultObject := Default(T);
   finally
     if Assigned(Parameters) then
       FreeAndNil(LParamToDate);
@@ -1413,8 +1349,7 @@ begin
   end;
 end;
 
-function TTelegramBotCore.ParamsToFormData(Parameters
-  : TDictionary<string, TValue>): TMultipartFormData;
+function TTelegramBotCore.ParamsToFormData(Parameters: TDictionary<string, TValue>): TMultipartFormData;
 var
   Parameter: TPair<string, TValue>;
 begin
@@ -1422,27 +1357,31 @@ begin
   for Parameter in Parameters do
   begin
 
-    if Parameter.Value.IsType<string> then
+    if Parameter.Value.IsType<string>then
     begin
       if not Parameter.Value.AsString.IsEmpty then
         Result.AddField(Parameter.Key, Parameter.Value.AsString)
     end
-    else if Parameter.Value.IsType<Int64> then
+    else if Parameter.Value.IsType<Int64>then
     begin
       if Parameter.Value.AsInt64 <> 0 then
         Result.AddField(Parameter.Key, IntToStr(Parameter.Value.AsInt64));
     end
-    else if Parameter.Value.IsType<Boolean> then
+    else if Parameter.Value.IsType<Boolean>then
     begin
       if Parameter.Value.AsBoolean then
-        Result.AddField(Parameter.Key,
-          Parameter.Value.AsBoolean.ToString(TUseBoolStrs.True));
+        Result.AddField(Parameter.Key, Parameter.Value.AsBoolean.ToString(TUseBoolStrs.True));
     end
-    else if Parameter.Value.IsType<TtgFileToSend> then
+    else if Parameter.Value.IsType<TtgFileToSend>then
     begin
       { TODO -oOwner -cGeneral : Отправка файлов }
-      Result.AddFile(Parameter.Key,
-        Parameter.Value.AsType<TtgFileToSend>.FileName);
+      with Parameter.Value.AsType<TtgFileToSend>do
+      begin
+        if Assigned(Content) then
+          Result.AddStream(Parameter.Key, Content)
+        else
+          Result.AddFile(Parameter.Key, FileName);
+      end;
     end
     else if Parameter.Value.Kind = tkClass then
     begin
@@ -1451,14 +1390,13 @@ begin
         Result.AddField(Parameter.Key, Parameter.Value.AsObject.AsJSON);
     end
     else
-      raise ETelegramUnknownData.Create('Check parametr type ' +
-        Parameter.Value.ToString);
+      raise ETelegramUnknownData.Create('Check parametr type ' + Parameter.Value.ToString);
   end;
 end;
 
 procedure TTelegramBotCore.SetIsReceiving(const Value: Boolean);
 begin
-  if (CsDesigning in ComponentState) then
+  if (csDesigning in ComponentState) then
     Exit;
   FIsReceiving := Value;
   if Value then
@@ -1482,9 +1420,15 @@ var
   X: TtgInlineQueryResult;
 begin
   SA := TSuperArray.Create();
-  for I := low(LArray) to high(LArray) do
+  for I := Low(LArray) to High(LArray) do
     SA.Add(T(LArray[I]).AsJSONObject);
   Result := SA.AsJSON();
+end;
+
+procedure TTelegramBotCore.DoDisconnect(ASender: TObject);
+begin
+  if Assigned(OnDisconnect) then
+    OnDisconnect(ASender);
 end;
 
 destructor TTelegramBotCore.Destroy;
@@ -1498,8 +1442,7 @@ end;
 { TTelegram }
 {$REGION 'Getting updates'}
 
-procedure TTelegramBot.SetWebhook(const Url: string; Certificate: TtgFileToSend;
-  Max_connections: Integer; Allowed_updates: TAllowedUpdates);
+procedure TTelegramBot.SetWebhook(const Url: string; Certificate: TtgFileToSend; Max_connections: Integer; Allowed_updates: TAllowedUpdates);
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -1527,8 +1470,7 @@ begin
   end;
 end;
 
-function TTelegramBot.GetUpdates(const Offset, Limit, Timeout: Integer;
-  Allowed_updates: TAllowedUpdates): TArray<TtgUpdate>;
+function TTelegramBot.GetUpdates(const Offset, Limit, Timeout: Integer; Allowed_updates: TAllowedUpdates): TArray<TtgUpdate>;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -1538,7 +1480,7 @@ begin
     Parameters.Add('limit', Limit);
     Parameters.Add('timeout', Timeout);
     Parameters.Add('allowed_updates', Allowed_updates.ToString);
-    Result := API < TArray < TtgUpdate >> ('getUpdates', Parameters);
+    Result := API<TArray<TtgUpdate>>('getUpdates', Parameters);
   finally
     Parameters.Free;
   end;
@@ -1551,8 +1493,7 @@ end;
 {$ENDREGION}
 {$REGION 'Basic methods'}
 
-function TTelegramBot.UnbanChatMember(Chat_id: TValue;
-  User_id: Integer): Boolean;
+function TTelegramBot.UnbanChatMember(Chat_id: TValue; User_id: Integer): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -1566,9 +1507,7 @@ begin
   end;
 end;
 
-function TTelegramBot.SendLocation(Chat_id: TValue; Location: TtgLocation;
-  Disable_notification: Boolean; Reply_to_message_id: Integer;
-  Reply_markup: TtgReplyKeyboardMarkup): TtgMessage;
+function TTelegramBot.SendLocation(Chat_id: TValue; Location: TtgLocation; Disable_notification: Boolean; Reply_to_message_id: Integer; Reply_markup: TtgReplyKeyboardMarkup): TtgMessage;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -1586,9 +1525,7 @@ begin
   end;
 end;
 
-function TTelegramBot.SendPhoto(ChatId, Photo: TValue; const Caption: string;
-  Disable_notification: Boolean; ReplyToMessageId: Integer;
-  ReplyMarkup: TtgReplyKeyboardMarkup): TtgMessage;
+function TTelegramBot.SendPhoto(ChatId, Photo: TValue; const Caption: string; Disable_notification: Boolean; ReplyToMessageId: Integer; ReplyMarkup: TtgReplyKeyboardMarkup): TtgMessage;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -1606,10 +1543,7 @@ begin
   end;
 end;
 
-function TTelegramBot.SendSticker(Chat_id, Sticker: TValue;
-  const Caption: string; Disable_notification: Boolean;
-  Reply_to_message_id: Integer; Reply_markup: TtgReplyKeyboardMarkup)
-  : TtgMessage;
+function TTelegramBot.SendSticker(Chat_id, Sticker: TValue; const Caption: string; Disable_notification: Boolean; Reply_to_message_id: Integer; Reply_markup: TtgReplyKeyboardMarkup): TtgMessage;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -1627,9 +1561,7 @@ begin
   end;
 end;
 
-function TTelegramBot.SendMessage(const Chat_id: TValue; const Text: string;
-  ParseMode: TtgParseMode; DisableWebPagePreview, Disable_notification: Boolean;
-  ReplyToMessageId: Integer; ReplyMarkup: IReplyMarkup): TtgMessage;
+function TTelegramBot.SendMessage(const Chat_id: TValue; const Text: string; ParseMode: TtgParseMode; DisableWebPagePreview, Disable_notification: Boolean; ReplyToMessageId: Integer; ReplyMarkup: IReplyMarkup): TtgMessage;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -1648,9 +1580,7 @@ begin
   end;
 end;
 
-function TTelegramBot.SendVenue(Chat_id: TValue; Venue: TtgVenue;
-  Disable_notification: Boolean; Reply_to_message_id: Integer;
-  Reply_markup: TtgReplyKeyboardMarkup): TtgMessage;
+function TTelegramBot.SendVenue(Chat_id: TValue; Venue: TtgVenue; Disable_notification: Boolean; Reply_to_message_id: Integer; Reply_markup: TtgReplyKeyboardMarkup): TtgMessage;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -1671,10 +1601,7 @@ begin
   end;
 end;
 
-function TTelegramBot.SendVideo(Chat_id, Video: TValue;
-  Duration, Width, Height: Integer; const Caption: string;
-  Disable_notification: Boolean; Reply_to_message_id: Integer;
-  Reply_markup: TtgReplyKeyboardMarkup): TtgMessage;
+function TTelegramBot.SendVideo(Chat_id, Video: TValue; Duration, Width, Height: Integer; const Caption: string; Disable_notification: Boolean; Reply_to_message_id: Integer; Reply_markup: TtgReplyKeyboardMarkup): TtgMessage;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -1695,10 +1622,7 @@ begin
   end;
 end;
 
-function TTelegramBot.SendVideoNote(Chat_id, Video_note: TValue;
-  Duration, Length: Integer; Disable_notification: Boolean;
-  Reply_to_message_id: Integer; Reply_markup: TtgReplyKeyboardMarkup)
-  : TtgMessage;
+function TTelegramBot.SendVideoNote(Chat_id, Video_note: TValue; Duration, Length: Integer; Disable_notification: Boolean; Reply_to_message_id: Integer; Reply_markup: TtgReplyKeyboardMarkup): TtgMessage;
 var
   LParameters: TDictionary<string, TValue>;
 begin
@@ -1717,9 +1641,7 @@ begin
   end;
 end;
 
-function TTelegramBot.SendVoice(Chat_id, Voice: TValue; Duration: Integer;
-  Disable_notification: Boolean; Reply_to_message_id: Integer;
-  Reply_markup: TtgReplyKeyboardMarkup): TtgMessage;
+function TTelegramBot.SendVoice(Chat_id, Voice: TValue; Duration: Integer; Disable_notification: Boolean; Reply_to_message_id: Integer; Reply_markup: TtgReplyKeyboardMarkup): TtgMessage;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -1737,10 +1659,7 @@ begin
   end;
 end;
 
-function TTelegramBot.SendAudio(Chat_id, Audio: TValue; Duration: Integer;
-  const Performer, Title: string; Disable_notification: Boolean;
-  Reply_to_message_id: Integer; ReplyMarkup: TtgReplyKeyboardMarkup)
-  : TtgMessage;
+function TTelegramBot.SendAudio(Chat_id, Audio: TValue; Duration: Integer; const Performer, Title: string; Disable_notification: Boolean; Reply_to_message_id: Integer; ReplyMarkup: TtgReplyKeyboardMarkup): TtgMessage;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -1760,8 +1679,7 @@ begin
   end;
 end;
 
-procedure TTelegramBot.SendChatAction(Chat_id: TValue;
-  const Action: TtgSendChatAction);
+procedure TTelegramBot.SendChatAction(Chat_id: TValue; const Action: TtgSendChatAction);
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -1775,9 +1693,7 @@ begin
   end;
 end;
 
-function TTelegramBot.SendContact(Chat_id: TValue; Contact: TtgContact;
-  Disable_notification: Boolean; Reply_to_message_id: Integer;
-  Reply_markup: TtgReplyKeyboardMarkup): TtgMessage;
+function TTelegramBot.SendContact(Chat_id: TValue; Contact: TtgContact; Disable_notification: Boolean; Reply_to_message_id: Integer; Reply_markup: TtgReplyKeyboardMarkup): TtgMessage;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -1796,10 +1712,7 @@ begin
   end;
 end;
 
-function TTelegramBot.SendDocument(Chat_id, Document: TValue;
-  const Caption: string; Disable_notification: Boolean;
-  Reply_to_message_id: Integer; Reply_markup: TtgReplyKeyboardMarkup)
-  : TtgMessage;
+function TTelegramBot.SendDocument(Chat_id, Document: TValue; const Caption: string; Disable_notification: Boolean; Reply_to_message_id: Integer; Reply_markup: TtgReplyKeyboardMarkup): TtgMessage;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -1817,8 +1730,7 @@ begin
   end;
 end;
 
-function TTelegramBot.KickChatMember(Chat_id: TValue; User_id: Integer)
-  : Boolean;
+function TTelegramBot.KickChatMember(Chat_id: TValue; User_id: Integer): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -1845,8 +1757,7 @@ begin
   end;
 end;
 
-function TTelegramBot.GetUserProfilePhotos(Chat_id: TValue;
-  Offset, Limit: Integer): TtgUserProfilePhotos;
+function TTelegramBot.GetUserProfilePhotos(Chat_id: TValue; Offset, Limit: Integer): TtgUserProfilePhotos;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -1866,8 +1777,7 @@ begin
   Result := Self.API<TtgUser>('getMe', nil);
 end;
 
-function TTelegramBot.ForwardMessage(Chat_id, From_chat_id: TValue;
-  Disable_notification: Boolean; Message_id: Integer): TtgMessage;
+function TTelegramBot.ForwardMessage(Chat_id, From_chat_id: TValue; Disable_notification: Boolean; Message_id: Integer): TtgMessage;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -1896,23 +1806,20 @@ begin
   end;
 end;
 
-function TTelegramBot.GetChatAdministrators(const Chat_id: TValue)
-  : TArray<TtgChatMember>;
+function TTelegramBot.GetChatAdministrators(const Chat_id: TValue): TArray<TtgChatMember>;
 var
   Parameters: TDictionary<string, TValue>;
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
     Parameters.Add('chat_id', Chat_id);
-    Result := Self.API < TArray < TtgChatMember >> ('getChatAdministrators',
-      Parameters);
+    Result := Self.API<TArray<TtgChatMember>>('getChatAdministrators', Parameters);
   finally
     Parameters.Free;
   end;
 end;
 
-function TTelegramBot.GetChatMember(Chat_id: TValue; User_id: Integer)
-  : TtgChatMember;
+function TTelegramBot.GetChatMember(Chat_id: TValue; User_id: Integer): TtgChatMember;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -1952,8 +1859,7 @@ begin
   end;
 end;
 
-function TTelegramBot.AnswerCallbackQuery(const Callback_query_id, Text: string;
-  Show_alert: Boolean): Boolean;
+function TTelegramBot.AnswerCallbackQuery(const Callback_query_id, Text: string; Show_alert: Boolean): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -1972,10 +1878,7 @@ end;
 {$ENDREGION}
 {$REGION 'Updating messages'}
 
-function TTelegramBot.EditMessageText(Chat_id: TValue; Message_id: Integer;
-  const Inline_message_id, Text: string; Parse_mode: TtgParseMode;
-  Disable_web_page_preview: Boolean;
-  Reply_markup: TtgReplyKeyboardMarkup): Boolean;
+function TTelegramBot.EditMessageText(Chat_id: TValue; Message_id: Integer; const Inline_message_id, Text: string; Parse_mode: TtgParseMode; Disable_web_page_preview: Boolean; Reply_markup: TtgReplyKeyboardMarkup): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -1994,8 +1897,7 @@ begin
   end;
 end;
 
-function TTelegramBot.DeleteMessage(Chat_id: TValue;
-  Message_id: Integer): Boolean;
+function TTelegramBot.DeleteMessage(Chat_id: TValue; Message_id: Integer): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -2009,9 +1911,7 @@ begin
   end;
 end;
 
-function TTelegramBot.EditMessageCaption(Chat_id: TValue; Message_id: Integer;
-  const Inline_message_id, Caption: string;
-  Reply_markup: TtgReplyKeyboardMarkup): Boolean;
+function TTelegramBot.EditMessageCaption(Chat_id: TValue; Message_id: Integer; const Inline_message_id, Caption: string; Reply_markup: TtgReplyKeyboardMarkup): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -2028,9 +1928,7 @@ begin
   end;
 end;
 
-function TTelegramBot.EditMessageReplyMarkup(Chat_id: TValue;
-  Message_id: Integer; const Inline_message_id: string;
-  Reply_markup: TtgReplyKeyboardMarkup): Boolean;
+function TTelegramBot.EditMessageReplyMarkup(Chat_id: TValue; Message_id: Integer; const Inline_message_id: string; Reply_markup: TtgReplyKeyboardMarkup): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -2048,10 +1946,7 @@ end;
 {$ENDREGION}
 {$REGION 'Inline mode'}
 
-function TTelegramBot.AnswerInlineQuery(const Inline_query_id: string;
-  Results: TArray<TtgInlineQueryResult>; Cache_time: Integer;
-  Is_personal: Boolean; const Next_offset, Switch_pm_text, Switch_pm_parameter
-  : string): Boolean;
+function TTelegramBot.AnswerInlineQuery(const Inline_query_id: string; Results: TArray<TtgInlineQueryResult>; Cache_time: Integer; Is_personal: Boolean; const Next_offset, Switch_pm_text, Switch_pm_parameter: string): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -2072,15 +1967,7 @@ end;
 {$ENDREGION}
 {$REGION 'Payments'}
 
-function TTelegramBot.SendInvoice(Chat_id: Integer; const Title: string;
-  const Description: string; const Payload: string;
-  const Provider_token: string; const Start_parameter: string;
-  const Currency: string; Prices: TArray<TtgLabeledPrice>;
-  const Photo_url: string; Photo_size: Integer; Photo_width: Integer;
-  Photo_height: Integer; Need_name: Boolean; Need_phone_number: Boolean;
-  Need_email: Boolean; Need_shipping_address: Boolean; Is_flexible: Boolean;
-  Disable_notification: Boolean; Reply_to_message_id: Integer;
-  Reply_markup: TtgReplyKeyboardMarkup): TtgMessage;
+function TTelegramBot.SendInvoice(Chat_id: Integer; const Title: string; const Description: string; const Payload: string; const Provider_token: string; const Start_parameter: string; const Currency: string; Prices: TArray<TtgLabeledPrice>; const Photo_url: string; Photo_size: Integer; Photo_width: Integer; Photo_height: Integer; Need_name: Boolean; Need_phone_number: Boolean; Need_email: Boolean; Need_shipping_address: Boolean; Is_flexible: Boolean; Disable_notification: Boolean; Reply_to_message_id: Integer; Reply_markup: TtgReplyKeyboardMarkup): TtgMessage;
 var
   LParameters: TDictionary<string, TValue>;
 begin
@@ -2111,8 +1998,7 @@ begin
   end;
 end;
 
-function TTelegramBot.AnswerPreCheckoutQuery(const Pre_checkout_query_id
-  : string; Ok: Boolean; const Error_message: string): Boolean;
+function TTelegramBot.AnswerPreCheckoutQuery(const Pre_checkout_query_id: string; Ok: Boolean; const Error_message: string): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -2127,9 +2013,7 @@ begin
   end;
 end;
 
-function TTelegramBot.AnswerShippingQuery(const Shipping_query_id: string;
-  Ok: Boolean; Shipping_options: TArray<TtgShippingOption>;
-  const Error_message: string): Boolean;
+function TTelegramBot.AnswerShippingQuery(const Shipping_query_id: string; Ok: Boolean; Shipping_options: TArray<TtgShippingOption>; const Error_message: string): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -2137,8 +2021,7 @@ begin
   try
     Parameters.Add('Shipping_query_id', Shipping_query_id);
     Parameters.Add('Ok', Ok);
-    Parameters.Add('Shipping_options',
-      ArrayToString<TtgShippingOption>(Shipping_options));
+    Parameters.Add('Shipping_options', ArrayToString<TtgShippingOption>(Shipping_options));
     Parameters.Add('Error_message', Error_message);
     Result := API<Boolean>('answerShippingQuery', Parameters);
   finally
@@ -2149,9 +2032,7 @@ end;
 {$ENDREGION}
 {$REGION 'Games'}
 
-function TTelegramBot.SetGameScore(User_id, Score: Integer;
-  Force, Disable_edit_message: Boolean; Chat_id, Message_id: Integer;
-  const Inline_message_id: string): TtgMessage;
+function TTelegramBot.SetGameScore(User_id, Score: Integer; Force, Disable_edit_message: Boolean; Chat_id, Message_id: Integer; const Inline_message_id: string): TtgMessage;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -2170,9 +2051,7 @@ begin
   end;
 end;
 
-function TTelegramBot.SendGame(Chat_id: Integer; const Game_short_name: string;
-  Disable_notification: Boolean; Reply_to_message_id: Integer;
-  Reply_markup: TtgReplyKeyboardMarkup): TtgMessage;
+function TTelegramBot.SendGame(Chat_id: Integer; const Game_short_name: string; Disable_notification: Boolean; Reply_to_message_id: Integer; Reply_markup: TtgReplyKeyboardMarkup): TtgMessage;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -2190,8 +2069,7 @@ begin
 
 end;
 
-function TTelegramBot.GetGameHighScores(User_id, Chat_id, Message_id: Integer;
-  const Inline_message_id: string): TArray<TtgGameHighScore>;
+function TTelegramBot.GetGameHighScores(User_id, Chat_id, Message_id: Integer; const Inline_message_id: string): TArray<TtgGameHighScore>;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -2201,8 +2079,7 @@ begin
     Parameters.Add('chat_id', Chat_id);
     Parameters.Add('message_id', Message_id);
     Parameters.Add('inline_message_id', Inline_message_id);
-    Result := API < TArray < TtgGameHighScore >> ('getGameHighScores',
-      Parameters);
+    Result := API<TArray<TtgGameHighScore>>('getGameHighScores', Parameters);
   finally
     Parameters.Free;
   end;
@@ -2210,14 +2087,11 @@ end;
 
 {$ENDREGION}
 {$REGION 'Async'}
-
+{$IF Defined(NO_QUEUE)}   // для работы в dll"ках
 procedure TtgRecesiver.Execute;
 var
   LUpdates: TArray<TtgUpdate>;
-{$IFDEF NO_QUEUE}
-var
   I: Integer;
-{$ENDIF}
 begin
   if Assigned(Bot.OnConnect) then
     Bot.OnConnect(Bot);
@@ -2228,15 +2102,39 @@ begin
     LUpdates := FBot.GetUpdates(Bot.MessageOffset, 100, 0, UPDATES_ALLOWED_ALL);
     if Length(LUpdates) = 0 then
       Continue;
-    Bot.MessageOffset := LUpdates[high(LUpdates)].Id + 1;
-{$IFDEF NO_QUEUE}
+    Bot.MessageOffset := LUpdates[High(LUpdates)].Id + 1;
+    for I := Low(LUpdates) to High(LUpdates) do
+      Self.OnUpdateReceived(LUpdates[I]);
+    if Assigned(LUpdates) then
+    begin
+      for I := Low(LUpdates) to High(LUpdates) do
+        FreeAndNil(LUpdates[I]);
+      LUpdates := nil;
+    end;
+
+  until (Terminated) or (not Bot.IsReceiving);
+end;
+
 {$ELSE}
+procedure TtgRecesiver.Execute;
+var
+  LUpdates: TArray<TtgUpdate>;
+begin
+  if Assigned(Bot.OnConnect) then
+    Bot.OnConnect(Bot);
+  repeat
+    Sleep(Bot.PollingTimeout);
+    if (Terminated) or (not Bot.IsReceiving) then
+      Break;
+    LUpdates := FBot.GetUpdates(Bot.MessageOffset, 100, 0, UPDATES_ALLOWED_ALL);
+    if Length(LUpdates) = 0 then
+      Continue;
+    Bot.MessageOffset := LUpdates[High(LUpdates)].Id + 1;
     TThread.Queue(Self,
       procedure
       var
         I: Integer;
       begin
-{$ENDIF}
         for I := Low(LUpdates) to High(LUpdates) do
           Self.OnUpdateReceived(LUpdates[I]);
         if Assigned(LUpdates) then
@@ -2245,35 +2143,12 @@ begin
             FreeAndNil(LUpdates[I]);
           LUpdates := nil;
         end;
-{$IFDEF NO_QUEUE}
-{$ELSE}
       end);
-{$ENDIF}
   until (Terminated) or (not Bot.IsReceiving);
-end;
+  end;
+
+{$ENDIF}
 {$ENDREGION}
 
-procedure TtgRecesiver.OnUpdateReceived(AValue: TtgUpdate);
-begin
-  if Assigned(Bot.OnUpdate) then
-    Bot.OnUpdate(Bot, AValue);
-  case AValue.&Type of
-    TtgUpdateType.MessageUpdate:
-      if Assigned(Bot.OnMessage) then
-        Bot.OnMessage(Bot, AValue.Message);
-    TtgUpdateType.InlineQueryUpdate:
-      if Assigned(Bot.OnInlineQuery) then
-        Bot.OnInlineQuery(Bot, AValue.InlineQuery);
-    TtgUpdateType.ChosenInlineResultUpdate:
-      if Assigned(Bot.OnInlineResultChosen) then
-        Bot.OnInlineResultChosen(Bot, AValue.ChosenInlineResult);
-    TtgUpdateType.CallbackQueryUpdate:
-      if Assigned(Bot.OnCallbackQuery) then
-        Bot.OnCallbackQuery(Bot, AValue.CallbackQuery);
-    TtgUpdateType.EditedMessage:
-      if Assigned(Bot.OnMessageEdited) then
-        Bot.OnMessageEdited(Bot, AValue.EditedMessage);
-  end;
-end;
-
 end.
+

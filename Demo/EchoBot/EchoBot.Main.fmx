@@ -8,6 +8,7 @@ object Main: TMain
   FormFactor.Height = 480
   FormFactor.Devices = [Desktop]
   OnCreate = FormCreate
+  OnClose = FormClose
   DesignerMasterStyle = 0
   object mmo1: TMemo
     Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
@@ -21,11 +22,14 @@ object Main: TMain
     Viewport.Height = 245.000000000000000000
   end
   object tgBot: TTelegramBot
+    OnConnect = tgBotConnect
+    OnDisconnect = tgBotDisconnect
     OnMessage = tgBotMessage
     OnMessageEdited = tgBotMessage
     OnInlineQuery = tgBotInlineQuery
     OnInlineResultChosen = tgBotInlineResultChosen
     OnCallbackQuery = tgBotCallbackQuery
+    OnReceiveError = tgBotReceiveError
     Left = 216
     Top = 88
   end

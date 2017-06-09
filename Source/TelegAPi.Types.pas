@@ -80,7 +80,7 @@ type
     /// “channel”
     /// </summary>
     [Alias('type')]
-    &Type: string;
+    TypeChat: string;
     /// <summary>
     /// Optional. Title, for channels and group chats
     /// </summary>
@@ -122,7 +122,7 @@ type
     /// clickable text URLs), text_mention (for users without usernames)
     /// </summary>
     [Alias('type')]
-    &Type: string;
+    TypeMessage: string;
     /// <summary>
     /// Offset in UTF-16 code units to the start of the entity
     /// </summary>
@@ -156,7 +156,7 @@ type
     FileSize: Integer;
     [Alias('file_path')]
     FilePath: string;
-    function GetFileUrl(Const AToken: string): string;
+    function GetFileUrl(const AToken: string): string;
   end;
 
   /// <summary>
@@ -775,8 +775,7 @@ type
     /// </summary>
     [Alias('request_location')]
     RequestLocation: Boolean;
-    constructor Create(const AText: string; ARequestContact: Boolean = False;
-      ARequestLocation: Boolean = False); overload;
+    constructor Create(const AText: string; ARequestContact: Boolean = False; ARequestLocation: Boolean = False); overload;
   end;
 
   /// <summary>
@@ -784,7 +783,6 @@ type
   /// </summary>
 
   TtgCallbackGame = class
-
   end;
 
   /// <summary>
@@ -792,6 +790,12 @@ type
   /// exactly one of the optional fields.
   /// </summary>
   TtgInlineKeyboardButton = class
+  public
+      /// <summary>
+    /// Initializes a new instance of the <see cref="InlineKeyboardButton"/> class.
+    /// </summary>
+    /// <param name="text">Text of the button</param>
+    constructor Create(const AText: string); overload;
   public
     /// <summary>
     /// Label text on the button
@@ -856,21 +860,15 @@ type
     /// <summary>
     /// Initializes a new instance of the <see cref="InlineKeyboardButton"/> class.
     /// </summary>
-    /// <param name="text">Text of the button</param>
-    constructor Create(const AText: String); overload;
-    /// <summary>
-    /// Initializes a new instance of the <see cref="InlineKeyboardButton"/> class.
-    /// </summary>
     /// <param name="text">The text.</param>
     /// <param name="callbackData">The callback data.</param>
-    constructor Create(const AText, ACallbackData: String); overload;
+    constructor Create(const AText, ACallbackData: string); overload;
     /// <summary>
     /// Initializes a new instance of the <see cref="InlineKeyboardButton"/> class.
     /// </summary>
     /// <param name="text">Text of the button</param>
     /// <param name="callbackGame"></param>
-    constructor Create(const AText: String;
-      ACallbackGame: TtgCallbackGame); overload;
+    constructor Create(const AText: string; ACallbackGame: TtgCallbackGame); overload;
   end;
 
   /// <summary>
@@ -944,34 +942,28 @@ type
   /// </summary>
   [Alias('InlineQuery')]
   TtgInlineQuery = class
-  private
-    FID: string;
-    FFrom: TtgUser;
-    FQuery: string;
-    Foffset: string;
   public
-    destructor Destroy; override;
-  published
     /// <summary>
     /// Unique identifier for this query
     /// </summary>
     [Alias('id')]
-    property ID: string read FID write FID;
+    ID: string;
     /// <summary>
     /// Sender
     /// </summary>
     [Alias('from')]
-    property From: TtgUser read FFrom write FFrom;
+    From: TtgUser;
     /// <summary>
     /// Text of the query
     /// </summary>
     [Alias('query')]
-    property Query: string read FQuery write FQuery;
+    Query: string;
     /// <summary>
     /// Offset of the results to be returned, can be controlled by the bot
     /// </summary>
     [Alias('offset')]
-    property Offset: string read Foffset write Foffset;
+    Offset: string;
+    destructor Destroy; override;
   end;
 
   /// <summary>
@@ -980,82 +972,68 @@ type
   /// </summary>
   [Alias('ChosenInlineResult')]
   TtgChosenInlineResult = class
-  private
-    FResultId: string;
-    FFrom: TtgUser;
-    FLocation: TtgLocation;
-    FQuery: string;
-    Finline_message_id: string;
-  published
+  public
     /// <summary>
     /// The unique identifier for the result that was chosen.
     /// </summary>
     [Alias('result_id')]
-    property ResultId: string read FResultId write FResultId;
+    ResultId: string;
     /// <summary>
     /// The user that chose the result.
     /// </summary>
     [Alias('from')]
-    property From: TtgUser read FFrom write FFrom;
+    From: TtgUser;
     /// <summary>
     /// The query that was used to obtain the result.
     /// </summary>
     [Alias('location')]
-    property Location: TtgLocation read FLocation write FLocation;
+    Location: TtgLocation;
     /// <summary>
     /// Optional. Identifier of the sent inline message. Available only if
     /// there is an inline keyboard attached to the message. Will be also
     /// received in callback queries and can be used to edit the message.
     /// </summary>
     [Alias('inline_message_id')]
-    property Inline_message_id: string read Finline_message_id
-      write Finline_message_id;
+    Inline_message_id: string;
     /// <summary>
     /// The query that was used to obtain the result.
     /// </summary>
     [Alias('query')]
-    property Query: string read FQuery write FQuery;
+    Query: string;
   end;
 
   [Alias('CallbackQuery')]
   TtgCallbackQuery = class
-  private
-    FID: string;
-    FFrom: TtgUser;
-    FMessage: TtgMessage;
-    FInlineMessageId: string;
-    FData: string;
-  published
+  public
     /// <summary>
     /// Unique identifier for this query
     /// </summary>
     [Alias('id')]
-    property ID: string read FID write FID;
+    ID: string;
     /// <summary>
     /// Sender
     /// </summary>
     [Alias('from')]
-    property From: TtgUser read FFrom write FFrom;
+    From: TtgUser;
     /// <summary>
     /// Optional. Message with the callback button that originated the
     /// query. Note that message content and message date will not be
     /// available if the message is too old
     /// </summary>
     [Alias('message')]
-    property message: TtgMessage read FMessage write FMessage;
+    message: TtgMessage;
     /// <summary>
     /// Optional. Identifier of the message sent via the bot in inline
     /// mode, that originated the query
     /// </summary>
     [Alias('inline_message_id')]
-    property InlineMessageId: string read FInlineMessageId
-      write FInlineMessageId;
+    InlineMessageId: string;
     /// <summary>
     /// Data associated with the callback button. Be aware that a bad
     /// client can send arbitrary data in this field
     /// </summary>
     [Alias('data')]
-    property Data: string read FData write FData;
+    Data: string;
   end;
 
 {$REGION 'Payments'}
@@ -1109,7 +1087,7 @@ type
     /// Portion label
     /// </summary>
     [Alias('label')]
-    &Label: string;
+    Text: string;
     /// <summary>
     /// Price of the product in the smallest units of the <see href="https://core.telegram.org/bots/payments#supported-currencies">
     /// currency</see> (integer, not float/double).
@@ -1339,6 +1317,7 @@ type
   /// <remarks>
   /// Only one of the optional parameters can be present in any given update.
   /// </remarks>
+
   [Alias('Update')]
   TtgUpdate = class
   public
@@ -1414,7 +1393,7 @@ type
     /// The update type.
     /// </value>
     /// <exception cref="System.ArgumentOutOfRangeException"></exception>
-    Function &Type: TtgUpdateType;
+    function &Type: TtgUpdateType;
   end;
 
   /// <summary />
@@ -1472,8 +1451,7 @@ implementation
 
 { TtgApiFileToSend }
 
-constructor TtgFileToSend.Create(const FileName: string;
-  const Content: TStream);
+constructor TtgFileToSend.Create(const FileName: string; const Content: TStream);
 begin
   Self.FileName := FileName;
   Self.Content := Content;
@@ -1487,8 +1465,7 @@ end;
 
 { TtgKeyboardButton }
 
-constructor TtgKeyboardButton.Create(const AText: string;
-  ARequestContact, ARequestLocation: Boolean);
+constructor TtgKeyboardButton.Create(const AText: string; ARequestContact, ARequestLocation: Boolean);
 begin
   Self.Text := AText;
   Self.RequestContact := ARequestContact;
@@ -1508,8 +1485,7 @@ end;
 
 destructor TtgMessageEntity.Destroy;
 begin
-  if Assigned(User) then
-    FreeAndNil(User);
+  FreeAndNil(User);
   inherited;
 end;
 
@@ -1533,8 +1509,7 @@ end;
 
 destructor TtgVideo.Destroy;
 begin
-  if Assigned(Thumb) then
-    FreeAndNil(Thumb);
+  FreeAndNil(Thumb);
   inherited;
 end;
 
@@ -1542,8 +1517,7 @@ end;
 
 destructor TtgVenue.Destroy;
 begin
-  if Assigned(Location) then
-    FreeAndNil(Location);
+  FreeAndNil(Location);
   inherited;
 end;
 
@@ -1553,56 +1527,44 @@ destructor TtgMessage.Destroy;
 var
   I: Integer;
 begin
-  if Assigned(From) then
-    FreeAndNil(From);
-  if Assigned(Chat) then
-    FreeAndNil(Chat);
-  if Assigned(ForwardFrom) then
-    FreeAndNil(ForwardFrom);
-  if Assigned(ForwardFromChat) then
-    FreeAndNil(ForwardFromChat);
-  if Assigned(ReplyToMessage) then
-    FreeAndNil(ReplyToMessage);
-  if Assigned(Audio) then
-    FreeAndNil(Audio);
-  if Assigned(Document) then
-    FreeAndNil(Document);
-  if Assigned(Sticker) then
-    FreeAndNil(Sticker);
-  if Assigned(Video) then
-    FreeAndNil(Video);
-  if Assigned(Voice) then
-    FreeAndNil(Voice);
-  if Assigned(Contact) then
-    FreeAndNil(Contact);
-  if Assigned(Location) then
-    FreeAndNil(Location);
-  if Assigned(Venue) then
-    FreeAndNil(Venue);
-
-  if Assigned(LeftChatMember) then
-    FreeAndNil(LeftChatMember);
-  if Assigned(PinnedMessage) then
-    FreeAndNil(PinnedMessage);
-  if Assigned(ForwardFromChat) then
-    FreeAndNil(ForwardFromChat);
+  FreeAndNil(From);
+  FreeAndNil(Chat);
+  FreeAndNil(ForwardFrom);
+  FreeAndNil(ForwardFromChat);
+  FreeAndNil(ReplyToMessage);
+  FreeAndNil(Audio);
+  FreeAndNil(Document);
+  FreeAndNil(Sticker);
+  FreeAndNil(Video);
+  FreeAndNil(Voice);
+  FreeAndNil(Contact);
+  FreeAndNil(Location);
+  FreeAndNil(Venue);
+  FreeAndNil(LeftChatMember);
+  FreeAndNil(PinnedMessage);
+  FreeAndNil(ForwardFromChat);
   if Assigned(NewChatMembers) then
   begin
     if Length(NewChatMembers) > 0 then
-      for I := low(NewChatMembers) to high(NewChatMembers) do
+      for I := Low(NewChatMembers) to High(NewChatMembers) do
         FreeAndNil(NewChatMembers[I]);
+  end;
+  //Photo
+  if Assigned(Photo) then
+  begin
+    if Length(Photo) > 0 then
+      for I := Low(Photo) to High(Photo) do
+        Photo[I].Free;
   end;
   if Assigned(Entities) then
   begin
     if Length(Entities) > 0 then
-      for I := low(Entities) to high(Entities) do
+      for I := Low(Entities) to High(Entities) do
         Entities[I].Free;
   end;
-  for I := low(NewChatPhoto) to high(NewChatPhoto) do
+  for I := Low(NewChatPhoto) to High(NewChatPhoto) do
     FreeAndNil(NewChatPhoto[I]);
-  SetLength(NewChatPhoto, 0);
-  if Assigned(Game) then
-    FreeAndNil(Game);
+  FreeAndNil(Game);
   inherited;
 end;
 
@@ -1666,14 +1628,11 @@ destructor TtgGame.Destroy;
 var
   I: Integer;
 begin
-  for I := low(Photo) to high(Photo) do
-    if Assigned(Photo[I]) then
-      FreeAndNil(Photo[I]);
-  for I := low(Text_entities) to high(Text_entities) do
-    if Assigned(Text_entities[I]) then
-      FreeAndNil(Text_entities[I]);
-  if Assigned(Animation) then
-    FreeAndNil(Animation);
+  for I := Low(Photo) to High(Photo) do
+    FreeAndNil(Photo[I]);
+  for I := Low(Text_entities) to High(Text_entities) do
+    FreeAndNil(Text_entities[I]);
+  FreeAndNil(Animation);
   inherited;
 end;
 
@@ -1681,8 +1640,7 @@ end;
 
 destructor TtgGameHighScore.Destroy;
 begin
-  if Assigned(User) then
-    FreeAndNil(User);
+  FreeAndNil(User);
   inherited;
 end;
 
@@ -1690,8 +1648,7 @@ end;
 
 destructor TtgInlineQuery.Destroy;
 begin
-  if Assigned(FFrom) then
-    FreeAndNil(FFrom);
+  FreeAndNil(From);
   inherited;
 end;
 
@@ -1702,8 +1659,8 @@ var
   I: Integer;
   J: Integer;
 begin
-  for I := low(Photos) to high(Photos) do
-    for J := low(Photos[I]) to high(Photos[I]) do
+  for I := Low(Photos) to High(Photos) do
+    for J := Low(Photos[I]) to High(Photos[I]) do
       FreeAndNil(Photos[I, J]);
   inherited;
 end;
@@ -1717,22 +1674,22 @@ end;
 
 { TtgInlineKeyboardButton }
 
-constructor TtgInlineKeyboardButton.Create(const AText: String);
+constructor TtgInlineKeyboardButton.Create(const AText: string);
 begin
   Text := AText;
 end;
 
-constructor TtgInlineKeyboardButton.Create(const AText, ACallbackData: String);
+constructor TtgInlineKeyboardButton.Create(const AText, ACallbackData: string);
 begin
   Self.Create(AText);
   Self.CallbackData := ACallbackData;
 end;
 
-constructor TtgInlineKeyboardButton.Create(const AText: String;
-  ACallbackGame: TtgCallbackGame);
+constructor TtgInlineKeyboardButton.Create(const AText: string; ACallbackGame: TtgCallbackGame);
 begin
   Self.Create(AText);
   Self.CallbackGame := ACallbackGame;
 end;
 
 end.
+

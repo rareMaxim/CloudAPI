@@ -27,7 +27,7 @@ type
     /// <summary>
     /// for photos
     /// </summary>
-    Upload_photo,
+    UploadPhoto,
     /// <summary>
     /// for videos
     /// </summary>
@@ -35,7 +35,7 @@ type
     /// <summary>
     /// for videos
     /// </summary>
-    Upload_video,
+    UploadVideo,
     /// <summary>
     /// for audio files
     /// </summary>

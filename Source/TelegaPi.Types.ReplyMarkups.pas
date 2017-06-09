@@ -63,14 +63,12 @@ type
     /// Initializes a new instance of the <see cref="InlineKeyboardMarkup"/> class.
     /// </summary>
     /// <param name="inlineKeyboardRow">The inline keyboard row.</param>
-    constructor Create(AInlineKeyboardRow
-      : TArray<TtgInlineKeyboardButton>); overload;
+    constructor Create(AInlineKeyboardRow: TArray<TtgInlineKeyboardButton>); overload;
     /// <summary>
     /// Initializes a new instance of the <see cref="InlineKeyboardMarkup"/> class.
     /// </summary>
     /// <param name="inlineKeyboard">The inline keyboard.</param>
-    constructor Create(InlineKeyboard: TArray < TArray < TtgInlineKeyboardButton
-      >> ); overload;
+    constructor Create(InlineKeyboard: TArray<TArray<TtgInlineKeyboardButton>>); overload;
     destructor Destroy; override;
     [DISABLE]
     property RefCount;
@@ -89,13 +87,8 @@ type
     /// <param name="keyboardRow">The keyboard row.</param>
     /// <param name="resizeKeyboard">if set to <c>true</c> the keyboard resizes vertically for optimal fit.</param>
     /// <param name="oneTimeKeyboard">if set to <c>true</c> the client hides the keyboard as soon as it's been used.</param>
-    constructor Create(AKeyboardRow: TArray<TtgKeyboardButton>;
-      AResizeKeyboard: Boolean = False;
-      AOneTimeKeyboard: Boolean = False); overload;
-
-    constructor Create(AKeyboard: TArray<TArray<TtgKeyboardButton>>;
-      AResizeKeyboard: Boolean = False;
-      AOneTimeKeyboard: Boolean = False); overload;
+    constructor Create(AKeyboardRow: TArray<TtgKeyboardButton>; AResizeKeyboard: Boolean = False; AOneTimeKeyboard: Boolean = False); overload;
+    constructor Create(AKeyboard: TArray<TArray<TtgKeyboardButton>>; AResizeKeyboard: Boolean = False; AOneTimeKeyboard: Boolean = False); overload;
     destructor Destroy; override;
   public
     /// <summary>
@@ -155,15 +148,13 @@ implementation
 
 { TtgInlineKeyboardMarkup }
 
-constructor TtgInlineKeyboardMarkup.Create(AInlineKeyboardRow
-  : TArray<TtgInlineKeyboardButton>);
+constructor TtgInlineKeyboardMarkup.Create(AInlineKeyboardRow: TArray<TtgInlineKeyboardButton>);
 begin
   SetLength(InlineKeyboard, 1);
   InlineKeyboard[0] := AInlineKeyboardRow;
 end;
 
-constructor TtgInlineKeyboardMarkup.Create(InlineKeyboard: TArray < TArray <
-  TtgInlineKeyboardButton >> );
+constructor TtgInlineKeyboardMarkup.Create(InlineKeyboard: TArray<TArray<TtgInlineKeyboardButton>>);
 begin
   Self.InlineKeyboard := InlineKeyboard;
 end;
@@ -181,8 +172,7 @@ end;
 
 { TtgReplyKeyboardMarkup }
 
-constructor TtgReplyKeyboardMarkup.Create(AKeyboardRow
-  : TArray<TtgKeyboardButton>; AResizeKeyboard, AOneTimeKeyboard: Boolean);
+constructor TtgReplyKeyboardMarkup.Create(AKeyboardRow: TArray<TtgKeyboardButton>; AResizeKeyboard, AOneTimeKeyboard: Boolean);
 begin
   inherited Create();
   SetLength(Keyboard, 1);
@@ -191,9 +181,7 @@ begin
   OneTimeKeyboard := AOneTimeKeyboard;
 end;
 
-constructor TtgReplyKeyboardMarkup.Create
-  (AKeyboard: TArray<TArray<TtgKeyboardButton>>;
-  AResizeKeyboard, AOneTimeKeyboard: Boolean);
+constructor TtgReplyKeyboardMarkup.Create(AKeyboard: TArray<TArray<TtgKeyboardButton>>; AResizeKeyboard, AOneTimeKeyboard: Boolean);
 begin
   inherited Create;
   Keyboard := AKeyboard;
@@ -205,10 +193,10 @@ destructor TtgReplyKeyboardMarkup.Destroy;
 var
   I, J: Integer;
 begin
-  for I := low(Keyboard) to high(Keyboard) do
-    for J := low(Keyboard[I]) to high(Keyboard[I]) do
+  for I := Low(Keyboard) to High(Keyboard) do
+    for J := Low(Keyboard[I]) to High(Keyboard[I]) do
       Keyboard[I, J].Free;
-  inherited;
+  inherited Destroy;
 end;
 { TtgReplyKeyboardRemove }
 
@@ -219,3 +207,4 @@ begin
 end;
 
 end.
+

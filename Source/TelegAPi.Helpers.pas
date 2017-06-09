@@ -125,11 +125,11 @@ begin
   case Self of
     TtgSendChatAction.Typing:
       Result := 'typing';
-    TtgSendChatAction.Upload_photo:
+    TtgSendChatAction.UploadPhoto:
       Result := 'upload_photo';
     TtgSendChatAction.Record_video:
       Result := 'record_video';
-    TtgSendChatAction.Upload_video:
+    TtgSendChatAction.UploadVideo:
       Result := 'upload_video';
     TtgSendChatAction.Record_audio:
       Result := 'record_audio';
