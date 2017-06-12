@@ -65,7 +65,7 @@ end;
 
 procedure TMain.FormCreate(Sender: TObject);
 begin
-  ReportMemoryLeaksOnShutdown := True;
+ // ReportMemoryLeaksOnShutdown := True;
   tgBot.Token := {$I ..\token.inc};
   if not tgBot.IsValidToken then
     raise ELoginCredentialError.Create('invalid token format');

@@ -1457,8 +1457,14 @@ type
 
 implementation
 
-{ TtgApiFileToSend }
+{ TtgAnimation }
+destructor TtgAnimation.Destroy;
+begin
+  FreeAndNil(Thumb);
+  inherited;
+end;
 
+{ TtgApiFileToSend }
 constructor TtgFileToSend.Create(const FileName: string; const Content: TStream);
 begin
   Self.FileName := FileName;
@@ -1471,8 +1477,75 @@ begin
   inherited;
 end;
 
-{ TtgKeyboardButton }
+{ TtgChatMember }
+destructor TtgChatMember.Destroy;
+begin
+  FreeAndNil(User);
+  inherited;
+end;
 
+{ TtgDocument }
+destructor TtgDocument.Destroy;
+begin
+  FreeAndNil(Thumb);
+  inherited;
+end;
+
+{ TtgFile }
+function TtgFile.GetFileUrl(const AToken: string): string;
+begin
+  result := Format('https://api.telegram.org/file/bot%S/%S', [AToken, FilePath])
+end;
+
+{ TtgGame }
+constructor TtgGame.Create;
+begin
+  inherited Create;
+  Photo := TObjectList<TtgPhotoSize>.Create;
+  Text_entities := TObjectList<TtgMessageEntity>.Create;
+end;
+
+destructor TtgGame.Destroy;
+begin
+  FreeAndNil(Photo);
+  FreeAndNil(Text_entities);
+  FreeAndNil(Animation);
+  inherited;
+end;
+
+{ TtgGameHighScore }
+destructor TtgGameHighScore.Destroy;
+begin
+  FreeAndNil(User);
+  inherited;
+end;
+
+{ TtgInlineKeyboardButton }
+constructor TtgInlineKeyboardButton.Create(const AText: string);
+begin
+  Text := AText;
+end;
+
+constructor TtgInlineKeyboardButton.Create(const AText, ACallbackData: string);
+begin
+  Self.Create(AText);
+  Self.CallbackData := ACallbackData;
+end;
+
+constructor TtgInlineKeyboardButton.Create(const AText: string; ACallbackGame: TtgCallbackGame);
+begin
+  Self.Create(AText);
+  Self.CallbackGame := ACallbackGame;
+end;
+
+ { TtgInlineQuery }
+destructor TtgInlineQuery.Destroy;
+begin
+  FreeAndNil(From);
+  inherited;
+end;
+
+{ TtgKeyboardButton }
 constructor TtgKeyboardButton.Create(const AText: string; ARequestContact, ARequestLocation: Boolean);
 begin
   Self.Text := AText;
@@ -1480,56 +1553,11 @@ begin
   Self.RequestLocation := ARequestLocation;
 end;
 
-{ TtgChatMember }
-
-destructor TtgChatMember.Destroy;
-begin
-  if Assigned(User) then
-    FreeAndNil(User);
-  inherited;
-end;
-
-{ TtgMessageEntity }
-
-destructor TtgMessageEntity.Destroy;
-begin
-  FreeAndNil(User);
-  inherited;
-end;
-
-{ TtgDocument }
-
-destructor TtgDocument.Destroy;
-begin
-  FreeAndNil(Thumb);
-  inherited;
-end;
-
-{ TtgSticker }
-
-destructor TtgSticker.Destroy;
-begin
-  FreeAndNil(Thumb);
-  inherited;
-end;
-
-{ TtgVideo }
-
-destructor TtgVideo.Destroy;
-begin
-  FreeAndNil(Thumb);
-  inherited;
-end;
-
-{ TtgVenue }
-
-destructor TtgVenue.Destroy;
-begin
-  FreeAndNil(Location);
-  inherited;
-end;
-
 { TtgMessage }
+constructor TtgMessage.Create;
+begin
+
+end;
 
 destructor TtgMessage.Destroy;
 begin
@@ -1557,8 +1585,47 @@ begin
   inherited;
 end;
 
-{ TtgUpdate }
+{ TtgMessageEntity }
+destructor TtgMessageEntity.Destroy;
+begin
+  FreeAndNil(User);
+  inherited;
+end;
 
+{ TtgVenue }
+destructor TtgVenue.Destroy;
+begin
+  FreeAndNil(Location);
+  inherited;
+end;
+
+{ TtgVideo }
+destructor TtgVideo.Destroy;
+begin
+  FreeAndNil(Thumb);
+  inherited;
+end;
+
+{TtgShippingOption}
+constructor TtgShippingOption.Create;
+begin
+  Prices := TObjectList<TtgLabeledPrice>.Create;
+end;
+
+destructor TtgShippingOption.Destroy;
+begin
+  FreeAndNil(Prices);
+  inherited;
+end;
+
+{ TtgSticker }
+destructor TtgSticker.Destroy;
+begin
+  FreeAndNil(Thumb);
+  inherited;
+end;
+
+{ TtgUpdate }
 function TtgUpdate.&Type: TtgUpdateType;
 begin
   if Assigned(Message) then
@@ -1575,7 +1642,6 @@ begin
     Exit(TtgUpdateType.ChannelPost);
   if Assigned(EditedMessage) then
     Exit(TtgUpdateType.ChannelPost);
-
   if Assigned(ShippingQuery) then
     Exit(TtgUpdateType.ShippingQueryUpdate);
   if Assigned(PreCheckoutQuery) then
@@ -1595,40 +1661,6 @@ begin
   inherited;
 end;
 
-{ TtgAnimation }
-
-destructor TtgAnimation.Destroy;
-begin
-  FreeAndNil(Thumb);
-  inherited;
-end;
-
-{ TtgGame }
-
-destructor TtgGame.Destroy;
-begin
-  FreeAndNil(Photo);
-  FreeAndNil(Text_entities);
-  FreeAndNil(Animation);
-  inherited;
-end;
-
-{ TtgGameHighScore }
-
-destructor TtgGameHighScore.Destroy;
-begin
-  FreeAndNil(User);
-  inherited;
-end;
-
-{ TtgInlineQuery }
-
-destructor TtgInlineQuery.Destroy;
-begin
-  FreeAndNil(From);
-  inherited;
-end;
-
 { TtgUserProfilePhotos }
 constructor TtgUserProfilePhotos.Create;
 begin
@@ -1641,30 +1673,15 @@ begin
   inherited;
 end;
 
-{ TtgFile }
-
-function TtgFile.GetFileUrl(const AToken: string): string;
+{TtgWebhookInfo}
+constructor TtgWebhookInfo.Create;
 begin
-  result := Format('https://api.telegram.org/file/bot%S/%S', [AToken, FilePath])
+  Allowed_updates := TList<string>.Create;
 end;
 
-{ TtgInlineKeyboardButton }
-
-constructor TtgInlineKeyboardButton.Create(const AText: string);
+destructor TtgWebhookInfo.Destroy;
 begin
-  Text := AText;
-end;
-
-constructor TtgInlineKeyboardButton.Create(const AText, ACallbackData: string);
-begin
-  Self.Create(AText);
-  Self.CallbackData := ACallbackData;
-end;
-
-constructor TtgInlineKeyboardButton.Create(const AText: string; ACallbackGame: TtgCallbackGame);
-begin
-  Self.Create(AText);
-  Self.CallbackGame := ACallbackGame;
+  FreeAndNil(Allowed_updates);
 end;
 
 end.
