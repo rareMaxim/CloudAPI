@@ -28,8 +28,8 @@ type
     /// Initializes a new instance of the <see cref="ApiRequestException"/> class.
     /// </summary>
     /// <param name="AMessage">The message that describes the error.</param>
-    constructor Create(AMessage: string); overload;
-    constructor Create(AMessage: string; AErrorCode: Integer); overload;
+    constructor Create(const AMessage: string); overload;
+    constructor Create(const AMessage: string; AErrorCode: Integer); overload;
     function ToString: string; override;
     /// <summary>
     /// Gets the error code.
@@ -45,12 +45,12 @@ implementation
 
 { EApiRequestException }
 
-constructor EApiRequestException.Create(AMessage: string);
+constructor EApiRequestException.Create(const AMessage: string);
 begin
   inherited Create(AMessage);
 end;
 
-constructor EApiRequestException.Create(AMessage: string; AErrorCode: Integer);
+constructor EApiRequestException.Create(const AMessage: string; AErrorCode: Integer);
 begin
   inherited Create(AMessage);
   FErrorCode := AErrorCode;

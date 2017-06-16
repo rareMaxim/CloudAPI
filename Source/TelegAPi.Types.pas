@@ -473,14 +473,17 @@ type
     /// <summary>
     /// Position in high score table for the game
     /// </summary>
+    [Alias('position')]
     Position: Integer;
     /// <summary>
     /// User
     /// </summary>
+    [Alias('user')]
     User: TtgUser;
     /// <summary>
     /// Score
     /// </summary>
+    [Alias('score')]
     Score: Integer;
     destructor Destroy; override;
   end;
@@ -725,7 +728,6 @@ type
     /// </summary>
     [Alias('pinned_message')]
     PinnedMessage: TtgMessage;
-    constructor Create;
     destructor Destroy; override;
   end;
 
@@ -915,7 +917,7 @@ type
     /// The error message.
     /// </value>
     [Alias('description')]
-    Message: string;
+    message: string;
     /// <summary>
     /// Gets the error code.
     /// </summary>
@@ -933,6 +935,8 @@ type
 
   [Alias('FileToSend')]
   TtgFileToSend = class
+  private
+    procedure DoCheckParams;
   public
     FileName: string;
     Content: TStream;
@@ -1025,7 +1029,7 @@ type
     /// available if the message is too old
     /// </summary>
     [Alias('message')]
-    Message: TtgMessage;
+    message: TtgMessage;
     /// <summary>
     /// Optional. Identifier of the message sent via the bot in inline
     /// mode, that originated the query
@@ -1344,7 +1348,7 @@ type
     /// etc.
     /// </summary>
     [Alias('message')]
-    Message: TtgMessage;
+    message: TtgMessage;
     /// <summary>
     /// Optional. New version of a message that is known to the bot and was
     /// edited
@@ -1399,7 +1403,7 @@ type
     /// The update type.
     /// </value>
     /// <exception cref="System.ArgumentOutOfRangeException"></exception>
-    function &Type: TtgUpdateType;
+    function &type: TtgUpdateType;
   end;
 
   /// <summary />
@@ -1469,12 +1473,22 @@ constructor TtgFileToSend.Create(const FileName: string; const Content: TStream)
 begin
   Self.FileName := FileName;
   Self.Content := Content;
+  DoCheckParams;
 end;
 
 destructor TtgFileToSend.Destroy;
 begin
-  Content.Free;
+  FreeAndNil(Content);
   inherited;
+end;
+
+procedure TtgFileToSend.DoCheckParams;
+begin
+  if not Assigned(Content) then
+  begin
+    if not FileExists(FileName) then
+      raise EFileNotFoundException.CreateFmt('File %S not found!', [FileName]);
+  end
 end;
 
 { TtgChatMember }
@@ -1494,7 +1508,7 @@ end;
 { TtgFile }
 function TtgFile.GetFileUrl(const AToken: string): string;
 begin
-  result := Format('https://api.telegram.org/file/bot%S/%S', [AToken, FilePath])
+  Result := Format('https://api.telegram.org/file/bot%S/%S', [AToken, FilePath])
 end;
 
 { TtgGame }
@@ -1554,10 +1568,6 @@ begin
 end;
 
 { TtgMessage }
-constructor TtgMessage.Create;
-begin
-
-end;
 
 destructor TtgMessage.Destroy;
 begin
@@ -1626,9 +1636,9 @@ begin
 end;
 
 { TtgUpdate }
-function TtgUpdate.&Type: TtgUpdateType;
+function TtgUpdate.&type: TtgUpdateType;
 begin
-  if Assigned(Message) then
+  if Assigned(message) then
     Exit(TtgUpdateType.MessageUpdate);
   if Assigned(InlineQuery) then
     Exit(TtgUpdateType.InlineQueryUpdate);
@@ -1651,7 +1661,7 @@ end;
 
 destructor TtgUpdate.Destroy;
 begin
-  FreeAndNil(Message);
+  FreeAndNil(message);
   FreeAndNil(EditedMessage);
   FreeAndNil(ChannelPost);
   FreeAndNil(EditedChannelPost);
@@ -1682,6 +1692,7 @@ end;
 destructor TtgWebhookInfo.Destroy;
 begin
   FreeAndNil(Allowed_updates);
+  inherited;
 end;
 
 end.

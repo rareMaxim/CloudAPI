@@ -154,14 +154,15 @@ type
     /// Requested profile pictures (in up to 4 sizes each)
     /// </summary>
     [Alias('hide_keyboard')]
-    Hide_keyboard: Boolean;
+    HideKeyboard: Boolean;
   end;
 
 implementation
 
 uses
   System.SysUtils;
-{TtgButtonedMarkup<T: class>}
+
+{TtgButtonedMarkup<T>}
 
 procedure TtgButtonedMarkup<T>.AddRow(AKeyboardRow: TArray<T>);
 var
@@ -180,6 +181,7 @@ end;
 destructor TtgButtonedMarkup<T>.Destroy;
 begin
   FreeAndNil(FKeyboard);
+  inherited;
 end;
 
 function TtgButtonedMarkup<T>.GetKeyboard: TArray<TArray<T>>;
@@ -201,11 +203,12 @@ begin
   for i := Low(Value) to High(Value) do
     Self.AddRow(Value[i]);
 end;
+
 { TtgInlineKeyboardMarkup }
 
 constructor TtgInlineKeyboardMarkup.Create(AInlineKeyboardRow: TArray<TtgInlineKeyboardButton>);
 begin
-  Self.Create;
+  inherited Create;
   Self.AddRow(AInlineKeyboardRow);
 end;
 
@@ -213,7 +216,7 @@ constructor TtgInlineKeyboardMarkup.Create(AInlineKeyboard: TArray<TArray<TtgInl
 var
   i: Integer;
 begin
-  Self.Create;
+  inherited Create;
   for i := Low(AInlineKeyboard) to High(AInlineKeyboard) do
   begin
     AddRow(AInlineKeyboard[i]);
@@ -224,7 +227,7 @@ end;
 
 constructor TtgReplyKeyboardMarkup.Create(AKeyboardRow: TArray<TtgKeyboardButton>; AResizeKeyboard, AOneTimeKeyboard: Boolean);
 begin
-  Self.Create;
+  inherited Create;
   AddRow(AKeyboardRow);
   ResizeKeyboard := AResizeKeyboard;
   OneTimeKeyboard := AOneTimeKeyboard;
@@ -232,7 +235,7 @@ end;
 
 constructor TtgReplyKeyboardMarkup.Create(AKeyboard: TArray<TArray<TtgKeyboardButton>>; AResizeKeyboard, AOneTimeKeyboard: Boolean);
 begin
-  Self.Create;
+  inherited Create;
   Self.Keyboard := AKeyboard;
   ResizeKeyboard := AResizeKeyboard;
   OneTimeKeyboard := AOneTimeKeyboard;

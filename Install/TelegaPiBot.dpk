@@ -35,7 +35,6 @@ requires
 contains
   TelegAPi.Types in '..\Source\TelegAPi.Types.pas',
   TelegAPi.RegisterIDE in '..\Source\TelegAPi.RegisterIDE.pas',
-  TelegAPi.Utils in '..\Source\TelegAPi.Utils.pas',
   TelegAPI.Bot in '..\Source\TelegAPI.Bot.pas',
   TelegAPi.Helpers in '..\Source\TelegAPi.Helpers.pas',
   TelegaPi.Types.ReplyMarkups in '..\Source\TelegaPi.Types.ReplyMarkups.pas',
