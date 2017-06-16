@@ -41,6 +41,7 @@ type
     procedure SendKeyboard(Msg: TtgMessage);
     procedure SendPhoto(Msg: TtgMessage);
     procedure SendRequest(Msg: TtgMessage);
+    procedure SendQuest(Msg: TtgMessage);
   public
     { Public declarations }
   end;
@@ -65,7 +66,7 @@ end;
 
 procedure TMain.FormCreate(Sender: TObject);
 begin
-  ReportMemoryLeaksOnShutdown := True;
+ // ReportMemoryLeaksOnShutdown := True;
   tgBot.Token := {$I ..\token.inc};
   if not tgBot.IsValidToken then
     raise ELoginCredentialError.Create('invalid token format');
@@ -122,6 +123,8 @@ begin
 end;
 
 procedure TMain.SendKeyboard(Msg: TtgMessage);
+const
+  WHAT_IS_DELPHI = 'Delphi — императивный, структурированный, объектно-ориентированный язык программирования со строгой статической типизацией переменных. Ообласть использования — написание прикладного программного обеспечения.';
 var
   keyboard: IReplyMarkup;
 begin
@@ -129,7 +132,7 @@ begin
     { first row }
     [TtgKeyboardButton.Create('1.1'), TtgKeyboardButton.Create('1.2')],
     { second row }
-    [TtgKeyboardButton.Create('2.1'), TtgKeyboardButton.Create('2.2')]]);
+    [TtgKeyboardButton.Create('2.1'), TtgKeyboardButton.Create('2.2')], [TtgKeyboardButton.Create(WHAT_IS_DELPHI)]], False);
   tgBot.SendMessage(Msg.Chat.Id, 'Choose', TtgParseMode.default, False, False, 0, keyboard).Free;
 end;
 
@@ -178,6 +181,20 @@ begin
   tgBot.AnswerInlineQuery(AInlineQuery.Id, results, 0, True);
 end;
 
+procedure TMain.SendQuest(Msg: TtgMessage);
+const
+  QUESTION = 'Как Вы считаете, связаны ли честность и вежливость между собой? И если да, то как?';
+var
+  keyboard: IReplyMarkup;
+begin
+  keyboard := TtgReplyKeyboardMarkup.Create([
+    { first row }
+    [TtgKeyboardButton.Create('1.1'), TtgKeyboardButton.Create('1.2')],
+    { second row }
+    [TtgKeyboardButton.Create('2.1'), TtgKeyboardButton.Create('2.2')], [TtgKeyboardButton.Create(QUESTION)]], False);
+  tgBot.SendMessage(Msg.Chat.Id, QUESTION, TtgParseMode.default, False, False, 0, keyboard).Free;
+end;
+
 procedure TMain.tgBotInlineResultChosen(ASender: TObject; AChosenInlineResult: TtgChosenInlineResult);
 begin
   WriteLine('Received choosen inline result: ' + AChosenInlineResult.ResultId);
@@ -205,12 +222,17 @@ begin
   begin
     SendRequest(AMessage);
   end
+  else if AMessage.Text.StartsWith('/quest') then // send custom keyboard
+  begin
+    SendQuest(AMessage);
+  end
   else
   begin
     usage := 'Usage:' + #13#10 +    //
       '/inline   - send inline keyboard' + #13#10 +    //
       '/keyboard - send custom keyboard' + #13#10 +   //
       '/photo    - send a photo' + #13#10 +       //
+      '/quest    - show test question' + #13#10 +       //
       '/request  - request location or contact';
     tgBot.SendMessage(AMessage.Chat.Id, usage, TtgParseMode.default, False, False, 0, TtgReplyKeyboardHide.Create).Free;
   end;

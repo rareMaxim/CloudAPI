@@ -6,6 +6,7 @@ uses
   XSuperObject,
   System.SysUtils,
   System.Classes,
+  System.Generics.Collections,
   TelegAPi.Types.Enums;
 
 type
@@ -472,14 +473,17 @@ type
     /// <summary>
     /// Position in high score table for the game
     /// </summary>
+    [Alias('position')]
     Position: Integer;
     /// <summary>
     /// User
     /// </summary>
+    [Alias('user')]
     User: TtgUser;
     /// <summary>
     /// Score
     /// </summary>
+    [Alias('score')]
     Score: Integer;
     destructor Destroy; override;
   end;
@@ -505,7 +509,7 @@ type
     /// Photo that will be displayed in the game message in chats.
     /// </summary>
     [Alias('photo')]
-    Photo: TArray<TtgPhotoSize>;
+    Photo: TObjectList<TtgPhotoSize>;
     /// <summary>
     /// Optional. Brief description of the game or high scores included in
     /// the game message. Can be automatically edited to include current
@@ -519,13 +523,14 @@ type
     /// URLs, bot commands, etc.
     /// </summary>
     [Alias('text_entities')]
-    Text_entities: TArray<TtgMessageEntity>;
+    Text_entities: TObjectList<TtgMessageEntity>;
     /// <summary>
     /// Optional. Animation that will be displayed in the game message in
     /// chats. Upload via BotFather
     /// </summary>
     [Alias('animation')]
     Animation: TtgAnimation;
+    constructor Create;
     destructor Destroy; override;
   end;
 
@@ -594,7 +599,7 @@ type
     /// bot commands, etc. that appear in the text
     /// </summary>
     [Alias('entities')]
-    Entities: TArray<TtgMessageEntity>;
+    Entities: TObjectList<TtgMessageEntity>;
     /// <summary>
     /// Optional. Message is an audio file, information about the file
     /// </summary>
@@ -614,7 +619,7 @@ type
     /// Optional. Message is a photo, available sizes of the photo
     /// </summary>
     [Alias('photo')]
-    Photo: TArray<TtgPhotoSize>;
+    Photo: TObjectList<TtgPhotoSize>;
     /// <summary>
     /// Optional. Message is a sticker, information about the sticker
     /// </summary>
@@ -667,7 +672,7 @@ type
     /// members)
     /// </summary>
     [Alias('new_chat_members')]
-    NewChatMembers: TArray<TtgUser>;
+    NewChatMembers: TObjectList<TtgUser>;
     /// <summary>
     /// Optional. A member was removed from the group, information about
     /// them (this member may be bot itself)
@@ -683,7 +688,7 @@ type
     /// Optional. A group photo was change to this value
     /// </summary>
     [Alias('new_chat_photo')]
-    NewChatPhoto: TArray<TtgPhotoSize>;
+    NewChatPhoto: TObjectList<TtgPhotoSize>;
     /// <summary>
     /// Optional. Informs that the group photo was deleted
     /// </summary>
@@ -741,7 +746,8 @@ type
     /// Requested profile pictures (in up to 4 sizes each)
     /// </summary>
     [Alias('photos')]
-    Photos: TArray<TArray<TtgPhotoSize>>;
+    Photos: TObjectList<TObjectList<TtgPhotoSize>>;
+    constructor Create;
     destructor Destroy; override;
   end;
 
@@ -911,7 +917,7 @@ type
     /// The error message.
     /// </value>
     [Alias('description')]
-    Message: string;
+    message: string;
     /// <summary>
     /// Gets the error code.
     /// </summary>
@@ -929,6 +935,8 @@ type
 
   [Alias('FileToSend')]
   TtgFileToSend = class
+  private
+    procedure DoCheckParams;
   public
     FileName: string;
     Content: TStream;
@@ -1233,7 +1241,9 @@ type
     /// List of price portions
     /// </summary>
     [Alias('prices')]
-    Prices: TArray<TtgLabeledPrice>;
+    Prices: TObjectList<TtgLabeledPrice>;
+    constructor Create;
+    destructor Destroy; override;
   end;
 
   /// <summary>
@@ -1338,7 +1348,7 @@ type
     /// etc.
     /// </summary>
     [Alias('message')]
-    Message: TtgMessage;
+    message: TtgMessage;
     /// <summary>
     /// Optional. New version of a message that is known to the bot and was
     /// edited
@@ -1393,7 +1403,7 @@ type
     /// The update type.
     /// </value>
     /// <exception cref="System.ArgumentOutOfRangeException"></exception>
-    function &Type: TtgUpdateType;
+    function &type: TtgUpdateType;
   end;
 
   /// <summary />
@@ -1444,27 +1454,112 @@ type
     /// to all update types
     /// </summary>
     [Alias('allowed_updates')]
-    Allowed_updates: TArray<string>;
+    Allowed_updates: TList<string>;
+    constructor Create;
+    destructor Destroy; override;
   end;
 
 implementation
 
-{ TtgApiFileToSend }
+{ TtgAnimation }
+destructor TtgAnimation.Destroy;
+begin
+  FreeAndNil(Thumb);
+  inherited;
+end;
 
+{ TtgApiFileToSend }
 constructor TtgFileToSend.Create(const FileName: string; const Content: TStream);
 begin
   Self.FileName := FileName;
   Self.Content := Content;
+  DoCheckParams;
 end;
 
 destructor TtgFileToSend.Destroy;
 begin
-  Content.Free;
+  FreeAndNil(Content);
+  inherited;
+end;
+
+procedure TtgFileToSend.DoCheckParams;
+begin
+  if not Assigned(Content) then
+  begin
+    if not FileExists(FileName) then
+      raise EFileNotFoundException.CreateFmt('File %S not found!', [FileName]);
+  end
+end;
+
+{ TtgChatMember }
+destructor TtgChatMember.Destroy;
+begin
+  FreeAndNil(User);
+  inherited;
+end;
+
+{ TtgDocument }
+destructor TtgDocument.Destroy;
+begin
+  FreeAndNil(Thumb);
+  inherited;
+end;
+
+{ TtgFile }
+function TtgFile.GetFileUrl(const AToken: string): string;
+begin
+  Result := Format('https://api.telegram.org/file/bot%S/%S', [AToken, FilePath])
+end;
+
+{ TtgGame }
+constructor TtgGame.Create;
+begin
+  inherited Create;
+  Photo := TObjectList<TtgPhotoSize>.Create;
+  Text_entities := TObjectList<TtgMessageEntity>.Create;
+end;
+
+destructor TtgGame.Destroy;
+begin
+  FreeAndNil(Photo);
+  FreeAndNil(Text_entities);
+  FreeAndNil(Animation);
+  inherited;
+end;
+
+{ TtgGameHighScore }
+destructor TtgGameHighScore.Destroy;
+begin
+  FreeAndNil(User);
+  inherited;
+end;
+
+{ TtgInlineKeyboardButton }
+constructor TtgInlineKeyboardButton.Create(const AText: string);
+begin
+  Text := AText;
+end;
+
+constructor TtgInlineKeyboardButton.Create(const AText, ACallbackData: string);
+begin
+  Self.Create(AText);
+  Self.CallbackData := ACallbackData;
+end;
+
+constructor TtgInlineKeyboardButton.Create(const AText: string; ACallbackGame: TtgCallbackGame);
+begin
+  Self.Create(AText);
+  Self.CallbackGame := ACallbackGame;
+end;
+
+ { TtgInlineQuery }
+destructor TtgInlineQuery.Destroy;
+begin
+  FreeAndNil(From);
   inherited;
 end;
 
 { TtgKeyboardButton }
-
 constructor TtgKeyboardButton.Create(const AText: string; ARequestContact, ARequestLocation: Boolean);
 begin
   Self.Text := AText;
@@ -1472,60 +1567,9 @@ begin
   Self.RequestLocation := ARequestLocation;
 end;
 
-{ TtgChatMember }
-
-destructor TtgChatMember.Destroy;
-begin
-  if Assigned(User) then
-    FreeAndNil(User);
-  inherited;
-end;
-
-{ TtgMessageEntity }
-
-destructor TtgMessageEntity.Destroy;
-begin
-  FreeAndNil(User);
-  inherited;
-end;
-
-{ TtgDocument }
-
-destructor TtgDocument.Destroy;
-begin
-  FreeAndNil(Thumb);
-  inherited;
-end;
-
-{ TtgSticker }
-
-destructor TtgSticker.Destroy;
-begin
-  FreeAndNil(Thumb);
-  inherited;
-end;
-
-{ TtgVideo }
-
-destructor TtgVideo.Destroy;
-begin
-  FreeAndNil(Thumb);
-  inherited;
-end;
-
-{ TtgVenue }
-
-destructor TtgVenue.Destroy;
-begin
-  FreeAndNil(Location);
-  inherited;
-end;
-
 { TtgMessage }
 
 destructor TtgMessage.Destroy;
-var
-  I: Integer;
 begin
   FreeAndNil(From);
   FreeAndNil(Chat);
@@ -1543,36 +1587,58 @@ begin
   FreeAndNil(LeftChatMember);
   FreeAndNil(PinnedMessage);
   FreeAndNil(ForwardFromChat);
-  if Assigned(NewChatMembers) then
-  begin
-    if Length(NewChatMembers) > 0 then
-      for I := Low(NewChatMembers) to High(NewChatMembers) do
-        FreeAndNil(NewChatMembers[I]);
-  end;
-  //Photo
-  if Assigned(Photo) then
-  begin
-    if Length(Photo) > 0 then
-      for I := Low(Photo) to High(Photo) do
-        Photo[I].Free;
-  end;
-  if Assigned(Entities) then
-  begin
-    if Length(Entities) > 0 then
-      for I := Low(Entities) to High(Entities) do
-        Entities[I].Free;
-  end;
-  for I := Low(NewChatPhoto) to High(NewChatPhoto) do
-    FreeAndNil(NewChatPhoto[I]);
+  FreeAndNil(NewChatMembers);
+  FreeAndNil(Photo);
+  FreeAndNil(Entities);
+  FreeAndNil(NewChatPhoto);
   FreeAndNil(Game);
   inherited;
 end;
 
-{ TtgUpdate }
-
-function TtgUpdate.&Type: TtgUpdateType;
+{ TtgMessageEntity }
+destructor TtgMessageEntity.Destroy;
 begin
-  if Assigned(Message) then
+  FreeAndNil(User);
+  inherited;
+end;
+
+{ TtgVenue }
+destructor TtgVenue.Destroy;
+begin
+  FreeAndNil(Location);
+  inherited;
+end;
+
+{ TtgVideo }
+destructor TtgVideo.Destroy;
+begin
+  FreeAndNil(Thumb);
+  inherited;
+end;
+
+{TtgShippingOption}
+constructor TtgShippingOption.Create;
+begin
+  Prices := TObjectList<TtgLabeledPrice>.Create;
+end;
+
+destructor TtgShippingOption.Destroy;
+begin
+  FreeAndNil(Prices);
+  inherited;
+end;
+
+{ TtgSticker }
+destructor TtgSticker.Destroy;
+begin
+  FreeAndNil(Thumb);
+  inherited;
+end;
+
+{ TtgUpdate }
+function TtgUpdate.&type: TtgUpdateType;
+begin
+  if Assigned(message) then
     Exit(TtgUpdateType.MessageUpdate);
   if Assigned(InlineQuery) then
     Exit(TtgUpdateType.InlineQueryUpdate);
@@ -1586,7 +1652,6 @@ begin
     Exit(TtgUpdateType.ChannelPost);
   if Assigned(EditedMessage) then
     Exit(TtgUpdateType.ChannelPost);
-
   if Assigned(ShippingQuery) then
     Exit(TtgUpdateType.ShippingQueryUpdate);
   if Assigned(PreCheckoutQuery) then
@@ -1596,99 +1661,38 @@ end;
 
 destructor TtgUpdate.Destroy;
 begin
-  if Assigned(message) then
-    FreeAndNil(message);
-  if Assigned(EditedMessage) then
-    FreeAndNil(EditedMessage);
-  if Assigned(ChannelPost) then
-    FreeAndNil(ChannelPost);
-  if Assigned(EditedChannelPost) then
-    FreeAndNil(EditedChannelPost);
-  if Assigned(InlineQuery) then
-    FreeAndNil(InlineQuery);
-  if Assigned(ChosenInlineResult) then
-    FreeAndNil(ChosenInlineResult);
-  if Assigned(CallbackQuery) then
-    FreeAndNil(CallbackQuery);
-  inherited;
-end;
-
-{ TtgAnimation }
-
-destructor TtgAnimation.Destroy;
-begin
-  if Assigned(Thumb) then
-    FreeAndNil(Thumb);
-  inherited;
-end;
-
-{ TtgGame }
-
-destructor TtgGame.Destroy;
-var
-  I: Integer;
-begin
-  for I := Low(Photo) to High(Photo) do
-    FreeAndNil(Photo[I]);
-  for I := Low(Text_entities) to High(Text_entities) do
-    FreeAndNil(Text_entities[I]);
-  FreeAndNil(Animation);
-  inherited;
-end;
-
-{ TtgGameHighScore }
-
-destructor TtgGameHighScore.Destroy;
-begin
-  FreeAndNil(User);
-  inherited;
-end;
-
-{ TtgInlineQuery }
-
-destructor TtgInlineQuery.Destroy;
-begin
-  FreeAndNil(From);
+  FreeAndNil(message);
+  FreeAndNil(EditedMessage);
+  FreeAndNil(ChannelPost);
+  FreeAndNil(EditedChannelPost);
+  FreeAndNil(InlineQuery);
+  FreeAndNil(ChosenInlineResult);
+  FreeAndNil(CallbackQuery);
   inherited;
 end;
 
 { TtgUserProfilePhotos }
+constructor TtgUserProfilePhotos.Create;
+begin
+  Photos := TObjectList<TObjectList<TtgPhotoSize>>.Create();
+end;
 
 destructor TtgUserProfilePhotos.Destroy;
-var
-  I: Integer;
-  J: Integer;
 begin
-  for I := Low(Photos) to High(Photos) do
-    for J := Low(Photos[I]) to High(Photos[I]) do
-      FreeAndNil(Photos[I, J]);
+  Photos.Free;
   inherited;
 end;
 
-{ TtgFile }
-
-function TtgFile.GetFileUrl(const AToken: string): string;
+{TtgWebhookInfo}
+constructor TtgWebhookInfo.Create;
 begin
-  result := Format('https://api.telegram.org/file/bot%S/%S', [AToken, FilePath])
+  Allowed_updates := TList<string>.Create;
 end;
 
-{ TtgInlineKeyboardButton }
-
-constructor TtgInlineKeyboardButton.Create(const AText: string);
+destructor TtgWebhookInfo.Destroy;
 begin
-  Text := AText;
-end;
-
-constructor TtgInlineKeyboardButton.Create(const AText, ACallbackData: string);
-begin
-  Self.Create(AText);
-  Self.CallbackData := ACallbackData;
-end;
-
-constructor TtgInlineKeyboardButton.Create(const AText: string; ACallbackGame: TtgCallbackGame);
-begin
-  Self.Create(AText);
-  Self.CallbackGame := ACallbackGame;
+  FreeAndNil(Allowed_updates);
+  inherited;
 end;
 
 end.

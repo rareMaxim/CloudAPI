@@ -3,19 +3,19 @@
 interface
 
 uses
-  System.Generics.Collections,
   System.Rtti,
   System.Classes,
-  System.SysUtils,
   System.TypInfo,
+  System.SysUtils,
   System.Net.Mime,
-  System.Net.HttpClient,
   System.Net.URLClient,
-  TelegAPI.Exceptions,
+  System.Net.HttpClient,
+  System.Generics.Collections,
   TelegAPI.Types,
   TelegAPI.Types.Enums,
   TelegAPI.Types.ReplyMarkups,
   TelegAPI.Types.InlineQueryResults,
+  TelegAPI.Exceptions,
   XSuperObject;
 
 type
@@ -314,7 +314,7 @@ type
     /// amazing guide to Webhooks</see>.
     /// </para>
     /// </remarks>
-    procedure SetWebhook(const Url: string; Certificate: TtgFileToSend = nil; Max_connections: Integer = 40; Allowed_updates: TAllowedUpdates = UPDATES_ALLOWED_ALL);
+    procedure SetWebhook(const Url: string; Certificate: TtgFileToSend = nil; MaxConnections: Integer = 40; AllowedUpdates: TAllowedUpdates = UPDATES_ALLOWED_ALL);
     /// <summary>
     /// Use this method to remove webhook integration if you decide to
     /// switch back to <see cref="TelegAPI.Bot|TTelegramBot.GetUpdates(Integer,Integer,Integer,TAllowedUpdates)">
@@ -395,7 +395,7 @@ type
     /// <returns>
     /// On success, the sent Message is returned.
     /// </returns>
-    function SendMessage(const Chat_id: TValue; const Text: string; ParseMode: TtgParseMode = TtgParseMode.Default; DisableWebPagePreview: Boolean = False; Disable_notification: Boolean = False; ReplyToMessageId: Integer = 0; ReplyMarkup: IReplyMarkup = nil): TtgMessage;
+    function SendMessage(const ChatId: TValue; const Text: string; ParseMode: TtgParseMode = TtgParseMode.Default; DisableWebPagePreview: Boolean = False; Disable_notification: Boolean = False; ReplyToMessageId: Integer = 0; ReplyMarkup: IReplyMarkup = nil): TtgMessage;
 
     /// <summary>
     /// Use this method to forward messages of any kind.
@@ -1331,13 +1331,9 @@ begin
     if not LApiResponse.Ok then
     begin
       if Assigned(OnReceiveError) then
-      begin
-        OnReceiveError(Self, EApiRequestException.FromApiResponse<T>(LApiResponse));
-      end
+        OnReceiveError(Self, EApiRequestException.FromApiResponse<T>(LApiResponse))
       else
-      begin
         raise EApiRequestException.FromApiResponse<T>(LApiResponse);
-      end;
     end;
     Result := LApiResponse.ResultObject;
     LApiResponse.ResultObject := Default(T);
@@ -1356,11 +1352,10 @@ begin
   Result := TMultipartFormData.Create;
   for Parameter in Parameters do
   begin
-
     if Parameter.Value.IsType<string>then
     begin
       if not Parameter.Value.AsString.IsEmpty then
-        Result.AddField(Parameter.Key, Parameter.Value.AsString)
+        Result.AddField(Parameter.Key, Parameter.Value.AsString);
     end
     else if Parameter.Value.IsType<Int64>then
     begin
@@ -1403,7 +1398,7 @@ begin
   begin
     FRecesiver := TtgRecesiver.Create(True);
     FRecesiver.Bot := TTelegramBot(Self);
-    FRecesiver.OnTerminate := OnDisconnect;
+    FRecesiver.OnTerminate := DoDisconnect;
     FRecesiver.Start;
   end
   else
@@ -1442,7 +1437,7 @@ end;
 { TTelegram }
 {$REGION 'Getting updates'}
 
-procedure TTelegramBot.SetWebhook(const Url: string; Certificate: TtgFileToSend; Max_connections: Integer; Allowed_updates: TAllowedUpdates);
+procedure TTelegramBot.SetWebhook(const Url: string; Certificate: TtgFileToSend; MaxConnections: Integer; AllowedUpdates: TAllowedUpdates);
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -1450,8 +1445,8 @@ begin
   try
     Parameters.Add('url', Url);
     Parameters.Add('certificate', Certificate);
-    Parameters.Add('max_connections', Max_connections);
-    Parameters.Add('allowed_updates', Allowed_updates.ToString);
+    Parameters.Add('max_connections', MaxConnections);
+    Parameters.Add('allowed_updates', AllowedUpdates.ToString);
     API<Boolean>('setWebhook', Parameters);
   finally
     Parameters.Free;
@@ -1561,13 +1556,13 @@ begin
   end;
 end;
 
-function TTelegramBot.SendMessage(const Chat_id: TValue; const Text: string; ParseMode: TtgParseMode; DisableWebPagePreview, Disable_notification: Boolean; ReplyToMessageId: Integer; ReplyMarkup: IReplyMarkup): TtgMessage;
+function TTelegramBot.SendMessage(const ChatId: TValue; const Text: string; ParseMode: TtgParseMode; DisableWebPagePreview, Disable_notification: Boolean; ReplyToMessageId: Integer; ReplyMarkup: IReplyMarkup): TtgMessage;
 var
   Parameters: TDictionary<string, TValue>;
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
-    Parameters.Add('chat_id', Chat_id);
+    Parameters.Add('chat_id', ChatId);
     Parameters.Add('text', Text);
     Parameters.Add('parse_mode', ParseMode.ToString);
     Parameters.Add('disable_web_page_preview', DisableWebPagePreview);
