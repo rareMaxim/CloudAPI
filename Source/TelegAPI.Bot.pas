@@ -3,19 +3,19 @@
 interface
 
 uses
-  System.Generics.Collections,
   System.Rtti,
   System.Classes,
-  System.SysUtils,
   System.TypInfo,
+  System.SysUtils,
   System.Net.Mime,
-  System.Net.HttpClient,
   System.Net.URLClient,
-  TelegAPI.Exceptions,
+  System.Net.HttpClient,
+  System.Generics.Collections,
   TelegAPI.Types,
   TelegAPI.Types.Enums,
   TelegAPI.Types.ReplyMarkups,
   TelegAPI.Types.InlineQueryResults,
+  TelegAPI.Exceptions,
   XSuperObject;
 
 type
@@ -1331,13 +1331,9 @@ begin
     if not LApiResponse.Ok then
     begin
       if Assigned(OnReceiveError) then
-      begin
-        OnReceiveError(Self, EApiRequestException.FromApiResponse<T>(LApiResponse));
-      end
+        OnReceiveError(Self, EApiRequestException.FromApiResponse<T>(LApiResponse))
       else
-      begin
         raise EApiRequestException.FromApiResponse<T>(LApiResponse);
-      end;
     end;
     Result := LApiResponse.ResultObject;
     LApiResponse.ResultObject := Default(T);
@@ -1356,11 +1352,10 @@ begin
   Result := TMultipartFormData.Create;
   for Parameter in Parameters do
   begin
-
     if Parameter.Value.IsType<string>then
     begin
       if not Parameter.Value.AsString.IsEmpty then
-        Result.AddField(Parameter.Key, Parameter.Value.AsString)
+        Result.AddField(Parameter.Key, Parameter.Value.AsString);
     end
     else if Parameter.Value.IsType<Int64>then
     begin
