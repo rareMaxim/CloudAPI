@@ -28,7 +28,7 @@ type
 
   TtgTMultipartFormDataHelper = Class helper for TMultipartFormData
     /// <summary>
-    /// Add a form data Stream
+    ///   Add a form data Stream
     /// </summary>
     procedure AddStream(const AFieldName: string; Data: TStream);
     experimental;

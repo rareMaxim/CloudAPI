@@ -16,7 +16,7 @@ type
   ETelegramUnknownData = class(ETelegramDataConvert);
 
   /// <summary>
-  /// Represents an api error
+  ///   Represents an api error
   /// </summary>
   EApiRequestException = class(Exception)
   private
@@ -25,18 +25,21 @@ type
   public
     class function FromApiResponse<T>(AApiResponse: TtgApiResponse<T>): EApiRequestException;
     /// <summary>
-    /// Initializes a new instance of the <see cref="ApiRequestException"/> class.
+    ///   Initializes a new instance of the <see cref="ApiRequestException" />
+    ///   class.
     /// </summary>
-    /// <param name="AMessage">The message that describes the error.</param>
+    /// <param name="AMessage">
+    ///   The message that describes the error.
+    /// </param>
     constructor Create(const AMessage: string); overload;
     constructor Create(const AMessage: string; AErrorCode: Integer); overload;
     function ToString: string; override;
     /// <summary>
-    /// Gets the error code.
+    ///   Gets the error code.
     /// </summary>
     property ErrorCode: Integer read FErrorCode write FErrorCode;
     /// <summary>
-    /// Contains information about why a request was unsuccessfull.
+    ///   Contains information about why a request was unsuccessfull.
     /// </summary>
     property Parameters: TrgResponseParameters read FParameters write FParameters;
   end;
