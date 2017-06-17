@@ -193,7 +193,7 @@ type
 
     /// <summary>
     ///   The <see cref="Update" /> contains a <see cref="ChosenInlineResult" />
-    ///   .
+    ///    .
     /// </summary>
     ChosenInlineResultUpdate,
 

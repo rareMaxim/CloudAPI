@@ -42,7 +42,7 @@ type
     procedure Execute; override;
     /// <summary>
     ///   Raises the <see cref="OnUpdate" />, <see cref="OnMessage" />, <see cref="OnInlineQuery" />
-    ///   , <see cref="OnInlineResultChosen" /> and <see cref="OnCallbackQuery" />
+    ///    , <see cref="OnInlineResultChosen" /> and <see cref="OnCallbackQuery" />
     ///    events.
     /// </summary>
     /// <param name="e">
@@ -86,7 +86,12 @@ type
     constructor Create(AOwner: TComponent); overload; override;
     destructor Destroy; override;
     /// <summary>
-    ///   Ассинхронный прием обновлений от сервера
+    ///   <para>
+    ///     Indicates if receiving updates
+    ///   </para>
+    ///   <para>
+    ///     Асинхронный прием обновлений от сервера
+    ///   </para>
     /// </summary>
     property IsReceiving: Boolean read FIsReceiving write SetIsReceiving default False;
   published
@@ -94,13 +99,18 @@ type
     ///   Задержка между опросами
     /// </summary>
     property PollingTimeout: Integer read FPollingTimeout write FPollingTimeout default 1000;
+    /// <summary>
+    ///   The current message offset
+    /// </summary>
     property MessageOffset: Integer read FMessageOffset write FMessageOffset default 0;
     /// <summary>
-    ///   Типы принимаемых сообщений
+    ///   <para>
+    ///     List the types of updates you want your bot to receive.
+    ///   </para>
+    ///   <para>
+    ///     Типы принимаемых сообщений
+    ///   </para>
     /// </summary>
-    /// <example>
-    ///   283107813:AAG4hEElAvIogTSHNHXI6rZtE46A7XQvIH
-    /// </example>
     property AllowedUpdates: TAllowedUpdates read FAllowedUpdates write FAllowedUpdates default UPDATES_ALLOWED_ALL;
     /// <summary>
     ///   Токен вашего бота.
@@ -108,6 +118,9 @@ type
     /// <remarks>
     ///   Создать бота и получить токен можно у @BotFather
     /// </remarks>
+    /// <example>
+    ///   283107813:AAG4hEElAvIogTSHNHXI6rZtE46A7XQvIH
+    /// </example>
     property Token: string read FToken write FToken;
     /// <summary>
     ///   Поддерживаемая версия платформы BotAPI
@@ -246,16 +259,15 @@ type
     ///   Timeout in seconds for long polling. Defaults to 0, i.e. usual short
     ///   polling
     /// </param>
-    /// <param name="Allowed_updates">
+    /// <param name="AllowedUpdates">
     ///   List the types of updates you want your bot to receive. For example,
     ///   specify [“message”, “edited_channel_post”, “callback_query”] to only
-    ///   receive updates of these types. See <see cref="TelegAPi.Classes|TtgUpdate">
-    ///   Update</see> for a complete list of available update types. Specify
-    ///   an empty list to receive all updates regardless of type (default). If
-    ///   not specified, the previous setting will be used. <br /><br /> Please
-    ///   note that this parameter doesn't affect updates created before the
-    ///   call to the getUpdates, so unwanted updates may be received for a
-    ///   short period of time.
+    ///   receive updates of these types. See Update for a complete list of
+    ///   available update types. Specify an empty list to receive all updates
+    ///   regardless of type (default). If not specified, the previous setting
+    ///   will be used. <br /><br />Please note that this parameter doesn't
+    ///   affect updates created before the call to the getUpdates, so unwanted
+    ///   updates may be received for a short period of time.
     /// </param>
     /// <returns>
     ///   An Array of Update objects is returned.
@@ -281,22 +293,21 @@ type
     ///   Upload your public key certificate so that the root certificate in
     ///   use can be checked. See our self-signed guide for details.
     /// </param>
-    /// <param name="Max_connections">
+    /// <param name="MaxConnections">
     ///   Maximum allowed number of simultaneous HTTPS connections to the
     ///   webhook for update delivery, 1-100. Defaults to 40. Use lower values
     ///   to limit the load on your bot‘s server, and higher values to increase
     ///   your bot’s throughput.
     /// </param>
-    /// <param name="Allowed_updates">
+    /// <param name="AllowedUpdates">
     ///   List the types of updates you want your bot to receive. For example,
     ///   specify [“message”, “edited_channel_post”, “callback_query”] to only
-    ///   receive updates of these types. See <see cref="TelegAPi.Classes|TtgUpdate">
-    ///   Update</see> for a complete list of available update types. Specify
-    ///   an empty list to receive all updates regardless of type (default). If
-    ///   not specified, the previous setting will be used. <br /><br /> Please
-    ///   note that this parameter doesn't affect updates created before the
-    ///   call to the setWebhook, so unwanted updates may be received for a
-    ///   short period of time.
+    ///   receive updates of these types. See Update for a complete list of
+    ///   available update types. Specify an empty list to receive all updates
+    ///   regardless of type (default). If not specified, the previous setting
+    ///   will be used. <br /><br />Please note that this parameter doesn't
+    ///   affect updates created before the call to the setWebhook, so unwanted
+    ///   updates may be received for a short period of time.
     /// </param>
     /// <remarks>
     ///   <para>
@@ -330,16 +341,13 @@ type
     /// <returns>
     ///   Returns <c>True</c> on success.
     /// </returns>
-    /// <seealso cref="TelegAPI.Bot|TTelegramBot.setWebhook(string,TtgFileToSend,TAllowedUpdates)">
-    ///   getUpdates
-    /// </seealso>
     function DeleteWebhook: Boolean;
 
     /// <summary>
     ///   Use this method to get current webhook status.
     /// </summary>
     /// <returns>
-    ///   On success, returns a <see cref="TelegAPi.Classes|TtgWebhookInfo">
+    ///   On success, returns a <see cref="TelegAPi.Types|TtgWebhookInfo">
     ///   WebhookInfo</see> object
     /// </returns>
     /// <remarks>
@@ -362,7 +370,7 @@ type
     ///     Возвращает основную информацию о боте
     ///   </para>
     ///   <para>
-    ///     Returns basic information about the bot in form of a <see cref="TelegAPi.Classes|TtgUser">
+    ///     Returns basic information about the bot in form of a <see cref="TelegAPi.Types|TtgUser">
     ///     User</see> object.
     ///   </para>
     /// </returns>
@@ -370,7 +378,7 @@ type
     /// <summary>
     ///   Use this method to send text messages.
     /// </summary>
-    /// <param name="Chat_id">
+    /// <param name="ChatId">
     ///   Integer or String. Unique identifier for the target chat or username
     ///   of the target channel (in the format <c>@channelusername</c> ).
     /// </param>
@@ -384,10 +392,10 @@ type
     /// <param name="DisableWebPagePreview">
     ///   Disables link previews for links in this message
     /// </param>
-    /// <param name="Disable_notification">
-    ///   Sends the message <see href="https://telegram.org/blog/channels-2-0#silent-messages">
-    ///   silently</see>. iOS users will not receive a notification, Android
-    ///   users will receive a notification with no sound.
+    /// <param name="DisableNotification">
+    ///   Sends the message silently. iOS users will not receive a
+    ///   notification, Android users will receive a notification with no
+    ///   sound.
     /// </param>
     /// <param name="ReplyToMessageId">
     ///   If the message is a reply, ID of the original message
@@ -399,28 +407,29 @@ type
     ///   reply keyboard or to force a reply from the user.
     /// </param>
     /// <returns>
-    ///   On success, the sent Message is returned.
+    ///   On success, the sent <see cref="TelegAPi.Types|TtgMessage">Message</see>
+    ///    is returned.
     /// </returns>
     function SendMessage(const ChatId: TValue; const Text: string; ParseMode: TtgParseMode = TtgParseMode.Default; DisableWebPagePreview: Boolean = False; DisableNotification: Boolean = False; ReplyToMessageId: Integer = 0; ReplyMarkup: IReplyMarkup = nil): TtgMessage;
 
     /// <summary>
     ///   Use this method to forward messages of any kind.
     /// </summary>
-    /// <param name="Chat_id">
+    /// <param name="ChatId">
     ///   Unique identifier for the target chat or username of the target
-    ///   channel (in the format @channelusername)
+    ///   channel (in the format @channelusername) <br />
     /// </param>
-    /// <param name="From_chat_id">
+    /// <param name="FromChatId">
     ///   Unique identifier for the chat where the original message was sent
-    ///   (or channel username in the format @channelusername)
+    ///   (or channel username in the format @channelusername) <br />
     /// </param>
-    /// <param name="Disable_notification">
+    /// <param name="DisableNotification">
     ///   Sends the message silently. iOS users will not receive a
     ///   notification, Android users will receive a notification with no
-    ///   sound.
+    ///   sound. <br />
     /// </param>
-    /// <param name="Message_id">
-    ///   Unique message identifier
+    /// <param name="MessageId">
+    ///   Unique message identifier <br />
     /// </param>
     /// <returns>
     ///   On success, the sent Message is returned.
@@ -429,41 +438,47 @@ type
     /// <summary>
     ///   Use this method to send photos.
     /// </summary>
-    /// <param name="chatId">
+    /// <param name="ChatId">
     ///   Unique identifier for the target chat or username of the target
-    ///   channel (in the format @channelusername)
+    ///   channel (in the format @channelusername) <br />
     /// </param>
-    /// <param name="photo">
+    /// <param name="Photo">
     ///   Photo to send. You can either pass a file_id as String to resend a
     ///   photo that is already on the Telegram servers, or upload a new photo
-    ///   using multipart/form-data.
+    ///   using multipart/form-data. <br />
     /// </param>
-    /// <param name="caption">
+    /// <param name="Caption">
     ///   Photo caption (may also be used when resending photos by file_id),
-    ///   0-200 characters
+    ///   0-200 characters <br />
     /// </param>
-    /// <param name="disable_notification">
+    /// <param name="DisableNotification">
     ///   Sends the message silently. iOS users will not receive a
     ///   notification, Android users will receive a notification with no
-    ///   sound.
+    ///   sound. <br />
     /// </param>
-    /// <param name="replyToMessageId">
-    ///   If the message is a reply, ID of the original message
+    /// <param name="ReplyToMessageId">
+    ///   If the message is a reply, ID of the original message <br />
     /// </param>
-    /// <param name="replyMarkup">
+    /// <param name="ReplyMarkup">
     ///   Additional interface options. A JSON-serialized object for an inline
     ///   keyboard, custom reply keyboard, instructions to remove reply
-    ///   keyboard or to force a reply from the user.
+    ///   keyboard or to force a reply from the user. <br />
     /// </param>
     /// <returns>
-    ///   On success, the sent Message is returned.
+    ///   On success, the sent <see cref="TelegAPi.Types|TtgMessage">Message</see>
+    ///    is returned.
     /// </returns>
     /// <example>
-    ///   var <br />LMessage: TtgMessage; <br />Begin <br />//Если не известен
-    ///   ИД файла <br />LMessage := sendPhoto(chatId,
-    ///   TtgFileToSend.Create('Путь к файлу'), nil); <br />//Если известен ИД
-    ///   файла <br />LMessage := sendPhoto(chatId, 'ИД Файла'); <br />... <br />
-    ///    LMessage.Free; <br />End;
+    ///   <code lang="Delphi">var
+    /// LMessage: TtgMessage;
+    /// Begin
+    /// //Если не известен ИД файла
+    /// LMessage := sendPhoto(chatId, TtgFileToSend.Create('Путь к файлу'), nil);
+    /// //Если известен ИД файла
+    /// LMessage := sendPhoto(chatId, 'ИД Файла');
+    /// ...
+    /// LMessage.Free;
+    /// End; </code>
     /// </example>
     function SendPhoto(ChatId: TValue; Photo: TValue; const Caption: string = ''; DisableNotification: Boolean = False; ReplyToMessageId: Integer = 0; ReplyMarkup: TtgReplyKeyboardMarkup = nil): TtgMessage;
     /// <summary>
@@ -471,117 +486,154 @@ type
     ///   display them in the music player. Your audio must be in the .mp3
     ///   format.
     /// </summary>
+    /// <param name="ChatId">
+    ///   Unique identifier for the target chat or username of the target
+    ///   channel (in the format @channelusername) <br />
+    /// </param>
+    /// <param name="Audio">
+    ///   Audio file to send. You can either pass a file_id as String to resend
+    ///   an audio that is already on the Telegram servers, or upload a new
+    ///   audio file using multipart/form-data. <br />
+    /// </param>
+    /// <param name="Duration">
+    ///   Duration of the audio in seconds <br />
+    /// </param>
+    /// <param name="Performer">
+    ///   Performer <br />
+    /// </param>
+    /// <param name="Title">
+    ///   Track name <br />
+    /// </param>
+    /// <param name="DisableNotification">
+    ///   Sends the message silently. iOS users will not receive a
+    ///   notification, Android users will receive a notification with no
+    ///   sound. <br />
+    /// </param>
+    /// <param name="ReplyToMessageId">
+    ///   If the message is a reply, ID of the original message <br />
+    /// </param>
+    /// <param name="ReplyMarkup">
+    ///   Additional interface options. A JSON-serialized object for an inline
+    ///   keyboard, custom reply keyboard, instructions to hide reply keyboard
+    ///   or to force a reply from the user. <br />
+    /// </param>
     /// <returns>
-    ///   On success, the sent Message is returned.
+    ///   On success, the sent <see cref="TelegAPi.Types|TtgMessage">Message</see>
+    ///    is returned.
     /// </returns>
     /// <remarks>
     ///   Bots can currently send audio files of up to 50 MB in size, this
     ///   limit may be changed in the future. For sending voice messages, use
-    ///   the sendVoice method instead.
+    ///   the <see cref="TelegAPI.Bot|TTelegramBot.SendVoice(TValue,TValue,Integer,Boolean,Integer,TtgReplyKeyboardMarkup)">
+    ///   sendVoice</see> method instead.
     /// </remarks>
-    /// <param name="chat_id">
-    ///   Unique identifier for the target chat or username of the target
-    ///   channel (in the format @channelusername)
-    /// </param>
-    /// <param name="audio">
-    ///   Audio file to send. You can either pass a file_id as String to resend
-    ///   an audio that is already on the Telegram servers, or upload a new
-    ///   audio file using multipart/form-data.
-    /// </param>
-    /// <param name="duration">
-    ///   Duration of the audio in seconds
-    /// </param>
-    /// <param name="performer">
-    ///   Performer
-    /// </param>
-    /// <param name="title">
-    ///   Track name
-    /// </param>
-    /// <param name="disable_notification">
-    ///   Sends the message silently. iOS users will not receive a
-    ///   notification, Android users will receive a notification with no
-    ///   sound.
-    /// </param>
-    /// <param name="reply_to_message_id">
-    ///   If the message is a reply, ID of the original message
-    /// </param>
-    /// <param name="reply_markup">
-    ///   Additional interface options. A JSON-serialized object for an inline
-    ///   keyboard, custom reply keyboard, instructions to hide reply keyboard
-    ///   or to force a reply from the user.
-    /// </param>
     function SendAudio(ChatId: TValue; Audio: TValue; Duration: Integer = 0; const Performer: string = ''; const Title: string = ''; DisableNotification: Boolean = False; ReplyToMessageId: Integer = 0; ReplyMarkup: TtgReplyKeyboardMarkup = nil): TtgMessage;
     /// <summary>
     ///   Use this method to send general files.
     /// </summary>
+    /// <param name="ChatId">
+    ///   Unique identifier for the target chat or username of the target
+    ///   channel (in the format @channelusername) <br />
+    /// </param>
+    /// <param name="Document">
+    ///   File to send. You can either pass a file_id as String to resend a
+    ///   file that is already on the Telegram servers, or upload a new file
+    ///   using multipart/form-data. <br />
+    /// </param>
+    /// <param name="Caption">
+    ///   Document caption (may also be used when resending documents by
+    ///   file_id), 0-200 characters <br />
+    /// </param>
+    /// <param name="DisableNotification">
+    ///   Sends the message silently. iOS users will not receive a
+    ///   notification, Android users will receive a notification with no
+    ///   sound. <br />
+    /// </param>
+    /// <param name="ReplyToMessageId">
+    ///   If the message is a reply, ID of the original message <br />
+    /// </param>
+    /// <param name="ReplyMarkup">
+    ///   Additional interface options. A JSON-serialized object for an inline
+    ///   keyboard, custom reply keyboard, instructions to hide reply keyboard
+    ///   or to force a reply from the user. <br />
+    /// </param>
     /// <returns>
-    ///   On success, the sent Message is returned.
+    ///   On success, the sent <see cref="TelegAPi.Types|TtgMessage">Message</see>
+    ///    is returned.
     /// </returns>
     /// <remarks>
     ///   Bots can currently send files of any type of up to 50 MB in size,
     ///   this limit may be changed in the future.
     /// </remarks>
-    /// <param name="chat_id">
-    ///   Unique identifier for the target chat or username of the target
-    ///   channel (in the format @channelusername)
-    /// </param>
-    /// <param name="document">
-    ///   File to send. You can either pass a file_id as String to resend a
-    ///   file that is already on the Telegram servers, or upload a new file
-    ///   using multipart/form-data.
-    /// </param>
-    /// <param name="caption">
-    ///   Document caption (may also be used when resending documents by
-    ///   file_id), 0-200 characters
-    /// </param>
-    /// <param name="disable_notification">
-    ///   Sends the message silently. iOS users will not receive a
-    ///   notification, Android users will receive a notification with no
-    ///   sound.
-    /// </param>
-    /// <param name="reply_to_message_id">
-    ///   If the message is a reply, ID of the original message
-    /// </param>
-    /// <param name="reply_markup">
-    ///   Additional interface options. A JSON-serialized object for an inline
-    ///   keyboard, custom reply keyboard, instructions to hide reply keyboard
-    ///   or to force a reply from the user.
-    /// </param>
     function SendDocument(ChatId: TValue; Document: TValue; const Caption: string = ''; DisableNotification: Boolean = False; ReplyToMessageId: Integer = 0; ReplyMarkup: TtgReplyKeyboardMarkup = nil): TtgMessage;
     /// <summary>
     ///   Use this method to send .webp stickers.
     /// </summary>
+    /// <param name="ChatId">
+    ///   Unique identifier for the target chat or username of the target
+    ///   channel (in the format @channelusername) <br />
+    /// </param>
+    /// <param name="Sticker">
+    ///   Sticker to send. You can either pass a file_id as String to resend a
+    ///   sticker that is already on the Telegram servers, or upload a new
+    ///   sticker using multipart/form-data. <br />
+    /// </param>
+    /// <param name="DisableNotification">
+    ///   Sends the message silently. iOS users will not receive a
+    ///   notification, Android users will receive a notification with no
+    ///   sound. <br />
+    /// </param>
+    /// <param name="ReplyToMessageId">
+    ///   If the message is a reply, ID of the original message <br />
+    /// </param>
+    /// <param name="ReplyMarkup">
+    ///   Additional interface options. A JSON-serialized object for an inline
+    ///   keyboard, custom reply keyboard, instructions to hide reply keyboard
+    ///   or to force a reply from the user. <br />
+    /// </param>
     /// <returns>
     ///   On success, the sent Message is returned.
     /// </returns>
-    /// <remarks />
-    /// <param name="chat_id">
-    ///   Unique identifier for the target chat or username of the target
-    ///   channel (in the format @channelusername)
-    /// </param>
-    /// <param name="sticker">
-    ///   Sticker to send. You can either pass a file_id as String to resend a
-    ///   sticker that is already on the Telegram servers, or upload a new
-    ///   sticker using multipart/form-data.
-    /// </param>
-    /// <param name="disable_notification">
-    ///   Sends the message silently. iOS users will not receive a
-    ///   notification, Android users will receive a notification with no
-    ///   sound.
-    /// </param>
-    /// <param name="reply_to_message_id">
-    ///   If the message is a reply, ID of the original message
-    /// </param>
-    /// <param name="reply_markup">
-    ///   Additional interface options. A JSON-serialized object for an inline
-    ///   keyboard, custom reply keyboard, instructions to hide reply keyboard
-    ///   or to force a reply from the user.
-    /// </param>
     function SendSticker(ChatId: TValue; Sticker: TValue; const Caption: string = ''; DisableNotification: Boolean = False; ReplyToMessageId: Integer = 0; ReplyMarkup: TtgReplyKeyboardMarkup = nil): TtgMessage;
     /// <summary>
     ///   Use this method to send video files, Telegram clients support mp4
     ///   videos (other formats may be sent as Document).
     /// </summary>
+    /// <param name="ChatId">
+    ///   Unique identifier for the target chat or username of the target
+    ///   channel (in the format @channelusername) <br />
+    /// </param>
+    /// <param name="Video">
+    ///   Video to send. You can either pass a file_id as String to resend a
+    ///   video that is already on the Telegram servers, or upload a new video
+    ///   file using multipart/form-data. <br />
+    /// </param>
+    /// <param name="Duration">
+    ///   Duration of sent video in seconds <br />
+    /// </param>
+    /// <param name="Width">
+    ///   Video width <br />
+    /// </param>
+    /// <param name="Height">
+    ///   Video height <br />
+    /// </param>
+    /// <param name="Caption">
+    ///   Video caption (may also be used when resending videos by file_id),
+    ///   0-200 characters <br />
+    /// </param>
+    /// <param name="DisableNotification">
+    ///   Sends the message silently. iOS users will not receive a
+    ///   notification, Android users will receive a notification with no
+    ///   sound. <br />
+    /// </param>
+    /// <param name="ReplyToMessageId">
+    ///   If the message is a reply, ID of the original message <br />
+    /// </param>
+    /// <param name="ReplyMarkup">
+    ///   Additional interface options. A JSON-serialized object for an inline
+    ///   keyboard, custom reply keyboard, instructions to hide reply keyboard
+    ///   or to force a reply from the user. <br />
+    /// </param>
     /// <returns>
     ///   On success, the sent Message is returned.
     /// </returns>
@@ -589,41 +641,6 @@ type
     ///   Bots can currently send video files of up to 50 MB in size, this
     ///   limit may be changed in the future.
     /// </remarks>
-    /// <param name="chat_id">
-    ///   Unique identifier for the target chat or username of the target
-    ///   channel (in the format @channelusername)
-    /// </param>
-    /// <param name="video">
-    ///   Video to send. You can either pass a file_id as String to resend a
-    ///   video that is already on the Telegram servers, or upload a new video
-    ///   file using multipart/form-data.
-    /// </param>
-    /// <param name="duration">
-    ///   Duration of sent video in seconds
-    /// </param>
-    /// <param name="width">
-    ///   Video width
-    /// </param>
-    /// <param name="height">
-    ///   Video height
-    /// </param>
-    /// <param name="caption">
-    ///   Video caption (may also be used when resending videos by file_id),
-    ///   0-200 characters
-    /// </param>
-    /// <param name="disable_notification">
-    ///   Sends the message silently. iOS users will not receive a
-    ///   notification, Android users will receive a notification with no
-    ///   sound.
-    /// </param>
-    /// <param name="reply_to_message_id">
-    ///   If the message is a reply, ID of the original message
-    /// </param>
-    /// <param name="reply_markup">
-    ///   Additional interface options. A JSON-serialized object for an inline
-    ///   keyboard, custom reply keyboard, instructions to hide reply keyboard
-    ///   or to force a reply from the user.
-    /// </param>
     function SendVideo(ChatId: TValue; Video: TValue; Duration: Integer = 0; Width: Integer = 0; Height: Integer = 0; const Caption: string = ''; DisableNotification: Boolean = False; ReplyToMessageId: Integer = 0; ReplyMarkup: TtgReplyKeyboardMarkup = nil): TtgMessage;
 
     /// <summary>
@@ -632,75 +649,77 @@ type
     ///   audio must be in an .ogg file encoded with OPUS (other formats may be
     ///   sent as Audio or Document).
     /// </summary>
+    /// <param name="ChatId">
+    ///   Unique identifier for the target chat or username of the target
+    ///   channel (in the format @channelusername) <br />
+    /// </param>
+    /// <param name="Voice">
+    ///   Audio file to send. You can either pass a file_id as String to resend
+    ///   an audio that is already on the Telegram servers, or upload a new
+    ///   audio file using multipart/form-data. <br />
+    /// </param>
+    /// <param name="Duration">
+    ///   Duration of sent audio in seconds <br />
+    /// </param>
+    /// <param name="DisableNotification">
+    ///   Sends the message silently. iOS users will not receive a
+    ///   notification, Android users will receive a notification with no
+    ///   sound. <br />
+    /// </param>
+    /// <param name="ReplyToMessageId">
+    ///   If the message is a reply, ID of the original message <br />
+    /// </param>
+    /// <param name="ReplyMarkup">
+    ///   Additional interface options. A JSON-serialized object for an inline
+    ///   keyboard, custom reply keyboard, instructions to hide reply keyboard
+    ///   or to force a reply from the user. <br />
+    /// </param>
     /// <returns>
-    ///   On success, the sent Message is returned
+    ///   On success, the sent <see cref="TelegAPi.Types|TtgMessage">Message</see>
+    ///    is returned
     /// </returns>
     /// <remarks>
     ///   Bots can currently send voice messages of up to 50 MB in size, this
     ///   limit may be changed in the future.
     /// </remarks>
-    /// <param name="chat_id">
-    ///   Unique identifier for the target chat or username of the target
-    ///   channel (in the format @channelusername)
-    /// </param>
-    /// <param name="voice">
-    ///   Audio file to send. You can either pass a file_id as String to resend
-    ///   an audio that is already on the Telegram servers, or upload a new
-    ///   audio file using multipart/form-data.
-    /// </param>
-    /// <param name="duration">
-    ///   Duration of sent audio in seconds
-    /// </param>
-    /// <param name="disable_notification">
-    ///   Sends the message silently. iOS users will not receive a
-    ///   notification, Android users will receive a notification with no
-    ///   sound.
-    /// </param>
-    /// <param name="reply_to_message_id">
-    ///   If the message is a reply, ID of the original message
-    /// </param>
-    /// <param name="reply_markup">
-    ///   Additional interface options. A JSON-serialized object for an inline
-    ///   keyboard, custom reply keyboard, instructions to hide reply keyboard
-    ///   or to force a reply from the user.
-    /// </param>
     function SendVoice(ChatId: TValue; Voice: TValue; Duration: Integer = 0; DisableNotification: Boolean = False; ReplyToMessageId: Integer = 0; ReplyMarkup: TtgReplyKeyboardMarkup = nil): TtgMessage;
     /// <summary>
     ///   As of <see href="https://telegram.org/blog/video-messages-and-telescope">
     ///   v.4.0</see>, Telegram clients support rounded square mp4 videos of up
     ///   to 1 minute long.
     /// </summary>
-    /// <param name="chat_id">
+    /// <param name="ChatId">
     ///   Unique identifier for the target chat or username of the target
-    ///   channel (in the format @channelusername)
+    ///   channel (in the format @channelusername) <br />
     /// </param>
-    /// <param name="video_note">
+    /// <param name="VideoNote">
     ///   Video note to send. Pass a file_id as String to send a video note
     ///   that exists on the Telegram servers (recommended) or upload a new
     ///   video using multipart/form-data. More info on Sending Files ».
-    ///   Sending video notes by a URL is currently unsupported
+    ///   Sending video notes by a URL is currently unsupported <br />
     /// </param>
-    /// <param name="duration">
-    ///   Duration of sent video in seconds
+    /// <param name="Duration">
+    ///   Duration of sent video in seconds <br />
     /// </param>
-    /// <param name="length">
-    ///   Video width and height
+    /// <param name="Length">
+    ///   Video width and height <br />
     /// </param>
-    /// <param name="disable_notification">
+    /// <param name="DisableNotification">
     ///   Sends the message silently. iOS users will not receive a
     ///   notification, Android users will receive a notification with no
-    ///   sound.
+    ///   sound. <br />
     /// </param>
-    /// <param name="reply_to_message_id">
-    ///   If the message is a reply, ID of the original message
+    /// <param name="ReplyToMessageId">
+    ///   If the message is a reply, ID of the original message <br />
     /// </param>
-    /// <param name="reply_markup">
+    /// <param name="ReplyMarkup">
     ///   Additional interface options. A JSON-serialized object for an inline
     ///   keyboard, custom reply keyboard, instructions to remove reply
-    ///   keyboard or to force a reply from the user.
+    ///   keyboard or to force a reply from the user. <br />
     /// </param>
     /// <returns>
-    ///   On success, the sent Message is returned.
+    ///   On success, the sent <see cref="TelegAPi.Types|TtgMessage">Message</see>
+    ///    is returned.
     /// </returns>
     /// <remarks>
     ///   Use this method to send video messages.
@@ -717,34 +736,33 @@ type
     /// <summary>
     ///   Use this method to send point on the map.
     /// </summary>
-    /// <returns>
-    ///   On success, the sent Message is returned.
-    /// </returns>
-    /// <remarks />
-    /// <param name="chat_id">
+    /// <param name="ChatId">
     ///   Unique identifier for the target chat or username of the target
-    ///   channel (in the format @channelusername)
+    ///   channel (in the format @channelusername) <br />
     /// </param>
-    /// <param name="latitude">
-    ///   Latitude of location
-    /// </param>
-    /// <param name="longitude">
-    ///   Longitude of location
-    /// </param>
-    /// <param name="disable_notification">
+    /// <param name="DisableNotification">
     ///   Sends the message silently. iOS users will not receive a
     ///   notification, Android users will receive a notification with no
-    ///   sound.
+    ///   sound. <br />
     /// </param>
-    /// <param name="reply_to_message_id">
-    ///   If the message is a reply, ID of the original message
+    /// <param name="ReplyToMessageId">
+    ///   If the message is a reply, ID of the original message <br />
     /// </param>
-    /// <param name="reply_markup">
+    /// <param name="ReplyMarkup">
     ///   Additional interface options. A JSON-serialized object for an inline
     ///   keyboard, custom reply keyboard, instructions to hide reply keyboard
-    ///   or to force a reply from the user.
+    ///   or to force a reply from the user. <br />
     /// </param>
-    /// <param name="" />
+    /// <param name="latitude">
+    ///   Latitude of location <br />
+    /// </param>
+    /// <param name="longitude">
+    ///   Longitude of location <br />
+    /// </param>
+    /// <returns>
+    ///   On success, the sent <see cref="TelegAPi.Types|TtgMessage">Message</see>
+    ///    is returned.
+    /// </returns>
     function SendLocation(ChatId: TValue; Location: TtgLocation; DisableNotification: Boolean = False; ReplyToMessageId: Integer = 0; ReplyMarkup: TtgReplyKeyboardMarkup = nil): TtgMessage;
     /// <summary>
     ///   Use this method to send information about a venue.
