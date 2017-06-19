@@ -396,6 +396,7 @@ type
     /// </summary>
     [Alias('latitude')]
     Latitude: Single;
+    constructor Create(ALongitude, ALatitude: Single);
   end;
 
   /// <summary>
@@ -1691,6 +1692,14 @@ destructor TtgWebhookInfo.Destroy;
 begin
   FreeAndNil(AllowedUpdates);
   inherited;
+end;
+
+{ TtgLocation }
+
+constructor TtgLocation.Create(ALongitude, ALatitude: Single);
+begin
+  Longitude := ALongitude;
+  Latitude := ALatitude;
 end;
 
 end.
