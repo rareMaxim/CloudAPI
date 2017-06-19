@@ -1017,7 +1017,7 @@ type
     ///   On success, True is returned.
     /// </returns>
     /// <seealso href="https://core.telegram.org/bots/api#answercallbackquery" />
-    function AnswerCallbackQuery(const CallbackQueryId: string; const Text: string = ''; ShowAlert: Boolean = False): Boolean;
+    function AnswerCallbackQuery(const CallbackQueryId: string; const Text: string = ''; ShowAlert: Boolean = False; Url: string = ''; CacheTime: Integer = 0): Boolean;
 {$ENDREGION}
 {$REGION 'Updating messages'}
     /// <summary>
@@ -1462,7 +1462,6 @@ begin
       if Assigned(Bot.OnMessageEdited) then
         Bot.OnMessageEdited(Bot, AValue.EditedMessage);
   end
-
 end;
 
 function TTelegramBotCore.API<T>(const Method: string; Parameters: TDictionary<string, TValue>): T;
@@ -2019,18 +2018,18 @@ begin
   end;
 end;
 
-function TTelegramBot.AnswerCallbackQuery(const CallbackQueryId, Text: string; ShowAlert: Boolean): Boolean;
+function TTelegramBot.AnswerCallbackQuery(const CallbackQueryId, Text: string; ShowAlert: Boolean; Url: string; CacheTime: Integer): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
     Parameters.Add('callback_query_id', CallbackQueryId);
-    if not Text.IsEmpty then
-      Parameters.Add('text', Text);
-    if ShowAlert then
-      Parameters.Add('show_alert', ShowAlert);
-    Result := API<Boolean>('forwardMessage', Parameters);
+    Parameters.Add('text', Text);
+    Parameters.Add('show_alert', ShowAlert);
+    Parameters.Add('url', Url);
+    Parameters.Add('cache_time', CacheTime);
+    Result := API<Boolean>('answerCallbackQuery', Parameters);
   finally
     Parameters.Free;
   end;

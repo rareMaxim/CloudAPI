@@ -1,4 +1,4 @@
-unit EchoBot.Main;
+п»їunit EchoBot.Main;
 
 interface
 
@@ -66,7 +66,7 @@ end;
 
 procedure TMain.FormCreate(Sender: TObject);
 begin
- // ReportMemoryLeaksOnShutdown := True;
+  ReportMemoryLeaksOnShutdown := True;
   tgBot.Token := {$I ..\token.inc};
   if not tgBot.IsValidToken then
     raise ELoginCredentialError.Create('invalid token format');
@@ -88,7 +88,7 @@ var
   kb: IReplyMarkup;
 begin
   kb := TtgReplyKeyboardMarkup.Create([[
-  {}TtgKeyboardButton.Create('Location', False, True),
+  {} TtgKeyboardButton.Create('Location', False, True),
   {} TtgKeyboardButton.Create('Contact', True, False)]]);
   tgBot.SendMessage(Msg.Chat.Id, 'Who or Where are you?', TtgParseMode.default, False, False, 0, kb).Free;
 end;
@@ -118,13 +118,11 @@ begin
     [TtgInlineKeyboardButton.Create('1.1', '1'), TtgInlineKeyboardButton.Create('1.2', '2')],
     { second row }
     [TtgInlineKeyboardButton.Create('2.1', '3'), TtgInlineKeyboardButton.Create('2.2', '4')]]);
-//  Sleep(500); // simulate longer running task
+  Sleep(500); // simulate longer running task
   tgBot.SendMessage(Msg.Chat.Id, 'Choose', TtgParseMode.default, False, False, 0, keyboard).Free;
 end;
 
 procedure TMain.SendKeyboard(Msg: TtgMessage);
-const
-  WHAT_IS_DELPHI = 'Delphi — императивный, структурированный, объектно-ориентированный язык программирования со строгой статической типизацией переменных. Ообласть использования — написание прикладного программного обеспечения.';
 var
   keyboard: IReplyMarkup;
 begin
@@ -132,7 +130,7 @@ begin
     { first row }
     [TtgKeyboardButton.Create('1.1'), TtgKeyboardButton.Create('1.2')],
     { second row }
-    [TtgKeyboardButton.Create('2.1'), TtgKeyboardButton.Create('2.2')], [TtgKeyboardButton.Create(WHAT_IS_DELPHI)]], False);
+    [TtgKeyboardButton.Create('2.1'), TtgKeyboardButton.Create('2.2')]], False);
   tgBot.SendMessage(Msg.Chat.Id, 'Choose', TtgParseMode.default, False, False, 0, keyboard).Free;
 end;
 
@@ -182,8 +180,6 @@ begin
 end;
 
 procedure TMain.SendQuest(Msg: TtgMessage);
-const
-  QUESTION = 'Как Вы считаете, связаны ли честность и вежливость между собой? И если да, то как?';
 var
   keyboard: IReplyMarkup;
 begin
@@ -191,8 +187,8 @@ begin
     { first row }
     [TtgKeyboardButton.Create('1.1'), TtgKeyboardButton.Create('1.2')],
     { second row }
-    [TtgKeyboardButton.Create('2.1'), TtgKeyboardButton.Create('2.2')], [TtgKeyboardButton.Create(QUESTION)]], False);
-  tgBot.SendMessage(Msg.Chat.Id, QUESTION, TtgParseMode.default, False, False, 0, keyboard).Free;
+    [TtgKeyboardButton.Create('2.1'), TtgKeyboardButton.Create('2.2')]], False);
+  tgBot.SendMessage(Msg.Chat.Id, 'Р’С‹Р±РµСЂРё:', TtgParseMode.default, False, False, 0, keyboard).Free;
 end;
 
 procedure TMain.tgBotInlineResultChosen(ASender: TObject; AChosenInlineResult: TtgChosenInlineResult);
@@ -232,7 +228,6 @@ begin
       '/inline   - send inline keyboard' + #13#10 +    //
       '/keyboard - send custom keyboard' + #13#10 +   //
       '/photo    - send a photo' + #13#10 +       //
-      '/quest    - show test question' + #13#10 +       //
       '/request  - request location or contact';
     tgBot.SendMessage(AMessage.Chat.Id, usage, TtgParseMode.default, False, False, 0, TtgReplyKeyboardHide.Create).Free;
   end;

@@ -13,13 +13,13 @@ object Main: TMain
   object mmo1: TMemo
     Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
     DataDetectorTypes = []
-    Align = Top
+    Align = Client
     Size.Width = 577.000000000000000000
-    Size.Height = 249.000000000000000000
+    Size.Height = 319.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 2
     Viewport.Width = 573.000000000000000000
-    Viewport.Height = 245.000000000000000000
+    Viewport.Height = 315.000000000000000000
   end
   object tgBot: TTelegramBot
     OnConnect = tgBotConnect

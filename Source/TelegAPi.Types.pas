@@ -1049,6 +1049,13 @@ type
     /// </summary>
     [Alias('data')]
     Data: string;
+    /// <summary>
+    ///   Optional. Short name of a Game to be returned, serves as the unique
+    //    identifier for the game
+    /// </summary>
+    [Alias('game_short_name')]
+    GameShortName: string;
+    destructor Destroy; override;
   end;
 
 {$REGION 'Payments'}
@@ -1467,7 +1474,35 @@ begin
   inherited;
 end;
 
-{ TtgApiFileToSend }
+{TtgCallbackQuery}
+destructor TtgCallbackQuery.Destroy;
+begin
+  FreeAndNil(From);
+  FreeAndNil(message);
+  inherited;
+end;
+{ TtgChatMember }
+
+destructor TtgChatMember.Destroy;
+begin
+  FreeAndNil(User);
+  inherited;
+end;
+
+{ TtgDocument }
+destructor TtgDocument.Destroy;
+begin
+  FreeAndNil(Thumb);
+  inherited;
+end;
+
+{ TtgFile }
+function TtgFile.GetFileUrl(const AToken: string): string;
+begin
+  Result := Format('https://api.telegram.org/file/bot%S/%S', [AToken, FilePath])
+end;
+{ TtgFileToSend }
+
 constructor TtgFileToSend.Create(const FileName: string; const Content: TStream);
 begin
   Self.FileName := FileName;
@@ -1489,28 +1524,8 @@ begin
       raise EFileNotFoundException.CreateFmt('File %S not found!', [FileName]);
   end
 end;
-
-{ TtgChatMember }
-destructor TtgChatMember.Destroy;
-begin
-  FreeAndNil(User);
-  inherited;
-end;
-
-{ TtgDocument }
-destructor TtgDocument.Destroy;
-begin
-  FreeAndNil(Thumb);
-  inherited;
-end;
-
-{ TtgFile }
-function TtgFile.GetFileUrl(const AToken: string): string;
-begin
-  Result := Format('https://api.telegram.org/file/bot%S/%S', [AToken, FilePath])
-end;
-
 { TtgGame }
+
 constructor TtgGame.Create;
 begin
   inherited Create;
@@ -1649,8 +1664,8 @@ begin
     Exit(TtgUpdateType.EditedMessage);
   if Assigned(ChannelPost) then
     Exit(TtgUpdateType.ChannelPost);
-  if Assigned(EditedMessage) then
-    Exit(TtgUpdateType.ChannelPost);
+  if Assigned(EditedChannelPost) then
+    Exit(TtgUpdateType.EditedChannelPost);
   if Assigned(ShippingQuery) then
     Exit(TtgUpdateType.ShippingQueryUpdate);
   if Assigned(PreCheckoutQuery) then
