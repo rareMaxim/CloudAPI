@@ -34,6 +34,7 @@ type
     constructor Create(const AMessage: string); overload;
     constructor Create(const AMessage: string; AErrorCode: Integer); overload;
     function ToString: string; override;
+    destructor Destroy; override;
     /// <summary>
     ///   Gets the error code.
     /// </summary>
@@ -57,7 +58,12 @@ constructor EApiRequestException.Create(const AMessage: string; AErrorCode: Inte
 begin
   inherited Create(AMessage);
   FErrorCode := AErrorCode;
+end;
 
+destructor EApiRequestException.Destroy;
+begin
+  FreeAndNil(FParameters);
+  inherited;
 end;
 
 class function EApiRequestException.FromApiResponse<T>(AApiResponse: TtgApiResponse<T>): EApiRequestException;

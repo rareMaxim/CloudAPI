@@ -938,6 +938,7 @@ type
     /// </summary>
     [Alias('parameters')]
     Parameters: TrgResponseParameters;
+    destructor Destroy; override;
   end;
 
   [Alias('FileToSend')]
@@ -1715,6 +1716,14 @@ constructor TtgLocation.Create(ALongitude, ALatitude: Single);
 begin
   Longitude := ALongitude;
   Latitude := ALatitude;
+end;
+
+{ TtgApiResponse<T> }
+
+destructor TtgApiResponse<T>.Destroy;
+begin
+  FreeAndNil(Parameters);
+  inherited;
 end;
 
 end.

@@ -65,22 +65,20 @@ begin
 end;
 
 procedure TMain.FormCreate(Sender: TObject);
+var
+  LMe: TtgUser;
 begin
   ReportMemoryLeaksOnShutdown := True;
   tgBot.Token := {$I ..\token.inc};
   if not tgBot.IsValidToken then
     raise ELoginCredentialError.Create('invalid token format');
-  try
-    with tgBot.GetMe do
-    begin
-      Caption := Username;
-      Free;
-    end;
+  LMe := tgBot.GetMe;
+  if Assigned(LMe) then
+  begin
+    Caption := LMe.Username;
+    FreeAndNil(LMe);
     tgBot.IsReceiving := True;
-  except
-    tgBot.IsReceiving := False;
   end;
-
 end;
 
 procedure TMain.SendRequest(Msg: TtgMessage);
@@ -202,6 +200,7 @@ var
 begin
   if not Assigned(AMessage) then
     Exit;
+  WriteLine(AMessage.Text);
   if AMessage.Text.StartsWith('/inline') then // send inline keyboard
   begin
     SendInline(AMessage);
@@ -235,7 +234,16 @@ end;
 
 procedure TMain.tgBotReceiveError(ASender: TObject; AApiRequestException: EApiRequestException);
 begin
+  case AApiRequestException.ErrorCode of
+    401:
+      begin
+        tgBot.IsReceiving := False;
+        ShowMessage('invalid bot login');
+      end;
+  end;
+
   WriteLine(AApiRequestException.ToString);
+  AApiRequestException.Free;
 end;
 
 procedure TMain.WriteLine(const AValue: string);

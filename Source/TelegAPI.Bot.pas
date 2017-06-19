@@ -1567,8 +1567,12 @@ begin
   end
   else
   begin
-    FRecesiver.Terminate;
-    FreeAndNil(FRecesiver);
+    if Assigned(FRecesiver) then
+    begin
+      FRecesiver.Terminate;
+
+      FreeAndNil(FRecesiver);
+    end;
   end;
 end;
 
