@@ -30,16 +30,18 @@ package TelegaPiBot;
 {$IMPLICITBUILD ON}
 
 requires
-  rtl,
-  IndySystem,
-  IndyProtocols,
-  IndyCore;
+  rtl;
 
 contains
-  TelegAPi.Classes in '..\Source\TelegAPi.Classes.pas',
+  TelegAPi.Types in '..\Source\TelegAPi.Types.pas',
   TelegAPi.RegisterIDE in '..\Source\TelegAPi.RegisterIDE.pas',
-  TelegAPi.Utils in '..\Source\TelegAPi.Utils.pas',
   TelegAPI.Bot in '..\Source\TelegAPI.Bot.pas',
-  TelegAPi.Helpers in '..\Source\TelegAPi.Helpers.pas';
+  TelegAPi.Helpers in '..\Source\TelegAPi.Helpers.pas',
+  TelegaPi.Types.ReplyMarkups in '..\Source\TelegaPi.Types.ReplyMarkups.pas',
+  TelegaPi.Types.InputMessageContents in '..\Source\TelegaPi.Types.InputMessageContents.pas',
+  TelegaPi.Types.InlineQueryResults in '..\Source\TelegaPi.Types.InlineQueryResults.pas',
+  TelegaPi.Types.Enums in '..\Source\TelegaPi.Types.Enums.pas',
+  TelegaPi.Exceptions in '..\Source\TelegaPi.Exceptions.pas';
 
 end.
+

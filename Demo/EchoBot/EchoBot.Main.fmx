@@ -1,0 +1,36 @@
+object Main: TMain
+  Left = 0
+  Top = 0
+  Caption = 'Form1'
+  ClientHeight = 319
+  ClientWidth = 577
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnCreate = FormCreate
+  OnClose = FormClose
+  DesignerMasterStyle = 0
+  object mmo1: TMemo
+    Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
+    DataDetectorTypes = []
+    Align = Client
+    Size.Width = 577.000000000000000000
+    Size.Height = 319.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 2
+    Viewport.Width = 573.000000000000000000
+    Viewport.Height = 315.000000000000000000
+  end
+  object tgBot: TTelegramBot
+    OnConnect = tgBotConnect
+    OnDisconnect = tgBotDisconnect
+    OnMessage = tgBotMessage
+    OnMessageEdited = tgBotMessage
+    OnInlineQuery = tgBotInlineQuery
+    OnInlineResultChosen = tgBotInlineResultChosen
+    OnCallbackQuery = tgBotCallbackQuery
+    OnReceiveError = tgBotReceiveError
+    Left = 216
+    Top = 88
+  end
+end

@@ -15,7 +15,6 @@ uses
 {$ENDIF}
   System.Classes,
   {Add new components here}
-
   TelegAPi.Bot;
 
 {$IFDEF REG_IN_LOAD}
