@@ -164,7 +164,7 @@ type
     ///   objects
     /// </summary>
     [Alias('keyboard')]
-    property Keyboard: TArray<TArray<TtgKeyboardButton>> read GetKeyboard write SetKeyboard;
+    property Keyboard;
   end;
 
   /// <summary>

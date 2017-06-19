@@ -1445,7 +1445,7 @@ procedure TtgRecesiver.OnUpdateReceived(AValue: TtgUpdate);
 begin
   if Assigned(Bot.OnUpdate) then
     Bot.OnUpdate(Bot, AValue);
-  case AValue.&Type of
+  case AValue.&type of
     TtgUpdateType.MessageUpdate:
       if Assigned(Bot.OnMessage) then
         Bot.OnMessage(Bot, AValue.Message);
@@ -1461,7 +1461,8 @@ begin
     TtgUpdateType.EditedMessage:
       if Assigned(Bot.OnMessageEdited) then
         Bot.OnMessageEdited(Bot, AValue.EditedMessage);
-  end;
+  end
+
 end;
 
 function TTelegramBotCore.API<T>(const Method: string; Parameters: TDictionary<string, TValue>): T;
@@ -2289,7 +2290,7 @@ begin
     if Length(LUpdates) = 0 then
       Continue;
     Bot.MessageOffset := LUpdates[High(LUpdates)].Id + 1;
-    TThread.Queue(Self,
+    TThread.Synchronize(nil,
       procedure
       var
         I: Integer;
