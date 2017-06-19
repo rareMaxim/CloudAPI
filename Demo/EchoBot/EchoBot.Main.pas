@@ -115,10 +115,10 @@ begin
   tgBot.SendChatAction(Msg.Chat.Id, TtgSendChatAction.Typing);
   keyboard := TtgInlineKeyboardMarkup.Create([
     { first row }
-    [TtgInlineKeyboardButton.Create('1.1'), TtgInlineKeyboardButton.Create('1.2')],
+    [TtgInlineKeyboardButton.Create('1.1', '1'), TtgInlineKeyboardButton.Create('1.2', '2')],
     { second row }
-    [TtgInlineKeyboardButton.Create('2.1'), TtgInlineKeyboardButton.Create('2.2')]]);
-  Sleep(500); // simulate longer running task
+    [TtgInlineKeyboardButton.Create('2.1', '3'), TtgInlineKeyboardButton.Create('2.2', '4')]]);
+//  Sleep(500); // simulate longer running task
   tgBot.SendMessage(Msg.Chat.Id, 'Choose', TtgParseMode.default, False, False, 0, keyboard).Free;
 end;
 
