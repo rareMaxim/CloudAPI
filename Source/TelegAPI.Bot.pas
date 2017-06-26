@@ -85,6 +85,7 @@ type
     function ParamsToFormData(Parameters: TDictionary<string, TValue>): TMultipartFormData;
     function ArrayToString<T: class, constructor>(LArray: TArray<T>): string;
     procedure DoDisconnect(ASender: TObject);
+  protected
     procedure ErrorHandler(AException: Exception);
   public
     constructor Create(AOwner: TComponent); overload; override;
@@ -2319,7 +2320,12 @@ begin
     Sleep(Bot.PollingTimeout);
     if (Terminated) or (not Bot.IsReceiving) then
       Break;
-    LUpdates := FBot.GetUpdates(Bot.MessageOffset, 100, 0, UPDATES_ALLOWED_ALL);
+    try
+      LUpdates := FBot.GetUpdates(Bot.MessageOffset, 100, 0, UPDATES_ALLOWED_ALL);
+    except
+      on E: Exception do
+        FBot.ErrorHandler(E);
+    end;
     if Length(LUpdates) = 0 then
       Continue;
     Bot.MessageOffset := LUpdates[High(LUpdates)].Id + 1;
