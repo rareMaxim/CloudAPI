@@ -33,6 +33,8 @@ type
 
   TtgOnReceiveGeneralError = procedure(ASender: TObject; AException: Exception) of object;
 
+  TtgOnReceiveRawData = procedure(ASender: TObject; const AData: string) of object;
+
   TTelegramBot = class;
 
   TtgRecesiver = class(TThread)
@@ -73,6 +75,7 @@ type
     FOnCallbackQuery: TtgOnCallbackQuery;
     FOnReceiveError: TtgOnReceiveError;
     FOnReceiveGeneralError: TtgOnReceiveGeneralError;
+    FOnRawData: TtgOnReceiveRawData;
     procedure SetIsReceiving(const Value: Boolean);
     function GetVersionAPI: string;
     /// <summary>
@@ -82,6 +85,7 @@ type
     function ParamsToFormData(Parameters: TDictionary<string, TValue>): TMultipartFormData;
     function ArrayToString<T: class, constructor>(LArray: TArray<T>): string;
     procedure DoDisconnect(ASender: TObject);
+    procedure ErrorHandler(AException: Exception);
   public
     constructor Create(AOwner: TComponent); overload; override;
     destructor Destroy; override;
@@ -95,6 +99,11 @@ type
     /// </summary>
     property IsReceiving: Boolean read FIsReceiving write SetIsReceiving default False;
   published
+  {$REGION 'Property|Свойства'}
+      /// <summary>
+    ///   Proxy Settings to be used by the client.
+    /// </summary>
+    property ProxySettings: TProxySettings read FProxySettings write FProxySettings;
     /// <summary>
     ///   Задержка между опросами
     /// </summary>
@@ -126,13 +135,7 @@ type
     ///   Поддерживаемая версия платформы BotAPI
     /// </summary>
     property VersionAPI: string read GetVersionAPI;
-    property OnConnect: TNotifyEvent read FOnConnect write FOnConnect;
-    property OnDisconnect: TNotifyEvent read FOnDisconnect write FOnDisconnect;
-    /// <summary>
-    ///   Proxy Settings to be used by the client.
-    /// </summary>
-    property ProxySettings: TProxySettings read FProxySettings write FProxySettings;
-
+{$ENDREGION}
 {$REGION 'События|Events'}
     /// <summary>
     ///   <para>
@@ -216,6 +219,9 @@ type
     ///   </para>
     /// </summary>
     property OnReceiveGeneralError: TtgOnReceiveGeneralError read FOnReceiveGeneralError write FOnReceiveGeneralError;
+    property OnConnect: TNotifyEvent read FOnConnect write FOnConnect;
+    property OnDisconnect: TNotifyEvent read FOnDisconnect write FOnDisconnect;
+    property OnReceiveRawData: TtgOnReceiveRawData read FOnRawData write FOnRawData;
 {$ENDREGION}
   end;
 
@@ -1483,14 +1489,26 @@ begin
     { TODO -oM.E.Sysoev -cGeneral : Error handing }
     LHttp.ProxySettings := FProxySettings;
     LURL_TELEG := 'https://api.telegram.org/bot' + FToken + '/' + Method;
-    // Преобразовуем параметры в строку, если нужно
-    if Assigned(Parameters) then
-    begin
-      LParamToDate := ParamsToFormData(Parameters);
-      LHttpResponse := LHttp.Post(LURL_TELEG, LParamToDate);
-    end
-    else
-      LHttpResponse := LHttp.Get(LURL_TELEG);
+    try
+      if Assigned(Parameters) then
+      begin
+        LParamToDate := ParamsToFormData(Parameters);
+        LHttpResponse := LHttp.Post(LURL_TELEG, LParamToDate);
+      end
+      else
+      begin
+        LHttpResponse := LHttp.Get(LURL_TELEG);
+      end;
+    except
+      on E: Exception do
+      begin
+        Self.ErrorHandler(E);
+        Result := Default(T);
+        Exit;
+      end;
+    end;
+    if Assigned(OnReceiveRawData) then
+      OnReceiveRawData(Self, LHttpResponse.ContentAsString);
     LApiResponse := TtgApiResponse<T>.FromJSON(LHttpResponse.ContentAsString);
     if not LApiResponse.Ok then
     begin
@@ -1561,6 +1579,7 @@ begin
   if Value then
   begin
     FRecesiver := TtgRecesiver.Create(True);
+    FRecesiver.FreeOnTerminate := False;
     FRecesiver.Bot := TTelegramBot(Self);
     FRecesiver.OnTerminate := DoDisconnect;
     FRecesiver.Start;
@@ -1570,7 +1589,6 @@ begin
     if Assigned(FRecesiver) then
     begin
       FRecesiver.Terminate;
-
       FreeAndNil(FRecesiver);
     end;
   end;
@@ -1592,6 +1610,19 @@ procedure TTelegramBotCore.DoDisconnect(ASender: TObject);
 begin
   if Assigned(OnDisconnect) then
     OnDisconnect(ASender);
+end;
+
+procedure TTelegramBotCore.ErrorHandler(AException: Exception);
+begin
+  if Assigned(OnReceiveGeneralError) then
+  begin
+    OnReceiveGeneralError(Self, AException);
+    Exit;
+  end
+  else
+  begin
+    raise Exception.Create(AException.Message);
+  end;
 end;
 
 destructor TTelegramBotCore.Destroy;
@@ -2229,7 +2260,6 @@ begin
   finally
     Parameters.Free;
   end;
-
 end;
 
 function TTelegramBot.GetGameHighScores(UserId, ChatId, MessageId: Integer; const InlineMessageId: string): TArray<TtgGameHighScore>;

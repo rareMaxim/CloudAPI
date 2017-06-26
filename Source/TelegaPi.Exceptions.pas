@@ -22,6 +22,7 @@ type
   private
     FErrorCode: Integer;
     FParameters: TrgResponseParameters;
+    FRawData: string;
   public
     class function FromApiResponse<T>(AApiResponse: TtgApiResponse<T>): EApiRequestException;
     /// <summary>
@@ -43,10 +44,13 @@ type
     ///   Contains information about why a request was unsuccessfull.
     /// </summary>
     property Parameters: TrgResponseParameters read FParameters write FParameters;
+    property RawData: string read FRawData write FRawData;
   end;
 
 implementation
 
+uses
+  XSuperObject;
 { EApiRequestException }
 
 constructor EApiRequestException.Create(const AMessage: string);
@@ -70,6 +74,7 @@ class function EApiRequestException.FromApiResponse<T>(AApiResponse: TtgApiRespo
 begin
   Result := EApiRequestException.Create(AApiResponse.Message, AApiResponse.Code);
   Result.Parameters := AApiResponse.Parameters;
+  Result.RawData := AApiResponse.AsJSON();
 end;
 
 function EApiRequestException.ToString: string;
