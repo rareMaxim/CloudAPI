@@ -43,14 +43,17 @@ type
   protected
     procedure Execute; override;
     /// <summary>
-    ///   Raises the <see cref="OnUpdate" />, <see cref="OnMessage" />, <see cref="OnInlineQuery" />
-    ///    , <see cref="OnInlineResultChosen" /> and <see cref="OnCallbackQuery" />
-    ///    events.
+    ///   Raises the <see cref="TelegAPI.Bot|TtgOnUpdate" />, <see cref="TelegAPI.Bot|TtgOnMessage" />
+    ///    , <see cref="TelegAPI.Bot|TtgOnInlineQuery" /> , <see cref="TelegAPI.Bot|TtgOnInlineResultChosen" />
+    ///    and <see cref="TelegAPI.Bot|TtgOnCallbackQuery" /> events.
     /// </summary>
-    /// <param name="e">
-    ///   The <see cref="UpdateEventArgs" /> instance containing the event
-    ///   data.
+    /// <param name="AValue">
+    ///   The <see cref="TelegAPi.Types|TtgUpdate">Update</see> instance
+    ///   containing the event data. <br />
     /// </param>
+    /// <exception cref="TelegaPi.Exceptions|ETelegramException">
+    ///   Возникает если получено неизвестное обновление
+    /// </exception>
     procedure OnUpdateReceived(AValue: TtgUpdate);
   public
     property Bot: TTelegramBot read FBot write FBot;
@@ -101,7 +104,7 @@ type
     property IsReceiving: Boolean read FIsReceiving write SetIsReceiving default False;
   published
   {$REGION 'Property|Свойства'}
-      /// <summary>
+    /// <summary>
     ///   Proxy Settings to be used by the client.
     /// </summary>
     property ProxySettings: TProxySettings read FProxySettings write FProxySettings;
@@ -1074,7 +1077,7 @@ type
     /// </param>
     /// <param name="MessageId">
     ///   Required if InlineMessageId is not specified. Unique identifier of <br />
-    ///   the sent message <br />
+    ///    the sent message <br />
     /// </param>
     /// <param name="InlineMessageId">
     ///   Required if ChatId and MessageId are not specified. Identifier of the
@@ -1098,16 +1101,16 @@ type
     /// </summary>
     /// <param name="ChatId">
     ///   Required if InlineMessageId is not specified. Unique identifier for <br />
-    ///   the target chat or username of the target channel (in the format <br />
-    ///   @channelusername) <br />
+    ///    the target chat or username of the target channel (in the format <br />
+    ///    @channelusername) <br />
     /// </param>
     /// <param name="MessageId">
     ///   Required if InlineMessageId is not specified. Unique identifier of <br />
-    ///   the sent message <br />
+    ///    the sent message <br />
     /// </param>
     /// <param name="InlineMessageId">
     ///   Required if ChatId and MessageId are not specified. Identifier of <br />
-    ///   the inline message <br />
+    ///    the inline message <br />
     /// </param>
     /// <param name="ReplyMarkup">
     ///   A JSON-serialized object for an inline keyboard. <br />
@@ -1261,7 +1264,8 @@ type
     ///   from the user. <br />
     /// </param>
     /// <returns>
-    ///   On success, the sent <see cref="Message" /> is returned.
+    ///   On success, the sent <see cref="TelegAPi.Types|TtgMessage" /> is
+    ///   returned.
     /// </returns>
     /// <seealso href="https://core.telegram.org/bots/api#sendinvoice" />
     function SendInvoice(ChatId: Integer; const Title: string; const Description: string; const Payload: string; const ProviderToken: string; const StartParameter: string; const Currency: string; Prices: TArray<TtgLabeledPrice>; const PhotoUrl: string = ''; PhotoSize: Integer = 0; PhotoWidth: Integer = 0; PhotoHeight: Integer = 0; NeedName: Boolean = False; NeedPhoneNumber: Boolean = False; NeedEmail: Boolean = False; NeedShippingAddress: Boolean = False; IsFlexible: Boolean = False; DisableNotification: Boolean = False; ReplyToMessageId: Integer = 0; ReplyMarkup: TtgReplyKeyboardMarkup = nil): TtgMessage;
@@ -1371,11 +1375,11 @@ type
     /// </param>
     /// <param name="ChatId">
     ///   Required if InlineMessageId is not specified. Unique identifier for <br />
-    ///   the target chat <br />
+    ///    the target chat <br />
     /// </param>
     /// <param name="MessageId">
     ///   Required if InlineMessageId is not specified. Identifier of the <br />
-    ///   sent message <br />
+    ///    sent message <br />
     /// </param>
     /// <param name="InlineMessageId">
     ///   Required if ChatId and MessageId are not specified. Identifier of the
@@ -1398,15 +1402,15 @@ type
     /// </param>
     /// <param name="ChatId">
     ///   Required if InlineMessageId is not specified. Unique identifier for <br />
-    ///   the target chat <br />
+    ///    the target chat <br />
     /// </param>
     /// <param name="MessageId">
     ///   Required if InlineMessageId is not specified. Identifier of the <br />
-    ///   sent message <br />
+    ///    sent message <br />
     /// </param>
     /// <param name="InlineMessageId">
     ///   Required if ChatId and MessageId are not specified. Identifier of <br />
-    ///   the inline message <br />
+    ///    the inline message <br />
     /// </param>
     /// <returns>
     ///   On success, returns an Array of <see cref="TelegAPi.Types|TtgGameHighScore">
@@ -1468,6 +1472,8 @@ begin
     TtgUpdateType.EditedMessage:
       if Assigned(Bot.OnMessageEdited) then
         Bot.OnMessageEdited(Bot, AValue.EditedMessage);
+  else
+    raise ETelegramException.Create('Unknown update type');
   end
 end;
 
@@ -1543,7 +1549,7 @@ begin
     else if Parameter.Value.IsType<Int64>then
     begin
       if Parameter.Value.AsInt64 <> 0 then
-        Result.AddField(Parameter.Key, IntToStr(Parameter.Value.AsInt64));
+        Result.AddField(Parameter.Key, Parameter.Value.AsInt64.ToString);
     end
     else if Parameter.Value.IsType<Boolean>then
     begin

@@ -26,8 +26,8 @@ type
   public
     class function FromApiResponse<T>(AApiResponse: TtgApiResponse<T>): EApiRequestException;
     /// <summary>
-    ///   Initializes a new instance of the <see cref="ApiRequestException" />
-    ///   class.
+    ///   Initializes a new instance of the <see cref="TelegaPi.Exceptions|EApiRequestException" />
+    ///    class.
     /// </summary>
     /// <param name="AMessage">
     ///   The message that describes the error.
