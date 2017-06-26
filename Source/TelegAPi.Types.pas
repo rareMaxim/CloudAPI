@@ -642,6 +642,12 @@ type
     [Alias('video_note')]
     VideoNote: TtgVideoNote;
     /// <summary>
+    ///   Optional. New members that were added to the group or supergroup and
+    ///   information about them (the bot itself may be one of these members)
+    /// </summary>
+    [Alias('new_chat_members')]
+    NewChatMembers: TObjectList<TtgUser>;
+    /// <summary>
     ///   Optional. Caption for the document, photo or video, 0-200 characters
     /// </summary>
     [Alias('caption')]
@@ -663,11 +669,11 @@ type
     [Alias('venue')]
     Venue: TtgVenue;
     /// <summary>
-    ///   Optional. New members that were added to the group or supergroup and
-    ///   information about them (the bot itself may be one of these members)
+    ///   Optional. A new member was added to the group, information about them
+    ///   (this member may be the bot itself)
     /// </summary>
-    [Alias('new_chat_members')]
-    NewChatMembers: TObjectList<TtgUser>;
+    [Alias('new_chat_member')]
+    NewChatMember: TtgUser;
     /// <summary>
     ///   Optional. A member was removed from the group, information about them
     ///   (this member may be bot itself)
