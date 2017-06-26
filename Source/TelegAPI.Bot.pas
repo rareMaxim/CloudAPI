@@ -1492,8 +1492,9 @@ begin
     raise EArgumentException.Create('Invalid token format');
   end;
   LHttp := THTTPClient.Create;
+  LApiResponse := nil;
+  LParamToDate := nil;
   try
-    { TODO -oM.E.Sysoev -cGeneral : Error handing }
     LHttp.ProxySettings := FProxySettings;
     LURL_TELEG := 'https://api.telegram.org/bot' + FToken + '/' + Method;
     try
@@ -1527,8 +1528,7 @@ begin
     Result := LApiResponse.ResultObject;
     LApiResponse.ResultObject := Default(T);
   finally
-    if Assigned(Parameters) then
-      FreeAndNil(LParamToDate);
+    FreeAndNil(LParamToDate);
     FreeAndNil(LHttp);
     FreeAndNil(LApiResponse);
   end;

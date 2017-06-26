@@ -22,14 +22,15 @@ object Main: TMain
     Viewport.Height = 315.000000000000000000
   end
   object tgBot: TTelegramBot
-    OnConnect = tgBotConnect
-    OnDisconnect = tgBotDisconnect
     OnMessage = tgBotMessage
     OnMessageEdited = tgBotMessage
     OnInlineQuery = tgBotInlineQuery
     OnInlineResultChosen = tgBotInlineResultChosen
     OnCallbackQuery = tgBotCallbackQuery
     OnReceiveError = tgBotReceiveError
+    OnReceiveGeneralError = tgBotReceiveGeneralError
+    OnConnect = tgBotConnect
+    OnDisconnect = tgBotDisconnect
     Left = 216
     Top = 88
   end

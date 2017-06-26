@@ -34,6 +34,7 @@ type
     procedure tgBotConnect(Sender: TObject);
     procedure tgBotDisconnect(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure tgBotReceiveGeneralError(ASender: TObject; AException: Exception);
   private
     { Private declarations }
     procedure WriteLine(const AValue: string);
@@ -72,13 +73,7 @@ begin
   tgBot.Token := {$I ..\token.inc};
   if not tgBot.IsValidToken then
     raise ELoginCredentialError.Create('invalid token format');
-  LMe := tgBot.GetMe;
-  if Assigned(LMe) then
-  begin
-    Caption := LMe.Username;
-    FreeAndNil(LMe);
-    tgBot.IsReceiving := True;
-  end;
+  tgBot.IsReceiving := True;
 end;
 
 procedure TMain.SendRequest(Msg: TtgMessage);
@@ -138,8 +133,19 @@ begin
 end;
 
 procedure TMain.tgBotConnect(Sender: TObject);
+var
+  LMe: TtgUser;
 begin
   WriteLine('Bot connected');
+  try
+    LMe := tgBot.GetMe;
+    if Assigned(LMe) then
+    begin
+      Caption := LMe.Username;
+    end;
+  finally
+    LMe.Free;
+  end;
 end;
 
 procedure TMain.tgBotDisconnect(Sender: TObject);
@@ -241,9 +247,13 @@ begin
         ShowMessage('invalid bot login');
       end;
   end;
-
   WriteLine(AApiRequestException.ToString);
   AApiRequestException.Free;
+end;
+
+procedure TMain.tgBotReceiveGeneralError(ASender: TObject; AException: Exception);
+begin
+  WriteLine(AException.ToString);
 end;
 
 procedure TMain.WriteLine(const AValue: string);
