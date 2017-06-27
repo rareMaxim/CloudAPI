@@ -1521,9 +1521,9 @@ begin
     if not LApiResponse.Ok then
     begin
       if Assigned(OnReceiveError) then
-        OnReceiveError(Self, EApiRequestException.FromApiResponse<T>(LApiResponse))
+        OnReceiveError(Self, EApiRequestException.FromApiResponse<T>(LApiResponse, Parameters))
       else
-        raise EApiRequestException.FromApiResponse<T>(LApiResponse);
+        raise EApiRequestException.FromApiResponse<T>(LApiResponse, Parameters);
     end;
     Result := LApiResponse.ResultObject;
     LApiResponse.ResultObject := Default(T);
