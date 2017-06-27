@@ -81,6 +81,7 @@ end;
 
 destructor EApiRequestException.Destroy;
 begin
+  FreeAndNil(FSendedParams);
   FreeAndNil(FParameters);
   inherited;
 end;

@@ -1521,7 +1521,11 @@ begin
     if not LApiResponse.Ok then
     begin
       if Assigned(OnReceiveError) then
-        OnReceiveError(Self, EApiRequestException.FromApiResponse<T>(LApiResponse, Parameters))
+        TThread.Synchronize(FRecesiver,
+          procedure
+          begin
+            OnReceiveError(Self, EApiRequestException.FromApiResponse<T>(LApiResponse, Parameters))
+          end)
       else
         raise EApiRequestException.FromApiResponse<T>(LApiResponse, Parameters);
     end;
@@ -1586,7 +1590,7 @@ begin
   if Value then
   begin
     FRecesiver := TtgRecesiver.Create(True);
-    FRecesiver.FreeOnTerminate := False;
+    FRecesiver.FreeOnTerminate := True;
     FRecesiver.Bot := TTelegramBot(Self);
     FRecesiver.OnTerminate := DoDisconnect;
     FRecesiver.Start;
@@ -1596,7 +1600,7 @@ begin
     if Assigned(FRecesiver) then
     begin
       FRecesiver.Terminate;
-      FreeAndNil(FRecesiver);
+      FRecesiver := nil;
     end;
   end;
 end;
