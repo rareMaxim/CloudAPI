@@ -1,4 +1,4 @@
-unit TelegaPi.Types.ReplyMarkups;
+ï»¿unit TelegaPi.Types.ReplyMarkups;
 
 interface
 
@@ -47,7 +47,7 @@ type
   public
     /// <summary>
     ///   Shows reply interface to the user, as if they manually selected the
-    ///   bot‘s message and tapped ’Reply'
+    ///   botâ€˜s message and tapped â€™Reply'
     /// </summary>
     [Alias('force_reply')]
     Force: Boolean;
@@ -56,10 +56,10 @@ type
   TtgButtonedMarkup<T: class> = class(TInterfacedObject, IReplyMarkup)
   private
     FKeyboard: TObjectList<TObjectList<T>>;
-    constructor Create; overload;
     function GetKeyboard: TArray<TArray<T>>;
     procedure SetKeyboard(Value: TArray<TArray<T>>);
   public
+    constructor Create; overload;
     procedure AddRow(AKeyboardRow: TArray<T>);
     destructor Destroy; override;
     /// <summary>
@@ -67,6 +67,7 @@ type
     ///   by an Array of <see cref="InlineKeyboardButton" />.
     /// </summary>
     property Keyboard: TArray<TArray<T>> read GetKeyboard write SetKeyboard;
+    property KeyboardList: TObjectList<TObjectList<T>> read FKeyboard write FKeyboard;
   end;
 
   TtgButtonedReplyMarkup<T: class> = class(TtgButtonedMarkup<T>)
@@ -104,6 +105,7 @@ type
   ///   channels yet. For now, feel free to use them in one-on-one chats or
   ///   groups.
   /// </remarks>
+
   [Alias('InlineKeyboardMarkup')]
   TtgInlineKeyboardMarkup = class(TtgButtonedMarkup<TtgInlineKeyboardButton>)
   public
@@ -155,6 +157,7 @@ type
     /// </summary>
     [Alias('one_time_keyboard')]
     OneTimeKeyboard: Boolean;
+    constructor Create(AResizeKeyboard, AOneTimeKeyboard: Boolean); overload;
     /// <summary>
     ///   Initializes a new instance of the <see cref="ReplyKeyboardMarkup" />
     ///   class.
@@ -231,6 +234,7 @@ end;
 
 constructor TtgButtonedMarkup<T>.Create;
 begin
+  inherited;
   FKeyboard := TObjectList<TObjectList<T>>.Create;
 end;
 
@@ -293,6 +297,13 @@ constructor TtgReplyKeyboardMarkup.Create(AKeyboard: TArray<TArray<TtgKeyboardBu
 begin
   inherited Create;
   Self.Keyboard := AKeyboard;
+  ResizeKeyboard := AResizeKeyboard;
+  OneTimeKeyboard := AOneTimeKeyboard;
+end;
+
+constructor TtgReplyKeyboardMarkup.Create(AResizeKeyboard, AOneTimeKeyboard: Boolean);
+begin
+  inherited Create;
   ResizeKeyboard := AResizeKeyboard;
   OneTimeKeyboard := AOneTimeKeyboard;
 end;

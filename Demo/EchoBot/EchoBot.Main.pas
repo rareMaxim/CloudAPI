@@ -117,11 +117,14 @@ procedure TMain.SendKeyboard(Msg: TtgMessage);
 var
   keyboard: IReplyMarkup;
 begin
-  keyboard := TtgReplyKeyboardMarkup.Create([
-    { first row }
-    [TtgKeyboardButton.Create('1.1'), TtgKeyboardButton.Create('1.2')],
-    { second row }
-    [TtgKeyboardButton.Create('2.1'), TtgKeyboardButton.Create('2.2')]], False);
+  keyboard := TtgReplyKeyboardMarkup.Create(False, True);
+  with keyboard as TtgReplyKeyboardMarkup do
+  begin
+  { first row }
+    AddRow([TtgKeyboardButton.Create('1.1'), TtgKeyboardButton.Create('1.2')]);
+  { second row }
+    AddRow([TtgKeyboardButton.Create('2.1'), TtgKeyboardButton.Create('2.2')]);
+  end;
   tgBot.SendMessage(Msg.Chat.Id, 'Choose', TtgParseMode.default, False, False, 0, keyboard).Free;
 end;
 
@@ -225,7 +228,7 @@ begin
   begin
     SendQuest(AMessage);
   end
-  else  if AMessage.Text.StartsWith('/help') then // send
+  else if AMessage.Text.StartsWith('/help') then // send
   begin
     usage := 'Usage:' + #13#10 +    //
       '/inline   - send inline keyboard' + #13#10 +    //
