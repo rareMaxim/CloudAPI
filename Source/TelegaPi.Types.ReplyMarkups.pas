@@ -213,24 +213,6 @@ type
     constructor Create(ARemoveKeyboard: Boolean = True);
   end;
 
-  /// <summary>
-  ///   Upon receiving a message with this object, Telegram clients will hide
-  ///   the current custom keyboard and display the default letter-keyboard. By
-  ///   default, custom keyboards are displayed until a new keyboard is sent by
-  ///   a bot. An exception is made for one-time keyboards that are hidden
-  ///   immediately after the user presses a button (see <see cref="TelegaPi.Types.ReplyMarkups|TtgReplyKeyboardMarkup">
-  ///   ReplyKeyboardMarkup</see>).
-  /// </summary>
-  [Alias('ReplyKeyboardHide')]
-  TtgReplyKeyboardHide = class(TtgReplyMarkup)
-  public
-    /// <summary>
-    ///   Requested profile pictures (in up to 4 sizes each)
-    /// </summary>
-    [Alias('hide_keyboard')]
-    HideKeyboard: Boolean;
-  end;
-
 implementation
 
 uses

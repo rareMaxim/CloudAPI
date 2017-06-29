@@ -232,7 +232,7 @@ begin
       '/keyboard - send custom keyboard' + #13#10 +   //
       '/photo    - send a photo' + #13#10 +       //
       '/request  - request location or contact';
-    tgBot.SendMessage(AMessage.Chat.Id, usage, TtgParseMode.default, False, False, 0, TtgReplyKeyboardHide.Create).Free;
+    tgBot.SendMessage(AMessage.Chat.Id, usage, TtgParseMode.default, False, False, 0, TtgReplyKeyboardRemove.Create).Free;
   end;
 end;
 
