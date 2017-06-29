@@ -1027,7 +1027,7 @@ type
     ///   On success, True is returned.
     /// </returns>
     /// <seealso href="https://core.telegram.org/bots/api#answercallbackquery" />
-    function AnswerCallbackQuery(const CallbackQueryId: string; const Text: string = ''; ShowAlert: Boolean = False; Url: string = ''; CacheTime: Integer = 0): Boolean;
+    function AnswerCallbackQuery(const CallbackQueryId: string; const Text: string = ''; ShowAlert: Boolean = False; const Url: string = ''; CacheTime: Integer = 0): Boolean;
 {$ENDREGION}
 {$REGION 'Updating messages'}
     /// <summary>
@@ -2060,7 +2060,7 @@ begin
   end;
 end;
 
-function TTelegramBot.AnswerCallbackQuery(const CallbackQueryId, Text: string; ShowAlert: Boolean; Url: string; CacheTime: Integer): Boolean;
+function TTelegramBot.AnswerCallbackQuery(const CallbackQueryId, Text: string; ShowAlert: Boolean; const Url: string; CacheTime: Integer): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
 begin

@@ -69,13 +69,14 @@ end;
 
 constructor EApiRequestException.Create(const AMessage: string; AErrorCode: Integer);
 begin
-  Create(AMessage);
+  inherited Create(AMessage);
   FErrorCode := AErrorCode;
 end;
 
 constructor EApiRequestException.Create(const AMessage: string; AErrorCode: Integer; ASentParam: TDictionary<string, TValue>);
 begin
-  Self.Create(AMessage, AErrorCode);
+  inherited Create(AMessage);
+  FErrorCode := AErrorCode;
   FSendedParams := ASentParam;
 end;
 
