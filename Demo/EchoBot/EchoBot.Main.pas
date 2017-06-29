@@ -66,8 +66,6 @@ begin
 end;
 
 procedure TMain.FormCreate(Sender: TObject);
-var
-  LMe: TtgUser;
 begin
   ReportMemoryLeaksOnShutdown := True;
   tgBot.Token := {$I ..\token.inc};
@@ -227,7 +225,7 @@ begin
   begin
     SendQuest(AMessage);
   end
-  else
+  else  if AMessage.Text.StartsWith('/help') then // send
   begin
     usage := 'Usage:' + #13#10 +    //
       '/inline   - send inline keyboard' + #13#10 +    //
@@ -244,7 +242,7 @@ begin
     401:
       begin
         tgBot.IsReceiving := False;
-        ShowMessage('invalid bot login');
+        ShowMessage(AApiRequestException.Message);
       end;
   end;
   WriteLine(AApiRequestException.ToString);

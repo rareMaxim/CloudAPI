@@ -1590,18 +1590,14 @@ begin
   if Value then
   begin
     FRecesiver := TtgRecesiver.Create(True);
-    FRecesiver.FreeOnTerminate := True;
+    FRecesiver.FreeOnTerminate := False;
     FRecesiver.Bot := TTelegramBot(Self);
     FRecesiver.OnTerminate := DoDisconnect;
     FRecesiver.Start;
   end
   else
   begin
-    if Assigned(FRecesiver) then
-    begin
-      FRecesiver.Terminate;
-      FRecesiver := nil;
-    end;
+    FreeAndNil(FRecesiver);
   end;
 end;
 
