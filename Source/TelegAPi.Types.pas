@@ -154,6 +154,24 @@ type
   end;
 
   /// <summary>
+  ///   This object represents a chat photo.
+  /// </summary>
+  TtgChatPhoto = class
+    /// <summary>
+    ///   Unique file identifier of small (160x160) chat photo. This file_id
+    ///   can be used only for photo download.
+    /// </summary>
+    [Alias('small_file_id')]
+    SmallFileId: string;
+    /// <summary>
+    ///   Unique file identifier of big (640x640) chat photo. This file_id can
+    ///   be used only for photo download.
+    /// </summary>
+    [Alias('big_file_id')]
+    BigFileId: string;
+  end;
+
+  /// <summary>
   ///   This object represents a chat.
   /// </summary>
   [Alias('Chat')]
@@ -195,6 +213,26 @@ type
     /// </summary>
     [Alias('all_members_are_administrators')]
     AllMembersAreAdministrators: Boolean;
+    /// <summary>
+    ///   Optional. Chat photo. Returned only in <see cref="TelegAPI.Bot|TTelegramBot.GetChat(TValue)">
+    ///   getChat</see>.
+    /// </summary>
+    [Alias('photo')]
+    Photo: TtgChatPhoto;
+    /// <summary>
+    ///   Optional. Description, for supergroups and channel chats. Returned
+    ///   only in <see cref="TelegAPI.Bot|TTelegramBot.GetChat(TValue)">getChat</see>
+    ///   .
+    /// </summary>
+    [Alias('description')]
+    Description: string;
+    /// <summary>
+    ///   Optional. Chat invite link, for supergroups and channel chats.
+    ///   Returned only in <see cref="TelegAPI.Bot|TTelegramBot.GetChat(TValue)">
+    ///   getChat</see>.
+    /// </summary>
+    [Alias('invite_link')]
+    InviteLink: string;
   end;
 
   /// <summary>
