@@ -34,6 +34,7 @@ type
     procedure tgBotConnect(Sender: TObject);
     procedure tgBotDisconnect(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure tgBotReceiveGeneralError(ASender: TObject; AException: Exception);
   private
     { Private declarations }
     procedure WriteLine(const AValue: string);
@@ -65,20 +66,12 @@ begin
 end;
 
 procedure TMain.FormCreate(Sender: TObject);
-var
-  LMe: TtgUser;
 begin
   ReportMemoryLeaksOnShutdown := True;
   tgBot.Token := {$I ..\token.inc};
   if not tgBot.IsValidToken then
     raise ELoginCredentialError.Create('invalid token format');
-  LMe := tgBot.GetMe;
-  if Assigned(LMe) then
-  begin
-    Caption := LMe.Username;
-    FreeAndNil(LMe);
-    tgBot.IsReceiving := True;
-  end;
+  tgBot.IsReceiving := True;
 end;
 
 procedure TMain.SendRequest(Msg: TtgMessage);
@@ -124,11 +117,14 @@ procedure TMain.SendKeyboard(Msg: TtgMessage);
 var
   keyboard: IReplyMarkup;
 begin
-  keyboard := TtgReplyKeyboardMarkup.Create([
-    { first row }
-    [TtgKeyboardButton.Create('1.1'), TtgKeyboardButton.Create('1.2')],
-    { second row }
-    [TtgKeyboardButton.Create('2.1'), TtgKeyboardButton.Create('2.2')]], False);
+  keyboard := TtgReplyKeyboardMarkup.Create(False, True);
+  with keyboard as TtgReplyKeyboardMarkup do
+  begin
+  { first row }
+    AddRow([TtgKeyboardButton.Create('1.1'), TtgKeyboardButton.Create('1.2')]);
+  { second row }
+    AddRow([TtgKeyboardButton.Create('2.1'), TtgKeyboardButton.Create('2.2')]);
+  end;
   tgBot.SendMessage(Msg.Chat.Id, 'Choose', TtgParseMode.default, False, False, 0, keyboard).Free;
 end;
 
@@ -138,8 +134,19 @@ begin
 end;
 
 procedure TMain.tgBotConnect(Sender: TObject);
+var
+  LMe: TtgUser;
 begin
   WriteLine('Bot connected');
+  try
+    LMe := tgBot.GetMe;
+    if Assigned(LMe) then
+    begin
+      Caption := LMe.Username;
+    end;
+  finally
+    LMe.Free;
+  end;
 end;
 
 procedure TMain.tgBotDisconnect(Sender: TObject);
@@ -221,14 +228,14 @@ begin
   begin
     SendQuest(AMessage);
   end
-  else
+  else if AMessage.Text.StartsWith('/help') then // send
   begin
     usage := 'Usage:' + #13#10 +    //
       '/inline   - send inline keyboard' + #13#10 +    //
       '/keyboard - send custom keyboard' + #13#10 +   //
       '/photo    - send a photo' + #13#10 +       //
       '/request  - request location or contact';
-    tgBot.SendMessage(AMessage.Chat.Id, usage, TtgParseMode.default, False, False, 0, TtgReplyKeyboardHide.Create).Free;
+    tgBot.SendMessage(AMessage.Chat.Id, usage, TtgParseMode.default, False, False, 0, TtgReplyKeyboardRemove.Create).Free;
   end;
 end;
 
@@ -238,12 +245,16 @@ begin
     401:
       begin
         tgBot.IsReceiving := False;
-        ShowMessage('invalid bot login');
+        ShowMessage(AApiRequestException.Message);
       end;
   end;
-
   WriteLine(AApiRequestException.ToString);
   AApiRequestException.Free;
+end;
+
+procedure TMain.tgBotReceiveGeneralError(ASender: TObject; AException: Exception);
+begin
+  WriteLine(AException.ToString);
 end;
 
 procedure TMain.WriteLine(const AValue: string);

@@ -642,6 +642,12 @@ type
     [Alias('video_note')]
     VideoNote: TtgVideoNote;
     /// <summary>
+    ///   Optional. New members that were added to the group or supergroup and
+    ///   information about them (the bot itself may be one of these members)
+    /// </summary>
+    [Alias('new_chat_members')]
+    NewChatMembers: TObjectList<TtgUser>;
+    /// <summary>
     ///   Optional. Caption for the document, photo or video, 0-200 characters
     /// </summary>
     [Alias('caption')]
@@ -663,11 +669,11 @@ type
     [Alias('venue')]
     Venue: TtgVenue;
     /// <summary>
-    ///   Optional. New members that were added to the group or supergroup and
-    ///   information about them (the bot itself may be one of these members)
+    ///   Optional. A new member was added to the group, information about them
+    ///   (this member may be the bot itself)
     /// </summary>
-    [Alias('new_chat_members')]
-    NewChatMembers: TObjectList<TtgUser>;
+    [Alias('new_chat_member')]
+    NewChatMember: TtgUser;
     /// <summary>
     ///   Optional. A member was removed from the group, information about them
     ///   (this member may be bot itself)
@@ -853,32 +859,31 @@ type
     [Alias('pay')]
     Pay: Boolean;
     /// <summary>
-    ///   Initializes a new instance of the <see cref="InlineKeyboardButton" />
-    ///   class.
+    ///   Initializes a new instance of the <see cref="TelegAPi.Types|TtgKeyboardButton" />
+    ///    class.
     /// </summary>
-    /// <param name="text">
+    /// <param name="AText">
     ///   Text of the button
     /// </param>
     constructor Create(const AText: string); overload;
     /// <summary>
-    ///   Initializes a new instance of the <see cref="InlineKeyboardButton" />
-    ///   class.
+    ///   Initializes a new instance of the <see cref="TelegAPi.Types|TtgKeyboardButton" />
+    ///    class.
     /// </summary>
-    /// <param name="text">
-    ///   The text.
+    /// <param name="AText">
+    ///   The text. <br />
     /// </param>
-    /// <param name="callbackData">
-    ///   The callback data.
+    /// <param name="ACallbackData">
+    ///   The callback data. <br />
     /// </param>
     constructor Create(const AText, ACallbackData: string); overload;
     /// <summary>
-    ///   Initializes a new instance of the <see cref="InlineKeyboardButton" />
-    ///   class.
+    ///   Initializes a new instance of the <see cref="TelegAPi.Types|TtgKeyboardButton" />
+    ///    class.
     /// </summary>
-    /// <param name="text">
-    ///   Text of the button
+    /// <param name="AText">
+    ///   Text of the button <br />
     /// </param>
-    /// <param name="callbackGame" />
     constructor Create(const AText: string; ACallbackGame: TtgCallbackGame); overload;
   end;
 
@@ -1052,7 +1057,6 @@ type
     Data: string;
     /// <summary>
     ///   Optional. Short name of a Game to be returned, serves as the unique
-    //    identifier for the game
     /// </summary>
     [Alias('game_short_name')]
     GameShortName: string;
@@ -1500,7 +1504,7 @@ end;
 { TtgFile }
 function TtgFile.GetFileUrl(const AToken: string): string;
 begin
-  Result := Format('https://api.telegram.org/file/bot%S/%S', [AToken, FilePath])
+  Result := 'https://api.telegram.org/file/bot' + AToken + '/' + FilePath;
 end;
 { TtgFileToSend }
 
@@ -1671,7 +1675,7 @@ begin
     Exit(TtgUpdateType.ShippingQueryUpdate);
   if Assigned(PreCheckoutQuery) then
     Exit(TtgUpdateType.PreCheckoutQueryUpdate);
-  result := TtgUpdateType.UnknownUpdate;
+  Result := TtgUpdateType.UnknownUpdate;
 end;
 
 destructor TtgUpdate.Destroy;

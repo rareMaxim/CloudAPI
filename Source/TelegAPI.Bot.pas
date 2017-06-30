@@ -33,6 +33,8 @@ type
 
   TtgOnReceiveGeneralError = procedure(ASender: TObject; AException: Exception) of object;
 
+  TtgOnReceiveRawData = procedure(ASender: TObject; const AData: string) of object;
+
   TTelegramBot = class;
 
   TtgRecesiver = class(TThread)
@@ -41,14 +43,17 @@ type
   protected
     procedure Execute; override;
     /// <summary>
-    ///   Raises the <see cref="OnUpdate" />, <see cref="OnMessage" />, <see cref="OnInlineQuery" />
-    ///    , <see cref="OnInlineResultChosen" /> and <see cref="OnCallbackQuery" />
-    ///    events.
+    ///   Raises the <see cref="TelegAPI.Bot|TtgOnUpdate" />, <see cref="TelegAPI.Bot|TtgOnMessage" />
+    ///    , <see cref="TelegAPI.Bot|TtgOnInlineQuery" /> , <see cref="TelegAPI.Bot|TtgOnInlineResultChosen" />
+    ///    and <see cref="TelegAPI.Bot|TtgOnCallbackQuery" /> events.
     /// </summary>
-    /// <param name="e">
-    ///   The <see cref="UpdateEventArgs" /> instance containing the event
-    ///   data.
+    /// <param name="AValue">
+    ///   The <see cref="TelegAPi.Types|TtgUpdate">Update</see> instance
+    ///   containing the event data. <br />
     /// </param>
+    /// <exception cref="TelegaPi.Exceptions|ETelegramException">
+    ///   Возникает если получено неизвестное обновление
+    /// </exception>
     procedure OnUpdateReceived(AValue: TtgUpdate);
   public
     property Bot: TTelegramBot read FBot write FBot;
@@ -73,6 +78,7 @@ type
     FOnCallbackQuery: TtgOnCallbackQuery;
     FOnReceiveError: TtgOnReceiveError;
     FOnReceiveGeneralError: TtgOnReceiveGeneralError;
+    FOnRawData: TtgOnReceiveRawData;
     procedure SetIsReceiving(const Value: Boolean);
     function GetVersionAPI: string;
     /// <summary>
@@ -82,6 +88,8 @@ type
     function ParamsToFormData(Parameters: TDictionary<string, TValue>): TMultipartFormData;
     function ArrayToString<T: class, constructor>(LArray: TArray<T>): string;
     procedure DoDisconnect(ASender: TObject);
+  protected
+    procedure ErrorHandler(AException: Exception);
   public
     constructor Create(AOwner: TComponent); overload; override;
     destructor Destroy; override;
@@ -95,6 +103,11 @@ type
     /// </summary>
     property IsReceiving: Boolean read FIsReceiving write SetIsReceiving default False;
   published
+  {$REGION 'Property|Свойства'}
+    /// <summary>
+    ///   Proxy Settings to be used by the client.
+    /// </summary>
+    property ProxySettings: TProxySettings read FProxySettings write FProxySettings;
     /// <summary>
     ///   Задержка между опросами
     /// </summary>
@@ -126,13 +139,7 @@ type
     ///   Поддерживаемая версия платформы BotAPI
     /// </summary>
     property VersionAPI: string read GetVersionAPI;
-    property OnConnect: TNotifyEvent read FOnConnect write FOnConnect;
-    property OnDisconnect: TNotifyEvent read FOnDisconnect write FOnDisconnect;
-    /// <summary>
-    ///   Proxy Settings to be used by the client.
-    /// </summary>
-    property ProxySettings: TProxySettings read FProxySettings write FProxySettings;
-
+{$ENDREGION}
 {$REGION 'События|Events'}
     /// <summary>
     ///   <para>
@@ -216,6 +223,9 @@ type
     ///   </para>
     /// </summary>
     property OnReceiveGeneralError: TtgOnReceiveGeneralError read FOnReceiveGeneralError write FOnReceiveGeneralError;
+    property OnConnect: TNotifyEvent read FOnConnect write FOnConnect;
+    property OnDisconnect: TNotifyEvent read FOnDisconnect write FOnDisconnect;
+    property OnReceiveRawData: TtgOnReceiveRawData read FOnRawData write FOnRawData;
 {$ENDREGION}
   end;
 
@@ -1017,7 +1027,7 @@ type
     ///   On success, True is returned.
     /// </returns>
     /// <seealso href="https://core.telegram.org/bots/api#answercallbackquery" />
-    function AnswerCallbackQuery(const CallbackQueryId: string; const Text: string = ''; ShowAlert: Boolean = False; Url: string = ''; CacheTime: Integer = 0): Boolean;
+    function AnswerCallbackQuery(const CallbackQueryId: string; const Text: string = ''; ShowAlert: Boolean = False; const Url: string = ''; CacheTime: Integer = 0): Boolean;
 {$ENDREGION}
 {$REGION 'Updating messages'}
     /// <summary>
@@ -1067,7 +1077,7 @@ type
     /// </param>
     /// <param name="MessageId">
     ///   Required if InlineMessageId is not specified. Unique identifier of <br />
-    ///   the sent message <br />
+    ///    the sent message <br />
     /// </param>
     /// <param name="InlineMessageId">
     ///   Required if ChatId and MessageId are not specified. Identifier of the
@@ -1084,23 +1094,20 @@ type
     ///   is returned, otherwise True is returned.
     /// </returns>
     /// <seealso href="https://core.telegram.org/bots/api#editmessagereplymarkup" />
-    function EditMessageCaption(ChatId: TValue; MessageId: Integer; const InlineMessageId: string; const Caption: string; ReplyMarkup: TtgReplyKeyboardMarkup = nil): Boolean;
+    function EditMessageCaption(ChatId: TValue; MessageId: Integer; const InlineMessageId: string; const Caption: string; ReplyMarkup: TtgReplyKeyboardMarkup = nil): Boolean; overload;
+
     /// <summary>
     ///   Use this method to edit only the reply markup of messages sent by the
     ///   bot or via the bot (for inline bots).
     /// </summary>
     /// <param name="ChatId">
     ///   Required if InlineMessageId is not specified. Unique identifier for <br />
-    ///   the target chat or username of the target channel (in the format <br />
-    ///   @channelusername) <br />
+    ///    the target chat or username of the target channel (in the format <br />
+    ///    @channelusername) <br />
     /// </param>
     /// <param name="MessageId">
     ///   Required if InlineMessageId is not specified. Unique identifier of <br />
-    ///   the sent message <br />
-    /// </param>
-    /// <param name="InlineMessageId">
-    ///   Required if ChatId and MessageId are not specified. Identifier of <br />
-    ///   the inline message <br />
+    ///    the sent message <br />
     /// </param>
     /// <param name="ReplyMarkup">
     ///   A JSON-serialized object for an inline keyboard. <br />
@@ -1109,7 +1116,23 @@ type
     ///   On success, if edited message is sent by the bot, the edited Message
     ///   is returned, otherwise True is returned.
     /// </returns>
-    function EditMessageReplyMarkup(ChatId: TValue; MessageId: Integer; const InlineMessageId: string; ReplyMarkup: TtgReplyKeyboardMarkup = nil): Boolean;
+    function EditMessageReplyMarkup(ChatId: TValue; MessageId: Integer; ReplyMarkup: TtgReplyKeyboardMarkup = nil): Boolean; overload;
+    /// <summary>
+    ///   Use this method to edit only the reply markup of messages sent by the
+    ///   bot or via the bot (for inline bots).
+    /// </summary>
+    /// <param name="InlineMessageId">
+    ///   Required if ChatId and MessageId are not specified. Identifier of <br />
+    ///    the inline message <br />
+    /// </param>
+    /// <param name="ReplyMarkup">
+    ///   A JSON-serialized object for an inline keyboard. <br />
+    /// </param>
+    /// <returns>
+    ///   On success, if edited message is sent by the bot, the edited Message
+    ///   is returned, otherwise True is returned.
+    /// </returns>
+    function EditMessageReplyMarkup(const InlineMessageId: string; ReplyMarkup: TtgReplyKeyboardMarkup = nil): Boolean; overload;
     /// <summary>
     ///   Use this method to delete a message.
     /// </summary>
@@ -1254,7 +1277,8 @@ type
     ///   from the user. <br />
     /// </param>
     /// <returns>
-    ///   On success, the sent <see cref="Message" /> is returned.
+    ///   On success, the sent <see cref="TelegAPi.Types|TtgMessage" /> is
+    ///   returned.
     /// </returns>
     /// <seealso href="https://core.telegram.org/bots/api#sendinvoice" />
     function SendInvoice(ChatId: Integer; const Title: string; const Description: string; const Payload: string; const ProviderToken: string; const StartParameter: string; const Currency: string; Prices: TArray<TtgLabeledPrice>; const PhotoUrl: string = ''; PhotoSize: Integer = 0; PhotoWidth: Integer = 0; PhotoHeight: Integer = 0; NeedName: Boolean = False; NeedPhoneNumber: Boolean = False; NeedEmail: Boolean = False; NeedShippingAddress: Boolean = False; IsFlexible: Boolean = False; DisableNotification: Boolean = False; ReplyToMessageId: Integer = 0; ReplyMarkup: TtgReplyKeyboardMarkup = nil): TtgMessage;
@@ -1364,11 +1388,11 @@ type
     /// </param>
     /// <param name="ChatId">
     ///   Required if InlineMessageId is not specified. Unique identifier for <br />
-    ///   the target chat <br />
+    ///    the target chat <br />
     /// </param>
     /// <param name="MessageId">
     ///   Required if InlineMessageId is not specified. Identifier of the <br />
-    ///   sent message <br />
+    ///    sent message <br />
     /// </param>
     /// <param name="InlineMessageId">
     ///   Required if ChatId and MessageId are not specified. Identifier of the
@@ -1391,15 +1415,15 @@ type
     /// </param>
     /// <param name="ChatId">
     ///   Required if InlineMessageId is not specified. Unique identifier for <br />
-    ///   the target chat <br />
+    ///    the target chat <br />
     /// </param>
     /// <param name="MessageId">
     ///   Required if InlineMessageId is not specified. Identifier of the <br />
-    ///   sent message <br />
+    ///    sent message <br />
     /// </param>
     /// <param name="InlineMessageId">
     ///   Required if ChatId and MessageId are not specified. Identifier of <br />
-    ///   the inline message <br />
+    ///    the inline message <br />
     /// </param>
     /// <returns>
     ///   On success, returns an Array of <see cref="TelegAPi.Types|TtgGameHighScore">
@@ -1438,7 +1462,7 @@ end;
 
 function TTelegramBotCore.GetVersionAPI: string;
 begin
-  Result := '3.0.0';
+  Result := '3.0.2';
 end;
 
 procedure TtgRecesiver.OnUpdateReceived(AValue: TtgUpdate);
@@ -1461,6 +1485,8 @@ begin
     TtgUpdateType.EditedMessage:
       if Assigned(Bot.OnMessageEdited) then
         Bot.OnMessageEdited(Bot, AValue.EditedMessage);
+  else
+    raise ETelegramException.Create('Unknown update type');
   end
 end;
 
@@ -1479,31 +1505,47 @@ begin
     raise EArgumentException.Create('Invalid token format');
   end;
   LHttp := THTTPClient.Create;
+  LApiResponse := nil;
+  LParamToDate := nil;
   try
-    { TODO -oM.E.Sysoev -cGeneral : Error handing }
     LHttp.ProxySettings := FProxySettings;
     LURL_TELEG := 'https://api.telegram.org/bot' + FToken + '/' + Method;
-    // Преобразовуем параметры в строку, если нужно
-    if Assigned(Parameters) then
-    begin
-      LParamToDate := ParamsToFormData(Parameters);
-      LHttpResponse := LHttp.Post(LURL_TELEG, LParamToDate);
-    end
-    else
-      LHttpResponse := LHttp.Get(LURL_TELEG);
+    try
+      if Assigned(Parameters) then
+      begin
+        LParamToDate := ParamsToFormData(Parameters);
+        LHttpResponse := LHttp.Post(LURL_TELEG, LParamToDate);
+      end
+      else
+      begin
+        LHttpResponse := LHttp.Get(LURL_TELEG);
+      end;
+    except
+      on E: Exception do
+      begin
+        Self.ErrorHandler(E);
+        Result := default(T);
+        Exit;
+      end;
+    end;
+    if Assigned(OnReceiveRawData) then
+      OnReceiveRawData(Self, LHttpResponse.ContentAsString);
     LApiResponse := TtgApiResponse<T>.FromJSON(LHttpResponse.ContentAsString);
     if not LApiResponse.Ok then
     begin
       if Assigned(OnReceiveError) then
-        OnReceiveError(Self, EApiRequestException.FromApiResponse<T>(LApiResponse))
+        TThread.Synchronize(FRecesiver,
+          procedure
+          begin
+            OnReceiveError(Self, EApiRequestException.FromApiResponse<T>(LApiResponse, Parameters))
+          end)
       else
-        raise EApiRequestException.FromApiResponse<T>(LApiResponse);
+        raise EApiRequestException.FromApiResponse<T>(LApiResponse, Parameters);
     end;
     Result := LApiResponse.ResultObject;
-    LApiResponse.ResultObject := Default(T);
+    LApiResponse.ResultObject := default(T);
   finally
-    if Assigned(Parameters) then
-      FreeAndNil(LParamToDate);
+    FreeAndNil(LParamToDate);
     FreeAndNil(LHttp);
     FreeAndNil(LApiResponse);
   end;
@@ -1524,7 +1566,7 @@ begin
     else if Parameter.Value.IsType<Int64>then
     begin
       if Parameter.Value.AsInt64 <> 0 then
-        Result.AddField(Parameter.Key, IntToStr(Parameter.Value.AsInt64));
+        Result.AddField(Parameter.Key, Parameter.Value.AsInt64.ToString);
     end
     else if Parameter.Value.IsType<Boolean>then
     begin
@@ -1561,18 +1603,14 @@ begin
   if Value then
   begin
     FRecesiver := TtgRecesiver.Create(True);
+    FRecesiver.FreeOnTerminate := False;
     FRecesiver.Bot := TTelegramBot(Self);
     FRecesiver.OnTerminate := DoDisconnect;
     FRecesiver.Start;
   end
   else
   begin
-    if Assigned(FRecesiver) then
-    begin
-      FRecesiver.Terminate;
-
-      FreeAndNil(FRecesiver);
-    end;
+    FreeAndNil(FRecesiver);
   end;
 end;
 
@@ -1592,6 +1630,19 @@ procedure TTelegramBotCore.DoDisconnect(ASender: TObject);
 begin
   if Assigned(OnDisconnect) then
     OnDisconnect(ASender);
+end;
+
+procedure TTelegramBotCore.ErrorHandler(AException: Exception);
+begin
+  if Assigned(OnReceiveGeneralError) then
+  begin
+    OnReceiveGeneralError(Self, AException);
+    Exit;
+  end
+  else
+  begin
+    raise Exception.Create(AException.Message);
+  end;
 end;
 
 destructor TTelegramBotCore.Destroy;
@@ -2022,7 +2073,7 @@ begin
   end;
 end;
 
-function TTelegramBot.AnswerCallbackQuery(const CallbackQueryId, Text: string; ShowAlert: Boolean; Url: string; CacheTime: Integer): Boolean;
+function TTelegramBot.AnswerCallbackQuery(const CallbackQueryId, Text: string; ShowAlert: Boolean; const Url: string; CacheTime: Integer): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -2091,7 +2142,7 @@ begin
   end;
 end;
 
-function TTelegramBot.EditMessageReplyMarkup(ChatId: TValue; MessageId: Integer; const InlineMessageId: string; ReplyMarkup: TtgReplyKeyboardMarkup): Boolean;
+function TTelegramBot.EditMessageReplyMarkup(ChatId: TValue; MessageId: Integer; ReplyMarkup: TtgReplyKeyboardMarkup): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -2099,13 +2150,27 @@ begin
   try
     Parameters.Add('chat_id', ChatId);
     Parameters.Add('message_id', MessageId);
-    Parameters.Add('inline_message_id', InlineMessageId);
     Parameters.Add('reply_markup', ReplyMarkup);
-    Result := API<Boolean>('editMessageText', Parameters);
+    Result := API<Boolean>('editMessageReplyMarkup', Parameters);
   finally
     Parameters.Free;
   end;
 end;
+
+function TTelegramBot.EditMessageReplyMarkup(const InlineMessageId: string; ReplyMarkup: TtgReplyKeyboardMarkup): Boolean;
+var
+  Parameters: TDictionary<string, TValue>;
+begin
+  Parameters := TDictionary<string, TValue>.Create;
+  try
+    Parameters.Add('inline_message_id', InlineMessageId);
+    Parameters.Add('reply_markup', ReplyMarkup);
+    Result := API<Boolean>('editMessageReplyMarkup', Parameters);
+  finally
+    Parameters.Free;
+  end;
+end;
+
 {$ENDREGION}
 {$REGION 'Inline mode'}
 
@@ -2229,7 +2294,6 @@ begin
   finally
     Parameters.Free;
   end;
-
 end;
 
 function TTelegramBot.GetGameHighScores(UserId, ChatId, MessageId: Integer; const InlineMessageId: string): TArray<TtgGameHighScore>;
@@ -2289,7 +2353,12 @@ begin
     Sleep(Bot.PollingTimeout);
     if (Terminated) or (not Bot.IsReceiving) then
       Break;
-    LUpdates := FBot.GetUpdates(Bot.MessageOffset, 100, 0, UPDATES_ALLOWED_ALL);
+    try
+      LUpdates := FBot.GetUpdates(Bot.MessageOffset, 100, 0, UPDATES_ALLOWED_ALL);
+    except
+      on E: Exception do
+        FBot.ErrorHandler(E);
+    end;
     if Length(LUpdates) = 0 then
       Continue;
     Bot.MessageOffset := LUpdates[High(LUpdates)].Id + 1;

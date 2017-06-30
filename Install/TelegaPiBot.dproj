@@ -55,7 +55,7 @@
         <GenDll>true</GenDll>
         <GenPackage>true</GenPackage>
         <PreBuildEvent>
-            <![CDATA[brcc32 -fo "TTelegramBot.dcr" "TTelegramBot.rc"
+            <![CDATA["$(BDS)\Bin\brcc32.exe" -fo "$(PROJECTDIR)\TTelegramBot.dcr" "$(PROJECTDIR)\TTelegramBot.rc"
 $(PreBuildEvent)]]>
         </PreBuildEvent>
         <SanitizedProjectName>TelegaPiBot</SanitizedProjectName>
@@ -83,7 +83,7 @@ $(PreBuildEvent)]]>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
-        <VerInfo_Build>109</VerInfo_Build>
+        <VerInfo_Build>125</VerInfo_Build>
         <VerInfo_Keys>CompanyName=;FileVersion=1.0.0.6;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName);ProductName=$(MSBuildProjectName)</VerInfo_Keys>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <VerInfo_MajorVer>1</VerInfo_MajorVer>
@@ -134,12 +134,6 @@ $(PreBuildEvent)]]>
                 <Source>
                     <Source Name="MainSource">TelegaPiBot.dpk</Source>
                 </Source>
-                <Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k240.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp240.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
-                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\18.0\Bpl\DUnitX_IDE_Expert_D10Berlin.bpl">DUnitX IDE Expert</Excluded_Packages>
-                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\18.0\Bpl\TelegaPiBot.bpl">File C:\Users\Public\Documents\Embarcadero\Studio\18.0\Bpl\TelegaPiBot.bpl not found</Excluded_Packages>
-                </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">
                 <DeployFile LocalName="$(BDS)\Redist\iossimulator\libPCRE.dylib" Class="DependencyModule">
@@ -538,7 +532,7 @@ $(PreBuildEvent)]]>
     <PropertyGroup Condition="'$(Config)'=='Debug' And '$(Platform)'=='Win32'">
         <PostBuildEvent/>
         <PostBuildEventIgnoreExitCode>False</PostBuildEventIgnoreExitCode>
-        <PreBuildEvent>brcc32 -fo &quot;TTelegramBot.dcr&quot; &quot;TTelegramBot.rc&quot;</PreBuildEvent>
+        <PreBuildEvent>&quot;$(BDS)\Bin\brcc32.exe&quot; -fo &quot;$(PROJECTDIR)\TTelegramBot.dcr&quot; &quot;$(PROJECTDIR)\TTelegramBot.rc&quot;</PreBuildEvent>
         <PreBuildEventIgnoreExitCode>False</PreBuildEventIgnoreExitCode>
         <PreLinkEvent/>
         <PreLinkEventIgnoreExitCode>False</PreLinkEventIgnoreExitCode>
@@ -546,7 +540,7 @@ $(PreBuildEvent)]]>
     <PropertyGroup Condition="'$(Config)'=='Release' And '$(Platform)'=='Win32'">
         <PostBuildEvent/>
         <PostBuildEventIgnoreExitCode>False</PostBuildEventIgnoreExitCode>
-        <PreBuildEvent>brcc32 -fo &quot;TTelegramBot.dcr&quot; &quot;TTelegramBot.rc&quot;</PreBuildEvent>
+        <PreBuildEvent>&quot;$(BDS)\Bin\brcc32.exe&quot; -fo &quot;$(PROJECTDIR)\TTelegramBot.dcr&quot; &quot;$(PROJECTDIR)\TTelegramBot.rc&quot;</PreBuildEvent>
         <PreBuildEventIgnoreExitCode>False</PreBuildEventIgnoreExitCode>
         <PreLinkEvent/>
         <PreLinkEventIgnoreExitCode>False</PreLinkEventIgnoreExitCode>
