@@ -894,10 +894,11 @@ type
     /// <seealso href="https://core.telegram.org/bots/api#getfile" />
     function GetFile(const FileId: string): TtgFile;
     /// <summary>
-    ///   Use this method to kick a user from a group or a supergroup. In the
-    ///   case of supergroups, the user will not be able to return to the group
-    ///   on their own using invite links, etc., unless unbanned first. The bot
-    ///   must be an administrator in the group for this to work.
+    ///   Use this method to kick a user from a group, a supergroup or a
+    ///   channel. In the case of supergroups and channels, the user will not
+    ///   be able to return to the group on their own using invite links, etc.,
+    ///   unless unbanned first. The bot must be an administrator in the chat
+    ///   for this to work and must have the appropriate admin rights.
     /// </summary>
     /// <param name="ChatId">
     ///   Unique identifier for the target group or username of the target
@@ -906,16 +907,22 @@ type
     /// <param name="UserId">
     ///   Unique identifier of the target user <br />
     /// </param>
+    /// <param name="UntilDate">
+    ///   Date when the user will be unbanned, unix time. If user is banned for
+    ///   more than 366 days or less than 30 seconds from the current time they
+    ///   are considered to be banned forever <br />unbanChatMember
+    /// </param>
     /// <returns>
     ///   Returns True on success.
     /// </returns>
     /// <remarks>
-    ///   Note: This will method only work if the ‘All Members Are Admins’
-    ///   setting is off in the target group. Otherwise members may only be
-    ///   removed by the group's creator or by the member that added them.
+    ///   Note: In regular groups (non-supergroups), this method will only work
+    ///   if the ‘All Members Are Admins’ setting is off in the target group.
+    ///   Otherwise members may only be removed by the group's creator or by
+    ///   the member that added them.
     /// </remarks>
     /// <seealso href="https://core.telegram.org/bots/api#kickchatmember" />
-    function KickChatMember(ChatId: TValue; UserId: Integer): Boolean;
+    function KickChatMember(ChatId: TValue; UserId: Integer; UntilDate: Integer = 0): Boolean;
     /// <summary>
     ///   Use this method to unban a previously kicked user in a supergroup.
     ///   The user will not return to the group automatically, but will be able
@@ -1456,7 +1463,7 @@ type
     ///   administrator in the chat for this to work and must have the
     ///   appropriate admin rights.
     /// </remarks>
-    function deleteChatPhoto(ChatId: TValue): Boolean;
+    function DeleteChatPhoto(ChatId: TValue): Boolean;
     /// <summary>
     ///   Use this method to export an invite link to a supergroup or a
     ///   channel.
@@ -1492,7 +1499,7 @@ type
     /// <returns>
     ///   Returns True on success.
     /// </returns>
-    function pinChatMessage(ChatId: TValue; MessageId: Integer; DisableNotification: Boolean = False): Boolean;
+    function PinChatMessage(ChatId: TValue; MessageId: Integer; DisableNotification: Boolean = False): Boolean;
     /// <summary>
     ///   Use this method to change the description of a supergroup or a
     ///   channel. The bot must be an administrator in the chat for this to
@@ -1508,7 +1515,7 @@ type
     /// <returns>
     ///   Returns True on success.
     /// </returns>
-    function setChatDescription(ChatId: TValue; Description: string): Boolean;
+    function SetChatDescription(ChatId: TValue; Description: string): Boolean;
     /// <summary>
     ///   Use this method to set a new profile photo for the chat. Photos can't
     ///   be changed for private chats.
@@ -1527,7 +1534,7 @@ type
     ///   The bot must be an administrator in the chat for this to work and
     ///   must have the appropriate admin rights.
     /// </remarks>
-    function setChatPhoto(ChatId: TValue; Photo: TtgFileToSend): Boolean;
+    function SetChatPhoto(ChatId: TValue; Photo: TtgFileToSend): Boolean;
     /// <summary>
     ///   Use this method to change the title of a chat. Titles can't be
     ///   changed for private chats. The bot must be an administrator in the
@@ -1547,7 +1554,7 @@ type
     ///   Note: In regular groups (non-supergroups), this method will only work
     ///   if the ‘All Members Are Admins’ setting is off in the target group.
     /// </remarks>
-    function setChatTitle(ChatId: TValue; Title: string): Boolean;
+    function SetChatTitle(ChatId: TValue; Title: string): Boolean;
     /// <summary>
     ///   Use this method to unpin a message in a supergroup chat. The bot must
     ///   be an administrator in the chat for this to work and must have the
@@ -1560,7 +1567,96 @@ type
     /// <returns>
     ///   Returns True on success.
     /// </returns>
-    function unpinChatMessage(ChatId: TValue): Boolean;
+    function UnpinChatMessage(ChatId: TValue): Boolean;
+{$ENDREGION}
+{$REGION 'Manage users and admins'}
+    /// <summary>
+    ///   Use this method to restrict a user in a supergroup. The bot must be
+    ///   an administrator in the supergroup for this to work and must have the
+    ///   appropriate admin rights. Pass True for all boolean parameters to
+    ///   lift restrictions from a user.
+    /// </summary>
+    /// <param name="ChatId">
+    ///   Unique identifier for the target chat or username of the target
+    ///   supergroup (in the format <c>@supergroupusername</c>)
+    /// </param>
+    /// <param name="UserId">
+    ///   Unique identifier of the target user
+    /// </param>
+    /// <param name="UntilDate">
+    ///   Date when restrictions will be lifted for the user, unix time. If
+    ///   user is restricted for more than 366 days or less than 30 seconds
+    ///   from the current time, they are considered to be restricted forever
+    /// </param>
+    /// <param name="CanSendMessages">
+    ///   Pass True, if the user can send text messages, contacts, locations
+    ///   and venues
+    /// </param>
+    /// <param name="CanSendMediaMessages">
+    ///   Pass True, if the user can send audios, documents, photos, videos,
+    ///   video notes and voice notes, implies CanSendMessages <br />
+    /// </param>
+    /// <param name="CanSendOtherMessages">
+    ///   Pass True, if the user can send animations, games, stickers and use
+    ///   inline bots, implies CanSendMediaMessages <br />
+    /// </param>
+    /// <param name="CanAddWebPagePreviews">
+    ///   Pass True, if the user may add web page previews to their messages,
+    ///   implies CanSendMediaMessages <br />
+    /// </param>
+    /// <returns>
+    ///   Returns True on success.
+    /// </returns>
+    function RestrictChatMember(ChatId: TValue; UserId: Integer; UntilDate: Integer = 0; CanSendMessages: Boolean = False; CanSendMediaMessages: Boolean = False; CanSendOtherMessages: Boolean = False; CanAddWebPagePreviews: Boolean = False): Boolean;
+    /// <summary>
+    ///   Use this method to restrict a user in a supergroup. The bot must be
+    ///   an administrator in the supergroup for this to work and must have the
+    ///   appropriate admin rights. Pass True for all boolean parameters to
+    ///   lift restrictions from a user.
+    /// </summary>
+    /// <param name="ChatId">
+    ///   Unique identifier for the target chat or username of the target
+    ///   supergroup (in the format <c>@supergroupusername</c>)
+    /// </param>
+    /// <param name="UserId">
+    ///   Unique identifier of the target user
+    /// </param>
+    /// <param name="CanChangeInfo">
+    ///   Pass True, if the administrator can change chat title, photo and
+    ///   other settings
+    /// </param>
+    /// <param name="CanPostMessages">
+    ///   Pass True, if the administrator can create channel posts, channels
+    ///   only
+    /// </param>
+    /// <param name="CanEditMessages">
+    ///   Pass True, if the administrator can edit messages of other users,
+    ///   channels only
+    /// </param>
+    /// <param name="CanDeleteMessages">
+    ///   Pass True, if the administrator can delete messages of other users
+    /// </param>
+    /// <param name="CanInviteUsers">
+    ///   Pass True, if the administrator can invite new users to the chat
+    /// </param>
+    /// <param name="CanRestrictMembers">
+    ///   Pass True, if the administrator can restrict, ban or unban chat
+    ///   members
+    /// </param>
+    /// <param name="CanPinMessages">
+    ///   Pass True, if the administrator can pin messages, supergroups only
+    /// </param>
+    /// <param name="CanPromoteMembers">
+    ///   Pass True, if the administrator can add new administrators with a
+    ///   subset of his own privileges or demote administrators that he has
+    ///   promoted, directly or indirectly (promoted by administrators that
+    ///   were appointed by him)
+    /// </param>
+    /// <returns>
+    ///   Returns True on success.
+    /// </returns>
+    function PromoteChatMember(ChatId: TValue; UserId: Integer; CanChangeInfo: Boolean = False; CanPostMessages: Boolean = False; CanEditMessages: Boolean = False; CanDeleteMessages: Boolean = False; CanInviteUsers: Boolean = False; CanRestrictMembers: Boolean = False; CanPinMessages: Boolean = False; CanPromoteMembers: Boolean = False): Boolean;
+
 {$ENDREGION}
   end;
 
@@ -2066,7 +2162,7 @@ begin
   end;
 end;
 
-function TTelegramBot.KickChatMember(ChatId: TValue; UserId: Integer): Boolean;
+function TTelegramBot.KickChatMember(ChatId: TValue; UserId, UntilDate: Integer): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -2074,6 +2170,7 @@ begin
   try
     Parameters.Add('chat_id', ChatId);
     Parameters.Add('user_id', UserId);
+    Parameters.Add('until_date', UntilDate);
     Result := API<Boolean>('kickChatMember', Parameters);
   finally
     Parameters.Free;
@@ -2437,7 +2534,7 @@ end;
 
 {$ENDREGION}
 {$REGION 'Manage groups and channels'}
-function TTelegramBot.deleteChatPhoto(ChatId: TValue): Boolean;
+function TTelegramBot.DeleteChatPhoto(ChatId: TValue): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -2463,7 +2560,7 @@ begin
   end;
 end;
 
-function TTelegramBot.pinChatMessage(ChatId: TValue; MessageId: Integer; DisableNotification: Boolean): Boolean;
+function TTelegramBot.PinChatMessage(ChatId: TValue; MessageId: Integer; DisableNotification: Boolean): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -2478,7 +2575,7 @@ begin
   end;
 end;
 
-function TTelegramBot.setChatDescription(ChatId: TValue; Description: string): Boolean;
+function TTelegramBot.SetChatDescription(ChatId: TValue; Description: string): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -2492,7 +2589,7 @@ begin
   end;
 end;
 
-function TTelegramBot.setChatPhoto(ChatId: TValue; Photo: TtgFileToSend): Boolean;
+function TTelegramBot.SetChatPhoto(ChatId: TValue; Photo: TtgFileToSend): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -2506,7 +2603,7 @@ begin
   end;
 end;
 
-function TTelegramBot.setChatTitle(ChatId: TValue; Title: string): Boolean;
+function TTelegramBot.SetChatTitle(ChatId: TValue; Title: string): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -2520,7 +2617,7 @@ begin
   end;
 end;
 
-function TTelegramBot.unpinChatMessage(ChatId: TValue): Boolean;
+function TTelegramBot.UnpinChatMessage(ChatId: TValue): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -2533,7 +2630,49 @@ begin
   end;
 end;
 {$ENDREGION}
+{$REGION 'Manage users and admins'}
 
+function TTelegramBot.PromoteChatMember(ChatId: TValue; UserId: Integer; CanChangeInfo, CanPostMessages, CanEditMessages, CanDeleteMessages, CanInviteUsers, CanRestrictMembers, CanPinMessages, CanPromoteMembers: Boolean): Boolean;
+var
+  Parameters: TDictionary<string, TValue>;
+begin
+  Parameters := TDictionary<string, TValue>.Create;
+  try
+    Parameters.Add('chat_id', ChatId);
+    Parameters.Add('user_id', UserId);
+    Parameters.Add('can_change_info', CanChangeInfo);
+    Parameters.Add('can_post_messages', CanPostMessages);
+    Parameters.Add('can_edit_messages', CanEditMessages);
+    Parameters.Add('can_delete_messages', CanDeleteMessages);
+    Parameters.Add('can_invite_users', CanInviteUsers);
+    Parameters.Add('can_restrict_members', CanRestrictMembers);
+    Parameters.Add('can_pin_messages', CanPinMessages);
+    Parameters.Add('can_promote_members', CanPromoteMembers);
+    Result := API<Boolean>('promoteChatMember', Parameters);
+  finally
+    Parameters.Free;
+  end;
+end;
+
+function TTelegramBot.RestrictChatMember(ChatId: TValue; UserId, UntilDate: Integer; CanSendMessages, CanSendMediaMessages, CanSendOtherMessages, CanAddWebPagePreviews: Boolean): Boolean;
+var
+  Parameters: TDictionary<string, TValue>;
+begin
+  Parameters := TDictionary<string, TValue>.Create;
+  try
+    Parameters.Add('chat_id', ChatId);
+    Parameters.Add('user_id', UserId);
+    Parameters.Add('until_date', UntilDate);
+    Parameters.Add('can_send_messages', CanSendMessages);
+    Parameters.Add('can_send_media_messages', CanSendMediaMessages);
+    Parameters.Add('can_send_other_messages', CanSendOtherMessages);
+    Parameters.Add('can_add_web_page_previews', CanAddWebPagePreviews);
+    Result := API<Boolean>('restrictChatMember', Parameters);
+  finally
+    Parameters.Free;
+  end;
+end;
+{$ENDREGION}
 {$REGION 'Async'}
 {$IF Defined(NO_QUEUE)}   // для работы в dll"ках
 
