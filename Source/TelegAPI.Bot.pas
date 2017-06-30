@@ -1440,6 +1440,128 @@ type
     /// </seealso>
     function GetGameHighScores(UserId: Integer; ChatId: Integer = 0; MessageId: Integer = 0; const InlineMessageId: string = ''): TArray<TtgGameHighScore>;
 {$ENDREGION}
+{$REGION 'Manage groups and channels'}
+    /// <summary>
+    ///   Use this method to delete a chat photo.
+    /// </summary>
+    /// <param name="ChatId">
+    ///   Unique identifier for the target chat or username of the target
+    ///   channel (in the format <c>@channelusername</c>)
+    /// </param>
+    /// <returns>
+    ///   Returns True on success.
+    /// </returns>
+    /// <remarks>
+    ///   Photos can't be changed for private chats. The bot must be an
+    ///   administrator in the chat for this to work and must have the
+    ///   appropriate admin rights.
+    /// </remarks>
+    function deleteChatPhoto(ChatId: TValue): Boolean;
+    /// <summary>
+    ///   Use this method to export an invite link to a supergroup or a
+    ///   channel.
+    /// </summary>
+    /// <param name="ChatId">
+    ///   Unique identifier for the target chat or username of the target
+    ///   channel (in the format <c>@channelusername</c>)
+    /// </param>
+    /// <returns>
+    ///   Returns exported invite link as String on success.
+    /// </returns>
+    /// <remarks>
+    ///   The bot must be an administrator in the chat for this to work and
+    ///   must have the appropriate admin rights.
+    /// </remarks>
+    function ExportChatInviteLink(ChatId: TValue): string;
+    /// <summary>
+    ///   Use this method to pin a message in a supergroup. The bot must be an
+    ///   administrator in the chat for this to work and must have the
+    ///   appropriate admin rights.
+    /// </summary>
+    /// <param name="ChatId">
+    ///   Unique identifier for the target chat or username of the target
+    ///   supergroup (in the format <c>@supergroupusername</c>)
+    /// </param>
+    /// <param name="MessageId">
+    ///   Identifier of a message to pin <br />
+    /// </param>
+    /// <param name="DisableNotification">
+    ///   Pass True, if it is not necessary to send a notification to all group
+    ///   members about the new pinned message
+    /// </param>
+    /// <returns>
+    ///   Returns True on success.
+    /// </returns>
+    function pinChatMessage(ChatId: TValue; MessageId: Integer; DisableNotification: Boolean = False): Boolean;
+    /// <summary>
+    ///   Use this method to change the description of a supergroup or a
+    ///   channel. The bot must be an administrator in the chat for this to
+    ///   work and must have the appropriate admin rights.
+    /// </summary>
+    /// <param name="ChatId">
+    ///   Unique identifier for the target chat or username of the target
+    ///   channel (in the format <c>@channelusername</c>)
+    /// </param>
+    /// <param name="Description">
+    ///   New chat description, 0-255 characters
+    /// </param>
+    /// <returns>
+    ///   Returns True on success.
+    /// </returns>
+    function setChatDescription(ChatId: TValue; Description: string): Boolean;
+    /// <summary>
+    ///   Use this method to set a new profile photo for the chat. Photos can't
+    ///   be changed for private chats.
+    /// </summary>
+    /// <param name="ChatId">
+    ///   Unique identifier for the target chat or username of the target
+    ///   channel (in the format <c>@channelusername</c>)
+    /// </param>
+    /// <param name="Photo">
+    ///   New chat photo, uploaded using multipart/form-data
+    /// </param>
+    /// <returns>
+    ///   Returns True on success.
+    /// </returns>
+    /// <remarks>
+    ///   The bot must be an administrator in the chat for this to work and
+    ///   must have the appropriate admin rights.
+    /// </remarks>
+    function setChatPhoto(ChatId: TValue; Photo: TtgFileToSend): Boolean;
+    /// <summary>
+    ///   Use this method to change the title of a chat. Titles can't be
+    ///   changed for private chats. The bot must be an administrator in the
+    ///   chat for this to work and must have the appropriate admin rights.
+    /// </summary>
+    /// <param name="ChatId">
+    ///   Unique identifier for the target chat or username of the target
+    ///   channel (in the format <c>@channelusername</c>)
+    /// </param>
+    /// <param name="Title">
+    ///   New chat title, 1-255 characters
+    /// </param>
+    /// <returns>
+    ///   Returns True on success.
+    /// </returns>
+    /// <remarks>
+    ///   Note: In regular groups (non-supergroups), this method will only work
+    ///   if the ‘All Members Are Admins’ setting is off in the target group.
+    /// </remarks>
+    function setChatTitle(ChatId: TValue; Title: string): Boolean;
+    /// <summary>
+    ///   Use this method to unpin a message in a supergroup chat. The bot must
+    ///   be an administrator in the chat for this to work and must have the
+    ///   appropriate admin rights.
+    /// </summary>
+    /// <param name="ChatId">
+    ///   Unique identifier for the target chat or username of the target
+    ///   supergroup (in the format <c>@supergroupusername</c>)
+    /// </param>
+    /// <returns>
+    ///   Returns True on success.
+    /// </returns>
+    function unpinChatMessage(ChatId: TValue): Boolean;
+{$ENDREGION}
   end;
 
 implementation
@@ -1524,7 +1646,7 @@ begin
       on E: Exception do
       begin
         Self.ErrorHandler(E);
-        Result := default(T);
+        Result := Default(T);
         Exit;
       end;
     end;
@@ -1543,7 +1665,7 @@ begin
         raise EApiRequestException.FromApiResponse<T>(LApiResponse, Parameters);
     end;
     Result := LApiResponse.ResultObject;
-    LApiResponse.ResultObject := default(T);
+    LApiResponse.ResultObject := Default(T);
   finally
     FreeAndNil(LParamToDate);
     FreeAndNil(LHttp);
@@ -2257,6 +2379,7 @@ begin
   end;
 end;
 
+
 {$ENDREGION}
 {$REGION 'Games'}
 
@@ -2313,8 +2436,107 @@ begin
 end;
 
 {$ENDREGION}
+{$REGION 'Manage groups and channels'}
+function TTelegramBot.deleteChatPhoto(ChatId: TValue): Boolean;
+var
+  Parameters: TDictionary<string, TValue>;
+begin
+  Parameters := TDictionary<string, TValue>.Create;
+  try
+    Parameters.Add('chat_id', ChatId);
+    Result := API<Boolean>('deleteChatPhoto', Parameters);
+  finally
+    Parameters.Free;
+  end;
+end;
+
+function TTelegramBot.ExportChatInviteLink(ChatId: TValue): string;
+var
+  Parameters: TDictionary<string, TValue>;
+begin
+  Parameters := TDictionary<string, TValue>.Create;
+  try
+    Parameters.Add('chat_id', ChatId);
+    Result := API<string>('exportChatInviteLink', Parameters);
+  finally
+    Parameters.Free;
+  end;
+end;
+
+function TTelegramBot.pinChatMessage(ChatId: TValue; MessageId: Integer; DisableNotification: Boolean): Boolean;
+var
+  Parameters: TDictionary<string, TValue>;
+begin
+  Parameters := TDictionary<string, TValue>.Create;
+  try
+    Parameters.Add('chat_id', ChatId);
+    Parameters.Add('message_id', MessageId);
+    Parameters.Add('disable_notification', DisableNotification);
+    Result := API<Boolean>('pinChatMessage', Parameters);
+  finally
+    Parameters.Free;
+  end;
+end;
+
+function TTelegramBot.setChatDescription(ChatId: TValue; Description: string): Boolean;
+var
+  Parameters: TDictionary<string, TValue>;
+begin
+  Parameters := TDictionary<string, TValue>.Create;
+  try
+    Parameters.Add('chat_id', ChatId);
+    Parameters.Add('description', Description);
+    Result := API<Boolean>('setChatDescription', Parameters);
+  finally
+    Parameters.Free;
+  end;
+end;
+
+function TTelegramBot.setChatPhoto(ChatId: TValue; Photo: TtgFileToSend): Boolean;
+var
+  Parameters: TDictionary<string, TValue>;
+begin
+  Parameters := TDictionary<string, TValue>.Create;
+  try
+    Parameters.Add('chat_id', ChatId);
+    Parameters.Add('photo', Photo);
+    Result := API<Boolean>('setChatPhoto', Parameters);
+  finally
+    Parameters.Free;
+  end;
+end;
+
+function TTelegramBot.setChatTitle(ChatId: TValue; Title: string): Boolean;
+var
+  Parameters: TDictionary<string, TValue>;
+begin
+  Parameters := TDictionary<string, TValue>.Create;
+  try
+    Parameters.Add('chat_id', ChatId);
+    Parameters.Add('title', Title);
+    Result := API<Boolean>('setChatTitle', Parameters);
+  finally
+    Parameters.Free;
+  end;
+end;
+
+function TTelegramBot.unpinChatMessage(ChatId: TValue): Boolean;
+var
+  Parameters: TDictionary<string, TValue>;
+begin
+  Parameters := TDictionary<string, TValue>.Create;
+  try
+    Parameters.Add('chat_id', ChatId);
+    Result := API<Boolean>('unpinChatMessage', Parameters);
+  finally
+    Parameters.Free;
+  end;
+end;
+{$ENDREGION}
+
 {$REGION 'Async'}
 {$IF Defined(NO_QUEUE)}   // для работы в dll"ках
+
 procedure TtgRecesiver.Execute;
 var
   LUpdates: TArray<TtgUpdate>;
@@ -2378,7 +2600,6 @@ begin
       end);
   until (Terminated) or (not Bot.IsReceiving);
 end;
-
 {$ENDIF}
 {$ENDREGION}
 
