@@ -1094,7 +1094,8 @@ type
     ///   is returned, otherwise True is returned.
     /// </returns>
     /// <seealso href="https://core.telegram.org/bots/api#editmessagereplymarkup" />
-    function EditMessageCaption(ChatId: TValue; MessageId: Integer; const InlineMessageId: string; const Caption: string; ReplyMarkup: TtgReplyKeyboardMarkup = nil): Boolean;
+    function EditMessageCaption(ChatId: TValue; MessageId: Integer; const InlineMessageId: string; const Caption: string; ReplyMarkup: TtgReplyKeyboardMarkup = nil): Boolean; overload;
+
     /// <summary>
     ///   Use this method to edit only the reply markup of messages sent by the
     ///   bot or via the bot (for inline bots).
@@ -1108,6 +1109,18 @@ type
     ///   Required if InlineMessageId is not specified. Unique identifier of <br />
     ///    the sent message <br />
     /// </param>
+    /// <param name="ReplyMarkup">
+    ///   A JSON-serialized object for an inline keyboard. <br />
+    /// </param>
+    /// <returns>
+    ///   On success, if edited message is sent by the bot, the edited Message
+    ///   is returned, otherwise True is returned.
+    /// </returns>
+    function EditMessageReplyMarkup(ChatId: TValue; MessageId: Integer; ReplyMarkup: TtgReplyKeyboardMarkup = nil): Boolean; overload;
+    /// <summary>
+    ///   Use this method to edit only the reply markup of messages sent by the
+    ///   bot or via the bot (for inline bots).
+    /// </summary>
     /// <param name="InlineMessageId">
     ///   Required if ChatId and MessageId are not specified. Identifier of <br />
     ///    the inline message <br />
@@ -1119,7 +1132,7 @@ type
     ///   On success, if edited message is sent by the bot, the edited Message
     ///   is returned, otherwise True is returned.
     /// </returns>
-    function EditMessageReplyMarkup(ChatId: TValue; MessageId: Integer; const InlineMessageId: string; ReplyMarkup: TtgReplyKeyboardMarkup = nil): Boolean;
+    function EditMessageReplyMarkup(const InlineMessageId: string; ReplyMarkup: TtgReplyKeyboardMarkup = nil): Boolean; overload;
     /// <summary>
     ///   Use this method to delete a message.
     /// </summary>
@@ -1511,7 +1524,7 @@ begin
       on E: Exception do
       begin
         Self.ErrorHandler(E);
-        Result := Default(T);
+        Result := default(T);
         Exit;
       end;
     end;
@@ -1530,7 +1543,7 @@ begin
         raise EApiRequestException.FromApiResponse<T>(LApiResponse, Parameters);
     end;
     Result := LApiResponse.ResultObject;
-    LApiResponse.ResultObject := Default(T);
+    LApiResponse.ResultObject := default(T);
   finally
     FreeAndNil(LParamToDate);
     FreeAndNil(LHttp);
@@ -2129,7 +2142,7 @@ begin
   end;
 end;
 
-function TTelegramBot.EditMessageReplyMarkup(ChatId: TValue; MessageId: Integer; const InlineMessageId: string; ReplyMarkup: TtgReplyKeyboardMarkup): Boolean;
+function TTelegramBot.EditMessageReplyMarkup(ChatId: TValue; MessageId: Integer; ReplyMarkup: TtgReplyKeyboardMarkup): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -2137,13 +2150,27 @@ begin
   try
     Parameters.Add('chat_id', ChatId);
     Parameters.Add('message_id', MessageId);
-    Parameters.Add('inline_message_id', InlineMessageId);
     Parameters.Add('reply_markup', ReplyMarkup);
-    Result := API<Boolean>('editMessageText', Parameters);
+    Result := API<Boolean>('editMessageReplyMarkup', Parameters);
   finally
     Parameters.Free;
   end;
 end;
+
+function TTelegramBot.EditMessageReplyMarkup(const InlineMessageId: string; ReplyMarkup: TtgReplyKeyboardMarkup): Boolean;
+var
+  Parameters: TDictionary<string, TValue>;
+begin
+  Parameters := TDictionary<string, TValue>.Create;
+  try
+    Parameters.Add('inline_message_id', InlineMessageId);
+    Parameters.Add('reply_markup', ReplyMarkup);
+    Result := API<Boolean>('editMessageReplyMarkup', Parameters);
+  finally
+    Parameters.Free;
+  end;
+end;
+
 {$ENDREGION}
 {$REGION 'Inline mode'}
 
