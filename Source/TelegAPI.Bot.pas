@@ -2684,22 +2684,20 @@ begin
   if Assigned(Bot.OnConnect) then
     Bot.OnConnect(Bot);
   repeat
-    Sleep(Bot.PollingTimeout);
-    if (Terminated) or (not Bot.IsReceiving) then
-      Break;
-    LUpdates := FBot.GetUpdates(Bot.MessageOffset, 100, 0, UPDATES_ALLOWED_ALL);
-    if Length(LUpdates) = 0 then
-      Continue;
-    Bot.MessageOffset := LUpdates[High(LUpdates)].Id + 1;
-    for I := Low(LUpdates) to High(LUpdates) do
-      Self.OnUpdateReceived(LUpdates[I]);
-    if Assigned(LUpdates) then
+    LUpdates := FBot.GetUpdates(Bot.MessageOffset, 100, 0, Bot.AllowedUpdates);
+    if Length(LUpdates) > 0 then
     begin
+      Bot.MessageOffset := LUpdates[High(LUpdates)].Id + 1;
       for I := Low(LUpdates) to High(LUpdates) do
-        FreeAndNil(LUpdates[I]);
-      LUpdates := nil;
+        Self.OnUpdateReceived(LUpdates[I]);
+      if Assigned(LUpdates) then
+      begin
+        for I := Low(LUpdates) to High(LUpdates) do
+          FreeAndNil(LUpdates[I]);
+        LUpdates := nil;
+      end;
     end;
-
+    Sleep(Bot.PollingTimeout);
   until (Terminated) or (not Bot.IsReceiving);
 end;
 
@@ -2711,32 +2709,33 @@ begin
   if Assigned(Bot.OnConnect) then
     Bot.OnConnect(Bot);
   repeat
-    Sleep(Bot.PollingTimeout);
-    if (Terminated) or (not Bot.IsReceiving) then
-      Break;
     try
-      LUpdates := FBot.GetUpdates(Bot.MessageOffset, 100, 0, UPDATES_ALLOWED_ALL);
+      LUpdates := FBot.GetUpdates(Bot.MessageOffset, 100, 0, Bot.AllowedUpdates);
     except
       on E: Exception do
         FBot.ErrorHandler(E);
     end;
-    if Length(LUpdates) = 0 then
-      Continue;
-    Bot.MessageOffset := LUpdates[High(LUpdates)].Id + 1;
-    TThread.Synchronize(nil,
-      procedure
-      var
-        I: Integer;
-      begin
-        for I := Low(LUpdates) to High(LUpdates) do
-          Self.OnUpdateReceived(LUpdates[I]);
-        if Assigned(LUpdates) then
+    if Length(LUpdates) > 0 then
+    begin
+      Bot.MessageOffset := LUpdates[High(LUpdates)].Id + 1;
+      TThread.Queue(Self,
+        procedure
+        var
+          I: Integer;
         begin
           for I := Low(LUpdates) to High(LUpdates) do
-            FreeAndNil(LUpdates[I]);
-          LUpdates := nil;
-        end;
-      end);
+          begin
+            Self.OnUpdateReceived(LUpdates[I]);
+          end;
+          if Assigned(LUpdates) then
+          begin
+            for I := Low(LUpdates) to High(LUpdates) do
+              FreeAndNil(LUpdates[I]);
+            LUpdates := nil;
+          end;
+        end);
+    end;
+    Sleep(Bot.PollingTimeout);
   until (Terminated) or (not Bot.IsReceiving);
 end;
 {$ENDIF}

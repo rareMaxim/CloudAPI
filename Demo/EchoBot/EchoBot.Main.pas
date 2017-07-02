@@ -145,7 +145,7 @@ begin
       Caption := LMe.Username;
     end;
   finally
-    LMe.Free;
+    FreeAndNil(LMe);
   end;
 end;
 
