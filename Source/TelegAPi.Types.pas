@@ -283,6 +283,7 @@ type
     FileSize: Integer;
     [Alias('file_path')]
     FilePath: string;
+    function CanDownload: Boolean;
     function GetFileUrl(const AToken: string): string;
   end;
 
@@ -1629,6 +1630,11 @@ begin
 end;
 
 { TtgFile }
+function TtgFile.CanDownload: Boolean;
+begin
+  Result := not FilePath.IsEmpty;
+end;
+
 function TtgFile.GetFileUrl(const AToken: string): string;
 begin
   Result := 'https://api.telegram.org/file/bot' + AToken + '/' + FilePath;
