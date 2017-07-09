@@ -1733,12 +1733,13 @@ begin
   FreeAndNil(LeftChatMember);
   FreeAndNil(PinnedMessage);
   FreeAndNil(ForwardFromChat);
+  FreeAndNil(NewChatMember);
   FreeAndNil(NewChatMembers);
   FreeAndNil(Photo);
   FreeAndNil(Entities);
   FreeAndNil(NewChatPhoto);
   FreeAndNil(Game);
-  inherited;
+  inherited Destroy;
 end;
 
 { TtgMessageEntity }
