@@ -1100,8 +1100,9 @@ type
     ///   is returned, otherwise True is returned.
     /// </returns>
     /// <seealso href="https://core.telegram.org/bots/api#editmessagereplymarkup" />
-    function EditMessageCaption(ChatId: TValue; MessageId: Integer; const InlineMessageId: string; const Caption: string; ReplyMarkup: IReplyMarkup = nil): Boolean; overload;
-
+    function EditMessageCaption(ChatId: TValue; MessageId: Integer; const Caption: string; ReplyMarkup: IReplyMarkup = nil): Boolean; overload;
+    {TODO -oM.E.Sysoev -cGeneral : Create Documentatiom}
+    function EditMessageCaption(const InlineMessageId: string; const Caption: string; ReplyMarkup: IReplyMarkup = nil): Boolean; overload;
     /// <summary>
     ///   Use this method to edit only the reply markup of messages sent by the
     ///   bot or via the bot (for inline bots).
@@ -2342,7 +2343,7 @@ begin
   end;
 end;
 
-function TTelegramBot.EditMessageCaption(ChatId: TValue; MessageId: Integer; const InlineMessageId, Caption: string; ReplyMarkup: IReplyMarkup): Boolean;
+function TTelegramBot.EditMessageCaption(ChatId: TValue; MessageId: Integer; const Caption: string; ReplyMarkup: IReplyMarkup): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -2350,7 +2351,20 @@ begin
   try
     Parameters.Add('chat_id', ChatId);
     Parameters.Add('message_id', MessageId);
-    Parameters.Add('inline_message_id', InlineMessageId);
+    Parameters.Add('caption', Caption);
+    Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
+    Result := API<Boolean>('editMessageCaption', Parameters);
+  finally
+    Parameters.Free;
+  end;
+end;
+
+function TTelegramBot.EditMessageCaption(const InlineMessageId, Caption: string; ReplyMarkup: IReplyMarkup): Boolean;
+var
+  Parameters: TDictionary<string, TValue>;
+begin
+  Parameters := TDictionary<string, TValue>.Create;
+  try
     Parameters.Add('caption', Caption);
     Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
     Result := API<Boolean>('editMessageCaption', Parameters);
