@@ -1127,7 +1127,7 @@ type
     ///   On success, if edited message is sent by the bot, the edited Message
     ///   is returned, otherwise True is returned.
     /// </returns>
-    function EditMessageReplyMarkup(ChatId: TValue; MessageId: Integer; ReplyMarkup: IReplyMarkup = nil): Boolean; overload;
+    function EditMessageReplyMarkup(ChatId: TValue; MessageId: Integer; ReplyMarkup: IReplyMarkup = nil): TtgMessage; overload;
     /// <summary>
     ///   Use this method to edit only the reply markup of messages sent by the
     ///   bot or via the bot (for inline bots).
@@ -1143,7 +1143,7 @@ type
     ///   On success, if edited message is sent by the bot, the edited Message
     ///   is returned, otherwise True is returned.
     /// </returns>
-    function EditMessageReplyMarkup(const InlineMessageId: string; ReplyMarkup: IReplyMarkup = nil): Boolean; overload;
+    function EditMessageReplyMarkup(const InlineMessageId: string; ReplyMarkup: IReplyMarkup = nil): TtgMessage; overload;
     /// <summary>
     ///   Use this method to delete a message.
     /// </summary>
@@ -2380,7 +2380,7 @@ begin
   end;
 end;
 
-function TTelegramBot.EditMessageReplyMarkup(ChatId: TValue; MessageId: Integer; ReplyMarkup: IReplyMarkup): Boolean;
+function TTelegramBot.EditMessageReplyMarkup(ChatId: TValue; MessageId: Integer; ReplyMarkup: IReplyMarkup): TtgMessage;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -2389,13 +2389,13 @@ begin
     Parameters.Add('chat_id', ChatId);
     Parameters.Add('message_id', MessageId);
     Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-    Result := API<Boolean>('editMessageReplyMarkup', Parameters);
+    Result := API<TtgMessage>('editMessageReplyMarkup', Parameters);
   finally
     Parameters.Free;
   end;
 end;
 
-function TTelegramBot.EditMessageReplyMarkup(const InlineMessageId: string; ReplyMarkup: IReplyMarkup): Boolean;
+function TTelegramBot.EditMessageReplyMarkup(const InlineMessageId: string; ReplyMarkup: IReplyMarkup): TtgMessage;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -2403,7 +2403,7 @@ begin
   try
     Parameters.Add('inline_message_id', InlineMessageId);
     Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-    Result := API<Boolean>('editMessageReplyMarkup', Parameters);
+    Result := API<TtgMessage>('editMessageReplyMarkup', Parameters);
   finally
     Parameters.Free;
   end;
