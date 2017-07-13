@@ -1545,7 +1545,7 @@ type
     ///   The update type.
     /// </value>
     /// <exception cref="System.ArgumentOutOfRangeException" />
-    function &type: TtgUpdateType;
+    function &Type: TtgUpdateType;
     destructor Destroy; override;
   end;
 

@@ -29,6 +29,8 @@ type
 
   TtgOnCallbackQuery = procedure(ASender: TObject; ACallbackQuery: TtgCallbackQuery) of object;
 
+  TtgOnChannelPost = procedure(ASender: TObject; AChanelPost: TtgMessage) of object;
+
   TtgOnReceiveError = procedure(ASender: TObject; AApiRequestException: EApiRequestException) of object;
 
   TtgOnReceiveGeneralError = procedure(ASender: TObject; AException: Exception) of object;
@@ -79,6 +81,7 @@ type
     FOnReceiveError: TtgOnReceiveError;
     FOnReceiveGeneralError: TtgOnReceiveGeneralError;
     FOnRawData: TtgOnReceiveRawData;
+    FOnChannelPost: TtgOnChannelPost;
     procedure SetIsReceiving(const Value: Boolean);
     function GetVersionAPI: string;
     /// <summary>
@@ -171,6 +174,7 @@ type
     ///   </para>
     /// </summary>
     property OnMessageEdited: TtgOnMessage read FOnMessageEdited write FOnMessageEdited;
+    property OnChannelPost: TtgOnChannelPost read FOnChannelPost write FOnChannelPost;
     /// <summary>
     ///   <para>
     ///     Возникает, когда получен <see cref="TelegAPi.Types|TtgInlineQuery" />
@@ -1686,7 +1690,7 @@ procedure TtgRecesiver.OnUpdateReceived(AValue: TtgUpdate);
 begin
   if Assigned(Bot.OnUpdate) then
     Bot.OnUpdate(Bot, AValue);
-  case AValue.&type of
+  case AValue.&Type of
     TtgUpdateType.MessageUpdate:
       if Assigned(Bot.OnMessage) then
         Bot.OnMessage(Bot, AValue.Message);
@@ -1702,6 +1706,9 @@ begin
     TtgUpdateType.EditedMessage:
       if Assigned(Bot.OnMessageEdited) then
         Bot.OnMessageEdited(Bot, AValue.EditedMessage);
+    TtgUpdateType.ChannelPost:
+      if Assigned(Bot.OnChannelPost) then
+        Bot.OnChannelPost(Self, AValue.ChannelPost);
   else
     raise ETelegramException.Create('Unknown update type');
   end
@@ -2699,7 +2706,7 @@ begin
     LUpdates := FBot.GetUpdates(Bot.MessageOffset, 100, 0, Bot.AllowedUpdates);
     if Length(LUpdates) > 0 then
     begin
-      Bot.MessageOffset := LUpdates[High(LUpdates)].Id + 1;
+      Bot.MessageOffset := LUpdates[High(LUpdates)].ID + 1;
       for I := Low(LUpdates) to High(LUpdates) do
         Self.OnUpdateReceived(LUpdates[I]);
       if Assigned(LUpdates) then
@@ -2729,7 +2736,7 @@ begin
     end;
     if Length(LUpdates) > 0 then
     begin
-      Bot.MessageOffset := LUpdates[High(LUpdates)].Id + 1;
+      Bot.MessageOffset := LUpdates[High(LUpdates)].ID + 1;
       TThread.Queue(Self,
         procedure
         var
