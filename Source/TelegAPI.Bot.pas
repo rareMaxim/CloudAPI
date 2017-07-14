@@ -1075,7 +1075,8 @@ type
     ///   is returned, otherwise True is returned.
     /// </returns>
     /// <seealso href="https://core.telegram.org/bots/api#editmessagetext" />
-    function EditMessageText(ChatId: TValue; MessageId: Integer; const InlineMessageId: string; const Text: string; ParseMode: TtgParseMode = TtgParseMode.Default; DisableWebPagePreview: Boolean = False; ReplyMarkup: IReplyMarkup = nil): Boolean;
+    function EditMessageText(ChatId: TValue; MessageId: Integer; const Text: string; ParseMode: TtgParseMode = TtgParseMode.Default; DisableWebPagePreview: Boolean = False; ReplyMarkup: IReplyMarkup = nil): TtgMessage; overload;
+    function EditMessageText(const InlineMessageId: string; const Text: string; ParseMode: TtgParseMode = TtgParseMode.Default; DisableWebPagePreview: Boolean = False; ReplyMarkup: IReplyMarkup = nil): TtgMessage; overload;
     /// <summary>
     ///   Use this method to edit captions of messages sent by the bot or via
     ///   the bot (for inline bots).
@@ -2317,7 +2318,24 @@ end;
 {$ENDREGION}
 {$REGION 'Updating messages'}
 
-function TTelegramBot.EditMessageText(ChatId: TValue; MessageId: Integer; const InlineMessageId, Text: string; ParseMode: TtgParseMode; DisableWebPagePreview: Boolean; ReplyMarkup: IReplyMarkup): Boolean;
+function TTelegramBot.EditMessageText(const InlineMessageId, Text: string; ParseMode: TtgParseMode; DisableWebPagePreview: Boolean; ReplyMarkup: IReplyMarkup): TtgMessage;
+var
+  Parameters: TDictionary<string, TValue>;
+begin
+  Parameters := TDictionary<string, TValue>.Create;
+  try
+    Parameters.Add('inline_message_id', InlineMessageId);
+    Parameters.Add('text', Text);
+    Parameters.Add('parse_mode', ParseMode.ToString);
+    Parameters.Add('disable_web_page_preview', DisableWebPagePreview);
+    Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
+    Result := API<TtgMessage>('editMessageText', Parameters);
+  finally
+    Parameters.Free;
+  end;
+end;
+
+function TTelegramBot.EditMessageText(ChatId: TValue; MessageId: Integer; const Text: string; ParseMode: TtgParseMode; DisableWebPagePreview: Boolean; ReplyMarkup: IReplyMarkup): TtgMessage;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -2325,12 +2343,11 @@ begin
   try
     Parameters.Add('chat_id', ChatId);
     Parameters.Add('message_id', MessageId);
-    Parameters.Add('inline_message_id', InlineMessageId);
     Parameters.Add('text', Text);
     Parameters.Add('parse_mode', ParseMode.ToString);
     Parameters.Add('disable_web_page_preview', DisableWebPagePreview);
     Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-    Result := API<Boolean>('editMessageText', Parameters);
+    Result := API<TtgMessage>('editMessageText', Parameters);
   finally
     Parameters.Free;
   end;

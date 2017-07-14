@@ -1789,7 +1789,7 @@ begin
 end;
 
 { TtgUpdate }
-function TtgUpdate.&type: TtgUpdateType;
+function TtgUpdate.&Type: TtgUpdateType;
 begin
   if Assigned(message) then
     Exit(TtgUpdateType.MessageUpdate);
