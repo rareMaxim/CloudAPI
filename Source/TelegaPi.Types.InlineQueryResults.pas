@@ -14,7 +14,7 @@ type
   ///   currently support results of the following 19 types ///
   /// </summary>
   [Alias('InlineQueryResult')]
-  TtgInlineQueryResult = class
+  TtgInlineQueryResult = class abstract
   public
     /// <summary>
     ///   Unique identifier for this result, 1-64 bytes
@@ -41,6 +41,7 @@ type
     /// </summary>
     [Alias('reply_markup')]
     ReplyMarkup: TtgInlineKeyboardMarkup;
+    constructor Create;
     destructor Destroy; override;
   end;
 
@@ -69,8 +70,6 @@ type
   [Alias('InlineQueryResultArticle')]
   TtgInlineQueryResultArticle = class(TtgInlineQueryResultNew)
   public
-    constructor Create;
-  public
     /// <summary>
     ///   Optional. URL of the result
     /// </summary>
@@ -87,6 +86,7 @@ type
     /// </summary>
     [Alias('description')]
     Description: string;
+    constructor Create;
   end;
 
   /// <summary>
@@ -118,6 +118,7 @@ type
     /// </summary>
     [Alias('audio_duration')]
     Duration: Integer;
+    constructor Create;
   end;
 
   /// <summary>
@@ -148,6 +149,7 @@ type
     /// </summary>
     [Alias('audio_file_id')]
     FileId: string;
+    constructor Create;
   end;
 
   /// <summary>
@@ -170,6 +172,7 @@ type
     /// </summary>
     [Alias('description')]
     Description: string;
+    constructor Create;
   end;
 
   /// <summary>
@@ -187,6 +190,7 @@ type
     /// </summary>
     [Alias('gif_file_id')]
     FileId: string;
+    constructor Create;
   end;
 
   /// <summary>
@@ -204,6 +208,7 @@ type
     /// </summary>
     [Alias('mpeg4_file_id')]
     FileId: string;
+    constructor Create;
   end;
 
   /// <summary>
@@ -225,6 +230,7 @@ type
     /// </summary>
     [Alias('description')]
     Description: string;
+    constructor Create;
   end;
 
   /// <summary>
@@ -241,6 +247,7 @@ type
     /// </summary>
     [Alias('sticker_file_id')]
     FileId: string;
+    constructor Create;
   end;
 
   /// <summary>
@@ -262,6 +269,7 @@ type
     /// </summary>
     [Alias('description')]
     Description: string;
+    constructor Create;
   end;
 
   /// <summary>
@@ -278,6 +286,7 @@ type
     /// </summary>
     [Alias('voice_file_id')]
     FileId: string;
+    constructor Create;
   end;
 
   /// <summary>
@@ -303,6 +312,7 @@ type
     /// </summary>
     [Alias('last_name')]
     LastName: string;
+    constructor Create;
   end;
 
   /// <summary>
@@ -336,16 +346,24 @@ type
     /// </summary>
     [Alias('description')]
     Description: string;
+    constructor Create;
   end;
 
   { TODO -oM.E.Sysoev -cNew Type : add InlineQueryResultGame }
   TtgInlineQueryResultGame = class
   public
+    [Alias('type')]
+    &type: String;
+    [Alias('id')]
+    id: String;
     /// <summary>
     ///   Short name of the game.
     /// </summary>
     [Alias('game_short_name')]
     GameShortName: String;
+    [Alias('reply_markup')]
+    reply_markup: TtgInlineKeyboardMarkup;
+    constructor Create;
   end;
 
   /// <summary>
@@ -387,6 +405,7 @@ type
     /// </summary>
     [Alias('thumb_url')]
     ThumbUrl: string;
+    constructor Create;
   end;
 
   /// <summary>
@@ -407,6 +426,7 @@ type
     /// </summary>
     [Alias('longitude')]
     Longitude: Single;
+    constructor Create;
   end;
 
   /// <summary>
@@ -443,6 +463,7 @@ type
     /// </summary>
     [Alias('caption')]
     Caption: string;
+    constructor Create;
   end;
 
   /// <summary>
@@ -480,6 +501,7 @@ type
     /// </summary>
     [Alias('caption')]
     Caption: string;
+    constructor Create;
   end;
 
   /// <summary>
@@ -510,6 +532,7 @@ type
     /// </summary>
     [Alias('foursquare_id')]
     FoursquareId: string;
+    constructor Create;
   end;
 
   /// <summary>
@@ -556,6 +579,7 @@ type
     /// </summary>
     [Alias('caption')]
     Caption: string;
+    constructor Create;
   end;
 
   /// <summary>
@@ -577,6 +601,7 @@ type
     /// </summary>
     [Alias('voice_duration')]
     Duration: Integer;
+    constructor Create;
   end;
 
 implementation
@@ -585,6 +610,12 @@ uses
   System.SysUtils;
 
 { TtgInlineQueryResult }
+
+constructor TtgInlineQueryResult.Create;
+begin
+  InputMessageContent := TtgInputMessageContent.Create;
+  ReplyMarkup := TtgInlineKeyboardMarkup.Create;
+end;
 
 destructor TtgInlineQueryResult.Destroy;
 begin
@@ -599,6 +630,158 @@ constructor TtgInlineQueryResultArticle.Create;
 begin
   inherited;
   &Type := 'article';
+end;
+
+{ TtgInlineQueryResultAudio }
+
+constructor TtgInlineQueryResultAudio.Create;
+begin
+  inherited;
+  &Type := 'audio';
+end;
+
+{ TtgInlineQueryResultCachedAudio }
+
+constructor TtgInlineQueryResultCachedAudio.Create;
+begin
+  inherited;
+  &Type := 'audio';
+end;
+
+{ TTgInlineQueryResultCachedDocument }
+
+constructor TTgInlineQueryResultCachedDocument.Create;
+begin
+  inherited;
+  &Type := 'document';
+end;
+
+{ TtgInlineQueryResultCachedGif }
+
+constructor TtgInlineQueryResultCachedGif.Create;
+begin
+  inherited;
+  &Type := 'gif';
+end;
+
+{ TtgInlineQueryResultCachedMpeg4Gif }
+
+constructor TtgInlineQueryResultCachedMpeg4Gif.Create;
+begin
+  inherited;
+  &Type := 'mpeg4_gif';
+end;
+
+{ TtgInlineQueryResultCachedPhoto }
+
+constructor TtgInlineQueryResultCachedPhoto.Create;
+begin
+  inherited;
+  &Type := 'photo';
+end;
+
+{ TtgInlineQueryResultCachedSticker }
+
+constructor TtgInlineQueryResultCachedSticker.Create;
+begin
+  inherited;
+  &Type := 'sticker';
+end;
+
+{ TtgInlineQueryResultCachedVideo }
+
+constructor TtgInlineQueryResultCachedVideo.Create;
+begin
+  inherited;
+  &Type := 'video';
+end;
+
+{ TtgInlineQueryResultCachedVoice }
+
+constructor TtgInlineQueryResultCachedVoice.Create;
+begin
+  inherited;
+  &Type := 'voice';
+end;
+
+{ TtgInlineQueryResultContact }
+
+constructor TtgInlineQueryResultContact.Create;
+begin
+  inherited;
+  &Type := 'contact';
+end;
+
+{ TtgInlineQueryResultDocument }
+
+constructor TtgInlineQueryResultDocument.Create;
+begin
+  inherited;
+  &Type := 'document';
+end;
+
+{ TtgInlineQueryResultGame }
+
+constructor TtgInlineQueryResultGame.Create;
+begin
+  inherited;
+  &Type := 'document';
+end;
+
+{ TtgInlineQueryResultGif }
+
+constructor TtgInlineQueryResultGif.Create;
+begin
+  inherited;
+  &Type := 'gif';
+end;
+
+{ TtgInlineQueryResultLocation }
+
+constructor TtgInlineQueryResultLocation.Create;
+begin
+  inherited;
+  &Type := 'location';
+end;
+
+{ TtgInlineQueryResultMpeg4Gif }
+
+constructor TtgInlineQueryResultMpeg4Gif.Create;
+begin
+  inherited;
+  &Type := 'mpeg4_gif';
+end;
+
+{ TtgInlineQueryResultPhoto }
+
+constructor TtgInlineQueryResultPhoto.Create;
+begin
+  inherited;
+  &Type := 'photo';
+end;
+
+{ TtgInlineQueryResultVenue }
+
+constructor TtgInlineQueryResultVenue.Create;
+begin
+  inherited;
+  &Type := 'venue';
+end;
+
+{ TtgInlineQueryResultVideo }
+
+constructor TtgInlineQueryResultVideo.Create;
+begin
+  inherited;
+  &Type := 'video';
+end;
+
+{ TtgInlineQueryResultVoice }
+
+constructor TtgInlineQueryResultVoice.Create;
+begin
+  inherited;
+  &Type := 'voice';
 end;
 
 end.

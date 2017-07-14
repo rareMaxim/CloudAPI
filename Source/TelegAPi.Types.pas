@@ -61,7 +61,114 @@ type
     /// </summary>
     [Alias('status')]
     Status: string;
+    /// <summary>
+    ///   Optional. Restictred and kicked only. Date when restrictions will be
+    ///   lifted for this user, unix time
+    /// </summary>
+    [Alias('until_date')]
+    UntilDate: Integer;
+    /// <summary>
+    ///   Optional. Administrators only. True, if the bot is allowed to edit
+    ///   administrator privileges of that user
+    /// </summary>
+    [Alias('can_be_edited')]
+    CanBeEdited: Boolean;
+    /// <summary>
+    ///   Optional. Administrators only. True, if the administrator can change
+    ///   the chat title, photo and other settings
+    /// </summary>
+    [Alias('can_change_info')]
+    CanChangeInfo: Boolean;
+    /// <summary>
+    ///   Optional. Administrators only. True, if the administrator can post in
+    ///   the channel, channels only
+    /// </summary>
+    [Alias('can_post_messages')]
+    CanPostMessages: Boolean;
+    /// <summary>
+    ///   Optional. Administrators only. True, if the administrator can edit
+    ///   messages of other users, channels only
+    /// </summary>
+    [Alias('can_edit_messages')]
+    CanEditMessages: Boolean;
+    /// <summary>
+    ///   Optional. Administrators only. True, if the administrator can delete
+    ///   messages of other users
+    /// </summary>
+    [Alias('can_delete_messages')]
+    CanDeleteMessages: Boolean;
+    /// <summary>
+    ///   Optional. Administrators only. True, if the administrator can invite
+    ///   new users to the chat
+    /// </summary>
+    [Alias('can_invite_users')]
+    CanInviteUsers: Boolean;
+    /// <summary>
+    ///   Optional. Administrators only. True, if the administrator can
+    ///   restrict, ban or unban chat members
+    /// </summary>
+    [Alias('can_restrict_members')]
+    CanRestrictMembers: Boolean;
+    /// <summary>
+    ///   Optional. Administrators only. True, if the administrator can pin
+    ///   messages, supergroups only
+    /// </summary>
+    [Alias('can_pin_messages')]
+    CanPinMessages: Boolean;
+    /// <summary>
+    ///   Optional. Administrators only. True, if the administrator can add new
+    ///   administrators with a subset of his own privileges or demote
+    ///   administrators that he has promoted, directly or indirectly (promoted
+    ///   by administrators that were appointed by the user)
+    /// </summary>
+    [Alias('can_promote_members')]
+    CanPromoteMembers: Boolean;
+    /// <summary>
+    ///   Optional. Restricted only. True, if the user can send text messages,
+    ///   contacts, locations and venues
+    /// </summary>
+    [Alias('can_send_messages')]
+    CanSendMessages: Boolean;
+    /// <summary>
+    ///   Optional. Restricted only. True, if the user can send audios,
+    ///   documents, photos, videos, video notes and voice notes, implies <see cref="TelegAPi.Types|TtgChatMember.CanSendMessages">
+    ///   CanSendMessages</see>
+    /// </summary>
+    [Alias('can_send_media_messages')]
+    CanSendMediaMessages: Boolean;
+    /// <summary>
+    ///   Optional. Restricted only. True, if the user can send animations,
+    ///   games, stickers and use inline bots, implies <see cref="TelegAPi.Types|TtgChatMember.CanSendMediaMessages">
+    ///   CanSendMediaMessages</see>
+    /// </summary>
+    [Alias('can_send_other_messages')]
+    CanSendOtherMessages: Boolean;
+    /// <summary>
+    ///   Optional. Restricted only. True, if user may add web page previews to
+    ///   his messages, implies <see cref="TelegAPi.Types|TtgChatMember.CanSendMediaMessages">
+    ///   CanSendMediaMessages</see>
+    /// </summary>
+    [Alias('can_add_web_page_previews')]
+    CanAddWebPagePreviews: Boolean;
     destructor Destroy; override;
+  end;
+
+  /// <summary>
+  ///   This object represents a chat photo.
+  /// </summary>
+  TtgChatPhoto = class
+    /// <summary>
+    ///   Unique file identifier of small (160x160) chat photo. This file_id
+    ///   can be used only for photo download.
+    /// </summary>
+    [Alias('small_file_id')]
+    SmallFileId: string;
+    /// <summary>
+    ///   Unique file identifier of big (640x640) chat photo. This file_id can
+    ///   be used only for photo download.
+    /// </summary>
+    [Alias('big_file_id')]
+    BigFileId: string;
   end;
 
   /// <summary>
@@ -106,6 +213,26 @@ type
     /// </summary>
     [Alias('all_members_are_administrators')]
     AllMembersAreAdministrators: Boolean;
+    /// <summary>
+    ///   Optional. Chat photo. Returned only in <see cref="TelegAPI.Bot|TTelegramBot.GetChat(TValue)">
+    ///   getChat</see>.
+    /// </summary>
+    [Alias('photo')]
+    Photo: TtgChatPhoto;
+    /// <summary>
+    ///   Optional. Description, for supergroups and channel chats. Returned
+    ///   only in <see cref="TelegAPI.Bot|TTelegramBot.GetChat(TValue)">getChat</see>
+    ///   .
+    /// </summary>
+    [Alias('description')]
+    Description: string;
+    /// <summary>
+    ///   Optional. Chat invite link, for supergroups and channel chats.
+    ///   Returned only in <see cref="TelegAPI.Bot|TTelegramBot.GetChat(TValue)">
+    ///   getChat</see>.
+    /// </summary>
+    [Alias('invite_link')]
+    InviteLink: string;
   end;
 
   /// <summary>
@@ -156,6 +283,7 @@ type
     FileSize: Integer;
     [Alias('file_path')]
     FilePath: string;
+    function CanDownload: Boolean;
     function GetFileUrl(const AToken: string): string;
   end;
 
@@ -1417,7 +1545,7 @@ type
     ///   The update type.
     /// </value>
     /// <exception cref="System.ArgumentOutOfRangeException" />
-    function &type: TtgUpdateType;
+    function &Type: TtgUpdateType;
     destructor Destroy; override;
   end;
 
@@ -1502,6 +1630,11 @@ begin
 end;
 
 { TtgFile }
+function TtgFile.CanDownload: Boolean;
+begin
+  Result := not FilePath.IsEmpty;
+end;
+
 function TtgFile.GetFileUrl(const AToken: string): string;
 begin
   Result := 'https://api.telegram.org/file/bot' + AToken + '/' + FilePath;
@@ -1606,12 +1739,13 @@ begin
   FreeAndNil(LeftChatMember);
   FreeAndNil(PinnedMessage);
   FreeAndNil(ForwardFromChat);
+  FreeAndNil(NewChatMember);
   FreeAndNil(NewChatMembers);
   FreeAndNil(Photo);
   FreeAndNil(Entities);
   FreeAndNil(NewChatPhoto);
   FreeAndNil(Game);
-  inherited;
+  inherited Destroy;
 end;
 
 { TtgMessageEntity }
@@ -1655,7 +1789,7 @@ begin
 end;
 
 { TtgUpdate }
-function TtgUpdate.&type: TtgUpdateType;
+function TtgUpdate.&Type: TtgUpdateType;
 begin
   if Assigned(message) then
     Exit(TtgUpdateType.MessageUpdate);
