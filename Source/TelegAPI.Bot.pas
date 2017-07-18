@@ -1687,7 +1687,7 @@ end;
 
 function TTelegramBotCore.GetVersionAPI: string;
 begin
-  Result := '3.1.0';
+  Result := '3.1.1';
 end;
 
 procedure TtgRecesiver.OnUpdateReceived(AValue: TtgUpdate);
