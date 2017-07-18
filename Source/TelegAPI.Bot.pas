@@ -94,6 +94,9 @@ type
   protected
     procedure ErrorHandler(AException: Exception);
   public
+{$IFDEF DEBUG}
+    function ApiTest<T>(const ARequest: string): T;
+{$ENDIF}
     constructor Create(AOwner: TComponent); overload; override;
     destructor Destroy; override;
     /// <summary>
@@ -1776,6 +1779,24 @@ begin
   end;
 end;
 
+{$IFDEF DEBUG}
+function TTelegramBotCore.ApiTest<T>(const ARequest: string): T;
+var
+  LApiResponse: TtgApiResponse<T>;
+begin
+  LApiResponse := nil;
+  try
+    LApiResponse := TtgApiResponse<T>.FromJSON(ARequest);
+    if not LApiResponse.Ok then
+      raise EApiRequestException.FromApiResponse<T>(LApiResponse);
+    Result := LApiResponse.ResultObject;
+    LApiResponse.ResultObject := Default(T);
+  finally
+    FreeAndNil(LApiResponse);
+  end;
+end;
+{$ENDIF}
+
 function TTelegramBotCore.ParamsToFormData(Parameters: TDictionary<string, TValue>): TMultipartFormData;
 var
   Parameter: TPair<string, TValue>;
@@ -2754,7 +2775,7 @@ begin
     if Length(LUpdates) > 0 then
     begin
       Bot.MessageOffset := LUpdates[High(LUpdates)].ID + 1;
-      TThread.Queue(Self,
+      TThread.Synchronize(nil,
         procedure
         var
           I: Integer;

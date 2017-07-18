@@ -524,7 +524,8 @@ type
     /// </summary>
     [Alias('latitude')]
     Latitude: Single;
-    constructor Create(ALongitude, ALatitude: Single);
+    constructor Create;overload;
+    constructor Create(ALongitude, ALatitude: Single);overload;
   end;
 
   /// <summary>
@@ -1492,7 +1493,7 @@ type
     ///   etc.
     /// </summary>
     [Alias('message')]
-    message: TtgMessage;
+    Message: TtgMessage;
     /// <summary>
     ///   Optional. New version of a message that is known to the bot and was
     ///   edited
@@ -1895,6 +1896,11 @@ constructor TtgLocation.Create(ALongitude, ALatitude: Single);
 begin
   Longitude := ALongitude;
   Latitude := ALatitude;
+end;
+
+constructor TtgLocation.Create;
+begin
+  inherited;
 end;
 
 { TtgApiResponse<T> }

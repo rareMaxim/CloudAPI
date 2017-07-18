@@ -15,11 +15,31 @@ object Main: TMain
     DataDetectorTypes = []
     Align = Client
     Size.Width = 577.000000000000000000
-    Size.Height = 319.000000000000000000
+    Size.Height = 297.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 2
     Viewport.Width = 573.000000000000000000
-    Viewport.Height = 315.000000000000000000
+    Viewport.Height = 293.000000000000000000
+  end
+  object edt1: TEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    Align = Top
+    TabOrder = 4
+    Text = 'C:\Users\maks4\Desktop\1.json'
+    Size.Width = 577.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    TextPrompt = 'Debug. FilePath to JSON response'
+    object btn1: TEditButton
+      CanFocus = False
+      Cursor = crArrow
+      Size.Width = 76.000000000000000000
+      Size.Height = 18.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 0
+      Text = 'Apply'
+      OnClick = btn1Click
+    end
   end
   object tgBot: TTelegramBot
     OnMessage = tgBotMessage

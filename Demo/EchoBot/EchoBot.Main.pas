@@ -19,12 +19,15 @@ uses
   TelegAPI.Bot,
   TelegAPI.Types,
   TelegAPI.Exceptions,
-  FMX.StdCtrls;
+  FMX.StdCtrls,
+  FMX.Edit;
 
 type
   TMain = class(TForm)
     tgBot: TTelegramBot;
     mmo1: TMemo;
+    edt1: TEdit;
+    btn1: TEditButton;
     procedure FormCreate(Sender: TObject);
     procedure tgBotInlineResultChosen(ASender: TObject; AChosenInlineResult: TtgChosenInlineResult);
     procedure tgBotInlineQuery(ASender: TObject; AInlineQuery: TtgInlineQuery);
@@ -35,6 +38,7 @@ type
     procedure tgBotDisconnect(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure tgBotReceiveGeneralError(ASender: TObject; AException: Exception);
+    procedure btn1Click(Sender: TObject);
   private
     { Private declarations }
     procedure WriteLine(const AValue: string);
@@ -46,6 +50,7 @@ type
     // parsing
     procedure ParseTextMessage(Msg: TtgMessage);
     procedure ParsePhotoMessage(Msg: TtgMessage);
+    procedure ParseLocationMessage(Msg: TtgMessage);
   public
     { Public declarations }
   end;
@@ -56,12 +61,22 @@ var
 implementation
 
 uses
+  System.IOUtils,
   TelegAPI.Helpers,
   TelegAPI.Types.Enums,
   TelegAPI.Types.ReplyMarkups,
   TelegAPI.Types.InlineQueryResults,
   TelegAPI.Types.InputMessageContents;
 {$R *.fmx}
+
+procedure TMain.btn1Click(Sender: TObject);
+var
+  LJson: string;
+  LReturn: TArray<TtgUpdate>;
+begin
+  LJson := TFile.ReadAllText(edt1.Text, TEncoding.UTF8);
+  LReturn := tgBot.ApiTest<TArray<TtgUpdate>>(LJson);
+end;
 
 procedure TMain.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
@@ -75,6 +90,11 @@ begin
   if not tgBot.IsValidToken then
     raise ELoginCredentialError.Create('invalid token format');
   tgBot.IsReceiving := True;
+end;
+
+procedure TMain.ParseLocationMessage(Msg: TtgMessage);
+begin
+  WriteLine('Location: ' + Msg.Location.Longitude.ToString + ' ' + Msg.Location.Latitude.ToString);
 end;
 
 procedure TMain.ParsePhotoMessage(Msg: TtgMessage);
@@ -95,7 +115,7 @@ procedure TMain.ParseTextMessage(Msg: TtgMessage);
 var
   usage: string;
 begin
-  WriteLine(Msg.Text);
+  WriteLine(Msg.From.Username + ': ' + Msg.Text);
   if Msg.Text.StartsWith('/inline') then // send inline keyboard
   begin
     SendInline(Msg);
@@ -177,6 +197,7 @@ begin
     AddRow([TtgKeyboardButton.Create('1.1'), TtgKeyboardButton.Create('1.2')]);
   { second row }
     AddRow([TtgKeyboardButton.Create('2.1'), TtgKeyboardButton.Create('2.2')]);
+    AddRow([TtgKeyboardButton.Create('Contact', True, False), TtgKeyboardButton.Create('Location', False, True)]);
   end;
   tgBot.SendMessage(Msg.Chat.Id, 'Choose', TtgParseMode.default, False, False, 0, keyboard).Free;
 end;
@@ -258,15 +279,12 @@ procedure TMain.tgBotMessage(ASender: TObject; AMessage: TtgMessage);
 begin
   case AMessage.&Type of
     TtgMessageType.TextMessage:
-      begin
-        ParseTextMessage(AMessage);
-      end;
+      ParseTextMessage(AMessage);
     TtgMessageType.PhotoMessage:
-      begin
-        ParsePhotoMessage(AMessage);
-      end;
+      ParsePhotoMessage(AMessage);
+    TtgMessageType.LocationMessage:
+      ParseLocationMessage(AMessage);
   end;
-
 end;
 
 procedure TMain.tgBotReceiveError(ASender: TObject; AApiRequestException: EApiRequestException);
