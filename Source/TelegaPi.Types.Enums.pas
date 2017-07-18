@@ -91,11 +91,12 @@ type
   /// <summary>
   ///   Type of a <see cref="Chat" />
   /// </summary>
+
   TtgChatType = (
     /// <summary>
     ///   Normal one to one <see cref="Chat" />
     /// </summary>
-    Private,
+    private,
 
     /// <summary>
     ///   Normal groupchat
@@ -114,6 +115,7 @@ type
   /// <summary>
   ///   Type of a <see cref="FileToSend" />
   /// </summary>
+
   TtgFileType = (
     /// <summary>
     ///   Unknown FileType
@@ -134,9 +136,10 @@ type
   /// <summary>
   ///   The type of a Message
   /// </summary>
+
   TtgMessageType = (UnknownMessage = 0, TextMessage, PhotoMessage, AudioMessage,
-    VideoMessage, VoiceMessage, DocumentMessage, StickerMessage,
-    LocationMessage, ContactMessage, ServiceMessage, VenueMessage);
+  VideoMessage, VideoNoteMessage, VoiceMessage, DocumentMessage, StickerMessage,
+  GameMessage, LocationMessage, ContactMessage, ServiceMessage, VenueMessage);
   /// <summary>
   ///   Text parsing mode
   /// </summary>
@@ -160,6 +163,7 @@ type
   ///     &lt;pre&gt;pre-formatted fixed-width code block&lt;/pre&gt; <br /><br />
   ///   </para>
   /// </example>
+
   TtgParseMode = (default = 0,
     /// <summary>
     ///   To use this mode, pass Markdown in the parse_mode field when using
@@ -230,15 +234,16 @@ type
     /// <summary>
     ///   Receive all <see cref="Update" /> Types
     /// </summary>
-
     All = 255);
-  TAllowedUpdate = (message, Edited_message, Channel_post, Edited_channel_post,
-    Inline_query, Chosen_inline_result, Callback_query);
+
+  TAllowedUpdate = (message, Edited_message, Channel_post, Edited_channel_post, Inline_query, Chosen_inline_result, Callback_query);
+
   TAllowedUpdates = set of TAllowedUpdate;
 
 const
-  UPDATES_ALLOWED_ALL = [Low(TAllowedUpdate) .. High(TAllowedUpdate)];
+  UPDATES_ALLOWED_ALL =[Low(TAllowedUpdate)..High(TAllowedUpdate)];
 
 implementation
 
 end.
+

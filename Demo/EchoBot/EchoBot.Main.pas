@@ -43,6 +43,9 @@ type
     procedure SendPhoto(Msg: TtgMessage);
     procedure SendRequest(Msg: TtgMessage);
     procedure SendQuest(Msg: TtgMessage);
+    // parsing
+    procedure ParseTextMessage(Msg: TtgMessage);
+    procedure ParsePhotoMessage(Msg: TtgMessage);
   public
     { Public declarations }
   end;
@@ -72,6 +75,56 @@ begin
   if not tgBot.IsValidToken then
     raise ELoginCredentialError.Create('invalid token format');
   tgBot.IsReceiving := True;
+end;
+
+procedure TMain.ParsePhotoMessage(Msg: TtgMessage);
+var
+  LFile: TtgFile;
+begin
+  if Msg.Photo.Last.CanDownload then
+    WriteLine(Msg.Photo.Last.GetFileUrl(tgBot.Token))
+  else
+  begin
+    LFile := tgBot.GetFile(Msg.Photo.Last.FileId);
+    WriteLine(LFile.GetFileUrl(tgBot.Token));
+    LFile.Free;
+  end;
+end;
+
+procedure TMain.ParseTextMessage(Msg: TtgMessage);
+var
+  usage: string;
+begin
+  WriteLine(Msg.Text);
+  if Msg.Text.StartsWith('/inline') then // send inline keyboard
+  begin
+    SendInline(Msg);
+  end
+  else if Msg.Text.StartsWith('/keyboard') then // send custom keyboard
+  begin
+    SendKeyboard(Msg);
+  end
+  else if Msg.Text.StartsWith('/photo') then // send custom keyboard
+  begin
+    SendPhoto(Msg);
+  end
+  else if Msg.Text.StartsWith('/request') then // send custom keyboard
+  begin
+    SendRequest(Msg);
+  end
+  else if Msg.Text.StartsWith('/quest') then // send custom keyboard
+  begin
+    SendQuest(Msg);
+  end
+  else if Msg.Text.StartsWith('/help') then // send
+  begin
+    usage := 'Usage:' + #13#10 +    //
+      '/inline   - send inline keyboard' + #13#10 +    //
+      '/keyboard - send custom keyboard' + #13#10 +   //
+      '/photo    - send a photo' + #13#10 +       //
+      '/request  - request location or contact';
+    tgBot.SendMessage(Msg.Chat.Id, usage, TtgParseMode.default, False, False, 0, TtgReplyKeyboardRemove.Create).Free;
+  end;
 end;
 
 procedure TMain.SendRequest(Msg: TtgMessage);
@@ -202,41 +255,18 @@ begin
 end;
 
 procedure TMain.tgBotMessage(ASender: TObject; AMessage: TtgMessage);
-var
-  usage: string;
 begin
-  if not Assigned(AMessage) then
-    Exit;
-  WriteLine(AMessage.Text);
-  if AMessage.Text.StartsWith('/inline') then // send inline keyboard
-  begin
-    SendInline(AMessage);
-  end
-  else if AMessage.Text.StartsWith('/keyboard') then // send custom keyboard
-  begin
-    SendKeyboard(AMessage);
-  end
-  else if AMessage.Text.StartsWith('/photo') then // send custom keyboard
-  begin
-    SendPhoto(AMessage);
-  end
-  else if AMessage.Text.StartsWith('/request') then // send custom keyboard
-  begin
-    SendRequest(AMessage);
-  end
-  else if AMessage.Text.StartsWith('/quest') then // send custom keyboard
-  begin
-    SendQuest(AMessage);
-  end
-  else if AMessage.Text.StartsWith('/help') then // send
-  begin
-    usage := 'Usage:' + #13#10 +    //
-      '/inline   - send inline keyboard' + #13#10 +    //
-      '/keyboard - send custom keyboard' + #13#10 +   //
-      '/photo    - send a photo' + #13#10 +       //
-      '/request  - request location or contact';
-    tgBot.SendMessage(AMessage.Chat.Id, usage, TtgParseMode.default, False, False, 0, TtgReplyKeyboardRemove.Create).Free;
+  case AMessage.&Type of
+    TtgMessageType.TextMessage:
+      begin
+        ParseTextMessage(AMessage);
+      end;
+    TtgMessageType.PhotoMessage:
+      begin
+        ParsePhotoMessage(AMessage);
+      end;
   end;
+
 end;
 
 procedure TMain.tgBotReceiveError(ASender: TObject; AApiRequestException: EApiRequestException);

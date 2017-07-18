@@ -857,6 +857,7 @@ type
     /// </summary>
     [Alias('pinned_message')]
     PinnedMessage: TtgMessage;
+    function &Type: TtgMessageType;
     destructor Destroy; override;
   end;
 
@@ -1720,6 +1721,46 @@ begin
 end;
 
 { TtgMessage }
+
+function TtgMessage.&Type: TtgMessageType;
+begin
+  if Assigned(Audio) then
+    Exit(TtgMessageType.AudioMessage);
+  if Assigned(Document) then
+    Exit(TtgMessageType.DocumentMessage);
+  if Assigned(Game) then
+    Exit(TtgMessageType.GameMessage);
+  if Assigned(Photo) then
+    Exit(TtgMessageType.PhotoMessage);
+  if Assigned(Sticker) then
+    Exit(TtgMessageType.StickerMessage);
+  if Assigned(Video) then
+    Exit(TtgMessageType.VideoMessage);
+  if Assigned(Voice) then
+    Exit(TtgMessageType.VoiceMessage);
+  if Assigned(VideoNote) then
+    Exit(TtgMessageType.VideoNoteMessage);
+  if Assigned(Contact) then
+    Exit(TtgMessageType.ContactMessage);
+  if Assigned(Location) then
+    Exit(TtgMessageType.LocationMessage);
+  if Assigned(Venue) then
+    Exit(TtgMessageType.VenueMessage);
+  if Assigned(Location) then
+    Exit(TtgMessageType.LocationMessage);
+  if not Text.IsEmpty then
+    Exit(TtgMessageType.TextMessage);
+  if Assigned(NewChatMember) or  //
+    Assigned(LeftChatMember) or    //
+    (Assigned(NewChatPhoto) and (NewChatPhoto.Count > 0)) or    //
+    (Assigned(NewChatMembers) and (NewChatMembers.Count > 0)) or   //
+    (not NewChatTitle.IsEmpty) or   //
+    DeleteChatPhoto or GroupChatCreated or SupergroupChatCreated or ChannelChatCreated or //
+    (MigrateToChatId <> 0) or (MigrateFromChatId <> 0) or  //
+    Assigned(PinnedMessage) then
+    Exit(TtgMessageType.ServiceMessage);
+  Result := TtgMessageType.UnknownMessage;
+end;
 
 destructor TtgMessage.Destroy;
 begin
