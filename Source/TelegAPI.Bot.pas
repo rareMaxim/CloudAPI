@@ -1523,7 +1523,7 @@ type
     /// <returns>
     ///   Returns True on success.
     /// </returns>
-    function SetChatDescription(ChatId: TValue; Description: string): Boolean;
+    function SetChatDescription(ChatId: TValue; const Description: string): Boolean;
     /// <summary>
     ///   Use this method to set a new profile photo for the chat. Photos can't
     ///   be changed for private chats.
@@ -1562,7 +1562,7 @@ type
     ///   Note: In regular groups (non-supergroups), this method will only work
     ///   if the ‘All Members Are Admins’ setting is off in the target group.
     /// </remarks>
-    function SetChatTitle(ChatId: TValue; Title: string): Boolean;
+    function SetChatTitle(ChatId: TValue; const Title: string): Boolean;
     /// <summary>
     ///   Use this method to unpin a message in a supergroup chat. The bot must
     ///   be an administrator in the chat for this to work and must have the
@@ -2632,7 +2632,7 @@ begin
   end;
 end;
 
-function TTelegramBot.SetChatDescription(ChatId: TValue; Description: string): Boolean;
+function TTelegramBot.SetChatDescription(ChatId: TValue; const Description: string): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -2660,7 +2660,7 @@ begin
   end;
 end;
 
-function TTelegramBot.SetChatTitle(ChatId: TValue; Title: string): Boolean;
+function TTelegramBot.SetChatTitle(ChatId: TValue; const Title: string): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
 begin
