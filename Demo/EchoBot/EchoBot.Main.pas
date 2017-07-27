@@ -164,7 +164,7 @@ var
   LFile: TtgFileToSend;
 begin
   tgBot.SendChatAction(Msg.Chat.Id, TtgSendChatAction.UploadPhoto);
-  LFile := TtgFileToSend.Create(PATH_PHOTO, nil);
+  LFile := TtgFileToSend.Create(PATH_PHOTO);
   try
     tgBot.SendPhoto(Msg.Chat.ID, LFile, 'Nice Picture').Free;
   finally
