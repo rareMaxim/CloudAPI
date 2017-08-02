@@ -41,7 +41,8 @@ contains
   TelegaPi.Types.InputMessageContents in '..\Source\TelegaPi.Types.InputMessageContents.pas',
   TelegaPi.Types.InlineQueryResults in '..\Source\TelegaPi.Types.InlineQueryResults.pas',
   TelegaPi.Types.Enums in '..\Source\TelegaPi.Types.Enums.pas',
-  TelegaPi.Exceptions in '..\Source\TelegaPi.Exceptions.pas';
+  TelegaPi.Exceptions in '..\Source\TelegaPi.Exceptions.pas',
+  TelegAPI.Bot.Console in '..\Source\TelegAPI.Bot.Console.pas';
 
 end.
 

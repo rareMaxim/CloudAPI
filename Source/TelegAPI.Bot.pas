@@ -82,7 +82,6 @@ type
     FOnReceiveGeneralError: TtgOnReceiveGeneralError;
     FOnRawData: TtgOnReceiveRawData;
     FOnChannelPost: TtgOnChannelPost;
-    procedure SetIsReceiving(const Value: Boolean);
     function GetVersionAPI: string;
     /// <summary>
     ///   Мастер-функция для запросов на сервак
@@ -90,9 +89,10 @@ type
     function API<T>(const Method: string; Parameters: TDictionary<string, TValue>): T;
     function ParamsToFormData(Parameters: TDictionary<string, TValue>): TMultipartFormData;
     function ArrayToString<T: class, constructor>(LArray: TArray<T>): string;
-    procedure DoDisconnect(ASender: TObject);
   protected
     procedure ErrorHandler(AException: Exception);
+    procedure SetIsReceiving(const Value: Boolean);
+    procedure DoDisconnect(ASender: TObject);
   public
 {$IFDEF DEBUG}
     function ApiTest<T>(const ARequest: string): T;
@@ -2731,34 +2731,7 @@ begin
 end;
 {$ENDREGION}
 {$REGION 'Async'}
-{$IF Defined(NO_QUEUE)}   // для работы в dll"ках
 
-procedure TtgRecesiver.Execute;
-var
-  LUpdates: TArray<TtgUpdate>;
-  I: Integer;
-begin
-  if Assigned(Bot.OnConnect) then
-    Bot.OnConnect(Bot);
-  repeat
-    LUpdates := FBot.GetUpdates(Bot.MessageOffset, 100, 0, Bot.AllowedUpdates);
-    if Length(LUpdates) > 0 then
-    begin
-      Bot.MessageOffset := LUpdates[High(LUpdates)].ID + 1;
-      for I := Low(LUpdates) to High(LUpdates) do
-        Self.OnUpdateReceived(LUpdates[I]);
-      if Assigned(LUpdates) then
-      begin
-        for I := Low(LUpdates) to High(LUpdates) do
-          FreeAndNil(LUpdates[I]);
-        LUpdates := nil;
-      end;
-    end;
-    Sleep(Bot.PollingTimeout);
-  until (Terminated) or (not Bot.IsReceiving);
-end;
-
-{$ELSE}
 procedure TtgRecesiver.Execute;
 var
   LUpdates: TArray<TtgUpdate>;
@@ -2795,7 +2768,6 @@ begin
     Sleep(Bot.PollingTimeout);
   until (Terminated) or (not Bot.IsReceiving);
 end;
-{$ENDIF}
 {$ENDREGION}
 
 end.
