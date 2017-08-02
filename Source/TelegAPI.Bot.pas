@@ -39,29 +39,30 @@ type
 
   TTelegramBot = class;
 
-  TtgRecesiver = class(TThread)
-  private
-    FBot: TTelegramBot;
-  protected
-    procedure Execute; override;
-    /// <summary>
-    ///   Raises the <see cref="TelegAPI.Bot|TtgOnUpdate" />, <see cref="TelegAPI.Bot|TtgOnMessage" />
-    ///    , <see cref="TelegAPI.Bot|TtgOnInlineQuery" /> , <see cref="TelegAPI.Bot|TtgOnInlineResultChosen" />
-    ///    and <see cref="TelegAPI.Bot|TtgOnCallbackQuery" /> events.
-    /// </summary>
-    /// <param name="AValue">
-    ///   The <see cref="TelegAPi.Types|TtgUpdate">Update</see> instance
-    ///   containing the event data. <br />
-    /// </param>
-    /// <exception cref="TelegaPi.Exceptions|ETelegramException">
-    ///   Возникает если получено неизвестное обновление
-    /// </exception>
-    procedure OnUpdateReceived(AValue: TtgUpdate);
-  public
-    property Bot: TTelegramBot read FBot write FBot;
-  end;
-
   TTelegramBotCore = class(TComponent)
+  private
+    type
+      TtgRecesiver = class(TThread)
+      private
+        FBot: TTelegramBot;
+      protected
+        procedure Execute; override;
+        /// <summary>
+        ///   Raises the <see cref="TelegAPI.Bot|TtgOnUpdate" />, <see cref="TelegAPI.Bot|TtgOnMessage" />
+        ///    , <see cref="TelegAPI.Bot|TtgOnInlineQuery" /> , <see cref="TelegAPI.Bot|TtgOnInlineResultChosen" />
+        ///    and <see cref="TelegAPI.Bot|TtgOnCallbackQuery" /> events.
+        /// </summary>
+        /// <param name="AValue">
+        ///   The <see cref="TelegAPi.Types|TtgUpdate">Update</see> instance
+        ///   containing the event data. <br />
+        /// </param>
+        /// <exception cref="TelegaPi.Exceptions|ETelegramException">
+        ///   Возникает если получено неизвестное обновление
+        /// </exception>
+        procedure OnUpdateReceived(AValue: TtgUpdate);
+      public
+        property Bot: TTelegramBot read FBot write FBot;
+      end;
   private
     FToken: string;
     FPollingTimeout: Integer;
@@ -1690,34 +1691,6 @@ begin
   Result := '3.1.1';
 end;
 
-procedure TtgRecesiver.OnUpdateReceived(AValue: TtgUpdate);
-begin
-  if Assigned(Bot.OnUpdate) then
-    Bot.OnUpdate(Bot, AValue);
-  case AValue.&Type of
-    TtgUpdateType.MessageUpdate:
-      if Assigned(Bot.OnMessage) then
-        Bot.OnMessage(Bot, AValue.Message);
-    TtgUpdateType.InlineQueryUpdate:
-      if Assigned(Bot.OnInlineQuery) then
-        Bot.OnInlineQuery(Bot, AValue.InlineQuery);
-    TtgUpdateType.ChosenInlineResultUpdate:
-      if Assigned(Bot.OnInlineResultChosen) then
-        Bot.OnInlineResultChosen(Bot, AValue.ChosenInlineResult);
-    TtgUpdateType.CallbackQueryUpdate:
-      if Assigned(Bot.OnCallbackQuery) then
-        Bot.OnCallbackQuery(Bot, AValue.CallbackQuery);
-    TtgUpdateType.EditedMessage:
-      if Assigned(Bot.OnMessageEdited) then
-        Bot.OnMessageEdited(Bot, AValue.EditedMessage);
-    TtgUpdateType.ChannelPost:
-      if Assigned(Bot.OnChannelPost) then
-        Bot.OnChannelPost(Self, AValue.ChannelPost);
-  else
-    raise ETelegramException.Create('Unknown update type');
-  end
-end;
-
 function TTelegramBotCore.API<T>(const Method: string; Parameters: TDictionary<string, TValue>): T;
 var
   LHttp: THTTPClient;
@@ -1752,7 +1725,7 @@ begin
       on E: Exception do
       begin
         Self.ErrorHandler(E);
-        Result := Default(T);
+        Result := default(T);
         Exit;
       end;
     end;
@@ -1771,7 +1744,7 @@ begin
         raise EApiRequestException.FromApiResponse<T>(LApiResponse, Parameters);
     end;
     Result := LApiResponse.ResultObject;
-    LApiResponse.ResultObject := Default(T);
+    LApiResponse.ResultObject := default(T);
   finally
     FreeAndNil(LParamToDate);
     FreeAndNil(LHttp);
@@ -1790,7 +1763,7 @@ begin
     if not LApiResponse.Ok then
       raise EApiRequestException.FromApiResponse<T>(LApiResponse);
     Result := LApiResponse.ResultObject;
-    LApiResponse.ResultObject := Default(T);
+    LApiResponse.ResultObject := default(T);
   finally
     FreeAndNil(LApiResponse);
   end;
@@ -2730,9 +2703,11 @@ begin
   end;
 end;
 {$ENDREGION}
-{$REGION 'Async'}
 
-procedure TtgRecesiver.Execute;
+{$REGION 'Async'}
+{ TTelegramBotCore.TtgRecesiver }
+
+procedure TTelegramBotCore.TtgRecesiver.Execute;
 var
   LUpdates: TArray<TtgUpdate>;
 begin
@@ -2767,6 +2742,34 @@ begin
     end;
     Sleep(Bot.PollingTimeout);
   until (Terminated) or (not Bot.IsReceiving);
+end;
+
+procedure TTelegramBotCore.TtgRecesiver.OnUpdateReceived(AValue: TtgUpdate);
+begin
+  if Assigned(Bot.OnUpdate) then
+    Bot.OnUpdate(Bot, AValue);
+  case AValue.&Type of
+    TtgUpdateType.MessageUpdate:
+      if Assigned(Bot.OnMessage) then
+        Bot.OnMessage(Bot, AValue.Message);
+    TtgUpdateType.InlineQueryUpdate:
+      if Assigned(Bot.OnInlineQuery) then
+        Bot.OnInlineQuery(Bot, AValue.InlineQuery);
+    TtgUpdateType.ChosenInlineResultUpdate:
+      if Assigned(Bot.OnInlineResultChosen) then
+        Bot.OnInlineResultChosen(Bot, AValue.ChosenInlineResult);
+    TtgUpdateType.CallbackQueryUpdate:
+      if Assigned(Bot.OnCallbackQuery) then
+        Bot.OnCallbackQuery(Bot, AValue.CallbackQuery);
+    TtgUpdateType.EditedMessage:
+      if Assigned(Bot.OnMessageEdited) then
+        Bot.OnMessageEdited(Bot, AValue.EditedMessage);
+    TtgUpdateType.ChannelPost:
+      if Assigned(Bot.OnChannelPost) then
+        Bot.OnChannelPost(Self, AValue.ChannelPost);
+  else
+    raise ETelegramException.Create('Unknown update type');
+  end
 end;
 {$ENDREGION}
 
