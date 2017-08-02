@@ -10,7 +10,7 @@
             <Dependencies>Install\TelegaPiBot.dproj</Dependencies>
         </Projects>
         <Projects Include="Demo\Console\ConsoleBot.dproj">
-            <Dependencies/>
+            <Dependencies>Install\TelegaPiBot.dproj</Dependencies>
         </Projects>
     </ItemGroup>
     <ProjectExtensions>
@@ -38,13 +38,13 @@
     <Target Name="EchoBot:Make" DependsOnTargets="TelegaPiBot:Make">
         <MSBuild Projects="Demo\EchoBot\EchoBot.dproj" Targets="Make"/>
     </Target>
-    <Target Name="ConsoleBot">
+    <Target Name="ConsoleBot" DependsOnTargets="TelegaPiBot">
         <MSBuild Projects="Demo\Console\ConsoleBot.dproj"/>
     </Target>
-    <Target Name="ConsoleBot:Clean">
+    <Target Name="ConsoleBot:Clean" DependsOnTargets="TelegaPiBot:Clean">
         <MSBuild Projects="Demo\Console\ConsoleBot.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="ConsoleBot:Make">
+    <Target Name="ConsoleBot:Make" DependsOnTargets="TelegaPiBot:Make">
         <MSBuild Projects="Demo\Console\ConsoleBot.dproj" Targets="Make"/>
     </Target>
     <Target Name="Build">

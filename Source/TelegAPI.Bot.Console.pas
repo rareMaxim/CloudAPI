@@ -218,11 +218,7 @@ end;
 constructor TTelegramBotConsole.Create(const AToken: string);
 begin
   inherited Create(nil);
-  AllowedUpdates := UPDATES_ALLOWED_ALL;
   Token := AToken;
-  IsReceiving := False;
-  PollingTimeout := 1000;
-  MessageOffset := 0;
 end;
 
 procedure TTelegramBotConsole.DoDisconnect(ASender: TObject);
