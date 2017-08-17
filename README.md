@@ -2,7 +2,7 @@
 
 Telega π - Библиотека для работы с Telegram Bot API в Delphi
 
-Версия Bot API: *3.1.0*
+Версия Bot API: *3.1.1*
 
 Пошаговое создание бота: https://github.com/ms301/TelegAPI/wiki/Hello-world
 

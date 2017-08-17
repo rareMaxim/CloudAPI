@@ -524,7 +524,8 @@ type
     /// </summary>
     [Alias('latitude')]
     Latitude: Single;
-    constructor Create(ALongitude, ALatitude: Single);
+    constructor Create;overload;
+    constructor Create(ALongitude, ALatitude: Single);overload;
   end;
 
   /// <summary>
@@ -1077,12 +1078,11 @@ type
 
   [Alias('FileToSend')]
   TtgFileToSend = class
-  private
-    procedure DoCheckParams;
   public
     FileName: string;
     Content: TStream;
-    constructor Create(const FileName: string; const Content: TStream);
+    constructor Create(const AFileName: string);overload;
+    constructor Create(AContent: TStream);overload;
     destructor Destroy; override;
   end;
 
@@ -1492,7 +1492,7 @@ type
     ///   etc.
     /// </summary>
     [Alias('message')]
-    message: TtgMessage;
+    Message: TtgMessage;
     /// <summary>
     ///   Optional. New version of a message that is known to the bot and was
     ///   edited
@@ -1640,13 +1640,22 @@ function TtgFile.GetFileUrl(const AToken: string): string;
 begin
   Result := 'https://api.telegram.org/file/bot' + AToken + '/' + FilePath;
 end;
-{ TtgFileToSend }
 
-constructor TtgFileToSend.Create(const FileName: string; const Content: TStream);
+{ TtgFileToSend }
+constructor TtgFileToSend.Create(const AFileName: string);
 begin
-  Self.FileName := FileName;
-  Self.Content := Content;
-  DoCheckParams;
+  Content := nil;
+  FileName := AFileName;
+  if not FileExists(AFileName) then
+    raise EFileNotFoundException.CreateFmt('File %S not found!', [AFileName]);
+end;
+
+constructor TtgFileToSend.Create(AContent: TStream);
+begin
+  FileName := string.Empty;
+  Content := AContent;
+  if not Assigned(AContent) then
+    raise EStreamError.Create('Stream not assigned!');
 end;
 
 destructor TtgFileToSend.Destroy;
@@ -1655,16 +1664,7 @@ begin
   inherited;
 end;
 
-procedure TtgFileToSend.DoCheckParams;
-begin
-  if not Assigned(Content) then
-  begin
-    if not FileExists(FileName) then
-      raise EFileNotFoundException.CreateFmt('File %S not found!', [FileName]);
-  end
-end;
 { TtgGame }
-
 constructor TtgGame.Create;
 begin
   inherited Create;
@@ -1895,6 +1895,11 @@ constructor TtgLocation.Create(ALongitude, ALatitude: Single);
 begin
   Longitude := ALongitude;
   Latitude := ALatitude;
+end;
+
+constructor TtgLocation.Create;
+begin
+  inherited;
 end;
 
 { TtgApiResponse<T> }
