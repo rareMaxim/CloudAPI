@@ -1775,24 +1775,32 @@ var
   Parameter: TPair<string, TValue>;
 begin
   Result := TMultipartFormData.Create;
+
   for Parameter in Parameters do
   begin
     if Parameter.Value.IsType<string>then
     begin
       if not Parameter.Value.AsString.IsEmpty then
         Result.AddField(Parameter.Key, Parameter.Value.AsString);
-    end
-    else if Parameter.Value.IsType<Int64>then
+      continue;
+    end;
+
+
+    if Parameter.Value.IsType<Int64>then
     begin
       if Parameter.Value.AsInt64 <> 0 then
         Result.AddField(Parameter.Key, Parameter.Value.AsInt64.ToString);
-    end
-    else if Parameter.Value.IsType<Boolean>then
+      continue;
+    end;
+
+    if Parameter.Value.IsType<Boolean>then
     begin
       if Parameter.Value.AsBoolean then
         Result.AddField(Parameter.Key, Parameter.Value.AsBoolean.ToString(TUseBoolStrs.True));
-    end
-    else if Parameter.Value.IsType<TtgFileToSend>then
+      continue;
+    end;
+
+    if Parameter.Value.IsType<TtgFileToSend>then
     begin
       { TODO -oOwner -cGeneral : Отправка файлов }
       with Parameter.Value.AsType<TtgFileToSend>do
@@ -1801,16 +1809,20 @@ begin
           Result.AddStream(Parameter.Key, Content)
         else
           Result.AddFile(Parameter.Key, FileName);
+
+        continue;
       end;
-    end
-    else if Parameter.Value.Kind = tkClass then
+    end;
+
+    if Parameter.Value.Kind = tkClass then
     begin
       { TODO -oOwner -cGeneral : Проверить че за херня тут твориться }
-      if not Parameter.Value.IsEmpty then
-        Result.AddField(Parameter.Key, Parameter.Value.AsObject.AsJSON);
-    end
-    else
-      raise ETelegramUnknownData.Create('Check parametr type ' + Parameter.Value.ToString);
+      if not Parameter.Value.IsEmpty then Result.AddField(Parameter.Key, Parameter.Value.AsObject.AsJSON);
+      continue;
+    end;
+
+    //At this point there are parameters with unknown types only
+    raise ETelegramUnknownData.Create('Check parameter type ' + Parameter.Value.ToString);
   end;
 end;
 
