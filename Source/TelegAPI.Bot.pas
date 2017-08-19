@@ -1770,61 +1770,89 @@ begin
 end;
 {$ENDIF}
 
-function TTelegramBotCore.ParamsToFormData(Parameters: TDictionary<string, TValue>): TMultipartFormData;
-var
-  Parameter: TPair<string, TValue>;
+
+//=============BEGIN PROTOTYPE CODE========================
+
+type TParamLoaderMethod=procedure(var mfpd:TMultipartFormData; TypeInfo:PTypeInfo;  key:string;  value:TValue);
+
+procedure AddInteger(var mfpd:TMultipartFormData; TypeInfo:PTypeInfo; key:string;  value:TValue);
 begin
+  if Value.AsInteger <> 0 then mfpd.AddField(Key, Value.AsInteger.ToString);
+end;
+
+procedure AddString(var mfpd:TMultipartFormData; TypeInfo:PTypeInfo; key:string; value:TValue);
+begin
+  if not value.AsString.IsEmpty then mfpd.AddField(Key, Value.AsString);
+end;
+
+procedure AddInt64(var mfpd:TMultipartFormData; TypeInfo:PTypeInfo; key:string;  value:TValue);
+begin
+  if Value.AsInt64 <> 0 then mfpd.AddField(Key, Value.AsInt64.ToString);
+end;
+
+procedure AddBoolean(var mfpd:TMultipartFormData; TypeInfo:PTypeInfo; key:string;  value:TValue);
+begin
+  if Value.AsBoolean then mfpd.AddField(Key, Value.AsBoolean.ToString(TUseBoolStrs.True));
+end;
+
+procedure AddClass_TtgFileToSend(var mfpd:TMultipartFormData; TypeInfo:PTypeInfo; key:string; value:TValue);
+var fts:TtgFileToSend;
+begin
+  fts:=Value.AsType<TtgFileToSend>;
+
+  if Assigned(fts.Content) then mfpd.AddStream(Key, fts.Content)
+    else mfpd.AddFile(Key, fts.FileName);
+end;
+
+function TTelegramBotCore.ParamsToFormData(Parameters: TDictionary<string, TValue>): TMultipartFormData;
+var Parameter : TPair<string, TValue>;
+    dict      : TDictionary< PTypeInfo, TParamLoaderMethod>;
+    addProc   : TParamLoaderMethod;
+begin
+  //=====================
+  //init type-lookup dictionary
+  dict:=TDictionary<PTypeInfo, TParamLoaderMethod>.Create;
+
+  //primitive types
+  dict.Add(PTypeInfo(TypeInfo(integer)), AddInteger);
+  dict.Add(PTypeInfo(TypeInfo(string )), AddString);
+  dict.Add(PTypeInfo(TypeInfo(int64  )), AddInt64);
+  dict.Add(PTypeInfo(TypeInfo(boolean)), AddBoolean);
+
+  //class types
+  dict.Add(PTypeInfo(System.TypeInfo(TtgFileToSend)), AddClass_TtgFileToSend);
+  //=====================
+
   Result := TMultipartFormData.Create;
-
-  for Parameter in Parameters do
-  begin
-    if Parameter.Value.IsType<string>then
+  try
+    for Parameter in Parameters do
     begin
-      if not Parameter.Value.AsString.IsEmpty then
-        Result.AddField(Parameter.Key, Parameter.Value.AsString);
-      continue;
-    end;
+      //skip all empty params
+      if parameter.Value.IsEmpty then continue;
 
-
-    if Parameter.Value.IsType<Int64>then
-    begin
-      if Parameter.Value.AsInt64 <> 0 then
-        Result.AddField(Parameter.Key, Parameter.Value.AsInt64.ToString);
-      continue;
-    end;
-
-    if Parameter.Value.IsType<Boolean>then
-    begin
-      if Parameter.Value.AsBoolean then
-        Result.AddField(Parameter.Key, Parameter.Value.AsBoolean.ToString(TUseBoolStrs.True));
-      continue;
-    end;
-
-    if Parameter.Value.IsType<TtgFileToSend>then
-    begin
-      { TODO -oOwner -cGeneral : Отправка файлов }
-      with Parameter.Value.AsType<TtgFileToSend>do
+      //look for the given parameter type
+      if dict.TryGetValue(parameter.Value.TypeInfo, addProc) then
       begin
-        if Assigned(Content) then
-          Result.AddStream(Parameter.Key, Content)
-        else
-          Result.AddFile(Parameter.Key, FileName);
-
-        continue;
+        addProc(result, parameter.Value.TypeInfo, parameter.Key,  parameter.Value);
+        continue; //param added OK
       end;
-    end;
 
-    if Parameter.Value.Kind = tkClass then
-    begin
-      { TODO -oOwner -cGeneral : Проверить че за херня тут твориться }
-      if not Parameter.Value.IsEmpty then Result.AddField(Parameter.Key, Parameter.Value.AsObject.AsJSON);
-      continue;
+      //last variant to search
+      if Parameter.Value.Kind = tkClass then
+      begin
+        { TODO -oOwner -cGeneral : Проверить че за херня тут твориться }
+        if not Parameter.Value.IsEmpty then
+        Result.AddField(Parameter.Key, Parameter.Value.AsObject.AsJSON);
+      end
+       else
+         raise ETelegramUnknownData.Create('Check parameter type ' + Parameter.Value.ToString);
     end;
-
-    //At this point there are parameters with unknown types only
-    raise ETelegramUnknownData.Create('Check parameter type ' + Parameter.Value.ToString);
+  finally
+    dict.Free;
   end;
 end;
+
+//=============END PROTOTYPE CODE========================
 
 procedure TTelegramBotCore.SetIsReceiving(const Value: Boolean);
 begin
