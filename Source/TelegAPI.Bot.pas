@@ -1816,8 +1816,11 @@ end;
 
 procedure TTelegramBotCore.SetIsReceiving(const Value: Boolean);
 begin
-  if (csDesigning in ComponentState) then
-    Exit;
+  if (csDesigning in ComponentState) then exit;
+
+  // duplicate FReceiver creation and freeing protection
+  if FIsReceiving=Value then exit;
+
   FIsReceiving := Value;
   if Value then
   begin
