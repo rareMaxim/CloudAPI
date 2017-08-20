@@ -16,6 +16,7 @@ uses
   TelegAPI.Types.ReplyMarkups,
   TelegAPI.Types.InlineQueryResults,
   TelegAPI.Exceptions,
+  TelegAPI.Utils.Params,
   XSuperObject;
 
 type
@@ -63,6 +64,9 @@ type
       public
         property Bot: TTelegramBot read FBot write FBot;
       end;
+
+      //Dictionary for types and its loaders pairs, f.e. string and AddString
+      TtgParamsLoaderDictionary = TDictionary< PTypeInfo, TtgParamLoaderMethod>;
   private
     FToken: string;
     FPollingTimeout: Integer;
@@ -83,13 +87,18 @@ type
     FOnReceiveGeneralError: TtgOnReceiveGeneralError;
     FOnRawData: TtgOnReceiveRawData;
     FOnChannelPost: TtgOnChannelPost;
+
+    FDictParamLoaders : TDictionary< PTypeInfo, TtgParamLoaderMethod>;
+
     function GetVersionAPI: string;
     /// <summary>
     ///   Мастер-функция для запросов на сервак
-    /// </summary>
+    /// </summary>    ///
     function API<T>(const Method: string; Parameters: TDictionary<string, TValue>): T;
     function ParamsToFormData(Parameters: TDictionary<string, TValue>): TMultipartFormData;
     function ArrayToString<T: class, constructor>(LArray: TArray<T>): string;
+    procedure InitParamLoadersDictionary;
+
   protected
     procedure ErrorHandler(AException: Exception);
     procedure SetIsReceiving(const Value: Boolean);
@@ -1684,12 +1693,40 @@ begin
   FIsReceiving := False;
   PollingTimeout := 1000;
   MessageOffset := 0;
+  InitParamLoadersDictionary;
 end;
+
+destructor TTelegramBotCore.Destroy;
+begin
+  Self.PollingTimeout := 0;
+  if IsReceiving then
+    IsReceiving := False;
+
+  FDictParamLoaders.Free;
+  inherited;
+end;
+
 
 function TTelegramBotCore.GetVersionAPI: string;
 begin
   Result := '3.1.1';
 end;
+
+procedure TTelegramBotCore.InitParamLoadersDictionary;
+begin
+  //init type-lookup dictionary
+  FDictParamLoaders:=TDictionary<PTypeInfo, TtgParamLoaderMethod>.Create;
+
+  //primitive types
+  FDictParamLoaders.Add(PTypeInfo(TypeInfo(integer)), TtgParamLoader.AddInteger);
+  FDictParamLoaders.Add(PTypeInfo(TypeInfo(string )), TtgParamLoader.AddString);
+  FDictParamLoaders.Add(PTypeInfo(TypeInfo(int64  )), TtgParamLoader.AddInt64);
+  FDictParamLoaders.Add(PTypeInfo(TypeInfo(boolean)), TtgParamLoader.AddBoolean);
+
+  //class types
+  FDictParamLoaders.Add(PTypeInfo(TypeInfo(TtgFileToSend)), TtgParamLoader.AddClass_TtgFileToSend);
+ end;
+
 
 function TTelegramBotCore.API<T>(const Method: string; Parameters: TDictionary<string, TValue>): T;
 var
@@ -1771,53 +1808,41 @@ end;
 {$ENDIF}
 
 function TTelegramBotCore.ParamsToFormData(Parameters: TDictionary<string, TValue>): TMultipartFormData;
-var
-  Parameter: TPair<string, TValue>;
+var Parameter : TPair<string, TValue>;
+    addProc   : TtgParamLoaderMethod;
 begin
   Result := TMultipartFormData.Create;
+
   for Parameter in Parameters do
   begin
-    if Parameter.Value.IsType<string>then
+    //skip all empty params
+    if parameter.Value.IsEmpty then continue;
+
+    //look for the given parameter type
+    if FDictParamLoaders.TryGetValue(parameter.Value.TypeInfo, addProc) then
     begin
-      if not Parameter.Value.AsString.IsEmpty then
-        Result.AddField(Parameter.Key, Parameter.Value.AsString);
-    end
-    else if Parameter.Value.IsType<Int64>then
-    begin
-      if Parameter.Value.AsInt64 <> 0 then
-        Result.AddField(Parameter.Key, Parameter.Value.AsInt64.ToString);
-    end
-    else if Parameter.Value.IsType<Boolean>then
-    begin
-      if Parameter.Value.AsBoolean then
-        Result.AddField(Parameter.Key, Parameter.Value.AsBoolean.ToString(TUseBoolStrs.True));
-    end
-    else if Parameter.Value.IsType<TtgFileToSend>then
-    begin
-      { TODO -oOwner -cGeneral : Отправка файлов }
-      with Parameter.Value.AsType<TtgFileToSend>do
-      begin
-        if Assigned(Content) then
-          Result.AddStream(Parameter.Key, Content)
-        else
-          Result.AddFile(Parameter.Key, FileName);
-      end;
-    end
-    else if Parameter.Value.Kind = tkClass then
+      addProc(result, parameter.Value.TypeInfo, parameter.Key,  parameter.Value);
+      continue; //param added OK
+    end;
+
+    //last variant to search
+    if Parameter.Value.Kind = tkClass then
     begin
       { TODO -oOwner -cGeneral : Проверить че за херня тут твориться }
       if not Parameter.Value.IsEmpty then
         Result.AddField(Parameter.Key, Parameter.Value.AsObject.AsJSON);
     end
-    else
-      raise ETelegramUnknownData.Create('Check parametr type ' + Parameter.Value.ToString);
+     else raise ETelegramUnknownData.Create('Check parameter type ' + Parameter.Value.ToString);
   end;
 end;
 
 procedure TTelegramBotCore.SetIsReceiving(const Value: Boolean);
 begin
-  if (csDesigning in ComponentState) then
-    Exit;
+  if (csDesigning in ComponentState) then exit;
+
+  // duplicate FReceiver creation and freeing protection
+  if FIsReceiving=Value then exit;
+
   FIsReceiving := Value;
   if Value then
   begin
@@ -1864,13 +1889,6 @@ begin
   end;
 end;
 
-destructor TTelegramBotCore.Destroy;
-begin
-  Self.PollingTimeout := 0;
-  if IsReceiving then
-    IsReceiving := False;
-  inherited;
-end;
 {$ENDREGION}
 { TTelegram }
 {$REGION 'Getting updates'}
