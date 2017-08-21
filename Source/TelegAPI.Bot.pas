@@ -69,9 +69,6 @@ type
       public
         property Bot: TTelegramBot read FBot write FBot;
       end;
-
-      //Dictionary for types and its loaders pairs, f.e. string and AddString
-      TtgParamsLoaderDictionary = TDictionary<PTypeInfo, TtgParamLoader.TLoader>;
   private
     FToken: string;
     FPollingTimeout: Integer;
@@ -1755,7 +1752,7 @@ begin
         raise EApiRequestException.FromApiResponse<T>(LApiResponse, Parameters);
     end;
     Result := LApiResponse.ResultObject;
-    LApiResponse.ResultObject := default(T);
+    LApiResponse.ResultObject := Default(T);
   finally
     FreeAndNil(LApiResponse);
   end;
@@ -1822,10 +1819,8 @@ end;
 
 procedure TTelegramBotCore.SetIsReceiving(const Value: Boolean);
 begin
-  if (csDesigning in ComponentState) then
-    Exit;
   // duplicate FReceiver creation and freeing protection
-  if FIsReceiving = Value then
+  if (csDesigning in ComponentState) or (FIsReceiving = Value) then
     Exit;
   FIsReceiving := Value;
   if Value then
@@ -1844,8 +1839,8 @@ end;
 
 procedure TTelegramBotCore.SetUseSynchronize(const Value: Boolean);
 begin
-  if Value = FUseSynchronize then exit;
-
+  if Value = FUseSynchronize then
+    Exit;
   if IsReceiving then
     IsReceiving := False;
   FUseSynchronize := Value;

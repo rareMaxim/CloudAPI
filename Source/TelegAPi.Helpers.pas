@@ -3,11 +3,10 @@ unit TelegAPi.Helpers;
 interface
 
 uses
-  {..} TelegAPi.Bot
-  {} , TelegAPi.Types.Enums
-  {} , System.Classes
-  {} , System.Net.Mime
-  {.};
+  TelegAPi.Bot,
+  TelegAPi.Types.Enums,
+  System.Classes,
+  System.Net.Mime;
 
 type
   TTelegramBotHelper = class helper for TTelegramBotCore
@@ -23,24 +22,23 @@ type
   end;
 
   TSendChatActionHelper = record helper for TtgSendChatAction
-    function ToString: String;
+    function ToString: string;
   end;
 
-  TtgTMultipartFormDataHelper = Class helper for TMultipartFormData
+  TtgTMultipartFormDataHelper = class helper for TMultipartFormData
     /// <summary>
     ///   Add a form data Stream
     /// </summary>
-    procedure AddStream(const AFieldName: string; Data: TStream); experimental;
-  End;
+    procedure AddStream(const AFieldName: string; Data: TStream);
+  end;
 
 implementation
 
 uses
-  {..} System.IOUtils
-  {} , System.SysUtils
-  {} , System.Generics.Collections
-  {} , System.RegularExpressions
-  {.};
+  System.IOUtils,
+  System.SysUtils,
+  System.Generics.Collections,
+  System.RegularExpressions;
 
 { TtgParseModeHelper }
 
@@ -62,7 +60,6 @@ function TAllowedUpdatesHelper.ToString: string;
 var
   LAllowed: TList<string>;
 begin
-  Result := '[';
   LAllowed := TList<string>.Create;
   try
     if TAllowedUpdate.Message in Self then
@@ -79,17 +76,15 @@ begin
       LAllowed.Add('"chosen_inline_result"');
     if TAllowedUpdate.Callback_query in Self then
       LAllowed.Add('"callback_query"');
-    Result := Result + Result.Join(',', LAllowed.ToArray);
+    Result := '[' + Result.Join(',', LAllowed.ToArray) + ']';
   finally
     LAllowed.Free;
   end;
-  Result := Result + ']';
 end;
 
 { TtgTMultipartFormDataHelper }
 
-procedure TtgTMultipartFormDataHelper.AddStream(const AFieldName: string;
-  Data: TStream);
+procedure TtgTMultipartFormDataHelper.AddStream(const AFieldName: string; Data: TStream);
 var
   lFileName: string;
   LFileStream: TFileStream;
@@ -119,7 +114,7 @@ end;
 
 { TSendChatActionHelper }
 
-function TSendChatActionHelper.ToString: String;
+function TSendChatActionHelper.ToString: string;
 begin
   case Self of
     TtgSendChatAction.Typing:
@@ -146,3 +141,4 @@ begin
 end;
 
 end.
+
