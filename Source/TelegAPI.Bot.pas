@@ -22,6 +22,8 @@ uses
 type
   TtgOnUpdate = procedure(ASender: TObject; AUpdate: TtgUpdate) of object;
 
+  TtgOnUpdates = procedure(ASender: TObject; AUpdates: TArray<TtgUpdate>) of object;
+
   TtgOnMessage = procedure(ASender: TObject; AMessage: TtgMessage) of object;
 
   TtgOnInlineQuery = procedure(ASender: TObject; AInlineQuery: TtgInlineQuery) of object;
@@ -88,6 +90,7 @@ type
     FOnRawData: TtgOnReceiveRawData;
     FOnChannelPost: TtgOnChannelPost;
     FParamLoader: TtgParamLoader;
+    FOnUpdates: TtgOnUpdates;
     function GetVersionAPI: string;
     /// <summary>
     ///   Мастер-функция для запросов на сервак
@@ -163,6 +166,7 @@ type
     ///   </para>
     /// </summary>
     property OnUpdate: TtgOnUpdate read FOnUpdate write FOnUpdate;
+    property OnUpdates: TtgOnUpdates read FOnUpdates write FOnUpdates;
     /// <summary>
     ///   <para>
     ///     Событие возникает когда получено <see cref="TelegAPi.Types|TtgMessage" />
@@ -2724,6 +2728,8 @@ begin
         var
           I: Integer;
         begin
+          if Assigned(Bot.OnUpdates) then
+            Bot.OnUpdates(Self, LUpdates);
           for I := Low(LUpdates) to High(LUpdates) do
           begin
             Self.OnUpdateReceived(LUpdates[I]);
