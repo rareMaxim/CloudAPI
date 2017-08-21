@@ -2,24 +2,64 @@ object Main: TMain
   Left = 0
   Top = 0
   Caption = 'Form1'
-  ClientHeight = 319
-  ClientWidth = 577
+  ClientHeight = 409
+  ClientWidth = 453
   FormFactor.Width = 320
   FormFactor.Height = 480
   FormFactor.Devices = [Desktop]
-  OnCreate = FormCreate
   OnClose = FormClose
   DesignerMasterStyle = 0
-  object mmo1: TMemo
+  object mmoLog: TMemo
     Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
     DataDetectorTypes = []
     Align = Client
-    Size.Width = 577.000000000000000000
-    Size.Height = 319.000000000000000000
+    Size.Width = 453.000000000000000000
+    Size.Height = 376.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 2
-    Viewport.Width = 573.000000000000000000
-    Viewport.Height = 315.000000000000000000
+    Viewport.Width = 449.000000000000000000
+    Viewport.Height = 372.000000000000000000
+  end
+  object Layout1: TLayout
+    Align = Top
+    Padding.Left = 5.000000000000000000
+    Padding.Top = 5.000000000000000000
+    Padding.Right = 5.000000000000000000
+    Padding.Bottom = 5.000000000000000000
+    Size.Width = 453.000000000000000000
+    Size.Height = 33.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 4
+    object lblToken: TLabel
+      Align = Left
+      Position.X = 5.000000000000000000
+      Position.Y = 5.000000000000000000
+      Size.Width = 44.000000000000000000
+      Size.Height = 23.000000000000000000
+      Size.PlatformDefault = False
+      Text = 'Token: '
+    end
+    object edtToken: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      Align = Client
+      TabOrder = 1
+      Margins.Right = 5.000000000000000000
+      Size.Width = 346.000000000000000000
+      Size.Height = 23.000000000000000000
+      Size.PlatformDefault = False
+      TextPrompt = 'Token from @BotFather'
+    end
+    object swtchToken: TSwitch
+      Align = Right
+      IsChecked = False
+      Position.X = 400.000000000000000000
+      Position.Y = 5.000000000000000000
+      Size.Width = 48.000000000000000000
+      Size.Height = 23.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 2
+      OnSwitch = swtchTokenSwitch
+    end
   end
   object tgBot: TTelegramBot
     OnMessage = tgBotMessage

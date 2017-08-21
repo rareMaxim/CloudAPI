@@ -14,13 +14,21 @@ uses
   TelegAPI.Bot,
   TelegAPI.Types,
   TelegAPI.Exceptions,
-  FMX.Edit, FMX.StdCtrls, FMX.Controls, FMX.Controls.Presentation, FMX.ScrollBox;
+  FMX.Edit,
+  FMX.StdCtrls,
+  FMX.Controls,
+  FMX.Controls.Presentation,
+  FMX.ScrollBox,
+  FMX.Layouts;
 
 type
   TMain = class(TForm)
     tgBot: TTelegramBot;
-    mmo1: TMemo;
-    procedure FormCreate(Sender: TObject);
+    mmoLog: TMemo;
+    Layout1: TLayout;
+    lblToken: TLabel;
+    edtToken: TEdit;
+    swtchToken: TSwitch;
     procedure tgBotInlineResultChosen(ASender: TObject; AChosenInlineResult: TtgChosenInlineResult);
     procedure tgBotInlineQuery(ASender: TObject; AInlineQuery: TtgInlineQuery);
     procedure tgBotMessage(ASender: TObject; AMessage: TtgMessage);
@@ -30,6 +38,7 @@ type
     procedure tgBotDisconnect(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure tgBotReceiveGeneralError(ASender: TObject; AException: Exception);
+    procedure swtchTokenSwitch(Sender: TObject);
   private
     { Private declarations }
     procedure WriteLine(const AValue: string);
@@ -63,15 +72,6 @@ uses
 procedure TMain.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   tgBot.IsReceiving := False;
-end;
-
-procedure TMain.FormCreate(Sender: TObject);
-begin
-  ReportMemoryLeaksOnShutdown := True;
-  tgBot.Token := {$I ..\token.inc};
-  if not tgBot.IsValidToken then
-    raise ELoginCredentialError.Create('invalid token format');
-  tgBot.IsReceiving := True;
 end;
 
 procedure TMain.ParseLocationMessage(Msg: TtgMessage);
@@ -139,6 +139,14 @@ begin
   tgBot.SendMessage(Msg.Chat.Id, 'Who or Where are you?', TtgParseMode.default, False, False, 0, kb).Free;
 end;
 
+procedure TMain.swtchTokenSwitch(Sender: TObject);
+begin
+  tgBot.Token := edtToken.Text;
+  if not tgBot.IsValidToken then
+    raise ELoginCredentialError.Create('invalid token format');
+  tgBot.IsReceiving := True;
+end;
+
 procedure TMain.SendPhoto(Msg: TtgMessage);
 const
   PATH_PHOTO = 'C:\Users\Public\Pictures\Sample Pictures\Tulips.jpg';
@@ -146,6 +154,8 @@ var
   LFile: TtgFileToSend;
 begin
   tgBot.SendChatAction(Msg.Chat.Id, TtgSendChatAction.UploadPhoto);
+  if not TFile.Exists(PATH_PHOTO) then
+    WriteLine('Change path to photo in metod: TMain.SendPhoto');
   LFile := TtgFileToSend.Create(PATH_PHOTO);
   try
     tgBot.SendPhoto(Msg.Chat.ID, LFile, 'Nice Picture').Free;
@@ -289,10 +299,12 @@ end;
 
 procedure TMain.WriteLine(const AValue: string);
 begin
-  mmo1.Lines.Insert(0, AValue);
+  mmoLog.Lines.Add(AValue);
+  mmoLog.ScrollBy(0, mmoLog.ContentBounds.Bottom, False);
 end;
 
 initialization
+  ReportMemoryLeaksOnShutdown := True;
 
 finalization
   if ReportMemoryLeaksOnShutdown then
