@@ -89,9 +89,9 @@ type
     ///        ), sender of the original message.
     ///     </item>
     ///   </list>
-    ///   Example: A user requests to change the bot's language, bot replies to
-    ///   the request with a keyboard to select the new language. Other users
-    ///   in the group don't see the keyboard.
+    ///    Example: A user requests to change the bot's language, bot replies
+    ///   to the request with a keyboard to select the new language. Other
+    ///   users in the group don't see the keyboard.
     /// </summary>
     [Alias('selective')]
     Selective: Boolean;
@@ -128,7 +128,7 @@ type
     /// <summary>
     ///   Array of <see cref="TelegAPi.Types|TtgInlineKeyboardButton" /> rows,
     ///   each represented by an Array of <see cref="TelegAPi.Types|TtgInlineKeyboardButton" />
-    ///   .
+    ///    .
     /// </summary>
     [Alias('inline_keyboard')]
     property Keyboard;

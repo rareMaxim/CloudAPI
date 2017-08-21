@@ -96,7 +96,6 @@ type
     /// <summary>
     ///   Мастер-функция для запросов на сервак
     /// </summary>
-    ///  ///
     function API<T>(const Method: string; Parameters: TDictionary<string, TValue>): T;
     function ParamsToFormData(Parameters: TDictionary<string, TValue>): TMultipartFormData;
     function ArrayToString<T: class, constructor>(LArray: TArray<T>): string;
@@ -139,7 +138,6 @@ type
     ///   UI)
     /// </summary>
     property UseSynchronize: Boolean read FUseSynchronize write SetUseSynchronize default True;
-
     /// <summary>
     ///   <para>
     ///     List the types of updates you want your bot to receive.
@@ -2766,7 +2764,6 @@ begin
           FreeAndNil(LUpdates[I]);
         end;
       end;
-      LUpdates := nil;
     end;
     Sleep(Bot.PollingTimeout);
   until (Terminated) or (not Bot.IsReceiving);

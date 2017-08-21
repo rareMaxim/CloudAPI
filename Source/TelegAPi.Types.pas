@@ -10,7 +10,6 @@ uses
   TelegAPi.Types.Enums;
 
 type
-
   /// <summary>
   ///   This object represents a Telegram user or bot.
   /// </summary>
@@ -222,7 +221,7 @@ type
     /// <summary>
     ///   Optional. Description, for supergroups and channel chats. Returned
     ///   only in <see cref="TelegAPI.Bot|TTelegramBot.GetChat(TValue)">getChat</see>
-    ///   .
+    ///    .
     /// </summary>
     [Alias('description')]
     Description: string;
@@ -524,8 +523,8 @@ type
     /// </summary>
     [Alias('latitude')]
     Latitude: Single;
-    constructor Create;overload;
-    constructor Create(ALongitude, ALatitude: Single);overload;
+    constructor Create; overload;
+    constructor Create(ALongitude, ALatitude: Single); overload;
   end;
 
   /// <summary>
@@ -1081,8 +1080,8 @@ type
   public
     FileName: string;
     Content: TStream;
-    constructor Create(const AFileName: string);overload;
-    constructor Create(AContent: TStream);overload;
+    constructor Create(const AFileName: string); overload;
+    constructor Create(AContent: TStream); overload;
     destructor Destroy; override;
   end;
 

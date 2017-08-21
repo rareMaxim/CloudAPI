@@ -30,8 +30,7 @@ type
     /// <summary>
     ///   Add a form data Stream
     /// </summary>
-    procedure AddStream(const AFieldName: string; Data: TStream);
-    experimental;
+    procedure AddStream(const AFieldName: string; Data: TStream); experimental;
   End;
 
 implementation

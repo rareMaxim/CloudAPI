@@ -7,19 +7,13 @@ uses
   System.Types,
   System.UITypes,
   System.Classes,
-  System.Variants,
   FMX.Types,
-  FMX.Controls,
   FMX.Forms,
-  FMX.Graphics,
   FMX.Dialogs,
-  FMX.Controls.Presentation,
   FMX.Memo,
-  FMX.ScrollBox,
   TelegAPI.Bot,
   TelegAPI.Types,
   TelegAPI.Exceptions,
-  FMX.StdCtrls,
   FMX.Edit;
 
 type

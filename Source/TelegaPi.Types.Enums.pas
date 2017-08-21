@@ -137,9 +137,7 @@ type
   ///   The type of a Message
   /// </summary>
 
-  TtgMessageType = (UnknownMessage = 0, TextMessage, PhotoMessage, AudioMessage,
-  VideoMessage, VideoNoteMessage, VoiceMessage, DocumentMessage, StickerMessage,
-  GameMessage, LocationMessage, ContactMessage, ServiceMessage, VenueMessage);
+  TtgMessageType = (UnknownMessage = 0, TextMessage, PhotoMessage, AudioMessage, VideoMessage, VideoNoteMessage, VoiceMessage, DocumentMessage, StickerMessage, GameMessage, LocationMessage, ContactMessage, ServiceMessage, VenueMessage);
   /// <summary>
   ///   Text parsing mode
   /// </summary>

@@ -230,8 +230,8 @@ end;
 procedure TTelegramBotConsole.SetIsReceiving(const Value: Boolean);
 begin
   // duplicate FReceiver creation and freeing protection
-  if FIsReceiving=Value then exit;
-
+  if FIsReceiving = Value then
+    Exit;
   FIsReceiving := Value;
   if Value then
   begin
@@ -246,8 +246,6 @@ begin
     FreeAndNil(FRecesiver);
   end;
 end;
-
-
 
 end.
 
