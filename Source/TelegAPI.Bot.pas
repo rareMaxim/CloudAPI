@@ -100,7 +100,9 @@ type
     ///   Мастер-функция для запросов на сервак
     /// </summary>
     function API<T>(const Method: string; Parameters: TDictionary<string, TValue>): T;
+    function SendDataToServer(const Method: string; Parameters: TDictionary<string, TValue>): string;
     function ParamsToFormData(Parameters: TDictionary<string, TValue>): TMultipartFormData;
+    function ApiTest<T>(const ARequest: string; Parameters: TDictionary<string, TValue>): T;
     function ArrayToString<T: class, constructor>(LArray: TArray<T>): string;
     procedure SetUseSynchronize(const Value: Boolean);
   protected
@@ -108,9 +110,6 @@ type
     procedure SetIsReceiving(const Value: Boolean);
     procedure DoDisconnect(ASender: TObject);
   public
-{$IFDEF DEBUG}
-    function ApiTest<T>(const ARequest: string): T;
-{$ENDIF}
     constructor Create(AOwner: TComponent); overload; override;
     destructor Destroy; override;
     /// <summary>
@@ -1723,11 +1722,7 @@ end;
 
 function TTelegramBotCore.API<T>(const Method: string; Parameters: TDictionary<string, TValue>): T;
 var
-  LHttp: THTTPClient;
-  LHttpResponse: IHTTPResponse;
-  LApiResponse: TtgApiResponse<T>;
-  LURL_TELEG: string;
-  LParamToDate: TMultipartFormData;
+  LTextResponse: string;
 begin
   if not Self.IsValidToken then
   begin
@@ -1735,33 +1730,19 @@ begin
       IsReceiving := False;
     raise EArgumentException.Create('Invalid token format');
   end;
-  LHttp := THTTPClient.Create;
+  LTextResponse := SendDataToServer(Method, Parameters);
+  if Assigned(OnReceiveRawData) then
+    OnReceiveRawData(Self, LTextResponse);
+  Result := ApiTest<T>(LTextResponse, Parameters);
+end;
+
+function TTelegramBotCore.ApiTest<T>(const ARequest: string; Parameters: TDictionary<string, TValue>): T;
+var
+  LApiResponse: TtgApiResponse<T>;
+begin
   LApiResponse := nil;
-  LParamToDate := nil;
   try
-    LHttp.ProxySettings := FProxySettings;
-    LURL_TELEG := 'https://api.telegram.org/bot' + FToken + '/' + Method;
-    try
-      if Assigned(Parameters) then
-      begin
-        LParamToDate := ParamsToFormData(Parameters);
-        LHttpResponse := LHttp.Post(LURL_TELEG, LParamToDate);
-      end
-      else
-      begin
-        LHttpResponse := LHttp.Get(LURL_TELEG);
-      end;
-    except
-      on E: Exception do
-      begin
-        Self.ErrorHandler(E);
-        Result := Default(T);
-        Exit;
-      end;
-    end;
-    if Assigned(OnReceiveRawData) then
-      OnReceiveRawData(Self, LHttpResponse.ContentAsString);
-    LApiResponse := TtgApiResponse<T>.FromJSON(LHttpResponse.ContentAsString);
+    LApiResponse := TtgApiResponse<T>.FromJSON(ARequest);
     if not LApiResponse.Ok then
     begin
       if Assigned(OnReceiveError) then
@@ -1774,31 +1755,11 @@ begin
         raise EApiRequestException.FromApiResponse<T>(LApiResponse, Parameters);
     end;
     Result := LApiResponse.ResultObject;
-    LApiResponse.ResultObject := Default(T);
-  finally
-    FreeAndNil(LParamToDate);
-    FreeAndNil(LHttp);
-    FreeAndNil(LApiResponse);
-  end;
-end;
-
-{$IFDEF DEBUG}
-function TTelegramBotCore.ApiTest<T>(const ARequest: string): T;
-var
-  LApiResponse: TtgApiResponse<T>;
-begin
-  LApiResponse := nil;
-  try
-    LApiResponse := TtgApiResponse<T>.FromJSON(ARequest);
-    if not LApiResponse.Ok then
-      raise EApiRequestException.FromApiResponse<T>(LApiResponse);
-    Result := LApiResponse.ResultObject;
-    LApiResponse.ResultObject := Default(T);
+    LApiResponse.ResultObject := default(T);
   finally
     FreeAndNil(LApiResponse);
   end;
 end;
-{$ENDIF}
 
 function TTelegramBotCore.ParamsToFormData(Parameters: TDictionary<string, TValue>): TMultipartFormData;
 var
@@ -1825,6 +1786,37 @@ begin
     end
     else
       raise ETelegramUnknownData.Create('Check parameter type ' + LParameter.Value.ToString);
+  end;
+end;
+
+function TTelegramBotCore.SendDataToServer(const Method: string; Parameters: TDictionary<string, TValue>): string;
+var
+  LHttp: THTTPClient;
+  LHttpResponse: IHTTPResponse;
+  LFullUrl: string;
+  LParamToDate: TMultipartFormData;
+begin
+  LHttp := THTTPClient.Create;
+  LParamToDate := nil;
+  try
+    LHttp.ProxySettings := FProxySettings;
+    LFullUrl := 'https://api.telegram.org/bot' + FToken + '/' + Method;
+    try
+      if Assigned(Parameters) then
+      begin
+        LParamToDate := ParamsToFormData(Parameters);
+        LHttpResponse := LHttp.Post(LFullUrl, LParamToDate);
+      end
+      else
+        LHttpResponse := LHttp.Get(LFullUrl);
+      Result := LHttpResponse.ContentAsString(TEncoding.UTF8);
+    except
+      on E: Exception do
+        Self.ErrorHandler(E);
+    end;
+  finally
+    FreeAndNil(LParamToDate);
+    FreeAndNil(LHttp);
   end;
 end;
 
@@ -2747,17 +2739,16 @@ end;
 
 procedure TTelegramBotCore.TtgRecesiver.DoOnUpdates(AUpdates: TArray<TtgUpdate>);
 begin
-  if Assigned(Bot.OnUpdates) then
-  begin
-    if Bot.UseSynchronize then
-      TThread.Synchronize(nil,
-        procedure
-        begin
-          Bot.OnUpdates(Self, AUpdates);
-        end)
-    else
-      Bot.OnUpdates(Self, AUpdates);
-  end;
+  if not Assigned(Bot.OnUpdates) then
+    Exit;
+  if Bot.UseSynchronize then
+    TThread.Synchronize(nil,
+      procedure
+      begin
+        Bot.OnUpdates(Self, AUpdates);
+      end)
+  else
+    Bot.OnUpdates(Self, AUpdates);
 end;
 
 procedure TTelegramBotCore.TtgRecesiver.Execute;

@@ -185,7 +185,6 @@ end;
 procedure TTelegramBotConsole.TtgRecesiver.Execute;
 var
   LUpdates: TArray<TtgUpdate>;
-  I: Integer;
 begin
   if Assigned(Bot.OnConnect) then
     Bot.OnConnect();

@@ -14,14 +14,12 @@ uses
   TelegAPI.Bot,
   TelegAPI.Types,
   TelegAPI.Exceptions,
-  FMX.Edit;
+  FMX.Edit, FMX.StdCtrls, FMX.Controls, FMX.Controls.Presentation, FMX.ScrollBox;
 
 type
   TMain = class(TForm)
     tgBot: TTelegramBot;
     mmo1: TMemo;
-    edt1: TEdit;
-    btn1: TEditButton;
     procedure FormCreate(Sender: TObject);
     procedure tgBotInlineResultChosen(ASender: TObject; AChosenInlineResult: TtgChosenInlineResult);
     procedure tgBotInlineQuery(ASender: TObject; AInlineQuery: TtgInlineQuery);
@@ -32,7 +30,6 @@ type
     procedure tgBotDisconnect(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure tgBotReceiveGeneralError(ASender: TObject; AException: Exception);
-    procedure btn1Click(Sender: TObject);
   private
     { Private declarations }
     procedure WriteLine(const AValue: string);
@@ -62,15 +59,6 @@ uses
   TelegAPI.Types.InlineQueryResults,
   TelegAPI.Types.InputMessageContents;
 {$R *.fmx}
-
-procedure TMain.btn1Click(Sender: TObject);
-var
-  LJson: string;
-  LReturn: TArray<TtgUpdate>;
-begin
-  LJson := TFile.ReadAllText(edt1.Text, TEncoding.UTF8);
-  LReturn := tgBot.ApiTest<TArray<TtgUpdate>>(LJson);
-end;
 
 procedure TMain.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
