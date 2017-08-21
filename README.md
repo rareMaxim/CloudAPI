@@ -14,7 +14,7 @@ Telega π - Библиотека для работы с Telegram Bot API в Delp
 | Базовые методы    | Да            | Не полностью    |
 | Базовые типы      | Да            | Не полностью    | 
 | Updating messages | Да            | Нет             | 
-| Inline mode       | 95-100 %      | Нет             | 
+| Inline mode       | да            | Нет             | 
 | Payments          | Да            | Нет             |  
 | Games             | Да            | Нет             |  
 
@@ -22,9 +22,16 @@ Telega π - Библиотека для работы с Telegram Bot API в Delp
 
 Вы можете помочь проекту:
 
-* [Созданием баг-репортов и запросов новых возможностей](https://github.com/ms301/TelegAPI/issues)
-* Рекламой проекта
-* [**Donate**](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=5ASFXPC68MS2U)
+### [Созданием баг-репортов и запросов новых возможностей](https://github.com/ms301/TelegAPI/issues)
+Благодаррю за активную помощь проекту:
+* [Эльдар](https://github.com/deadalice)
+* [Андрей](https://github.com/andb24)
+
+а так же многих других, кто спрашивает/предлагает фичи/указывает баги. 
+### Рекламой проекта
+
+### [**Donate**](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=5ASFXPC68MS2U)
+- К сожалинию, еще никто не помог материально =(
 
 ## Зависимости
 
