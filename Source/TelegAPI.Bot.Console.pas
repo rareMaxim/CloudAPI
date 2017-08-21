@@ -16,6 +16,9 @@ type
       private
         FBot: TTelegramBotConsole;
       protected
+        function GetUpdates: TArray<TtgUpdate>;
+        procedure DoOnUpdates(AUpdates: TArray<TtgUpdate>);
+        procedure DoOnUpdate(AUpdates: TArray<TtgUpdate>);
         procedure Execute; override;
         /// <summary>
         ///   Raises the <see cref="TelegAPI.Bot|TtgOnUpdate" />, <see cref="TelegAPI.Bot|TtgOnMessage" />
@@ -48,6 +51,7 @@ type
     FOnConnect: TProc;
     FOnReceiveGeneralError: TProc<Exception>;
     FOnRawData: TProc<string>;
+    FOnUpdates: TProc<TArray<TtgUpdate>>;
   protected
     procedure SetIsReceiving(const Value: Boolean);
     procedure DoDisconnect(ASender: TObject);
@@ -74,6 +78,7 @@ type
     ///   </para>
     /// </summary>
     property OnUpdate: TProc<TtgUpdate> read FOnUpdate write FOnUpdate;
+    property OnUpdates: TProc<TArray<TtgUpdate>> read FOnUpdates write FOnUpdates;
     /// <summary>
     ///   <para>
     ///     Событие возникает когда получено <see cref="TelegAPi.Types|TtgMessage" />
@@ -160,6 +165,23 @@ uses
 
 { TTelegramBotConsole.TtgRecesiver }
 
+procedure TTelegramBotConsole.TtgRecesiver.DoOnUpdate(AUpdates: TArray<TtgUpdate>);
+var
+  I: Integer;
+begin
+  for I := Low(AUpdates) to High(AUpdates) do
+  begin
+    Bot.OnUpdate(AUpdates[I]);
+    FreeAndNil(AUpdates[I]);
+  end;
+end;
+
+procedure TTelegramBotConsole.TtgRecesiver.DoOnUpdates(AUpdates: TArray<TtgUpdate>);
+begin
+  if Assigned(Bot.OnUpdates) then
+    Bot.OnUpdates(AUpdates);
+end;
+
 procedure TTelegramBotConsole.TtgRecesiver.Execute;
 var
   LUpdates: TArray<TtgUpdate>;
@@ -168,21 +190,25 @@ begin
   if Assigned(Bot.OnConnect) then
     Bot.OnConnect();
   repeat
-    LUpdates := FBot.GetUpdates(Bot.MessageOffset, 100, 0, Bot.AllowedUpdates);
-    if Length(LUpdates) > 0 then
+    LUpdates := Self.GetUpdates;
+    if (Assigned(LUpdates)) and (Length(LUpdates) > 0) and (not Terminated) then
     begin
       Bot.MessageOffset := LUpdates[High(LUpdates)].ID + 1;
-      for I := Low(LUpdates) to High(LUpdates) do
-        Self.OnUpdateReceived(LUpdates[I]);
-      if Assigned(LUpdates) then
-      begin
-        for I := Low(LUpdates) to High(LUpdates) do
-          FreeAndNil(LUpdates[I]);
-        LUpdates := nil;
-      end;
+      Self.DoOnUpdates(LUpdates);
+      Self.DoOnUpdate(LUpdates);
     end;
     Sleep(Bot.PollingTimeout);
   until (Terminated) or (not Bot.IsReceiving);
+end;
+
+function TTelegramBotConsole.TtgRecesiver.GetUpdates: TArray<TtgUpdate>;
+begin
+  try
+    Result := FBot.GetUpdates(Bot.MessageOffset, 100, 0, Bot.AllowedUpdates);
+  except
+    on E: Exception do
+      FBot.ErrorHandler(E);
+  end;
 end;
 
 procedure TTelegramBotConsole.TtgRecesiver.OnUpdateReceived(AValue: TtgUpdate);

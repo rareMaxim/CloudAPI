@@ -49,7 +49,9 @@ type
       private
         FBot: TTelegramBot;
       protected
-        procedure Execute; override;
+        function GetUpdates: TArray<TtgUpdate>;
+        procedure DoOnUpdates(AUpdates: TArray<TtgUpdate>);
+        procedure DoOnUpdate(AUpdates: TArray<TtgUpdate>);
         /// <summary>
         ///   Raises the <see cref="TelegAPI.Bot|TtgOnUpdate" />, <see cref="TelegAPI.Bot|TtgOnMessage" />
         ///    , <see cref="TelegAPI.Bot|TtgOnInlineQuery" /> , <see cref="TelegAPI.Bot|TtgOnInlineResultChosen" />
@@ -63,6 +65,7 @@ type
         ///   Возникает если получено неизвестное обновление
         /// </exception>
         procedure OnUpdateReceived(AValue: TtgUpdate);
+        procedure Execute; override;
       public
         property Bot: TTelegramBot read FBot write FBot;
       end;
@@ -2721,52 +2724,68 @@ end;
 {$REGION 'Async'}
 { TTelegramBotCore.TtgRecesiver }
 
+procedure TTelegramBotCore.TtgRecesiver.DoOnUpdate(AUpdates: TArray<TtgUpdate>);
+var
+  I: Integer;
+begin
+  for I := Low(AUpdates) to High(AUpdates) do
+  begin
+    if Bot.UseSynchronize then
+      TThread.Synchronize(nil,
+        procedure
+        begin
+          Self.OnUpdateReceived(AUpdates[I]);
+          FreeAndNil(AUpdates[I]);
+        end)
+    else
+    begin
+      Bot.OnUpdate(Self, AUpdates[I]);
+      FreeAndNil(AUpdates[I]);
+    end;
+  end;
+end;
+
+procedure TTelegramBotCore.TtgRecesiver.DoOnUpdates(AUpdates: TArray<TtgUpdate>);
+begin
+  if Assigned(Bot.OnUpdates) then
+  begin
+    if Bot.UseSynchronize then
+      TThread.Synchronize(nil,
+        procedure
+        begin
+          Bot.OnUpdates(Self, AUpdates);
+        end)
+    else
+      Bot.OnUpdates(Self, AUpdates);
+  end;
+end;
+
 procedure TTelegramBotCore.TtgRecesiver.Execute;
 var
   LUpdates: TArray<TtgUpdate>;
-  I: Integer;
 begin
   if Assigned(Bot.OnConnect) then
     Bot.OnConnect(Bot);
   repeat
-    try
-      LUpdates := FBot.GetUpdates(Bot.MessageOffset, 100, 0, Bot.AllowedUpdates);
-    except
-      on E: Exception do
-        FBot.ErrorHandler(E);
-    end;
+    LUpdates := Self.GetUpdates;
     if (Assigned(LUpdates)) and (Length(LUpdates) > 0) and (not Terminated) then
     begin
       Bot.MessageOffset := LUpdates[High(LUpdates)].ID + 1;
-      if Assigned(Bot.OnUpdates) then
-      begin
-        if Bot.UseSynchronize then
-          TThread.Synchronize(nil,
-            procedure
-            begin
-              Bot.OnUpdates(Self, LUpdates);
-            end)
-        else
-          Bot.OnUpdates(Self, LUpdates);
-      end;
-      for I := Low(LUpdates) to High(LUpdates) do
-      begin
-        if Bot.UseSynchronize then
-          TThread.Synchronize(nil,
-            procedure
-            begin
-              Self.OnUpdateReceived(LUpdates[I]);
-              FreeAndNil(LUpdates[I]);
-            end)
-        else
-        begin
-          Bot.OnUpdate(Self, LUpdates[I]);
-          FreeAndNil(LUpdates[I]);
-        end;
-      end;
+      Self.DoOnUpdates(LUpdates);
+      Self.DoOnUpdate(LUpdates);
     end;
     Sleep(Bot.PollingTimeout);
   until (Terminated) or (not Bot.IsReceiving);
+end;
+
+function TTelegramBotCore.TtgRecesiver.GetUpdates: TArray<TtgUpdate>;
+begin
+  try
+    Result := FBot.GetUpdates(Bot.MessageOffset, 100, 0, Bot.AllowedUpdates);
+  except
+    on E: Exception do
+      FBot.ErrorHandler(E);
+  end;
 end;
 
 procedure TTelegramBotCore.TtgRecesiver.OnUpdateReceived(AValue: TtgUpdate);
