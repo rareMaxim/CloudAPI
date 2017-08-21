@@ -2760,7 +2760,7 @@ begin
             end)
         else
         begin
-          Bot.OnUpdates(Self, LUpdates);
+          Bot.OnUpdate(Self, LUpdates[I]);
           FreeAndNil(LUpdates[I]);
         end;
       end;
