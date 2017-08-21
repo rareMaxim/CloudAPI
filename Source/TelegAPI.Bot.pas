@@ -1844,6 +1844,8 @@ end;
 
 procedure TTelegramBotCore.SetUseSynchronize(const Value: Boolean);
 begin
+  if Value = FUseSynchronize then exit;
+
   if IsReceiving then
     IsReceiving := False;
   FUseSynchronize := Value;
