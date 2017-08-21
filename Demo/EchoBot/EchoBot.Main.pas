@@ -310,5 +310,11 @@ begin
   mmo1.Lines.Insert(0, AValue);
 end;
 
+initialization
+
+finalization
+  if ReportMemoryLeaksOnShutdown then
+    CheckSynchronize();
+
 end.
 
