@@ -97,7 +97,7 @@ type
     ///   Мастер-функция для запросов на сервак
     /// </summary>
     function API<T>(const Method: string; Parameters: TDictionary<string, TValue>): T;
-    function SendDataToServer(const Method: string; Parameters: TDictionary<string, TValue>): string;
+    function SendDataToServer(const Method: string; Parameters: TDictionary<string, TValue>; var Response:string): boolean;
     function ParamsToFormData(Parameters: TDictionary<string, TValue>): TMultipartFormData;
     function ApiTest<T>(const ARequest: string; Parameters: TDictionary<string, TValue>): T;
     function ArrayToString<T: class, constructor>(LArray: TArray<T>): string;
@@ -1727,7 +1727,10 @@ begin
       IsReceiving := False;
     raise EArgumentException.Create('Invalid token format');
   end;
-  LTextResponse := SendDataToServer(Method, Parameters);
+  // при сбое сети ответа от сервера не будет, придёт exception от THttpClient
+  if not SendDataToServer(Method, Parameters, LTextResponse) then
+  <сообщаем об ошибке>
+
   if Assigned(OnReceiveRawData) then
     OnReceiveRawData(Self, LTextResponse);
   Result := ApiTest<T>(LTextResponse, Parameters);
@@ -1786,13 +1789,14 @@ begin
   end;
 end;
 
-function TTelegramBotCore.SendDataToServer(const Method: string; Parameters: TDictionary<string, TValue>): string;
+function TTelegramBotCore.SendDataToServer(const Method: string; Parameters: TDictionary<string, TValue>; var Response:string): boolean;
 var
   LHttp: THTTPClient;
   LHttpResponse: IHTTPResponse;
   LFullUrl: string;
   LParamToDate: TMultipartFormData;
 begin
+  result:=false;
   LHttp := THTTPClient.Create;
   LParamToDate := nil;
   try
@@ -1806,15 +1810,20 @@ begin
       end
       else
         LHttpResponse := LHttp.Get(LFullUrl);
-      Result := LHttpResponse.ContentAsString(TEncoding.UTF8);
+
+      Response := LHttpResponse.ContentAsString(TEncoding.UTF8);
     except
-      on E: Exception do
-        Self.ErrorHandler(E);
+        on E: Exception do
+        begin
+          Self.ErrorHandler(E);
+          exit;
+        end;
     end;
   finally
     FreeAndNil(LParamToDate);
     FreeAndNil(LHttp);
   end;
+  result:=true;
 end;
 
 procedure TTelegramBotCore.SetIsReceiving(const Value: Boolean);
