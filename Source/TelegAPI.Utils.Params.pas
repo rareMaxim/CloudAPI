@@ -1,59 +1,98 @@
 unit TelegAPI.Utils.Params;
+
 interface
 
-uses System.rtti,
-     System.TypInfo,
-     System.SysUtils,
-     TelegAPI.Types,
-     TelegAPI.Exceptions,
-     System.Net.Mime;
+uses
+  System.rtti,
+  System.TypInfo,
+  System.SysUtils,
+  TelegAPI.Types,
+  TelegAPI.Exceptions,
+  System.Net.Mime,
+  System.Generics.Collections;
 
-type //parameter loader method
-     TtgParamLoaderMethod = procedure(var mpfd:TMultipartFormData;
-                                      TypeInfo:PTypeInfo;
-                                      key:string;
-                                      value:TValue) of object;
+type
 
-     //This class is used by func. TTelegramBotCore.ParamsToFormData
-     //to locate suitable param loader for API request parameters preparation.
-     TtgParamLoader=class
-     public
-       class procedure AddInteger (var mpfd:TMultipartFormData; Type_Info:PTypeInfo;  key:string;  value:TValue);
-       class procedure AddString  (var mpfd:TMultipartFormData; Type_Info:PTypeInfo;  key:string;  value:TValue);
-       class procedure AddInt64   (var mpfd:TMultipartFormData; Type_Info:PTypeInfo;  key:string;  value:TValue);
-       class procedure AddBoolean (var mpfd:TMultipartFormData; Type_Info:PTypeInfo;  key:string;  value:TValue);
-       class procedure AddClass_TtgFileToSend(var mpfd:TMultipartFormData; TypeInfo:PTypeInfo; key:string; value:TValue);
-     end;
+  /// <summary>
+  ///  This class is used by func. TTelegramBotCore.ParamsToFormData
+  ///  to locate suitable param loader for API request parameters preparation.
+  /// </summary>
+  TtgParamLoader = class
+  public
+    type
+      //parameter loader method
+      TLoader = procedure(var AFormData: TMultipartFormData; TypeInfo: PTypeInfo; AKey: string; AValue: TValue) of object;
+  public
+    ParamLoaders: TDictionary<PTypeInfo, TtgParamLoader.TLoader>;
+  protected
+    procedure AddInteger(var AFormData: TMultipartFormData; ATypeInfo: PTypeInfo; AKey: string; AValue: TValue);
+    procedure AddString(var AFormData: TMultipartFormData; ATypeInfo: PTypeInfo; AKey: string; AValue: TValue);
+    procedure AddInt64(var AFormData: TMultipartFormData; ATypeInfo: PTypeInfo; AKey: string; AValue: TValue);
+    procedure AddBoolean(var AFormData: TMultipartFormData; ATypeInfo: PTypeInfo; AKey: string; AValue: TValue);
+    procedure AddClass_TtgFileToSend(var AFormData: TMultipartFormData; ATypeInfo: PTypeInfo; AKey: string; AValue: TValue);
+  public
+    constructor Create;
+    destructor Destroy; override;
+  end;
 
-implementation uses TelegAPI.Helpers;
+implementation
 
-class procedure TtgParamLoader.AddInteger(var mpfd: TMultipartFormData; Type_Info: PTypeInfo; key: string; value: TValue);
+uses
+  TelegAPI.Helpers;
+
+procedure TtgParamLoader.AddInteger(var AFormData: TMultipartFormData; ATypeInfo: PTypeInfo; AKey: string; AValue: TValue);
 begin
-  if Value.AsInteger <> 0 then mpfd.AddField(Key, Value.AsInteger.ToString);
+  if AValue.AsInteger <> 0 then
+    AFormData.AddField(AKey, AValue.AsInteger.ToString);
 end;
 
-class procedure TtgParamLoader.AddString(var mpfd: TMultipartFormData; Type_Info: PTypeInfo; key: string; value: TValue);
+procedure TtgParamLoader.AddString(var AFormData: TMultipartFormData; ATypeInfo: PTypeInfo; AKey: string; AValue: TValue);
 begin
-  if not value.AsString.IsEmpty then mpfd.AddField(Key, Value.AsString);
+  if not AValue.AsString.IsEmpty then
+    AFormData.AddField(AKey, AValue.AsString);
 end;
 
-class procedure TtgParamLoader.AddInt64(var mpfd: TMultipartFormData; Type_Info: PTypeInfo; key: string; value: TValue);
+constructor TtgParamLoader.Create;
 begin
-  if Value.AsInt64 <> 0 then mpfd.AddField(Key, Value.AsInt64.ToString);
+  //init type-lookup dictionary
+  ParamLoaders := TDictionary<PTypeInfo, TtgParamLoader.TLoader>.Create;
+  //primitive types
+  ParamLoaders.Add(PTypeInfo(TypeInfo(Integer)), AddInteger);
+  ParamLoaders.Add(PTypeInfo(TypeInfo(string)), AddString);
+  ParamLoaders.Add(PTypeInfo(TypeInfo(Int64)), AddInt64);
+  ParamLoaders.Add(PTypeInfo(TypeInfo(Boolean)), AddBoolean);
+  //class types
+  ParamLoaders.Add(PTypeInfo(TypeInfo(TtgFileToSend)), AddClass_TtgFileToSend);
 end;
 
-class procedure TtgParamLoader.AddBoolean(var mpfd: TMultipartFormData; Type_Info: PTypeInfo; key: string; value: TValue);
+destructor TtgParamLoader.Destroy;
 begin
-  if Value.AsBoolean then mpfd.AddField(Key, Value.AsBoolean.ToString(TUseBoolStrs.True));
+  ParamLoaders.Free;
+  inherited;
 end;
 
-class procedure TtgParamLoader.AddClass_TtgFileToSend(var mpfd: TMultipartFormData; TypeInfo: PTypeInfo; key: string; value: TValue);
-var fts:TtgFileToSend;
+procedure TtgParamLoader.AddInt64(var AFormData: TMultipartFormData; ATypeInfo: PTypeInfo; AKey: string; AValue: TValue);
 begin
-  fts:=Value.AsType<TtgFileToSend>;
+  if AValue.AsInt64 <> 0 then
+    AFormData.AddField(AKey, AValue.AsInt64.ToString);
+end;
 
-  if assigned(fts.Content) then mpfd.AddStream(Key, fts.Content)
-    else mpfd.AddFile(Key, fts.FileName);
+procedure TtgParamLoader.AddBoolean(var AFormData: TMultipartFormData; ATypeInfo: PTypeInfo; AKey: string; AValue: TValue);
+begin
+  if AValue.AsBoolean then
+    AFormData.AddField(AKey, AValue.AsBoolean.ToString(TUseBoolStrs.True));
+end;
+
+procedure TtgParamLoader.AddClass_TtgFileToSend(var AFormData: TMultipartFormData; ATypeInfo: PTypeInfo; AKey: string; AValue: TValue);
+var
+  LFileToSent: TtgFileToSend;
+begin
+  LFileToSent := AValue.AsType<TtgFileToSend>;
+  if Assigned(LFileToSent.Content) then
+    AFormData.AddStream(AKey, LFileToSent.Content)
+  else
+    AFormData.AddFile(AKey, LFileToSent.FileName);
 end;
 
 end.
+
