@@ -91,13 +91,16 @@ type
     FOnChannelPost: TtgOnChannelPost;
     FParamLoader: TtgParamLoader;
     FOnUpdates: TtgOnUpdates;
+    FUseSynchronize: Boolean;
     function GetVersionAPI: string;
     /// <summary>
     ///   Мастер-функция для запросов на сервак
-    /// </summary>    ///
+    /// </summary>
+    ///  ///
     function API<T>(const Method: string; Parameters: TDictionary<string, TValue>): T;
     function ParamsToFormData(Parameters: TDictionary<string, TValue>): TMultipartFormData;
     function ArrayToString<T: class, constructor>(LArray: TArray<T>): string;
+    procedure SetUseSynchronize(const Value: Boolean);
   protected
     procedure ErrorHandler(AException: Exception);
     procedure SetIsReceiving(const Value: Boolean);
@@ -131,6 +134,12 @@ type
     ///   The current message offset
     /// </summary>
     property MessageOffset: Integer read FMessageOffset write FMessageOffset default 0;
+    /// <summary>
+    ///   Асинхронные вызовы событий (небезопасно, если при этом обновляется
+    ///   UI)
+    /// </summary>
+    property UseSynchronize: Boolean read FUseSynchronize write SetUseSynchronize default True;
+
     /// <summary>
     ///   <para>
     ///     List the types of updates you want your bot to receive.
@@ -1694,7 +1703,7 @@ begin
   FIsReceiving := False;
   PollingTimeout := 1000;
   MessageOffset := 0;
-
+  FUseSynchronize := True;
 end;
 
 destructor TTelegramBotCore.Destroy;
@@ -1838,6 +1847,13 @@ begin
   begin
     FreeAndNil(FRecesiver);
   end;
+end;
+
+procedure TTelegramBotCore.SetUseSynchronize(const Value: Boolean);
+begin
+  if IsReceiving then
+    IsReceiving := False;
+  FUseSynchronize := Value;
 end;
 
 function TTelegramBotCore.ArrayToString<T>(LArray: TArray<T>): string;
@@ -2710,6 +2726,7 @@ end;
 procedure TTelegramBotCore.TtgRecesiver.Execute;
 var
   LUpdates: TArray<TtgUpdate>;
+  I: Integer;
 begin
   if Assigned(Bot.OnConnect) then
     Bot.OnConnect(Bot);
@@ -2720,27 +2737,36 @@ begin
       on E: Exception do
         FBot.ErrorHandler(E);
     end;
-    if Length(LUpdates) > 0 then
+    if (Assigned(LUpdates)) and (Length(LUpdates) > 0) and (not Terminated) then
     begin
       Bot.MessageOffset := LUpdates[High(LUpdates)].ID + 1;
-      TThread.Synchronize(nil,
-        procedure
-        var
-          I: Integer;
-        begin
-          if Assigned(Bot.OnUpdates) then
-            Bot.OnUpdates(Self, LUpdates);
-          for I := Low(LUpdates) to High(LUpdates) do
-          begin
-            Self.OnUpdateReceived(LUpdates[I]);
-          end;
-          if Assigned(LUpdates) then
-          begin
-            for I := Low(LUpdates) to High(LUpdates) do
+      if Assigned(Bot.OnUpdates) then
+      begin
+        if Bot.UseSynchronize then
+          TThread.Synchronize(nil,
+            procedure
+            begin
+              Bot.OnUpdates(Self, LUpdates);
+            end)
+        else
+          Bot.OnUpdates(Self, LUpdates);
+      end;
+      for I := Low(LUpdates) to High(LUpdates) do
+      begin
+        if Bot.UseSynchronize then
+          TThread.Synchronize(nil,
+            procedure
+            begin
+              Self.OnUpdateReceived(LUpdates[I]);
               FreeAndNil(LUpdates[I]);
-            LUpdates := nil;
-          end;
-        end);
+            end)
+        else
+        begin
+          Bot.OnUpdates(Self, LUpdates);
+          FreeAndNil(LUpdates[I]);
+        end;
+      end;
+      LUpdates := nil;
     end;
     Sleep(Bot.PollingTimeout);
   until (Terminated) or (not Bot.IsReceiving);
