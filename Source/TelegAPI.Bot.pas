@@ -24,7 +24,7 @@ type
 
   TtgOnUpdates = procedure(ASender: TObject; AUpdates: TArray<TtgUpdate>) of object;
 
-  TtgOnMessage = procedure(ASender: TObject; AMessage: TtgMessage) of object;
+  TtgOnMessage = procedure(ASender: TObject; AMessage: TTgMessage) of object;
 
   TtgOnInlineQuery = procedure(ASender: TObject; AInlineQuery: TtgInlineQuery) of object;
 
@@ -32,7 +32,7 @@ type
 
   TtgOnCallbackQuery = procedure(ASender: TObject; ACallbackQuery: TtgCallbackQuery) of object;
 
-  TtgOnChannelPost = procedure(ASender: TObject; AChanelPost: TtgMessage) of object;
+  TtgOnChannelPost = procedure(ASender: TObject; AChanelPost: TTgMessage) of object;
 
   TtgOnReceiveError = procedure(ASender: TObject; AApiRequestException: EApiRequestException) of object;
 
@@ -119,7 +119,7 @@ type
     /// </summary>
     property IsReceiving: Boolean read FIsReceiving write SetIsReceiving default False;
   published
-  {$REGION 'Property|Свойства'}
+{$REGION 'Property|Свойства'}
     /// <summary>
     ///   Proxy Settings to be used by the client.
     /// </summary>
@@ -443,7 +443,7 @@ type
     ///   On success, the sent <see cref="TelegAPi.Types|TtgMessage">Message</see>
     ///    is returned.
     /// </returns>
-    function SendMessage(const ChatId: TValue; const Text: string; ParseMode: TtgParseMode = TtgParseMode.Default; DisableWebPagePreview: Boolean = False; DisableNotification: Boolean = False; ReplyToMessageId: Integer = 0; ReplyMarkup: IReplyMarkup = nil): TtgMessage;
+    function SendMessage(const ChatId: TValue; const Text: string; ParseMode: TtgParseMode = TtgParseMode.Default; DisableWebPagePreview: Boolean = False; DisableNotification: Boolean = False; ReplyToMessageId: Integer = 0; ReplyMarkup: IReplyMarkup = nil): TTgMessage;
     /// <summary>
     ///   Use this method to forward messages of any kind.
     /// </summary>
@@ -466,7 +466,7 @@ type
     /// <returns>
     ///   On success, the sent Message is returned.
     /// </returns>
-    function ForwardMessage(ChatId: TValue; FromChatId: TValue; DisableNotification: Boolean = False; MessageId: Integer = 0): TtgMessage;
+    function ForwardMessage(ChatId: TValue; FromChatId: TValue; DisableNotification: Boolean = False; MessageId: Integer = 0): TTgMessage;
     /// <summary>
     ///   Use this method to send photos.
     /// </summary>
@@ -512,7 +512,7 @@ type
     /// LMessage.Free;
     /// End; </code>
     /// </example>
-    function SendPhoto(ChatId: TValue; Photo: TValue; const Caption: string = ''; DisableNotification: Boolean = False; ReplyToMessageId: Integer = 0; ReplyMarkup: IReplyMarkup = nil): TtgMessage;
+    function SendPhoto(ChatId: TValue; Photo: TValue; const Caption: string = ''; DisableNotification: Boolean = False; ReplyToMessageId: Integer = 0; ReplyMarkup: IReplyMarkup = nil): TTgMessage;
     /// <summary>
     ///   Use this method to send audio files, if you want Telegram clients to
     ///   display them in the music player. Your audio must be in the .mp3
@@ -559,7 +559,7 @@ type
     ///   the <see cref="TelegAPI.Bot|TTelegramBot.SendVoice(TValue,TValue,Integer,Boolean,Integer,IReplyMarkup)">
     ///   sendVoice</see> method instead.
     /// </remarks>
-    function SendAudio(ChatId: TValue; Audio: TValue; Duration: Integer = 0; const Performer: string = ''; const Title: string = ''; DisableNotification: Boolean = False; ReplyToMessageId: Integer = 0; ReplyMarkup: IReplyMarkup = nil): TtgMessage;
+    function SendAudio(ChatId: TValue; Audio: TValue; Duration: Integer = 0; const Performer: string = ''; const title: string = ''; DisableNotification: Boolean = False; ReplyToMessageId: Integer = 0; ReplyMarkup: IReplyMarkup = nil): TTgMessage;
     /// <summary>
     ///   Use this method to send general files.
     /// </summary>
@@ -597,37 +597,8 @@ type
     ///   Bots can currently send files of any type of up to 50 MB in size,
     ///   this limit may be changed in the future.
     /// </remarks>
-    function SendDocument(ChatId: TValue; Document: TValue; const Caption: string = ''; DisableNotification: Boolean = False; ReplyToMessageId: Integer = 0; ReplyMarkup: IReplyMarkup = nil): TtgMessage;
-    /// <summary>
-    ///   Use this method to send .webp stickers.
-    /// </summary>
-    /// <param name="ChatId">
-    ///   Unique identifier for the target chat or username of the target
-    ///   channel (in the format @channelusername) <br />
-    /// </param>
-    /// <param name="Sticker">
-    ///   Sticker to send. You can either pass a file_id as String to resend a
-    ///   sticker that is already on the Telegram servers, or upload a new
-    ///   sticker using multipart/form-data. <br />
-    /// </param>
-    /// <param name="DisableNotification">
-    ///   Sends the message silently. iOS users will not receive a
-    ///   notification, Android users will receive a notification with no
-    ///   sound. <br />
-    /// </param>
-    /// <param name="ReplyToMessageId">
-    ///   If the message is a reply, ID of the original message <br />
-    /// </param>
-    /// <param name="ReplyMarkup">
-    ///   Additional interface options. A JSON-serialized object for an inline
-    ///   keyboard, custom reply keyboard, instructions to hide reply keyboard
-    ///   or to force a reply from the user. <br />
-    /// </param>
-    /// <returns>
-    ///   On success, the sent Message is returned.
-    /// </returns>
-    function SendSticker(ChatId: TValue; Sticker: TValue; const Caption: string = ''; DisableNotification: Boolean = False; ReplyToMessageId: Integer = 0; ReplyMarkup: IReplyMarkup = nil): TtgMessage;
-    /// <summary>
+    function SendDocument(ChatId: TValue; Document: TValue; const Caption: string = ''; DisableNotification: Boolean = False; ReplyToMessageId: Integer = 0; ReplyMarkup: IReplyMarkup = nil): TTgMessage;
+     /// <summary>
     ///   Use this method to send video files, Telegram clients support mp4
     ///   videos (other formats may be sent as Document).
     /// </summary>
@@ -673,7 +644,7 @@ type
     ///   Bots can currently send video files of up to 50 MB in size, this
     ///   limit may be changed in the future.
     /// </remarks>
-    function SendVideo(ChatId: TValue; Video: TValue; Duration: Integer = 0; Width: Integer = 0; Height: Integer = 0; const Caption: string = ''; DisableNotification: Boolean = False; ReplyToMessageId: Integer = 0; ReplyMarkup: IReplyMarkup = nil): TtgMessage;
+    function SendVideo(ChatId: TValue; Video: TValue; Duration: Integer = 0; Width: Integer = 0; Height: Integer = 0; const Caption: string = ''; DisableNotification: Boolean = False; ReplyToMessageId: Integer = 0; ReplyMarkup: IReplyMarkup = nil): TTgMessage;
 
     /// <summary>
     ///   Use this method to send audio files, if you want Telegram clients to
@@ -714,7 +685,7 @@ type
     ///   Bots can currently send voice messages of up to 50 MB in size, this
     ///   limit may be changed in the future.
     /// </remarks>
-    function SendVoice(ChatId: TValue; Voice: TValue; Duration: Integer = 0; DisableNotification: Boolean = False; ReplyToMessageId: Integer = 0; ReplyMarkup: IReplyMarkup = nil): TtgMessage;
+    function SendVoice(ChatId: TValue; Voice: TValue; Duration: Integer = 0; DisableNotification: Boolean = False; ReplyToMessageId: Integer = 0; ReplyMarkup: IReplyMarkup = nil): TTgMessage;
     /// <summary>
     ///   As of <see href="https://telegram.org/blog/video-messages-and-telescope">
     ///   v.4.0</see>, Telegram clients support rounded square mp4 videos of up
@@ -763,7 +734,7 @@ type
       DisableNotification: Boolean = False; //
       ReplyToMessageId: Integer = 0; //
       ReplyMarkup: IReplyMarkup = nil //
-    ): TtgMessage;
+    ): TTgMessage;
 
     /// <summary>
     ///   Use this method to send point on the map.
@@ -792,7 +763,7 @@ type
     ///   On success, the sent <see cref="TelegAPi.Types|TtgMessage">Message</see>
     ///    is returned.
     /// </returns>
-    function SendLocation(ChatId: TValue; Location: TtgLocation; DisableNotification: Boolean = False; ReplyToMessageId: Integer = 0; ReplyMarkup: IReplyMarkup = nil): TtgMessage;
+    function SendLocation(ChatId: TValue; Location: TtgLocation; DisableNotification: Boolean = False; ReplyToMessageId: Integer = 0; ReplyMarkup: IReplyMarkup = nil): TTgMessage;
     /// <summary>
     ///   Use this method to send information about a venue.
     /// </summary>
@@ -828,7 +799,7 @@ type
     /// <returns>
     ///   On success, the sent Message is returned.
     /// </returns>
-    function SendVenue(ChatId: TValue; Venue: TtgVenue; DisableNotification: Boolean = False; ReplyToMessageId: Integer = 0; ReplyMarkup: IReplyMarkup = nil): TtgMessage;
+    function SendVenue(ChatId: TValue; Venue: TtgVenue; DisableNotification: Boolean = False; ReplyToMessageId: Integer = 0; ReplyMarkup: IReplyMarkup = nil): TTgMessage;
     /// <summary>
     ///   Use this method to send phone contacts.
     /// </summary>
@@ -857,7 +828,7 @@ type
     ///    is returned.
     /// </returns>
     /// <seealso href="https://core.telegram.org/bots/api#sendcontact" />
-    function SendContact(ChatId: TValue; Contact: TtgContact; DisableNotification: Boolean = False; ReplyToMessageId: Integer = 0; ReplyMarkup: IReplyMarkup = nil): TtgMessage;
+    function SendContact(ChatId: TValue; Contact: TtgContact; DisableNotification: Boolean = False; ReplyToMessageId: Integer = 0; ReplyMarkup: IReplyMarkup = nil): TTgMessage;
     /// <summary>
     ///   Use this method when you need to tell the user that something is
     ///   happening on the bot's side. The status is set for 5 seconds or less
@@ -1094,8 +1065,8 @@ type
     ///   is returned, otherwise True is returned.
     /// </returns>
     /// <seealso href="https://core.telegram.org/bots/api#editmessagetext" />
-    function EditMessageText(ChatId: TValue; MessageId: Integer; const Text: string; ParseMode: TtgParseMode = TtgParseMode.Default; DisableWebPagePreview: Boolean = False; ReplyMarkup: IReplyMarkup = nil): TtgMessage; overload;
-    function EditMessageText(const InlineMessageId: string; const Text: string; ParseMode: TtgParseMode = TtgParseMode.Default; DisableWebPagePreview: Boolean = False; ReplyMarkup: IReplyMarkup = nil): TtgMessage; overload;
+    function EditMessageText(ChatId: TValue; MessageId: Integer; const Text: string; ParseMode: TtgParseMode = TtgParseMode.Default; DisableWebPagePreview: Boolean = False; ReplyMarkup: IReplyMarkup = nil): TTgMessage; overload;
+    function EditMessageText(const InlineMessageId: string; const Text: string; ParseMode: TtgParseMode = TtgParseMode.Default; DisableWebPagePreview: Boolean = False; ReplyMarkup: IReplyMarkup = nil): TTgMessage; overload;
     /// <summary>
     ///   Use this method to edit captions of messages sent by the bot or via
     ///   the bot (for inline bots).
@@ -1147,7 +1118,7 @@ type
     ///   On success, if edited message is sent by the bot, the edited Message
     ///   is returned, otherwise True is returned.
     /// </returns>
-    function EditMessageReplyMarkup(ChatId: TValue; MessageId: Integer; ReplyMarkup: IReplyMarkup = nil): TtgMessage; overload;
+    function EditMessageReplyMarkup(ChatId: TValue; MessageId: Integer; ReplyMarkup: IReplyMarkup = nil): TTgMessage; overload;
     /// <summary>
     ///   Use this method to edit only the reply markup of messages sent by the
     ///   bot or via the bot (for inline bots).
@@ -1163,7 +1134,7 @@ type
     ///   On success, if edited message is sent by the bot, the edited Message
     ///   is returned, otherwise True is returned.
     /// </returns>
-    function EditMessageReplyMarkup(const InlineMessageId: string; ReplyMarkup: IReplyMarkup = nil): TtgMessage; overload;
+    function EditMessageReplyMarkup(const InlineMessageId: string; ReplyMarkup: IReplyMarkup = nil): TTgMessage; overload;
     /// <summary>
     ///   Use this method to delete a message.
     /// </summary>
@@ -1312,7 +1283,7 @@ type
     ///   returned.
     /// </returns>
     /// <seealso href="https://core.telegram.org/bots/api#sendinvoice" />
-    function SendInvoice(ChatId: Integer; const Title: string; const Description: string; const Payload: string; const ProviderToken: string; const StartParameter: string; const Currency: string; Prices: TArray<TtgLabeledPrice>; const PhotoUrl: string = ''; PhotoSize: Integer = 0; PhotoWidth: Integer = 0; PhotoHeight: Integer = 0; NeedName: Boolean = False; NeedPhoneNumber: Boolean = False; NeedEmail: Boolean = False; NeedShippingAddress: Boolean = False; IsFlexible: Boolean = False; DisableNotification: Boolean = False; ReplyToMessageId: Integer = 0; ReplyMarkup: IReplyMarkup = nil): TtgMessage;
+    function SendInvoice(ChatId: Integer; const title: string; const Description: string; const Payload: string; const ProviderToken: string; const StartParameter: string; const Currency: string; Prices: TArray<TtgLabeledPrice>; const PhotoUrl: string = ''; PhotoSize: Integer = 0; PhotoWidth: Integer = 0; PhotoHeight: Integer = 0; NeedName: Boolean = False; NeedPhoneNumber: Boolean = False; NeedEmail: Boolean = False; NeedShippingAddress: Boolean = False; IsFlexible: Boolean = False; DisableNotification: Boolean = False; ReplyToMessageId: Integer = 0; ReplyMarkup: IReplyMarkup = nil): TTgMessage;
     /// <summary>
     ///   If you sent an invoice requesting a shipping address and the
     ///   parameter is_flexible was specified, the Bot API will send an Update
@@ -1399,7 +1370,7 @@ type
     ///   On success, the sent Message is returned.
     /// </returns>
     /// <seealso href="https://core.telegram.org/bots/api#sendgame" />
-    function SendGame(ChatId: Integer; const GameShortName: string; DisableNotification: Boolean = False; ReplyToMessageId: Integer = 0; ReplyMarkup: IReplyMarkup = nil): TtgMessage;
+    function SendGame(ChatId: Integer; const GameShortName: string; DisableNotification: Boolean = False; ReplyToMessageId: Integer = 0; ReplyMarkup: IReplyMarkup = nil): TTgMessage;
     /// <summary>
     ///   Use this method to set the score of the specified user in a game.
     /// </summary>
@@ -1436,7 +1407,7 @@ type
     ///   False.
     /// </returns>
     /// <seealso href="https://core.telegram.org/bots/api#setgamescore" />
-    function SetGameScore(UserId: Integer; Score: Integer; Force: Boolean = False; DisableEditMessage: Boolean = False; ChatId: Integer = 0; MessageId: Integer = 0; const InlineMessageId: string = ''): TtgMessage;
+    function SetGameScore(UserId: Integer; Score: Integer; Force: Boolean = False; DisableEditMessage: Boolean = False; ChatId: Integer = 0; MessageId: Integer = 0; const InlineMessageId: string = ''): TTgMessage;
     /// <summary>
     ///   Use this method to get data for high score tables. Will return the
     ///   score of the specified user and several of his neighbors in a game.
@@ -1578,7 +1549,7 @@ type
     ///   Note: In regular groups (non-supergroups), this method will only work
     ///   if the ‘All Members Are Admins’ setting is off in the target group.
     /// </remarks>
-    function SetChatTitle(ChatId: TValue; const Title: string): Boolean;
+    function SetChatTitle(ChatId: TValue; const title: string): Boolean;
     /// <summary>
     ///   Use this method to unpin a message in a supergroup chat. The bot must
     ///   be an administrator in the chat for this to work and must have the
@@ -1681,6 +1652,137 @@ type
     /// </returns>
     function PromoteChatMember(ChatId: TValue; UserId: Integer; CanChangeInfo: Boolean = False; CanPostMessages: Boolean = False; CanEditMessages: Boolean = False; CanDeleteMessages: Boolean = False; CanInviteUsers: Boolean = False; CanRestrictMembers: Boolean = False; CanPinMessages: Boolean = False; CanPromoteMembers: Boolean = False): Boolean;
 {$ENDREGION}
+{$REGION 'Strickers'}
+  /// <summary>
+    ///   Use this method to send .webp stickers.
+    /// </summary>
+    /// <param name="ChatId">
+    ///   Unique identifier for the target chat or username of the target
+    ///   channel (in the format @channelusername) <br />
+    /// </param>
+    /// <param name="Sticker">
+    ///   Sticker to send. You can either pass a file_id as String to resend a
+    ///   sticker that is already on the Telegram servers, or upload a new
+    ///   sticker using multipart/form-data. <br />
+    /// </param>
+    /// <param name="DisableNotification">
+    ///   Sends the message silently. iOS users will not receive a
+    ///   notification, Android users will receive a notification with no
+    ///   sound. <br />
+    /// </param>
+    /// <param name="ReplyToMessageId">
+    ///   If the message is a reply, ID of the original message <br />
+    /// </param>
+    /// <param name="ReplyMarkup">
+    ///   Additional interface options. A JSON-serialized object for an inline
+    ///   keyboard, custom reply keyboard, instructions to hide reply keyboard
+    ///   or to force a reply from the user. <br />
+    /// </param>
+    /// <returns>
+    ///   On success, the sent Message is returned.
+    /// </returns>
+    function SendSticker(ChatId: TValue; Sticker: TValue; DisableNotification: Boolean = False; ReplyToMessageId: Integer = 0; ReplyMarkup: IReplyMarkup = nil): TTgMessage;
+     /// <summary>
+    ///   Use this method to get a sticker set.
+    /// </summary>
+    /// <param name="name">
+    ///   Name of the sticker set
+    /// </param>
+    /// <returns>
+    ///   On success, a <see cref="TelegAPi.Types|TtgStickerSet">StickerSet</see>
+    ///    object is returned.
+    /// </returns>
+    function getStickerSet(const Name: string): TtgStickerSet;
+    /// <summary>
+    ///   Use this method to upload a .png file with a sticker for later use in
+    ///   <see cref="TelegAPI.Bot|TTelegramBot.createNewStickerSet(Integer,string,string,TValue,string,Boolean,TtgMaskPosition)">
+    ///   createNewStickerSet</see> and <see cref="TelegAPI.Bot|TTelegramBot.addStickerToSet(Integer,string,TValue,string,TtgMaskPosition)">
+    ///   addStickerToSet</see> methods (can be used multiple times). <br />
+    /// </summary>
+    /// <param name="UserId">
+    ///   User identifier of sticker file owner <br />
+    /// </param>
+    /// <param name="PngSticker">
+    ///   Png image with the sticker, must be up to 512 kilobytes in size,
+    ///   dimensions must not exceed 512px, and either width or height must be
+    ///   exactly 512px. <br />
+    /// </param>
+    /// <returns>
+    ///   Returns the uploaded <see cref="TelegAPi.Types|TtgFile">File</see> on
+    ///   success.
+    /// </returns>
+    function uploadStickerFile(UserId: Integer; PngSticker: TtgFileToSend): TtgFile;
+    /// <summary>
+    ///   Use this method to create new sticker set owned by a user. The bot
+    ///   will be able to edit the created sticker set.
+    /// </summary>
+    /// <param name="UserId">
+    ///   User identifier of created sticker set owner <br />
+    /// </param>
+    /// <param name="Name">
+    ///   Short name of sticker set, to be used in t.me/addstickers/ URLs
+    ///   (e.g., animals). Can contain only english letters, digits and
+    ///   underscores. Must begin with a letter, can't contain consecutive
+    ///   underscores and must end in by “__&lt;bot username&gt;”.
+    ///   &lt;bot_username&gt; is case insensitive. 1-64 characters. <br />
+    /// </param>
+    /// <param name="Title">
+    ///   Sticker set title, 1-64 characters <br />
+    /// </param>
+    /// <param name="PngSticker">
+    ///   Png image with the sticker, must be up to 512 kilobytes in size,
+    ///   dimensions must not exceed 512px, and either width or height must be
+    ///   exactly 512px. Pass a file_id as a String to send a file that already
+    ///   exists on the Telegram servers, pass an HTTP URL as a String for
+    ///   Telegram to get a file from the Internet, or upload a new one using
+    ///   multipart/form-data. More info on Sending Files » <br />
+    /// </param>
+    /// <param name="Emojis">
+    ///   One or more emoji corresponding to the sticker <br />
+    /// </param>
+    /// <param name="ContainsMasks">
+    ///   Pass True, if a set of mask stickers should be created <br />
+    /// </param>
+    /// <param name="MaskPosition">
+    ///   A JSON-serialized object for position where the mask should be placed
+    ///   on faces <br />
+    /// </param>
+    /// <returns>
+    ///   Returns True on success.
+    /// </returns>
+    function createNewStickerSet(UserId: Integer; const Name, Title: string; PngSticker: TValue; const Emojis: string; ContainsMasks: Boolean = False; MaskPosition: TtgMaskPosition = nil): Boolean;
+    /// <summary>
+    ///  Use this method to add a new sticker to a set created by the bot.
+    /// </summary>
+    /// <returns>
+    ///  Returns True on success.
+    /// </returns>
+    function addStickerToSet(UserId: Integer; const Name: string; PngSticker: TValue; const Emojis: string; MaskPosition: TtgMaskPosition = nil): Boolean;
+    /// <summary>
+    ///   Use this method to move a sticker in a set created by the bot to a
+    ///   specific position.
+    /// </summary>
+    /// <param name="Sticker">
+    ///   File identifier of the sticker
+    /// </param>
+    /// <param name="Position">
+    ///   New sticker position in the set, zero-based
+    /// </param>
+    /// <returns>
+    ///   Returns True on success.
+    /// </returns>
+    function setStickerPositionInSet(const Sticker: string; Position: Integer): Boolean;
+    /// <summary>
+    ///   Use this method to delete a sticker from a set created by the bot.
+    /// </summary>
+    /// <param name="Sticker">
+    ///   File identifier of the sticker
+    /// </param>
+    /// <returns>
+    ///   Returns True on success.
+    /// </returns>
+    function deleteStickerFromSet(const Sticker: string): Boolean;
+{$ENDREGION}
   end;
 
 implementation
@@ -1714,7 +1816,7 @@ end;
 
 function TTelegramBotCore.GetVersionAPI: string;
 begin
-  Result := '3.1.2';
+  Result := '3.3.0';
 end;
 
 function TTelegramBotCore.API<T>(const Method: string; Parameters: TDictionary<string, TValue>): T;
@@ -1752,7 +1854,7 @@ begin
         raise EApiRequestException.FromApiResponse<T>(LApiResponse, Parameters);
     end;
     Result := LApiResponse.ResultObject;
-    LApiResponse.ResultObject := Default(T);
+    LApiResponse.ResultObject := default(T);
   finally
     FreeAndNil(LApiResponse);
   end;
@@ -1946,7 +2048,7 @@ begin
   end;
 end;
 
-function TTelegramBot.SendLocation(ChatId: TValue; Location: TtgLocation; DisableNotification: Boolean; ReplyToMessageId: Integer; ReplyMarkup: IReplyMarkup): TtgMessage;
+function TTelegramBot.SendLocation(ChatId: TValue; Location: TtgLocation; DisableNotification: Boolean; ReplyToMessageId: Integer; ReplyMarkup: IReplyMarkup): TTgMessage;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -1958,13 +2060,13 @@ begin
     Parameters.Add('disable_notification', DisableNotification);
     Parameters.Add('reply_to_message_id', ReplyToMessageId);
     Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-    Result := API<TtgMessage>('sendLocation', Parameters);
+    Result := API<TTgMessage>('sendLocation', Parameters);
   finally
     Parameters.Free;
   end;
 end;
 
-function TTelegramBot.SendPhoto(ChatId, Photo: TValue; const Caption: string; DisableNotification: Boolean; ReplyToMessageId: Integer; ReplyMarkup: IReplyMarkup): TtgMessage;
+function TTelegramBot.SendPhoto(ChatId, Photo: TValue; const Caption: string; DisableNotification: Boolean; ReplyToMessageId: Integer; ReplyMarkup: IReplyMarkup): TTgMessage;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -1976,13 +2078,13 @@ begin
     Parameters.Add('disable_notification', DisableNotification);
     Parameters.Add('reply_to_message_id', ReplyToMessageId);
     Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-    Result := API<TtgMessage>('sendPhoto', Parameters);
+    Result := API<TTgMessage>('sendPhoto', Parameters);
   finally
     Parameters.Free;
   end;
 end;
 
-function TTelegramBot.SendSticker(ChatId, Sticker: TValue; const Caption: string; DisableNotification: Boolean; ReplyToMessageId: Integer; ReplyMarkup: IReplyMarkup): TtgMessage;
+function TTelegramBot.SendSticker(ChatId, Sticker: TValue; DisableNotification: Boolean; ReplyToMessageId: Integer; ReplyMarkup: IReplyMarkup): TTgMessage;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -1990,17 +2092,16 @@ begin
   try
     Parameters.Add('chat_id', ChatId);
     Parameters.Add('sticker', Sticker);
-    Parameters.Add('caption', Caption);
     Parameters.Add('disable_notification', DisableNotification);
     Parameters.Add('reply_to_message_id', ReplyToMessageId);
     Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-    Result := API<TtgMessage>('sendSticker', Parameters);
+    Result := API<TTgMessage>('sendSticker', Parameters);
   finally
     Parameters.Free;
   end;
 end;
 
-function TTelegramBot.SendMessage(const ChatId: TValue; const Text: string; ParseMode: TtgParseMode; DisableWebPagePreview, DisableNotification: Boolean; ReplyToMessageId: Integer; ReplyMarkup: IReplyMarkup): TtgMessage;
+function TTelegramBot.SendMessage(const ChatId: TValue; const Text: string; ParseMode: TtgParseMode; DisableWebPagePreview, DisableNotification: Boolean; ReplyToMessageId: Integer; ReplyMarkup: IReplyMarkup): TTgMessage;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -2013,13 +2114,13 @@ begin
     Parameters.Add('disable_notification', DisableNotification);
     Parameters.Add('reply_to_message_id', ReplyToMessageId);
     Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-    Result := API<TtgMessage>('sendMessage', Parameters);
+    Result := API<TTgMessage>('sendMessage', Parameters);
   finally
     Parameters.Free;
   end;
 end;
 
-function TTelegramBot.SendVenue(ChatId: TValue; Venue: TtgVenue; DisableNotification: Boolean; ReplyToMessageId: Integer; ReplyMarkup: IReplyMarkup): TtgMessage;
+function TTelegramBot.SendVenue(ChatId: TValue; Venue: TtgVenue; DisableNotification: Boolean; ReplyToMessageId: Integer; ReplyMarkup: IReplyMarkup): TTgMessage;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -2034,13 +2135,13 @@ begin
     Parameters.Add('disable_notification', DisableNotification);
     Parameters.Add('reply_to_message_id', ReplyToMessageId);
     Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-    Result := API<TtgMessage>('sendVenue', Parameters);
+    Result := API<TTgMessage>('sendVenue', Parameters);
   finally
     Parameters.Free;
   end;
 end;
 
-function TTelegramBot.SendVideo(ChatId, Video: TValue; Duration, Width, Height: Integer; const Caption: string; DisableNotification: Boolean; ReplyToMessageId: Integer; ReplyMarkup: IReplyMarkup): TtgMessage;
+function TTelegramBot.SendVideo(ChatId, Video: TValue; Duration, Width, Height: Integer; const Caption: string; DisableNotification: Boolean; ReplyToMessageId: Integer; ReplyMarkup: IReplyMarkup): TTgMessage;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -2055,13 +2156,13 @@ begin
     Parameters.Add('disable_notification', DisableNotification);
     Parameters.Add('reply_to_message_id', ReplyToMessageId);
     Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-    Result := API<TtgMessage>('sendVideo', Parameters);
+    Result := API<TTgMessage>('sendVideo', Parameters);
   finally
     Parameters.Free;
   end;
 end;
 
-function TTelegramBot.SendVideoNote(ChatId, VideoNote: TValue; Duration, Length: Integer; DisableNotification: Boolean; ReplyToMessageId: Integer; ReplyMarkup: IReplyMarkup): TtgMessage;
+function TTelegramBot.SendVideoNote(ChatId, VideoNote: TValue; Duration, Length: Integer; DisableNotification: Boolean; ReplyToMessageId: Integer; ReplyMarkup: IReplyMarkup): TTgMessage;
 var
   LParameters: TDictionary<string, TValue>;
 begin
@@ -2074,13 +2175,13 @@ begin
     LParameters.Add('disable_notification', DisableNotification);
     LParameters.Add('reply_to_message_id', ReplyToMessageId);
     LParameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-    Result := API<TtgMessage>('sendVoice', LParameters);
+    Result := API<TTgMessage>('sendVoice', LParameters);
   finally
     LParameters.Free;
   end;
 end;
 
-function TTelegramBot.SendVoice(ChatId, Voice: TValue; Duration: Integer; DisableNotification: Boolean; ReplyToMessageId: Integer; ReplyMarkup: IReplyMarkup): TtgMessage;
+function TTelegramBot.SendVoice(ChatId, Voice: TValue; Duration: Integer; DisableNotification: Boolean; ReplyToMessageId: Integer; ReplyMarkup: IReplyMarkup): TTgMessage;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -2092,13 +2193,13 @@ begin
     Parameters.Add('disable_notification', DisableNotification);
     Parameters.Add('reply_to_message_id', ReplyToMessageId);
     Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-    Result := API<TtgMessage>('sendVoice', Parameters);
+    Result := API<TTgMessage>('sendVoice', Parameters);
   finally
     Parameters.Free;
   end;
 end;
 
-function TTelegramBot.SendAudio(ChatId, Audio: TValue; Duration: Integer; const Performer, Title: string; DisableNotification: Boolean; ReplyToMessageId: Integer; ReplyMarkup: IReplyMarkup): TtgMessage;
+function TTelegramBot.SendAudio(ChatId, Audio: TValue; Duration: Integer; const Performer, Title: string; DisableNotification: Boolean; ReplyToMessageId: Integer; ReplyMarkup: IReplyMarkup): TTgMessage;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -2112,7 +2213,7 @@ begin
     Parameters.Add('disable_notification', DisableNotification);
     Parameters.Add('reply_to_message_id', ReplyToMessageId);
     Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-    Result := API<TtgMessage>('sendAudio', Parameters);
+    Result := API<TTgMessage>('sendAudio', Parameters);
   finally
     Parameters.Free;
   end;
@@ -2132,7 +2233,7 @@ begin
   end;
 end;
 
-function TTelegramBot.SendContact(ChatId: TValue; Contact: TtgContact; DisableNotification: Boolean; ReplyToMessageId: Integer; ReplyMarkup: IReplyMarkup): TtgMessage;
+function TTelegramBot.SendContact(ChatId: TValue; Contact: TtgContact; DisableNotification: Boolean; ReplyToMessageId: Integer; ReplyMarkup: IReplyMarkup): TTgMessage;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -2145,13 +2246,13 @@ begin
     Parameters.Add('disable_notification', DisableNotification);
     Parameters.Add('reply_to_message_id', ReplyToMessageId);
     Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-    Result := API<TtgMessage>('sendContact', Parameters);
+    Result := API<TTgMessage>('sendContact', Parameters);
   finally
     Parameters.Free;
   end;
 end;
 
-function TTelegramBot.SendDocument(ChatId, Document: TValue; const Caption: string; DisableNotification: Boolean; ReplyToMessageId: Integer; ReplyMarkup: IReplyMarkup): TtgMessage;
+function TTelegramBot.SendDocument(ChatId, Document: TValue; const Caption: string; DisableNotification: Boolean; ReplyToMessageId: Integer; ReplyMarkup: IReplyMarkup): TTgMessage;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -2163,7 +2264,7 @@ begin
     Parameters.Add('disable_notification', DisableNotification);
     Parameters.Add('reply_to_message_id', ReplyToMessageId);
     Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-    Result := API<TtgMessage>('sendDocument', Parameters);
+    Result := API<TTgMessage>('sendDocument', Parameters);
   finally
     Parameters.Free;
   end;
@@ -2217,7 +2318,20 @@ begin
   Result := Self.API<TtgUser>('getMe', nil);
 end;
 
-function TTelegramBot.ForwardMessage(ChatId, FromChatId: TValue; DisableNotification: Boolean; MessageId: Integer): TtgMessage;
+function TTelegramBot.getStickerSet(const name: string): TtgStickerSet;
+var
+  Parameters: TDictionary<string, TValue>;
+begin
+  Parameters := TDictionary<string, TValue>.Create;
+  try
+    Parameters.Add('name', name);
+    Result := API<TtgStickerSet>('getStickerSet', Parameters);
+  finally
+    Parameters.Free;
+  end;
+end;
+
+function TTelegramBot.ForwardMessage(ChatId, FromChatId: TValue; DisableNotification: Boolean; MessageId: Integer): TTgMessage;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -2227,7 +2341,7 @@ begin
     Parameters.Add('from_chat_id', FromChatId);
     Parameters.Add('disable_notification', DisableNotification);
     Parameters.Add('message_id', MessageId);
-    Result := API<TtgMessage>('forwardMessage', Parameters);
+    Result := API<TTgMessage>('forwardMessage', Parameters);
   finally
     Parameters.Free;
   end;
@@ -2299,6 +2413,23 @@ begin
   end;
 end;
 
+function TTelegramBot.addStickerToSet(UserId: Integer; const Name: string; PngSticker: TValue; const Emojis: string; MaskPosition: TtgMaskPosition): Boolean;
+var
+  Parameters: TDictionary<string, TValue>;
+begin
+  Parameters := TDictionary<string, TValue>.Create;
+  try
+    Parameters.Add('user_id', UserId);
+    Parameters.Add('name', name);
+    Parameters.Add('png_sticker', PngSticker);
+    Parameters.Add('emojis', emojis);
+    Parameters.Add('mask_position', MaskPosition);
+    Result := API<Boolean>('addStickerToSet', Parameters);
+  finally
+    Parameters.Free;
+  end;
+end;
+
 function TTelegramBot.AnswerCallbackQuery(const CallbackQueryId, Text: string; ShowAlert: Boolean; const Url: string; CacheTime: Integer): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
@@ -2318,7 +2449,7 @@ end;
 {$ENDREGION}
 {$REGION 'Updating messages'}
 
-function TTelegramBot.EditMessageText(const InlineMessageId, Text: string; ParseMode: TtgParseMode; DisableWebPagePreview: Boolean; ReplyMarkup: IReplyMarkup): TtgMessage;
+function TTelegramBot.EditMessageText(const InlineMessageId, Text: string; ParseMode: TtgParseMode; DisableWebPagePreview: Boolean; ReplyMarkup: IReplyMarkup): TTgMessage;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -2329,13 +2460,13 @@ begin
     Parameters.Add('parse_mode', ParseMode.ToString);
     Parameters.Add('disable_web_page_preview', DisableWebPagePreview);
     Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-    Result := API<TtgMessage>('editMessageText', Parameters);
+    Result := API<TTgMessage>('editMessageText', Parameters);
   finally
     Parameters.Free;
   end;
 end;
 
-function TTelegramBot.EditMessageText(ChatId: TValue; MessageId: Integer; const Text: string; ParseMode: TtgParseMode; DisableWebPagePreview: Boolean; ReplyMarkup: IReplyMarkup): TtgMessage;
+function TTelegramBot.EditMessageText(ChatId: TValue; MessageId: Integer; const Text: string; ParseMode: TtgParseMode; DisableWebPagePreview: Boolean; ReplyMarkup: IReplyMarkup): TTgMessage;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -2347,7 +2478,7 @@ begin
     Parameters.Add('parse_mode', ParseMode.ToString);
     Parameters.Add('disable_web_page_preview', DisableWebPagePreview);
     Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-    Result := API<TtgMessage>('editMessageText', Parameters);
+    Result := API<TTgMessage>('editMessageText', Parameters);
   finally
     Parameters.Free;
   end;
@@ -2362,6 +2493,19 @@ begin
     Parameters.Add('chat_id', ChatId);
     Parameters.Add('message_id', MessageId);
     Result := API<Boolean>('deleteMessage', Parameters);
+  finally
+    Parameters.Free;
+  end;
+end;
+
+function TTelegramBot.deleteStickerFromSet(const sticker: string): Boolean;
+var
+  Parameters: TDictionary<string, TValue>;
+begin
+  Parameters := TDictionary<string, TValue>.Create;
+  try
+    Parameters.Add('sticker', sticker);
+    Result := API<Boolean>('deleteStickerFromSet', Parameters);
   finally
     Parameters.Free;
   end;
@@ -2397,7 +2541,7 @@ begin
   end;
 end;
 
-function TTelegramBot.EditMessageReplyMarkup(ChatId: TValue; MessageId: Integer; ReplyMarkup: IReplyMarkup): TtgMessage;
+function TTelegramBot.EditMessageReplyMarkup(ChatId: TValue; MessageId: Integer; ReplyMarkup: IReplyMarkup): TTgMessage;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -2406,13 +2550,13 @@ begin
     Parameters.Add('chat_id', ChatId);
     Parameters.Add('message_id', MessageId);
     Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-    Result := API<TtgMessage>('editMessageReplyMarkup', Parameters);
+    Result := API<TTgMessage>('editMessageReplyMarkup', Parameters);
   finally
     Parameters.Free;
   end;
 end;
 
-function TTelegramBot.EditMessageReplyMarkup(const InlineMessageId: string; ReplyMarkup: IReplyMarkup): TtgMessage;
+function TTelegramBot.EditMessageReplyMarkup(const InlineMessageId: string; ReplyMarkup: IReplyMarkup): TTgMessage;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -2420,7 +2564,7 @@ begin
   try
     Parameters.Add('inline_message_id', InlineMessageId);
     Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-    Result := API<TtgMessage>('editMessageReplyMarkup', Parameters);
+    Result := API<TTgMessage>('editMessageReplyMarkup', Parameters);
   finally
     Parameters.Free;
   end;
@@ -2450,7 +2594,7 @@ end;
 {$ENDREGION}
 {$REGION 'Payments'}
 
-function TTelegramBot.SendInvoice(ChatId: Integer; const Title: string; const Description: string; const Payload: string; const ProviderToken: string; const StartParameter: string; const Currency: string; Prices: TArray<TtgLabeledPrice>; const PhotoUrl: string; PhotoSize: Integer; PhotoWidth: Integer; PhotoHeight: Integer; NeedName: Boolean; NeedPhoneNumber: Boolean; NeedEmail: Boolean; NeedShippingAddress: Boolean; IsFlexible: Boolean; DisableNotification: Boolean; ReplyToMessageId: Integer; ReplyMarkup: IReplyMarkup): TtgMessage;
+function TTelegramBot.SendInvoice(ChatId: Integer; const Title: string; const Description: string; const Payload: string; const ProviderToken: string; const StartParameter: string; const Currency: string; Prices: TArray<TtgLabeledPrice>; const PhotoUrl: string; PhotoSize: Integer; PhotoWidth: Integer; PhotoHeight: Integer; NeedName: Boolean; NeedPhoneNumber: Boolean; NeedEmail: Boolean; NeedShippingAddress: Boolean; IsFlexible: Boolean; DisableNotification: Boolean; ReplyToMessageId: Integer; ReplyMarkup: IReplyMarkup): TTgMessage;
 var
   LParameters: TDictionary<string, TValue>;
 begin
@@ -2475,7 +2619,7 @@ begin
     LParameters.Add('disable_notification', DisableNotification);
     LParameters.Add('reply_to_message_id', ReplyToMessageId);
     LParameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-    Result := API<TtgMessage>('sendInvoice', LParameters);
+    Result := API<TTgMessage>('sendInvoice', LParameters);
   finally
     LParameters.Free;
   end;
@@ -2512,11 +2656,30 @@ begin
   end;
 end;
 
+function TTelegramBot.createNewStickerSet(UserId: Integer; const Name, Title: string; PngSticker: TValue; const Emojis: string; ContainsMasks: Boolean; MaskPosition: TtgMaskPosition): Boolean;
+var
+  Parameters: TDictionary<string, TValue>;
+begin
+  Parameters := TDictionary<string, TValue>.Create;
+  try
+    Parameters.Add('user_id', UserId);
+    Parameters.Add('name', Name);
+    Parameters.Add('title', Title);
+    Parameters.Add('png_sticker', PngSticker);
+    Parameters.Add('emojis', Emojis);
+    Parameters.Add('contains_masks', ContainsMasks);
+    Parameters.Add('mask_position', MaskPosition);
+    Result := API<Boolean>('createNewStickerSet', Parameters);
+  finally
+    Parameters.Free;
+  end;
+
+end;
 
 {$ENDREGION}
 {$REGION 'Games'}
 
-function TTelegramBot.SetGameScore(UserId, Score: Integer; Force, DisableEditMessage: Boolean; ChatId, MessageId: Integer; const InlineMessageId: string): TtgMessage;
+function TTelegramBot.SetGameScore(UserId, Score: Integer; Force, DisableEditMessage: Boolean; ChatId, MessageId: Integer; const InlineMessageId: string): TTgMessage;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -2529,13 +2692,27 @@ begin
     Parameters.Add('chat_id', ChatId);
     Parameters.Add('message_id', MessageId);
     Parameters.Add('inline_message_id', InlineMessageId);
-    Result := API<TtgMessage>('setGameScore', Parameters);
+    Result := API<TTgMessage>('setGameScore', Parameters);
   finally
     Parameters.Free;
   end;
 end;
 
-function TTelegramBot.SendGame(ChatId: Integer; const GameShortName: string; DisableNotification: Boolean; ReplyToMessageId: Integer; ReplyMarkup: IReplyMarkup): TtgMessage;
+function TTelegramBot.setStickerPositionInSet(const Sticker: string; position: Integer): Boolean;
+var
+  Parameters: TDictionary<string, TValue>;
+begin
+  Parameters := TDictionary<string, TValue>.Create;
+  try
+    Parameters.Add('sticker', Sticker);
+    Parameters.Add('position', position);
+    Result := API<Boolean>('setStickerPositionInSet', Parameters);
+  finally
+    Parameters.Free;
+  end;
+end;
+
+function TTelegramBot.SendGame(ChatId: Integer; const GameShortName: string; DisableNotification: Boolean; ReplyToMessageId: Integer; ReplyMarkup: IReplyMarkup): TTgMessage;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -2546,7 +2723,7 @@ begin
     Parameters.Add('disable_notification', DisableNotification);
     Parameters.Add('reply_to_message_id', ReplyToMessageId);
     Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-    Result := API<TtgMessage>('sendGame', Parameters);
+    Result := API<TTgMessage>('sendGame', Parameters);
   finally
     Parameters.Free;
   end;
@@ -2665,6 +2842,21 @@ begin
     Parameters.Free;
   end;
 end;
+
+function TTelegramBot.uploadStickerFile(UserId: Integer; PngSticker: TtgFileToSend): TtgFile;
+var
+  Parameters: TDictionary<string, TValue>;
+begin
+  Parameters := TDictionary<string, TValue>.Create;
+  try
+    Parameters.Add('user_id', UserId);
+    Parameters.Add('png_sticker', PngSticker);
+    Result := API<TtgFile>('uploadStickerFile', Parameters);
+  finally
+    Parameters.Free;
+  end;
+end;
+
 {$ENDREGION}
 {$REGION 'Manage users and admins'}
 
