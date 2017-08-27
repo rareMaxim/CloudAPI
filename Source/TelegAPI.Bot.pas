@@ -1284,7 +1284,7 @@ type
     ///   returned.
     /// </returns>
     /// <seealso href="https://core.telegram.org/bots/api#sendinvoice" />
-    function SendInvoice(ChatId: Integer; const title: string; const Description: string; const Payload: string; const ProviderToken: string; const StartParameter: string; const Currency: string; Prices: TArray<TtgLabeledPrice>; const PhotoUrl: string = ''; PhotoSize: Integer = 0; PhotoWidth: Integer = 0; PhotoHeight: Integer = 0; NeedName: Boolean = False; NeedPhoneNumber: Boolean = False; NeedEmail: Boolean = False; NeedShippingAddress: Boolean = False; IsFlexible: Boolean = False; DisableNotification: Boolean = False; ReplyToMessageId: Integer = 0; ReplyMarkup: IReplyMarkup = nil): TTgMessage;
+    function SendInvoice(ChatId: Integer; const Title: string; const Description: string; const Payload: string; const ProviderToken: string; const StartParameter: string; const Currency: string; Prices: TArray<TtgLabeledPrice>; const PhotoUrl: string = ''; PhotoSize: Integer = 0; PhotoWidth: Integer = 0; PhotoHeight: Integer = 0; NeedName: Boolean = False; NeedPhoneNumber: Boolean = False; NeedEmail: Boolean = False; NeedShippingAddress: Boolean = False; IsFlexible: Boolean = False; DisableNotification: Boolean = False; ReplyToMessageId: Integer = 0; ReplyMarkup: IReplyMarkup = nil): TTgMessage;
     /// <summary>
     ///   If you sent an invoice requesting a shipping address and the
     ///   parameter is_flexible was specified, the Bot API will send an Update
@@ -1830,7 +1830,7 @@ begin
   if LTextResponse.IsEmpty then
   begin
     ErrorHandlerGeneral(ETelegramUnknownData.Create('Can''t parse response'));
-    Result := Default(T);
+    Result := default(T);
   end
   else
     Result := ApiTest<T>(LTextResponse, Parameters);
@@ -1846,7 +1846,7 @@ begin
     if not LApiResponse.Ok then
       ErrorHandlerApi(EApiRequestException.FromApiResponse<T>(LApiResponse, Parameters));
     Result := LApiResponse.ResultObject;
-    LApiResponse.ResultObject := Default(T);
+    LApiResponse.ResultObject := default(T);
   finally
     FreeAndNil(LApiResponse);
   end;
@@ -1947,7 +1947,6 @@ function TTelegramBotCore.ArrayToString<T>(LArray: TArray<T>): string;
 var
   SA: ISuperArray;
   I: Integer;
-  X: TtgInlineQueryResult;
 begin
   SA := TSuperArray.Create();
   for I := Low(LArray) to High(LArray) do
@@ -2615,6 +2614,7 @@ begin
     LParameters.Add('description', Description);
     LParameters.Add('payload', Payload);
     LParameters.Add('provider_token', ProviderToken);
+    LParameters.Add('start_parameter', StartParameter);
     LParameters.Add('currency', Currency);
     LParameters.Add('prices', ArrayToString<TtgLabeledPrice>(Prices));
     LParameters.Add('photo_url', PhotoUrl);
@@ -2930,7 +2930,7 @@ begin
         end)
     else
     begin
-      Bot.OnUpdate(Self, AUpdates[I]);
+      Self.OnUpdateReceived(AUpdates[I]);
       FreeAndNil(AUpdates[I]);
     end;
   end;

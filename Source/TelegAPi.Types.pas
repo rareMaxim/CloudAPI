@@ -244,7 +244,7 @@ type
     ///   getChat</see>.
     /// </summary>
     [Alias('pinned_message')]
-    PinnedMessage: TtgMessage;
+    PinnedMessage: TTgMessage;
   end;
 
   /// <summary>
@@ -393,7 +393,7 @@ type
     ///   just to the left of the default mask position.
     /// </summary>
     [Alias('x_shift')]
-    XShift: single;
+    XShift: Single;
     /// <summary>
     ///   Shift by Y-axis measured in heights of the mask scaled to the face
     ///   size, from top to bottom. For example, 1.0 will place the mask just
@@ -754,7 +754,7 @@ type
   ///   This object represents a message.
   /// </summary>
   [Alias('Message')]
-  TtgMessage = class
+  TTgMessage = class
   public
     /// <summary>
     ///   Unique message identifier
@@ -811,7 +811,7 @@ type
     ///   even if it itself is a reply.
     /// </summary>
     [Alias('reply_to_message')]
-    ReplyToMessage: TtgMessage;
+    ReplyToMessage: TTgMessage;
     /// <summary>
     ///   Optional. Date the message was last edited in Unix time.
     /// </summary>
@@ -961,7 +961,7 @@ type
     ///   if it is itself a reply
     /// </summary>
     [Alias('pinned_message')]
-    PinnedMessage: TtgMessage;
+    PinnedMessage: TTgMessage;
     /// <summary>
     ///   Optional. Message is an invoice for a <see href="https://core.telegram.org/bots/api#payments">
     ///   payment</see>, information about the invoice. <see href="https://core.telegram.org/bots/api#payments">
@@ -1289,7 +1289,7 @@ type
     ///   the message is too old
     /// </summary>
     [Alias('message')]
-    message: TtgMessage;
+    message: TTgMessage;
     /// <summary>
     ///   Optional. Identifier of the message sent via the bot in inline mode,
     ///   that originated the query
@@ -1372,7 +1372,10 @@ type
     ///   currencies.json</see>, it shows the number of digits past the decimal
     ///   point for each <br />currency (2 for the majority of currencies). <br />
     /// </example>
+    [Alias('amount')]
     Amount: Integer;
+    constructor Create; overload;
+    constructor Create(const AText: string; AAmount: Integer); overload;
   end;
 
   /// <summary>
@@ -1610,13 +1613,13 @@ type
     ///   etc.
     /// </summary>
     [Alias('message')]
-    message: TtgMessage;
+    message: TTgMessage;
     /// <summary>
     ///   Optional. New version of a message that is known to the bot and was
     ///   edited
     /// </summary>
     [Alias('edited_message')]
-    EditedMessage: TtgMessage;
+    EditedMessage: TTgMessage;
     /// <summary>
     ///   Optional. New incoming inline query
     /// </summary>
@@ -1638,13 +1641,13 @@ type
     ///   sticker, etc.
     /// </summary>
     [Alias('channel_post')]
-    ChannelPost: TtgMessage;
+    ChannelPost: TTgMessage;
     /// <summary>
     ///   Optional. New version of a channel post that is known to the bot and
     ///   was edited
     /// </summary>
     [Alias('edited_channel_post')]
-    EditedChannelPost: TtgMessage;
+    EditedChannelPost: TTgMessage;
     /// <summary>
     ///   Optional. New incoming shipping query. Only for invoices with
     ///   flexible price
@@ -1840,7 +1843,7 @@ end;
 
 { TtgMessage }
 
-function TtgMessage.&type: TtgMessageType;
+function TTgMessage.&type: TtgMessageType;
 begin
   if Assigned(Audio) then
     Exit(TtgMessageType.AudioMessage);
@@ -1880,7 +1883,7 @@ begin
   Result := TtgMessageType.UnknownMessage;
 end;
 
-destructor TtgMessage.Destroy;
+destructor TTgMessage.Destroy;
 begin
   FreeAndNil(From);
   FreeAndNil(Chat);
@@ -2039,6 +2042,19 @@ destructor TtgStickerSet.Destroy;
 begin
   stickers.Free;
   inherited;
+end;
+
+{ TtgLabeledPrice }
+
+constructor TtgLabeledPrice.Create;
+begin
+  inherited Create;
+end;
+
+constructor TtgLabeledPrice.Create(const AText: string; AAmount: Integer);
+begin
+  Text := AText;
+  Amount := AAmount;
 end;
 
 end.

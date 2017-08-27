@@ -173,7 +173,7 @@ var
 begin
   for I := Low(AUpdates) to High(AUpdates) do
   begin
-    Bot.OnUpdate(AUpdates[I]);
+    Self.OnUpdateReceived(AUpdates[I]);
     FreeAndNil(AUpdates[I]);
   end;
 end;

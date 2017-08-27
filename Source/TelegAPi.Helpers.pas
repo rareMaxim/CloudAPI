@@ -4,6 +4,7 @@ interface
 
 uses
   TelegAPi.Bot,
+  TelegAPi.Types,
   TelegAPi.Types.Enums,
   System.Classes,
   System.Net.Mime;
@@ -30,6 +31,10 @@ type
     ///   Add a form data Stream
     /// </summary>
     procedure AddStream(const AFieldName: string; Data: TStream);
+  end;
+
+  TtgMessageHelper = class helper for TTgMessage
+    function IsCommand(const AValue: string): Boolean;
   end;
 
 implementation
@@ -138,6 +143,22 @@ begin
     TtgSendChatAction.Upload_video_note:
       Result := 'upload_video_note';
   end;
+end;
+
+{ TtgMessageHelper }
+
+function TtgMessageHelper.IsCommand(const AValue: string): Boolean;
+var
+  LEnt: TtgMessageEntity;
+begin
+  Result := False;
+  if Assigned(Self.Entities) then
+    for LEnt in Self.Entities do
+    begin
+      if (LEnt.TypeMessage = 'bot_command') then
+        if AValue.Substring(LEnt.Offset, LEnt.Length) = AValue then
+          Exit(True);
+    end;
 end;
 
 end.
