@@ -7,50 +7,50 @@ uses
   System.Types,
   System.UITypes,
   System.Classes,
-  System.Variants,
   FMX.Types,
-  FMX.Controls,
   FMX.Forms,
-  FMX.Graphics,
   FMX.Dialogs,
-  FMX.Controls.Presentation,
   FMX.Memo,
-  FMX.ScrollBox,
   TelegAPI.Bot,
   TelegAPI.Types,
   TelegAPI.Exceptions,
+  FMX.Edit,
   FMX.StdCtrls,
-  FMX.Edit;
+  FMX.Controls,
+  FMX.Controls.Presentation,
+  FMX.ScrollBox,
+  FMX.Layouts;
 
 type
   TMain = class(TForm)
     tgBot: TTelegramBot;
-    mmo1: TMemo;
-    edt1: TEdit;
-    btn1: TEditButton;
-    procedure FormCreate(Sender: TObject);
+    mmoLog: TMemo;
+    Layout1: TLayout;
+    lblToken: TLabel;
+    edtToken: TEdit;
+    swtchToken: TSwitch;
     procedure tgBotInlineResultChosen(ASender: TObject; AChosenInlineResult: TtgChosenInlineResult);
     procedure tgBotInlineQuery(ASender: TObject; AInlineQuery: TtgInlineQuery);
-    procedure tgBotMessage(ASender: TObject; AMessage: TtgMessage);
+    procedure tgBotMessage(ASender: TObject; AMessage: TTgMessage);
     procedure tgBotCallbackQuery(ASender: TObject; ACallbackQuery: TtgCallbackQuery);
     procedure tgBotReceiveError(ASender: TObject; AApiRequestException: EApiRequestException);
     procedure tgBotConnect(Sender: TObject);
     procedure tgBotDisconnect(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure tgBotReceiveGeneralError(ASender: TObject; AException: Exception);
-    procedure btn1Click(Sender: TObject);
+    procedure swtchTokenSwitch(Sender: TObject);
   private
     { Private declarations }
     procedure WriteLine(const AValue: string);
-    procedure SendInline(Msg: TtgMessage);
-    procedure SendKeyboard(Msg: TtgMessage);
-    procedure SendPhoto(Msg: TtgMessage);
-    procedure SendRequest(Msg: TtgMessage);
-    procedure SendQuest(Msg: TtgMessage);
+    procedure SendInline(Msg: TTgMessage);
+    procedure SendKeyboard(Msg: TTgMessage);
+    procedure SendPhoto(Msg: TTgMessage);
+    procedure SendRequest(Msg: TTgMessage);
+    procedure SendQuest(Msg: TTgMessage);
     // parsing
-    procedure ParseTextMessage(Msg: TtgMessage);
-    procedure ParsePhotoMessage(Msg: TtgMessage);
-    procedure ParseLocationMessage(Msg: TtgMessage);
+    procedure ParseTextMessage(Msg: TTgMessage);
+    procedure ParsePhotoMessage(Msg: TTgMessage);
+    procedure ParseLocationMessage(Msg: TTgMessage);
   public
     { Public declarations }
   end;
@@ -69,35 +69,17 @@ uses
   TelegAPI.Types.InputMessageContents;
 {$R *.fmx}
 
-procedure TMain.btn1Click(Sender: TObject);
-var
-  LJson: string;
-  LReturn: TArray<TtgUpdate>;
-begin
-  LJson := TFile.ReadAllText(edt1.Text, TEncoding.UTF8);
-  LReturn := tgBot.ApiTest<TArray<TtgUpdate>>(LJson);
-end;
-
 procedure TMain.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   tgBot.IsReceiving := False;
 end;
 
-procedure TMain.FormCreate(Sender: TObject);
-begin
-  ReportMemoryLeaksOnShutdown := True;
-  tgBot.Token := {$I ..\token.inc};
-  if not tgBot.IsValidToken then
-    raise ELoginCredentialError.Create('invalid token format');
-  tgBot.IsReceiving := True;
-end;
-
-procedure TMain.ParseLocationMessage(Msg: TtgMessage);
+procedure TMain.ParseLocationMessage(Msg: TTgMessage);
 begin
   WriteLine('Location: ' + Msg.Location.Longitude.ToString + ' ' + Msg.Location.Latitude.ToString);
 end;
 
-procedure TMain.ParsePhotoMessage(Msg: TtgMessage);
+procedure TMain.ParsePhotoMessage(Msg: TTgMessage);
 var
   LFile: TtgFile;
 begin
@@ -111,7 +93,7 @@ begin
   end;
 end;
 
-procedure TMain.ParseTextMessage(Msg: TtgMessage);
+procedure TMain.ParseTextMessage(Msg: TTgMessage);
 var
   usage: string;
 begin
@@ -147,7 +129,7 @@ begin
   end;
 end;
 
-procedure TMain.SendRequest(Msg: TtgMessage);
+procedure TMain.SendRequest(Msg: TTgMessage);
 var
   kb: IReplyMarkup;
 begin
@@ -157,13 +139,23 @@ begin
   tgBot.SendMessage(Msg.Chat.Id, 'Who or Where are you?', TtgParseMode.default, False, False, 0, kb).Free;
 end;
 
-procedure TMain.SendPhoto(Msg: TtgMessage);
+procedure TMain.swtchTokenSwitch(Sender: TObject);
+begin
+  tgBot.Token := edtToken.Text;
+  if not tgBot.IsValidToken then
+    raise ELoginCredentialError.Create('invalid token format');
+  tgBot.IsReceiving := swtchToken.IsChecked;
+end;
+
+procedure TMain.SendPhoto(Msg: TTgMessage);
 const
   PATH_PHOTO = 'C:\Users\Public\Pictures\Sample Pictures\Tulips.jpg';
 var
   LFile: TtgFileToSend;
 begin
   tgBot.SendChatAction(Msg.Chat.Id, TtgSendChatAction.UploadPhoto);
+  if not TFile.Exists(PATH_PHOTO) then
+    WriteLine('Change path to photo in metod: TMain.SendPhoto');
   LFile := TtgFileToSend.Create(PATH_PHOTO);
   try
     tgBot.SendPhoto(Msg.Chat.ID, LFile, 'Nice Picture').Free;
@@ -186,7 +178,7 @@ begin
   tgBot.SendMessage(Msg.Chat.Id, 'Choose', TtgParseMode.default, False, False, 0, keyboard).Free;
 end;
 
-procedure TMain.SendKeyboard(Msg: TtgMessage);
+procedure TMain.SendKeyboard(Msg: TTgMessage);
 var
   keyboard: IReplyMarkup;
 begin
@@ -258,7 +250,7 @@ begin
   tgBot.AnswerInlineQuery(AInlineQuery.Id, results, 0, True);
 end;
 
-procedure TMain.SendQuest(Msg: TtgMessage);
+procedure TMain.SendQuest(Msg: TTgMessage);
 var
   keyboard: IReplyMarkup;
 begin
@@ -275,7 +267,7 @@ begin
   WriteLine('Received choosen inline result: ' + AChosenInlineResult.ResultId);
 end;
 
-procedure TMain.tgBotMessage(ASender: TObject; AMessage: TtgMessage);
+procedure TMain.tgBotMessage(ASender: TObject; AMessage: TTgMessage);
 begin
   case AMessage.&Type of
     TtgMessageType.TextMessage:
@@ -289,15 +281,7 @@ end;
 
 procedure TMain.tgBotReceiveError(ASender: TObject; AApiRequestException: EApiRequestException);
 begin
-  case AApiRequestException.ErrorCode of
-    401:
-      begin
-        tgBot.IsReceiving := False;
-        ShowMessage(AApiRequestException.Message);
-      end;
-  end;
   WriteLine(AApiRequestException.ToString);
-  AApiRequestException.Free;
 end;
 
 procedure TMain.tgBotReceiveGeneralError(ASender: TObject; AException: Exception);
@@ -307,8 +291,16 @@ end;
 
 procedure TMain.WriteLine(const AValue: string);
 begin
-  mmo1.Lines.Insert(0, AValue);
+  mmoLog.Lines.Add(AValue);
+  mmoLog.ScrollBy(0, mmoLog.ContentBounds.Bottom, False);
 end;
+
+initialization
+  ReportMemoryLeaksOnShutdown := True;
+
+finalization
+  if ReportMemoryLeaksOnShutdown then
+    CheckSynchronize();
 
 end.
 

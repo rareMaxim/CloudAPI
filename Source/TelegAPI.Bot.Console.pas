@@ -16,6 +16,9 @@ type
       private
         FBot: TTelegramBotConsole;
       protected
+        function GetUpdates: TArray<TtgUpdate>;
+        procedure DoOnUpdates(AUpdates: TArray<TtgUpdate>);
+        procedure DoOnUpdate(AUpdates: TArray<TtgUpdate>);
         procedure Execute; override;
         /// <summary>
         ///   Raises the <see cref="TelegAPI.Bot|TtgOnUpdate" />, <see cref="TelegAPI.Bot|TtgOnMessage" />
@@ -38,9 +41,9 @@ type
     FRecesiver: TtgRecesiver;
     FIsReceiving: Boolean;
     FOnDisconnect: TProc;
-    FOnMessage: TProc<TtgMessage>;
-    FOnMessageEdited: TProc<TtgMessage>;
-    FOnChannelPost: TProc<TtgMessage>;
+    FOnMessage: TProc<TTgMessage>;
+    FOnMessageEdited: TProc<TTgMessage>;
+    FOnChannelPost: TProc<TTgMessage>;
     FOnInlineQuery: TProc<TtgInlineQuery>;
     FOnInlineResultChosen: TProc<TtgChosenInlineResult>;
     FOnReceiveError: TProc<EApiRequestException>;
@@ -48,9 +51,12 @@ type
     FOnConnect: TProc;
     FOnReceiveGeneralError: TProc<Exception>;
     FOnRawData: TProc<string>;
+    FOnUpdates: TProc<TArray<TtgUpdate>>;
   protected
     procedure SetIsReceiving(const Value: Boolean);
     procedure DoDisconnect(ASender: TObject);
+    procedure ErrorHandlerGeneral(AException: Exception);
+    procedure ErrorHandlerApi(AError: EApiRequestException);
   public
     constructor Create(const AToken: string);
     /// <summary>
@@ -74,6 +80,7 @@ type
     ///   </para>
     /// </summary>
     property OnUpdate: TProc<TtgUpdate> read FOnUpdate write FOnUpdate;
+    property OnUpdates: TProc<TArray<TtgUpdate>> read FOnUpdates write FOnUpdates;
     /// <summary>
     ///   <para>
     ///     Событие возникает когда получено <see cref="TelegAPi.Types|TtgMessage" />
@@ -83,7 +90,7 @@ type
     ///     recieved.
     ///   </para>
     /// </summary>
-    property OnMessage: TProc<TtgMessage> read FOnMessage write FOnMessage;
+    property OnMessage: TProc<TTgMessage> read FOnMessage write FOnMessage;
     /// <summary>
     ///   <para>
     ///     Возникает когда <see cref="TelegAPi.Types|TtgMessage" /> было
@@ -93,8 +100,8 @@ type
     ///     Occurs when <see cref="TelegAPi.Types|TtgMessage" /> was edited.
     ///   </para>
     /// </summary>
-    property OnMessageEdited: TProc<TtgMessage> read FOnMessageEdited write FOnMessageEdited;
-    property OnChannelPost: TProc<TtgMessage> read FOnChannelPost write FOnChannelPost;
+    property OnMessageEdited: TProc<TTgMessage> read FOnMessageEdited write FOnMessageEdited;
+    property OnChannelPost: TProc<TTgMessage> read FOnChannelPost write FOnChannelPost;
     /// <summary>
     ///   <para>
     ///     Возникает, когда получен <see cref="TelegAPi.Types|TtgInlineQuery" />
@@ -160,29 +167,49 @@ uses
 
 { TTelegramBotConsole.TtgRecesiver }
 
+procedure TTelegramBotConsole.TtgRecesiver.DoOnUpdate(AUpdates: TArray<TtgUpdate>);
+var
+  I: Integer;
+begin
+  for I := Low(AUpdates) to High(AUpdates) do
+  begin
+    Bot.OnUpdate(AUpdates[I]);
+    FreeAndNil(AUpdates[I]);
+  end;
+end;
+
+procedure TTelegramBotConsole.TtgRecesiver.DoOnUpdates(AUpdates: TArray<TtgUpdate>);
+begin
+  if Assigned(Bot.OnUpdates) then
+    Bot.OnUpdates(AUpdates);
+end;
+
 procedure TTelegramBotConsole.TtgRecesiver.Execute;
 var
   LUpdates: TArray<TtgUpdate>;
-  I: Integer;
 begin
   if Assigned(Bot.OnConnect) then
     Bot.OnConnect();
   repeat
-    LUpdates := FBot.GetUpdates(Bot.MessageOffset, 100, 0, Bot.AllowedUpdates);
-    if Length(LUpdates) > 0 then
+    LUpdates := Self.GetUpdates;
+    if (Assigned(LUpdates)) and (Length(LUpdates) > 0) and (not Terminated) then
     begin
       Bot.MessageOffset := LUpdates[High(LUpdates)].ID + 1;
-      for I := Low(LUpdates) to High(LUpdates) do
-        Self.OnUpdateReceived(LUpdates[I]);
-      if Assigned(LUpdates) then
-      begin
-        for I := Low(LUpdates) to High(LUpdates) do
-          FreeAndNil(LUpdates[I]);
-        LUpdates := nil;
-      end;
+      Self.DoOnUpdates(LUpdates);
+      Self.DoOnUpdate(LUpdates);
     end;
     Sleep(Bot.PollingTimeout);
   until (Terminated) or (not Bot.IsReceiving);
+end;
+
+function TTelegramBotConsole.TtgRecesiver.GetUpdates: TArray<TtgUpdate>;
+begin
+  try
+    Result := FBot.GetUpdates(Bot.MessageOffset, 100, 0, Bot.AllowedUpdates);
+  except
+    on E: Exception do
+      FBot.ErrorHandlerGeneral(E);
+  end;
 end;
 
 procedure TTelegramBotConsole.TtgRecesiver.OnUpdateReceived(AValue: TtgUpdate);
@@ -227,11 +254,31 @@ begin
     OnDisconnect;
 end;
 
+procedure TTelegramBotConsole.ErrorHandlerApi(AError: EApiRequestException);
+begin
+  if Assigned(OnReceiveError) then
+    OnReceiveError(AError)
+  else
+    raise AError;
+  if Assigned(AError) then
+    FreeAndNil(AError);
+end;
+
+procedure TTelegramBotConsole.ErrorHandlerGeneral(AException: Exception);
+begin
+  if Assigned(OnReceiveGeneralError) then
+    OnReceiveGeneralError(AException)
+  else
+    raise Exception.Create(AException.Message);
+  if Assigned(AException) then
+    FreeAndNil(AException);
+end;
+
 procedure TTelegramBotConsole.SetIsReceiving(const Value: Boolean);
 begin
   // duplicate FReceiver creation and freeing protection
-  if FIsReceiving=Value then exit;
-
+  if FIsReceiving = Value then
+    Exit;
   FIsReceiving := Value;
   if Value then
   begin
@@ -246,8 +293,6 @@ begin
     FreeAndNil(FRecesiver);
   end;
 end;
-
-
 
 end.
 

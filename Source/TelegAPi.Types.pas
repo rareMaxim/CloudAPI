@@ -10,7 +10,6 @@ uses
   TelegAPi.Types.Enums;
 
 type
-
   /// <summary>
   ///   This object represents a Telegram user or bot.
   /// </summary>
@@ -22,6 +21,11 @@ type
     /// </summary>
     [Alias('id')]
     ID: Integer;
+   /// <summary>
+   ///   True, if this user is a bot
+   /// </summary>
+    [Alias('is_bot')]
+    IsBot: Boolean;
     /// <summary>
     ///   User‘s or bot’s first name
     /// </summary>
@@ -171,9 +175,11 @@ type
     BigFileId: string;
   end;
 
+  TTgMessage = class;
   /// <summary>
   ///   This object represents a chat.
   /// </summary>
+
   [Alias('Chat')]
   TtgChat = class
   public
@@ -222,7 +228,7 @@ type
     /// <summary>
     ///   Optional. Description, for supergroups and channel chats. Returned
     ///   only in <see cref="TelegAPI.Bot|TTelegramBot.GetChat(TValue)">getChat</see>
-    ///   .
+    ///    .
     /// </summary>
     [Alias('description')]
     Description: string;
@@ -233,6 +239,12 @@ type
     /// </summary>
     [Alias('invite_link')]
     InviteLink: string;
+    /// <summary>
+    ///   Optional. Pinned message, for supergroups. Returned only in <see cref="TelegAPI.Bot|TTelegramBot.GetChat(TValue)">
+    ///   getChat</see>.
+    /// </summary>
+    [Alias('pinned_message')]
+    PinnedMessage: TtgMessage;
   end;
 
   /// <summary>
@@ -364,9 +376,41 @@ type
   end;
 
   /// <summary>
+  ///   This object describes the position on faces where a mask should be
+  ///   placed by default.
+  /// </summary>
+  TtgMaskPosition = class
+    /// <summary>
+    ///   The part of the face relative to which the mask should be placed. One
+    ///   of “forehead”, “eyes”, “mouth”, or “chin”.
+    /// </summary>
+    [Alias('point')]
+    {TODO -oOwner -cGeneral : Заменить строку на перечисление}
+    Point: string;
+    /// <summary>
+    ///   Shift by X-axis measured in widths of the mask scaled to the face
+    ///   size, from left to right. For example, choosing -1.0 will place mask
+    ///   just to the left of the default mask position.
+    /// </summary>
+    [Alias('x_shift')]
+    XShift: single;
+    /// <summary>
+    ///   Shift by Y-axis measured in heights of the mask scaled to the face
+    ///   size, from top to bottom. For example, 1.0 will place the mask just
+    ///   below the default mask position.
+    /// </summary>
+    [Alias('y_shift')]
+    YShift: Single;
+    /// <summary>
+    ///   Mask scaling coefficient. For example, 2.0 means double size.
+    /// </summary>
+    [Alias('scale')]
+    Scale: Single;
+  end;
+
+  /// <summary>
   ///   This object represents a sticker.
   /// </summary>
-  [Alias('Sticker')]
   TtgSticker = class(TtgFile)
   public
     /// <summary>
@@ -389,6 +433,45 @@ type
     /// </summary>
     [Alias('emoji')]
     Emoji: string;
+    /// <summary>
+    ///   Optional. Name of the sticker set to which the sticker belongs
+    /// </summary>
+    [Alias('set_name')]
+    SetName: string;
+    /// <summary>
+    ///   Optional. For mask stickers, the position where the mask should be
+    ///   placed
+    /// </summary>
+    [Alias('mask_position')]
+    MaskPosition: TtgMaskPosition;
+    destructor Destroy; override;
+  end;
+
+  /// <summary>
+  ///   This object represents a sticker set.
+  /// </summary>
+  TtgStickerSet = class
+    /// <summary>
+    ///   Sticker set name
+    /// </summary>
+    [Alias('name')]
+    Name: string;
+    /// <summary>
+    ///   Sticker set title
+    /// </summary>
+    [Alias('title')]
+    Title: string;
+    /// <summary>
+    ///   True, if the sticker set contains masks
+    /// </summary>
+    [Alias('contains_masks')]
+    ContainsMasks: Boolean;
+    /// <summary>
+    ///   List of all set stickers
+    /// </summary>
+    [Alias('stickers')]
+    Stickers: TObjectList<TtgSticker>;
+    constructor Create;
     destructor Destroy; override;
   end;
 
@@ -524,8 +607,8 @@ type
     /// </summary>
     [Alias('latitude')]
     Latitude: Single;
-    constructor Create;overload;
-    constructor Create(ALongitude, ALatitude: Single);overload;
+    constructor Create; overload;
+    constructor Create(ALongitude, ALatitude: Single); overload;
   end;
 
   /// <summary>
@@ -663,6 +746,10 @@ type
     destructor Destroy; override;
   end;
 
+  TtgInvoice = class;
+
+  TtgSuccessfulPayment = class;
+
   /// <summary>
   ///   This object represents a message.
   /// </summary>
@@ -701,6 +788,18 @@ type
     [Alias('forward_from_chat')]
     ForwardFromChat: TtgChat;
     /// <summary>
+    ///   Optional. For messages forwarded from channels, identifier of the
+    ///   original message in the channel
+    /// </summary>
+    [Alias('forward_from_message_id')]
+    ForwardFromMessageId: Integer;
+    /// <summary>
+    ///   Optional. For messages forwarded from channels, signature of the post
+    ///   author if present
+    /// </summary>
+    [Alias('forward_signature')]
+    ForwardSignature: string;
+    /// <summary>
     ///   Optional. For forwarded messages, date the original message was sent
     ///   in Unix time
     /// </summary>
@@ -718,6 +817,11 @@ type
     /// </summary>
     [Alias('edit_date')]
     EditDate: Integer;
+    /// <summary>
+    ///   Optional. Signature of the post author for messages in channels
+    /// </summary>
+    [Alias('author_signature')]
+    AuthorSignature: string;
     /// <summary>
     ///   Optional. For text messages, the actual UTF-8 text of the message
     /// </summary>
@@ -858,7 +962,21 @@ type
     /// </summary>
     [Alias('pinned_message')]
     PinnedMessage: TtgMessage;
-    function &Type: TtgMessageType;
+    /// <summary>
+    ///   Optional. Message is an invoice for a <see href="https://core.telegram.org/bots/api#payments">
+    ///   payment</see>, information about the invoice. <see href="https://core.telegram.org/bots/api#payments">
+    ///   More about payments »</see>
+    /// </summary>
+    [Alias('invoice')]
+    Invoice: TtgInvoice;
+    /// <summary>
+    ///   Optional. Message is a service message about a successful payment,
+    ///   information about the payment. <see href="https://core.telegram.org/bots/api#payments">
+    ///   More about payments »</see>
+    /// </summary>
+    [Alias('successful_payment')]
+    SuccessfulPayment: TtgSuccessfulPayment;
+    function &type: TtgMessageType;
     destructor Destroy; override;
   end;
 
@@ -1081,8 +1199,8 @@ type
   public
     FileName: string;
     Content: TStream;
-    constructor Create(const AFileName: string);overload;
-    constructor Create(AContent: TStream);overload;
+    constructor Create(const AFileName: string); overload;
+    constructor Create(AContent: TStream); overload;
     destructor Destroy; override;
   end;
 
@@ -1492,7 +1610,7 @@ type
     ///   etc.
     /// </summary>
     [Alias('message')]
-    Message: TtgMessage;
+    message: TtgMessage;
     /// <summary>
     ///   Optional. New version of a message that is known to the bot and was
     ///   edited
@@ -1546,7 +1664,7 @@ type
     ///   The update type.
     /// </value>
     /// <exception cref="System.ArgumentOutOfRangeException" />
-    function &Type: TtgUpdateType;
+    function &type: TtgUpdateType;
     destructor Destroy; override;
   end;
 
@@ -1722,7 +1840,7 @@ end;
 
 { TtgMessage }
 
-function TtgMessage.&Type: TtgMessageType;
+function TtgMessage.&type: TtgMessageType;
 begin
   if Assigned(Audio) then
     Exit(TtgMessageType.AudioMessage);
@@ -1830,7 +1948,7 @@ begin
 end;
 
 { TtgUpdate }
-function TtgUpdate.&Type: TtgUpdateType;
+function TtgUpdate.&type: TtgUpdateType;
 begin
   if Assigned(message) then
     Exit(TtgUpdateType.MessageUpdate);
@@ -1907,6 +2025,19 @@ end;
 destructor TtgApiResponse<T>.Destroy;
 begin
   FreeAndNil(Parameters);
+  inherited;
+end;
+
+{ TtgStickerSet }
+
+constructor TtgStickerSet.Create;
+begin
+  stickers := TObjectList<TtgSticker>.Create;
+end;
+
+destructor TtgStickerSet.Destroy;
+begin
+  stickers.Free;
   inherited;
 end;
 

@@ -21,11 +21,12 @@ uses
 {$ENDIF}
 
 procedure Register;
-Begin
+begin
 {$IFDEF REG_IN_LOAD}
   RegisterWithSplashScreen;
 {$ENDIF}
   RegisterComponents('Telegram', [TTelegramBot]);
-End;
+end;
 
 end.
+
