@@ -41,9 +41,9 @@ type
     FRecesiver: TtgRecesiver;
     FIsReceiving: Boolean;
     FOnDisconnect: TProc;
-    FOnMessage: TProc<TtgMessage>;
-    FOnMessageEdited: TProc<TtgMessage>;
-    FOnChannelPost: TProc<TtgMessage>;
+    FOnMessage: TProc<TTgMessage>;
+    FOnMessageEdited: TProc<TTgMessage>;
+    FOnChannelPost: TProc<TTgMessage>;
     FOnInlineQuery: TProc<TtgInlineQuery>;
     FOnInlineResultChosen: TProc<TtgChosenInlineResult>;
     FOnReceiveError: TProc<EApiRequestException>;
@@ -55,6 +55,8 @@ type
   protected
     procedure SetIsReceiving(const Value: Boolean);
     procedure DoDisconnect(ASender: TObject);
+    procedure ErrorHandlerGeneral(AException: Exception);
+    procedure ErrorHandlerApi(AError: EApiRequestException);
   public
     constructor Create(const AToken: string);
     /// <summary>
@@ -88,7 +90,7 @@ type
     ///     recieved.
     ///   </para>
     /// </summary>
-    property OnMessage: TProc<TtgMessage> read FOnMessage write FOnMessage;
+    property OnMessage: TProc<TTgMessage> read FOnMessage write FOnMessage;
     /// <summary>
     ///   <para>
     ///     Возникает когда <see cref="TelegAPi.Types|TtgMessage" /> было
@@ -98,8 +100,8 @@ type
     ///     Occurs when <see cref="TelegAPi.Types|TtgMessage" /> was edited.
     ///   </para>
     /// </summary>
-    property OnMessageEdited: TProc<TtgMessage> read FOnMessageEdited write FOnMessageEdited;
-    property OnChannelPost: TProc<TtgMessage> read FOnChannelPost write FOnChannelPost;
+    property OnMessageEdited: TProc<TTgMessage> read FOnMessageEdited write FOnMessageEdited;
+    property OnChannelPost: TProc<TTgMessage> read FOnChannelPost write FOnChannelPost;
     /// <summary>
     ///   <para>
     ///     Возникает, когда получен <see cref="TelegAPi.Types|TtgInlineQuery" />
@@ -206,7 +208,7 @@ begin
     Result := FBot.GetUpdates(Bot.MessageOffset, 100, 0, Bot.AllowedUpdates);
   except
     on E: Exception do
-      FBot.ErrorHandler(E);
+      FBot.ErrorHandlerGeneral(E);
   end;
 end;
 
@@ -250,6 +252,26 @@ procedure TTelegramBotConsole.DoDisconnect(ASender: TObject);
 begin
   if Assigned(OnDisconnect) then
     OnDisconnect;
+end;
+
+procedure TTelegramBotConsole.ErrorHandlerApi(AError: EApiRequestException);
+begin
+  if Assigned(OnReceiveError) then
+    OnReceiveError(AError)
+  else
+    raise AError;
+  if Assigned(AError) then
+    FreeAndNil(AError);
+end;
+
+procedure TTelegramBotConsole.ErrorHandlerGeneral(AException: Exception);
+begin
+  if Assigned(OnReceiveGeneralError) then
+    OnReceiveGeneralError(AException)
+  else
+    raise Exception.Create(AException.Message);
+  if Assigned(AException) then
+    FreeAndNil(AException);
 end;
 
 procedure TTelegramBotConsole.SetIsReceiving(const Value: Boolean);

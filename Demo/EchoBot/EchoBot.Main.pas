@@ -31,7 +31,7 @@ type
     swtchToken: TSwitch;
     procedure tgBotInlineResultChosen(ASender: TObject; AChosenInlineResult: TtgChosenInlineResult);
     procedure tgBotInlineQuery(ASender: TObject; AInlineQuery: TtgInlineQuery);
-    procedure tgBotMessage(ASender: TObject; AMessage: TtgMessage);
+    procedure tgBotMessage(ASender: TObject; AMessage: TTgMessage);
     procedure tgBotCallbackQuery(ASender: TObject; ACallbackQuery: TtgCallbackQuery);
     procedure tgBotReceiveError(ASender: TObject; AApiRequestException: EApiRequestException);
     procedure tgBotConnect(Sender: TObject);
@@ -42,15 +42,15 @@ type
   private
     { Private declarations }
     procedure WriteLine(const AValue: string);
-    procedure SendInline(Msg: TtgMessage);
-    procedure SendKeyboard(Msg: TtgMessage);
-    procedure SendPhoto(Msg: TtgMessage);
-    procedure SendRequest(Msg: TtgMessage);
-    procedure SendQuest(Msg: TtgMessage);
+    procedure SendInline(Msg: TTgMessage);
+    procedure SendKeyboard(Msg: TTgMessage);
+    procedure SendPhoto(Msg: TTgMessage);
+    procedure SendRequest(Msg: TTgMessage);
+    procedure SendQuest(Msg: TTgMessage);
     // parsing
-    procedure ParseTextMessage(Msg: TtgMessage);
-    procedure ParsePhotoMessage(Msg: TtgMessage);
-    procedure ParseLocationMessage(Msg: TtgMessage);
+    procedure ParseTextMessage(Msg: TTgMessage);
+    procedure ParsePhotoMessage(Msg: TTgMessage);
+    procedure ParseLocationMessage(Msg: TTgMessage);
   public
     { Public declarations }
   end;
@@ -74,12 +74,12 @@ begin
   tgBot.IsReceiving := False;
 end;
 
-procedure TMain.ParseLocationMessage(Msg: TtgMessage);
+procedure TMain.ParseLocationMessage(Msg: TTgMessage);
 begin
   WriteLine('Location: ' + Msg.Location.Longitude.ToString + ' ' + Msg.Location.Latitude.ToString);
 end;
 
-procedure TMain.ParsePhotoMessage(Msg: TtgMessage);
+procedure TMain.ParsePhotoMessage(Msg: TTgMessage);
 var
   LFile: TtgFile;
 begin
@@ -93,7 +93,7 @@ begin
   end;
 end;
 
-procedure TMain.ParseTextMessage(Msg: TtgMessage);
+procedure TMain.ParseTextMessage(Msg: TTgMessage);
 var
   usage: string;
 begin
@@ -129,7 +129,7 @@ begin
   end;
 end;
 
-procedure TMain.SendRequest(Msg: TtgMessage);
+procedure TMain.SendRequest(Msg: TTgMessage);
 var
   kb: IReplyMarkup;
 begin
@@ -144,10 +144,10 @@ begin
   tgBot.Token := edtToken.Text;
   if not tgBot.IsValidToken then
     raise ELoginCredentialError.Create('invalid token format');
-  tgBot.IsReceiving := True;
+  tgBot.IsReceiving := swtchToken.IsChecked;
 end;
 
-procedure TMain.SendPhoto(Msg: TtgMessage);
+procedure TMain.SendPhoto(Msg: TTgMessage);
 const
   PATH_PHOTO = 'C:\Users\Public\Pictures\Sample Pictures\Tulips.jpg';
 var
@@ -178,7 +178,7 @@ begin
   tgBot.SendMessage(Msg.Chat.Id, 'Choose', TtgParseMode.default, False, False, 0, keyboard).Free;
 end;
 
-procedure TMain.SendKeyboard(Msg: TtgMessage);
+procedure TMain.SendKeyboard(Msg: TTgMessage);
 var
   keyboard: IReplyMarkup;
 begin
@@ -250,7 +250,7 @@ begin
   tgBot.AnswerInlineQuery(AInlineQuery.Id, results, 0, True);
 end;
 
-procedure TMain.SendQuest(Msg: TtgMessage);
+procedure TMain.SendQuest(Msg: TTgMessage);
 var
   keyboard: IReplyMarkup;
 begin
@@ -267,7 +267,7 @@ begin
   WriteLine('Received choosen inline result: ' + AChosenInlineResult.ResultId);
 end;
 
-procedure TMain.tgBotMessage(ASender: TObject; AMessage: TtgMessage);
+procedure TMain.tgBotMessage(ASender: TObject; AMessage: TTgMessage);
 begin
   case AMessage.&Type of
     TtgMessageType.TextMessage:
@@ -281,15 +281,7 @@ end;
 
 procedure TMain.tgBotReceiveError(ASender: TObject; AApiRequestException: EApiRequestException);
 begin
-  case AApiRequestException.ErrorCode of
-    401:
-      begin
-        tgBot.IsReceiving := False;
-        ShowMessage(AApiRequestException.Message);
-      end;
-  end;
   WriteLine(AApiRequestException.ToString);
-  AApiRequestException.Free;
 end;
 
 procedure TMain.tgBotReceiveGeneralError(ASender: TObject; AException: Exception);

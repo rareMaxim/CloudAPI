@@ -103,7 +103,8 @@ type
     function ArrayToString<T: class, constructor>(LArray: TArray<T>): string;
     procedure SetUseSynchronize(const Value: Boolean);
   protected
-    procedure ErrorHandler(AException: Exception);
+    procedure ErrorHandlerGeneral(AException: Exception);
+    procedure ErrorHandlerApi(AError: EApiRequestException);
     procedure SetIsReceiving(const Value: Boolean);
     procedure DoDisconnect(ASender: TObject);
   public
@@ -1823,16 +1824,16 @@ function TTelegramBotCore.API<T>(const Method: string; Parameters: TDictionary<s
 var
   LTextResponse: string;
 begin
-  if not Self.IsValidToken then
-  begin
-    if IsReceiving then
-      IsReceiving := False;
-    raise EArgumentException.Create('Invalid token format');
-  end;
   LTextResponse := SendDataToServer(Method, Parameters);
   if Assigned(OnReceiveRawData) then
     OnReceiveRawData(Self, LTextResponse);
-  Result := ApiTest<T>(LTextResponse, Parameters);
+  if LTextResponse.IsEmpty then
+  begin
+    ErrorHandlerGeneral(ETelegramUnknownData.Create('Can''t parse response'));
+    Result := Default(T);
+  end
+  else
+    Result := ApiTest<T>(LTextResponse, Parameters);
 end;
 
 function TTelegramBotCore.ApiTest<T>(const ARequest: string; Parameters: TDictionary<string, TValue>): T;
@@ -1843,18 +1844,9 @@ begin
   try
     LApiResponse := TtgApiResponse<T>.FromJSON(ARequest);
     if not LApiResponse.Ok then
-    begin
-      if Assigned(OnReceiveError) then
-        TThread.Synchronize(FRecesiver,
-          procedure
-          begin
-            OnReceiveError(Self, EApiRequestException.FromApiResponse<T>(LApiResponse, Parameters))
-          end)
-      else
-        raise EApiRequestException.FromApiResponse<T>(LApiResponse, Parameters);
-    end;
+      ErrorHandlerApi(EApiRequestException.FromApiResponse<T>(LApiResponse, Parameters));
     Result := LApiResponse.ResultObject;
-    LApiResponse.ResultObject := default(T);
+    LApiResponse.ResultObject := Default(T);
   finally
     FreeAndNil(LApiResponse);
   end;
@@ -1884,7 +1876,7 @@ begin
         Result.AddField(LParameter.Key, LParameter.Value.AsObject.AsJSON);
     end
     else
-      raise ETelegramUnknownData.Create('Check parameter type ' + LParameter.Value.ToString);
+      ErrorHandlerGeneral(ETelegramDataConvert.Create('Check parameter type ' + LParameter.Value.ToString));
   end;
 end;
 
@@ -1911,7 +1903,10 @@ begin
       Result := LHttpResponse.ContentAsString(TEncoding.UTF8);
     except
       on E: Exception do
-        Self.ErrorHandler(E);
+      begin
+        Self.ErrorHandlerGeneral(E);
+        Result := string.Empty;
+      end;
     end;
   finally
     FreeAndNil(LParamToDate);
@@ -1966,17 +1961,32 @@ begin
     OnDisconnect(ASender);
 end;
 
-procedure TTelegramBotCore.ErrorHandler(AException: Exception);
+procedure TTelegramBotCore.ErrorHandlerApi(AError: EApiRequestException);
+begin
+  if Assigned(OnReceiveError) then
+    TThread.Synchronize(nil,
+      procedure
+      begin
+        OnReceiveError(Self, AError);
+      end)
+  else
+    raise AError;
+  if Assigned(AError) then
+    FreeAndNil(AError);
+end;
+
+procedure TTelegramBotCore.ErrorHandlerGeneral(AException: Exception);
 begin
   if Assigned(OnReceiveGeneralError) then
-  begin
-    OnReceiveGeneralError(Self, AException);
-    Exit;
-  end
+    TThread.Synchronize(nil,
+      procedure
+      begin
+        OnReceiveGeneralError(Self, AException)
+      end)
   else
-  begin
     raise Exception.Create(AException.Message);
-  end;
+  if Assigned(AException) then
+    FreeAndNil(AException);
 end;
 
 {$ENDREGION}
@@ -2420,9 +2430,9 @@ begin
   Parameters := TDictionary<string, TValue>.Create;
   try
     Parameters.Add('user_id', UserId);
-    Parameters.Add('name', name);
+    Parameters.Add('name', Name);
     Parameters.Add('png_sticker', PngSticker);
-    Parameters.Add('emojis', emojis);
+    Parameters.Add('emojis', Emojis);
     Parameters.Add('mask_position', MaskPosition);
     Result := API<Boolean>('addStickerToSet', Parameters);
   finally
@@ -2964,7 +2974,7 @@ begin
     Result := FBot.GetUpdates(Bot.MessageOffset, 100, 0, Bot.AllowedUpdates);
   except
     on E: Exception do
-      FBot.ErrorHandler(E);
+      FBot.ErrorHandlerGeneral(E);
   end;
 end;
 
