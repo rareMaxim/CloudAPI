@@ -12,6 +12,9 @@
         <Projects Include="Demo\Console\ConsoleBot.dproj">
             <Dependencies>Install\TelegaPiBot.dproj</Dependencies>
         </Projects>
+        <Projects Include="Demo\DonateMe\DonateMe.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -47,14 +50,23 @@
     <Target Name="ConsoleBot:Make" DependsOnTargets="TelegaPiBot:Make">
         <MSBuild Projects="Demo\Console\ConsoleBot.dproj" Targets="Make"/>
     </Target>
+    <Target Name="DonateMe">
+        <MSBuild Projects="Demo\DonateMe\DonateMe.dproj"/>
+    </Target>
+    <Target Name="DonateMe:Clean">
+        <MSBuild Projects="Demo\DonateMe\DonateMe.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="DonateMe:Make">
+        <MSBuild Projects="Demo\DonateMe\DonateMe.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="TelegaPiBot;EchoBot;ConsoleBot"/>
+        <CallTarget Targets="TelegaPiBot;EchoBot;ConsoleBot;DonateMe"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="TelegaPiBot:Clean;EchoBot:Clean;ConsoleBot:Clean"/>
+        <CallTarget Targets="TelegaPiBot:Clean;EchoBot:Clean;ConsoleBot:Clean;DonateMe:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="TelegaPiBot:Make;EchoBot:Make;ConsoleBot:Make"/>
+        <CallTarget Targets="TelegaPiBot:Make;EchoBot:Make;ConsoleBot:Make;DonateMe:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

@@ -156,7 +156,7 @@ begin
     for LEnt in Self.Entities do
     begin
       if (LEnt.TypeMessage = 'bot_command') then
-        if AValue.Substring(LEnt.Offset, LEnt.Length) = AValue then
+        if Self.Text.Substring(LEnt.Offset, LEnt.Length).StartsWith(AValue) then
           Exit(True);
     end;
 end;
