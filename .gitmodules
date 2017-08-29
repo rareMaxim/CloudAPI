@@ -1,0 +1,3 @@
+[submodule "modules/DJSON"]
+	path = modules/DJSON
+	url = https://github.com/mauriziodm/DJSON.git
