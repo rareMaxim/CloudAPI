@@ -16,8 +16,7 @@ uses
   TelegAPI.Types.ReplyMarkups,
   TelegAPI.Types.InlineQueryResults,
   TelegAPI.Exceptions,
-  TelegAPI.Utils.Params,
-  XSuperObject;
+  TelegAPI.Utils.Params;
 
 type
   TtgOnUpdate = procedure(ASender: TObject; AUpdate: TtgUpdate) of object;
@@ -100,7 +99,6 @@ type
     function SendDataToServer(const Method: string; Parameters: TDictionary<string, TValue>): string;
     function ParamsToFormData(Parameters: TDictionary<string, TValue>): TMultipartFormData;
     function ApiTest<T>(const ARequest: string; Parameters: TDictionary<string, TValue>): T;
-    function ArrayToString<T: class, constructor>(LArray: TArray<T>): string;
     procedure SetUseSynchronize(const Value: Boolean);
   protected
     procedure ErrorHandlerGeneral(AException: Exception);
@@ -1789,7 +1787,10 @@ type
 implementation
 
 uses
-  TelegAPI.Helpers;
+  DJSON,
+  TelegAPI.Helpers,
+  TelegAPI.Utils.Json,
+  DJSON.Params;
 
 { TTelegramBotCore }
 
@@ -1830,7 +1831,7 @@ begin
   if LTextResponse.IsEmpty then
   begin
     ErrorHandlerGeneral(ETelegramUnknownData.Create('Can''t parse response'));
-    Result := default(T);
+    Result := Default(T);
   end
   else
     Result := ApiTest<T>(LTextResponse, Parameters);
@@ -1839,14 +1840,17 @@ end;
 function TTelegramBotCore.ApiTest<T>(const ARequest: string; Parameters: TDictionary<string, TValue>): T;
 var
   LApiResponse: TtgApiResponse<T>;
+  LdjParams: IdjParams;
 begin
   LApiResponse := nil;
+  LdjParams := dj.Default;
+  LdjParams.Engine := TdjEngine.eJDO;
   try
-    LApiResponse := TtgApiResponse<T>.FromJSON(ARequest);
+    LApiResponse := dj.FromJson(ARequest, LdjParams).&To < TtgApiResponse<T> > ;
     if not LApiResponse.Ok then
       ErrorHandlerApi(EApiRequestException.FromApiResponse<T>(LApiResponse, Parameters));
     Result := LApiResponse.ResultObject;
-    LApiResponse.ResultObject := default(T);
+    LApiResponse.ResultObject := Default(T);
   finally
     FreeAndNil(LApiResponse);
   end;
@@ -1873,7 +1877,7 @@ begin
     begin
       { TODO -oOwner -cGeneral : Проверить че за херня тут твориться }
       if not LParameter.Value.IsEmpty then
-        Result.AddField(LParameter.Key, LParameter.Value.AsObject.AsJSON);
+        Result.AddField(LParameter.Key, dj.From(LParameter.Value.AsObject).ToJson);
     end
     else
       ErrorHandlerGeneral(ETelegramDataConvert.Create('Check parameter type ' + LParameter.Value.ToString));
@@ -1941,17 +1945,6 @@ begin
   if IsReceiving then
     IsReceiving := False;
   FUseSynchronize := Value;
-end;
-
-function TTelegramBotCore.ArrayToString<T>(LArray: TArray<T>): string;
-var
-  SA: ISuperArray;
-  I: Integer;
-begin
-  SA := TSuperArray.Create();
-  for I := Low(LArray) to High(LArray) do
-    SA.Add(T(LArray[I]).AsJSONObject);
-  Result := SA.AsJSON();
 end;
 
 procedure TTelegramBotCore.DoDisconnect(ASender: TObject);
@@ -2589,7 +2582,7 @@ begin
   Parameters := TDictionary<string, TValue>.Create;
   try
     Parameters.Add('inline_query_id', InlineQueryId);
-    Parameters.Add('results', ArrayToString<TtgInlineQueryResult>(Results));
+    Parameters.Add('results', TJsonUtils.ArrayToJString<TtgInlineQueryResult>(Results));
     Parameters.Add('cache_time', CacheTime);
     Parameters.Add('is_personal', IsPersonal);
     Parameters.Add('next_offset', NextOffset);
@@ -2616,7 +2609,7 @@ begin
     LParameters.Add('provider_token', ProviderToken);
     LParameters.Add('start_parameter', StartParameter);
     LParameters.Add('currency', Currency);
-    LParameters.Add('prices', ArrayToString<TtgLabeledPrice>(Prices));
+    LParameters.Add('prices', TJsonUtils.ArrayToJString<TtgLabeledPrice>(Prices));
     LParameters.Add('photo_url', PhotoUrl);
     LParameters.Add('photo_size', PhotoSize);
     LParameters.Add('photo_width', PhotoWidth);
@@ -2658,7 +2651,7 @@ begin
   try
     Parameters.Add('Shipping_query_id', ShippingQueryId);
     Parameters.Add('Ok', Ok);
-    Parameters.Add('Shipping_options', ArrayToString<TtgShippingOption>(ShippingOptions));
+    Parameters.Add('Shipping_options', TJsonUtils.ArrayToJString<TtgShippingOption>(ShippingOptions));
     Parameters.Add('Error_message', ErrorMessage);
     Result := API<Boolean>('answerShippingQuery', Parameters);
   finally

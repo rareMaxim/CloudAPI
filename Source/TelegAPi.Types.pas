@@ -3,121 +3,121 @@
 interface
 
 uses
-  XSuperObject,
   System.SysUtils,
   System.Classes,
   System.Generics.Collections,
-  TelegAPi.Types.Enums;
+  TelegAPi.Types.Enums,
+  DJSON.Attributes;
 
 type
   /// <summary>
   ///   This object represents a Telegram user or bot.
   /// </summary>
-  [Alias('User')]
-  TtgUser = class
+//  [djName('User')]
+  TtgUser = class(TObject)
   public
     /// <summary>
     ///   Unique identifier for this user or bot
     /// </summary>
-    [Alias('id')]
+    [djName('id')]
     ID: Integer;
    /// <summary>
    ///   True, if this user is a bot
    /// </summary>
-    [Alias('is_bot')]
+    [djName('is_bot')]
     IsBot: Boolean;
     /// <summary>
     ///   User‘s or bot’s first name
     /// </summary>
-    [Alias('first_name')]
+    [djName('first_name')]
     FirstName: string;
     /// <summary>
     ///   Optional. User‘s or bot’s last name
     /// </summary>
-    [Alias('last_name')]
+    [djName('last_name')]
     LastName: string;
     /// <summary>
     ///   Optional. User‘s or bot’s username
     /// </summary>
-    [Alias('username')]
+    [djName('username')]
     Username: string;
     /// <summary>
     ///   Optional. IETF language tag of the user's language
     /// </summary>
-    [Alias('language_code')]
+    [djName('language_code')]
     LanguageCode: string;
   end;
 
   /// <summary>
   ///   This object contains information about one member of the chat.
   /// </summary>
-  [Alias('ChatMember')]
+  [djName('ChatMember')]
   TtgChatMember = class
   public
     /// <summary>
     ///   Information about the user
     /// </summary>
-    [Alias('user')]
+    [djName('user')]
     User: TtgUser;
     /// <summary>
     ///   The member's status in the chat. Can be “creator”, “administrator”,
     ///   “member”, “left” or “kicked”
     /// </summary>
-    [Alias('status')]
+    [djName('status')]
     Status: string;
     /// <summary>
     ///   Optional. Restictred and kicked only. Date when restrictions will be
     ///   lifted for this user, unix time
     /// </summary>
-    [Alias('until_date')]
+    [djName('until_date')]
     UntilDate: Integer;
     /// <summary>
     ///   Optional. Administrators only. True, if the bot is allowed to edit
     ///   administrator privileges of that user
     /// </summary>
-    [Alias('can_be_edited')]
+    [djName('can_be_edited')]
     CanBeEdited: Boolean;
     /// <summary>
     ///   Optional. Administrators only. True, if the administrator can change
     ///   the chat title, photo and other settings
     /// </summary>
-    [Alias('can_change_info')]
+    [djName('can_change_info')]
     CanChangeInfo: Boolean;
     /// <summary>
     ///   Optional. Administrators only. True, if the administrator can post in
     ///   the channel, channels only
     /// </summary>
-    [Alias('can_post_messages')]
+    [djName('can_post_messages')]
     CanPostMessages: Boolean;
     /// <summary>
     ///   Optional. Administrators only. True, if the administrator can edit
     ///   messages of other users, channels only
     /// </summary>
-    [Alias('can_edit_messages')]
+    [djName('can_edit_messages')]
     CanEditMessages: Boolean;
     /// <summary>
     ///   Optional. Administrators only. True, if the administrator can delete
     ///   messages of other users
     /// </summary>
-    [Alias('can_delete_messages')]
+    [djName('can_delete_messages')]
     CanDeleteMessages: Boolean;
     /// <summary>
     ///   Optional. Administrators only. True, if the administrator can invite
     ///   new users to the chat
     /// </summary>
-    [Alias('can_invite_users')]
+    [djName('can_invite_users')]
     CanInviteUsers: Boolean;
     /// <summary>
     ///   Optional. Administrators only. True, if the administrator can
     ///   restrict, ban or unban chat members
     /// </summary>
-    [Alias('can_restrict_members')]
+    [djName('can_restrict_members')]
     CanRestrictMembers: Boolean;
     /// <summary>
     ///   Optional. Administrators only. True, if the administrator can pin
     ///   messages, supergroups only
     /// </summary>
-    [Alias('can_pin_messages')]
+    [djName('can_pin_messages')]
     CanPinMessages: Boolean;
     /// <summary>
     ///   Optional. Administrators only. True, if the administrator can add new
@@ -125,34 +125,34 @@ type
     ///   administrators that he has promoted, directly or indirectly (promoted
     ///   by administrators that were appointed by the user)
     /// </summary>
-    [Alias('can_promote_members')]
+    [djName('can_promote_members')]
     CanPromoteMembers: Boolean;
     /// <summary>
     ///   Optional. Restricted only. True, if the user can send text messages,
     ///   contacts, locations and venues
     /// </summary>
-    [Alias('can_send_messages')]
+    [djName('can_send_messages')]
     CanSendMessages: Boolean;
     /// <summary>
     ///   Optional. Restricted only. True, if the user can send audios,
     ///   documents, photos, videos, video notes and voice notes, implies <see cref="TelegAPi.Types|TtgChatMember.CanSendMessages">
     ///   CanSendMessages</see>
     /// </summary>
-    [Alias('can_send_media_messages')]
+    [djName('can_send_media_messages')]
     CanSendMediaMessages: Boolean;
     /// <summary>
     ///   Optional. Restricted only. True, if the user can send animations,
     ///   games, stickers and use inline bots, implies <see cref="TelegAPi.Types|TtgChatMember.CanSendMediaMessages">
     ///   CanSendMediaMessages</see>
     /// </summary>
-    [Alias('can_send_other_messages')]
+    [djName('can_send_other_messages')]
     CanSendOtherMessages: Boolean;
     /// <summary>
     ///   Optional. Restricted only. True, if user may add web page previews to
     ///   his messages, implies <see cref="TelegAPi.Types|TtgChatMember.CanSendMediaMessages">
     ///   CanSendMediaMessages</see>
     /// </summary>
-    [Alias('can_add_web_page_previews')]
+    [djName('can_add_web_page_previews')]
     CanAddWebPagePreviews: Boolean;
     destructor Destroy; override;
   end;
@@ -165,13 +165,13 @@ type
     ///   Unique file identifier of small (160x160) chat photo. This file_id
     ///   can be used only for photo download.
     /// </summary>
-    [Alias('small_file_id')]
+    [djName('small_file_id')]
     SmallFileId: string;
     /// <summary>
     ///   Unique file identifier of big (640x640) chat photo. This file_id can
     ///   be used only for photo download.
     /// </summary>
-    [Alias('big_file_id')]
+    [djName('big_file_id')]
     BigFileId: string;
   end;
 
@@ -180,70 +180,70 @@ type
   ///   This object represents a chat.
   /// </summary>
 
-  [Alias('Chat')]
+  [djName('Chat')]
   TtgChat = class
   public
     /// <summary>
     ///   Unique identifier for this chat, not exceeding 1e13 by absolute value
     /// </summary>
-    [Alias('id')]
+    [djName('id')]
     ID: Int64;
     /// <summary>
     ///   Type of chat, can be either “private”, “group”, “supergroup” or
     ///   “channel”
     /// </summary>
-    [Alias('type')]
+    [djName('type')]
     TypeChat: string;
     /// <summary>
     ///   Optional. Title, for channels and group chats
     /// </summary>
-    [Alias('title')]
+    [djName('title')]
     Title: string;
     /// <summary>
     ///   Optional. Username, for private chats and channels if available
     /// </summary>
-    [Alias('username')]
+    [djName('username')]
     Username: string;
     /// <summary>
     ///   Optional. First name of the other party in a private chat
     /// </summary>
-    [Alias('first_name')]
+    [djName('first_name')]
     FirstName: string;
     /// <summary>
     ///   Optional. Last name of the other party in a private chat
     /// </summary>
-    [Alias('last_name')]
+    [djName('last_name')]
     LastName: string;
     /// <summary>
     ///   Optional. True if a group has ‘All Members Are Admins’ enabled.
     /// </summary>
-    [Alias('all_members_are_administrators')]
+    [djName('all_members_are_administrators')]
     AllMembersAreAdministrators: Boolean;
     /// <summary>
     ///   Optional. Chat photo. Returned only in <see cref="TelegAPI.Bot|TTelegramBot.GetChat(TValue)">
     ///   getChat</see>.
     /// </summary>
-    [Alias('photo')]
+    [djName('photo')]
     Photo: TtgChatPhoto;
     /// <summary>
     ///   Optional. Description, for supergroups and channel chats. Returned
     ///   only in <see cref="TelegAPI.Bot|TTelegramBot.GetChat(TValue)">getChat</see>
     ///    .
     /// </summary>
-    [Alias('description')]
+    [djName('description')]
     Description: string;
     /// <summary>
     ///   Optional. Chat invite link, for supergroups and channel chats.
     ///   Returned only in <see cref="TelegAPI.Bot|TTelegramBot.GetChat(TValue)">
     ///   getChat</see>.
     /// </summary>
-    [Alias('invite_link')]
+    [djName('invite_link')]
     InviteLink: string;
     /// <summary>
     ///   Optional. Pinned message, for supergroups. Returned only in <see cref="TelegAPI.Bot|TTelegramBot.GetChat(TValue)">
     ///   getChat</see>.
     /// </summary>
-    [Alias('pinned_message')]
+    [djName('pinned_message')]
     PinnedMessage: TTgMessage;
   end;
 
@@ -251,7 +251,7 @@ type
   ///   This object represents one special entity in a text message. For
   ///   example, hashtags, usernames, URLs, etc.
   /// </summary>
-  [Alias('MessageEntity')]
+  [djName('MessageEntity')]
   TtgMessageEntity = class
   public
     /// <summary>
@@ -260,40 +260,40 @@ type
     ///   string), pre (monowidth block), text_link (for clickable text URLs),
     ///   text_mention (for users without usernames)
     /// </summary>
-    [Alias('type')]
+    [djName('type')]
     TypeMessage: string;
     /// <summary>
     ///   Offset in UTF-16 code units to the start of the entity
     /// </summary>
-    [Alias('offset')]
+    [djName('offset')]
     Offset: Integer;
     /// <summary>
     ///   Length of the entity in UTF-16 code units
     /// </summary>
-    [Alias('length')]
+    [djName('length')]
     Length: Integer;
     /// <summary>
     ///   Optional. For “text_link” only, url that will be opened after user
     ///   taps on the text
     /// </summary>
-    [Alias('url')]
+    [djName('url')]
     Url: string;
     /// <summary>
     ///   Optional. For “text_mention” only, the mentioned user
     /// </summary>
-    [Alias('user')]
+    [djName('user')]
     User: TtgUser;
     destructor Destroy; override;
   end;
 
-  [Alias('File')]
+  [djName('File')]
   TtgFile = class
   public
-    [Alias('file_id')]
+    [djName('file_id')]
     FileId: string;
-    [Alias('file_size')]
+    [djName('file_size')]
     FileSize: Integer;
-    [Alias('file_path')]
+    [djName('file_path')]
     FilePath: string;
     function CanDownload: Boolean;
     function GetFileUrl(const AToken: string): string;
@@ -303,28 +303,28 @@ type
   ///   This object represents an audio file to be treated as music by the
   ///   Telegram clients.
   /// </summary>
-  [Alias('Audio')]
+  [djName('Audio')]
   TtgAudio = class(TtgFile)
   public
     /// <summary>
     ///   Duration of the audio in seconds as defined by sender
     /// </summary>
-    [Alias('duration')]
+    [djName('duration')]
     Duration: Integer;
     /// <summary>
     ///   Performer of the audio as defined by sender or by audio tags
     /// </summary>
-    [Alias('performer')]
+    [djName('performer')]
     Performer: string;
     /// <summary>
     ///   Title of the audio as defined by sender or by audio tags
     /// </summary>
-    [Alias('title')]
+    [djName('title')]
     Title: string;
     /// <summary>
     ///   Optional. MIME type of the file as defined by sender
     /// </summary>
-    [Alias('mime_type')]
+    [djName('mime_type')]
     MimeType: string;
   end;
 
@@ -335,18 +335,18 @@ type
   ///   A missing thumbnail for a file (or sticker) is presented as an empty
   ///   object.
   /// </remarks>
-  [Alias('PhotoSize')]
+  [djName('PhotoSize')]
   TtgPhotoSize = class(TtgFile)
   public
     /// <summary>
     ///   Photo width
     /// </summary>
-    [Alias('width')]
+    [djName('width')]
     Width: Integer;
     /// <summary>
     ///   Photo height
     /// </summary>
-    [Alias('Height')]
+    [djName('Height')]
     Height: Integer;
   end;
 
@@ -354,23 +354,23 @@ type
   ///   This object represents a general file (as opposed to photos, voice
   ///   messages and audio files).
   /// </summary>
-  [Alias('Document')]
+  [djName('Document')]
   TtgDocument = class(TtgFile)
   public
     /// <summary>
     ///   Document thumbnail as defined by sender
     /// </summary>
-    [Alias('thumb')]
+    [djName('thumb')]
     Thumb: TtgPhotoSize;
     /// <summary>
     ///   Optional. Original filename as defined by sender
     /// </summary>
-    [Alias('file_name')]
+    [djName('file_name')]
     FileName: string;
     /// <summary>
     ///   Optional. MIME type of the file as defined by sender
     /// </summary>
-    [Alias('mime_type')]
+    [djName('mime_type')]
     MimeType: string;
     destructor Destroy; override;
   end;
@@ -384,7 +384,7 @@ type
     ///   The part of the face relative to which the mask should be placed. One
     ///   of “forehead”, “eyes”, “mouth”, or “chin”.
     /// </summary>
-    [Alias('point')]
+    [djName('point')]
     {TODO -oOwner -cGeneral : Заменить строку на перечисление}
     Point: string;
     /// <summary>
@@ -392,19 +392,19 @@ type
     ///   size, from left to right. For example, choosing -1.0 will place mask
     ///   just to the left of the default mask position.
     /// </summary>
-    [Alias('x_shift')]
+    [djName('x_shift')]
     XShift: Single;
     /// <summary>
     ///   Shift by Y-axis measured in heights of the mask scaled to the face
     ///   size, from top to bottom. For example, 1.0 will place the mask just
     ///   below the default mask position.
     /// </summary>
-    [Alias('y_shift')]
+    [djName('y_shift')]
     YShift: Single;
     /// <summary>
     ///   Mask scaling coefficient. For example, 2.0 means double size.
     /// </summary>
-    [Alias('scale')]
+    [djName('scale')]
     Scale: Single;
   end;
 
@@ -416,33 +416,33 @@ type
     /// <summary>
     ///   Sticker width
     /// </summary>
-    [Alias('width')]
+    [djName('width')]
     Width: Integer;
     /// <summary>
     ///   Sticker height
     /// </summary>
-    [Alias('width')]
+    [djName('width')]
     Height: Integer;
     /// <summary>
     ///   Sticker thumbnail in .webp or .jpg format
     /// </summary>
-    [Alias('thumb')]
+    [djName('thumb')]
     Thumb: TtgPhotoSize;
     /// <summary>
     ///   Optional. Emoji associated with the sticker
     /// </summary>
-    [Alias('emoji')]
+    [djName('emoji')]
     Emoji: string;
     /// <summary>
     ///   Optional. Name of the sticker set to which the sticker belongs
     /// </summary>
-    [Alias('set_name')]
+    [djName('set_name')]
     SetName: string;
     /// <summary>
     ///   Optional. For mask stickers, the position where the mask should be
     ///   placed
     /// </summary>
-    [Alias('mask_position')]
+    [djName('mask_position')]
     MaskPosition: TtgMaskPosition;
     destructor Destroy; override;
   end;
@@ -454,22 +454,22 @@ type
     /// <summary>
     ///   Sticker set name
     /// </summary>
-    [Alias('name')]
+    [djName('name')]
     Name: string;
     /// <summary>
     ///   Sticker set title
     /// </summary>
-    [Alias('title')]
+    [djName('title')]
     Title: string;
     /// <summary>
     ///   True, if the sticker set contains masks
     /// </summary>
-    [Alias('contains_masks')]
+    [djName('contains_masks')]
     ContainsMasks: Boolean;
     /// <summary>
     ///   List of all set stickers
     /// </summary>
-    [Alias('stickers')]
+    [djName('stickers')]
     Stickers: TObjectList<TtgSticker>;
     constructor Create;
     destructor Destroy; override;
@@ -478,33 +478,33 @@ type
   /// <summary>
   ///   This object represents a video file.
   /// </summary>
-  [Alias('Video')]
+  [djName('Video')]
   TtgVideo = class(TtgFile)
   public
     /// <summary>
     ///   Video width as defined by sender
     /// </summary>
-    [Alias('width')]
+    [djName('width')]
     Width: Integer;
     /// <summary>
     ///   Video height as defined by sender
     /// </summary>
-    [Alias('height')]
+    [djName('height')]
     Height: Integer;
     /// <summary>
     ///   Duration of the video in seconds as defined by sender
     /// </summary>
-    [Alias('duration')]
+    [djName('duration')]
     Duration: Integer;
     /// <summary>
     ///   Video thumbnail
     /// </summary>
-    [Alias('thumb')]
+    [djName('thumb')]
     Thumb: TtgPhotoSize;
     /// <summary>
     ///   Optional. Mime type of a file as defined by sender
     /// </summary>
-    [Alias('mime_type')]
+    [djName('mime_type')]
     MimeType: string;
     destructor Destroy; override;
   end;
@@ -515,97 +515,97 @@ type
   /// <remarks>
   ///   available in Telegram apps as of v.4.0
   /// </remarks>
-  [Alias('VideoNote')]
+  [djName('VideoNote')]
   TtgVideoNote = class
   public
     /// <summary>
     ///   Unique identifier for this file
     /// </summary>
-    [Alias('file_id')]
+    [djName('file_id')]
     FileId: string;
     /// <summary>
     ///   Video width and height as defined by sender
     /// </summary>
-    [Alias('length')]
+    [djName('length')]
     Length: Integer;
     /// <summary>
     ///   Duration of the video in seconds as defined by sender
     /// </summary>
-    [Alias('duration')]
+    [djName('duration')]
     Duration: Integer;
     /// <summary>
     ///   Optional. Video thumbnail
     /// </summary>
-    [Alias('thumb')]
+    [djName('thumb')]
     Thumb: TtgPhotoSize;
     /// <summary>
     ///   Optional. File size
     /// </summary>
-    [Alias('file_size')]
+    [djName('file_size')]
     FileSize: Integer;
   end;
 
   /// <summary>
   ///   This object represents a voice note.
   /// </summary>
-  [Alias('Voice')]
+  [djName('Voice')]
   TtgVoice = class(TtgFile)
   public
     /// <summary>
     ///   Duration of the audio in seconds as defined by sender
     /// </summary>
-    [Alias('duration')]
+    [djName('duration')]
     Duration: Integer;
     /// <summary>
     ///   Optional. MIME type of the file as defined by sender
     /// </summary>
-    [Alias('mime_type')]
+    [djName('mime_type')]
     MimeType: string;
   end;
 
   /// <summary>
   ///   This object represents a phone contact.
   /// </summary>
-  [Alias('Contact')]
+  [djName('Contact')]
   TtgContact = class
   public
     /// <summary>
     ///   Contact's phone number
     /// </summary>
-    [Alias('phone_number')]
+    [djName('phone_number')]
     PhoneNumber: string;
     /// <summary>
     ///   Contact's first name
     /// </summary>
-    [Alias('first_name')]
+    [djName('first_name')]
     FirstName: string;
     /// <summary>
     ///   Optional. Contact's last name
     /// </summary>
-    [Alias('last_name')]
+    [djName('last_name')]
     LastName: string;
     /// <summary>
     ///   Optional. Contact's user identifier in Telegram
     /// </summary>
-    [Alias('user_id')]
+    [djName('user_id')]
     UserId: Integer;
   end;
 
   /// <summary>
   ///   This object represents a point on the map.
   /// </summary>
-  [Alias('Location')]
+  [djName('Location')]
   TtgLocation = class
   public
     /// <summary>
     ///   Longitude as defined by sender
     /// </summary>
-    [Alias('longitude')]
+    [djName('longitude')]
     Longitude: Single;
     /// <summary>
     ///   Latitude as defined by sender
     /// </summary>
-    [Alias('latitude')]
+    [djName('latitude')]
     Latitude: Single;
     constructor Create; overload;
     constructor Create(ALongitude, ALatitude: Single); overload;
@@ -614,28 +614,28 @@ type
   /// <summary>
   ///   This object represents a venue.
   /// </summary>
-  [Alias('Venue')]
+  [djName('Venue')]
   TtgVenue = class
   public
     /// <summary>
     ///   Venue location
     /// </summary>
-    [Alias('location')]
+    [djName('location')]
     Location: TtgLocation;
     /// <summary>
     ///   Title of the result
     /// </summary>
-    [Alias('title')]
+    [djName('title')]
     Title: string;
     /// <summary>
     ///   Address of the venue
     /// </summary>
-    [Alias('address')]
+    [djName('address')]
     Address: string;
     /// <summary>
     ///   Optional. Foursquare identifier of the venue
     /// </summary>
-    [Alias('foursquare_id')]
+    [djName('foursquare_id')]
     FoursquareId: string;
     destructor Destroy; override;
   end;
@@ -645,33 +645,33 @@ type
   ///   chats (check out Lumberjack for an example). This object represents an
   ///   animation file to be displayed in the message containing a game.
   /// </summary>
-  [Alias('Animation')]
+  [djName('Animation')]
   TtgAnimation = class
   public
     /// <summary>
     ///   Unique file identifier
     /// </summary>
-    [Alias('file_id')]
+    [djName('file_id')]
     FileId: string;
     /// <summary>
     ///   Optional. Animation thumbnail as defined by sender
     /// </summary>
-    [Alias('thumb')]
+    [djName('thumb')]
     Thumb: TtgPhotoSize;
     /// <summary>
     ///   Optional. Original animation filename as defined by sender
     /// </summary>
-    [Alias('file_name')]
+    [djName('file_name')]
     FileName: string;
     /// <summary>
     ///   Optional. MIME type of the file as defined by sender
     /// </summary>
-    [Alias('mime_type')]
+    [djName('mime_type')]
     MimeType: string;
     /// <summary>
     ///   Optional. File size
     /// </summary>
-    [Alias('file_size')]
+    [djName('file_size')]
     FileSize: Integer;
     destructor Destroy; override;
   end;
@@ -679,23 +679,23 @@ type
   /// <summary>
   ///   This object represents one row of the high scores table for a game.
   /// </summary>
-  [Alias('Game')]
+  [djName('Game')]
   TtgGameHighScore = class
   public
     /// <summary>
     ///   Position in high score table for the game
     /// </summary>
-    [Alias('position')]
+    [djName('position')]
     Position: Integer;
     /// <summary>
     ///   User
     /// </summary>
-    [Alias('user')]
+    [djName('user')]
     User: TtgUser;
     /// <summary>
     ///   Score
     /// </summary>
-    [Alias('score')]
+    [djName('score')]
     Score: Integer;
     destructor Destroy; override;
   end;
@@ -704,23 +704,23 @@ type
   ///   This object represents a game. Use BotFather to create and edit games,
   ///   their short names will act as unique identifiers.
   /// </summary>
-  [Alias('Game')]
+  [djName('Game')]
   TtgGame = class
   public
     /// <summary>
     ///   Title of the game
     /// </summary>
-    [Alias('title')]
+    [djName('title')]
     Title: string;
     /// <summary>
     ///   Description of the game
     /// </summary>
-    [Alias('description')]
+    [djName('description')]
     Description: string;
     /// <summary>
     ///   Photo that will be displayed in the game message in chats.
     /// </summary>
-    [Alias('photo')]
+    [djName('photo')]
     Photo: TObjectList<TtgPhotoSize>;
     /// <summary>
     ///   Optional. Brief description of the game or high scores included in
@@ -728,19 +728,19 @@ type
     ///   scores for the game when the bot calls setGameScore, or manually
     ///   edited using editMessageText. 0-4096 characters.
     /// </summary>
-    [Alias('text')]
+    [djName('text')]
     Text: string;
     /// <summary>
     ///   Optional. Special entities that appear in text, such as usernames,
     ///   URLs, bot commands, etc.
     /// </summary>
-    [Alias('text_entities')]
+    [djName('text_entities')]
     TextEntities: TObjectList<TtgMessageEntity>;
     /// <summary>
     ///   Optional. Animation that will be displayed in the game message in
     ///   chats. Upload via BotFather
     /// </summary>
-    [Alias('animation')]
+    [djName('animation')]
     Animation: TtgAnimation;
     constructor Create;
     destructor Destroy; override;
@@ -753,228 +753,228 @@ type
   /// <summary>
   ///   This object represents a message.
   /// </summary>
-  [Alias('Message')]
+  [djName('Message')]
   TTgMessage = class
   public
     /// <summary>
     ///   Unique message identifier
     /// </summary>
-    [Alias('message_id')]
+    [djName('message_id')]
     MessageId: Integer;
     /// <summary>
     ///   Sender
     /// </summary>
-    [Alias('from')]
+    [djName('from')]
     From: TtgUser;
     /// <summary>
     ///   Date the message was sent in Unix time
     /// </summary>
-    [Alias('date')]
+    [djName('date')]
     Date: Integer;
     /// <summary>
     ///   Conversation the message belongs to
     /// </summary>
-    [Alias('chat')]
+    [djName('chat')]
     Chat: TtgChat;
     /// <summary>
     ///   Optional. For forwarded messages, sender of the original message
     /// </summary>
-    [Alias('forward_from')]
+    [djName('forward_from')]
     ForwardFrom: TtgUser;
     /// <summary>
     ///   Optional. For messages forwarded from a channel, information about
     ///   the original channel
     /// </summary>
-    [Alias('forward_from_chat')]
+    [djName('forward_from_chat')]
     ForwardFromChat: TtgChat;
     /// <summary>
     ///   Optional. For messages forwarded from channels, identifier of the
     ///   original message in the channel
     /// </summary>
-    [Alias('forward_from_message_id')]
+    [djName('forward_from_message_id')]
     ForwardFromMessageId: Integer;
     /// <summary>
     ///   Optional. For messages forwarded from channels, signature of the post
     ///   author if present
     /// </summary>
-    [Alias('forward_signature')]
+    [djName('forward_signature')]
     ForwardSignature: string;
     /// <summary>
     ///   Optional. For forwarded messages, date the original message was sent
     ///   in Unix time
     /// </summary>
-    [Alias('forward_date')]
+    [djName('forward_date')]
     ForwardDate: Integer;
     /// <summary>
     ///   Optional. For replies, the original message. Note that the Message
     ///   object in this field will not contain further reply_to_message fields
     ///   even if it itself is a reply.
     /// </summary>
-    [Alias('reply_to_message')]
+    [djName('reply_to_message')]
     ReplyToMessage: TTgMessage;
     /// <summary>
     ///   Optional. Date the message was last edited in Unix time.
     /// </summary>
-    [Alias('edit_date')]
+    [djName('edit_date')]
     EditDate: Integer;
     /// <summary>
     ///   Optional. Signature of the post author for messages in channels
     /// </summary>
-    [Alias('author_signature')]
+    [djName('author_signature')]
     AuthorSignature: string;
     /// <summary>
     ///   Optional. For text messages, the actual UTF-8 text of the message
     /// </summary>
-    [Alias('text')]
+    [djName('text')]
     Text: string;
     /// <summary>
     ///   Optional. For text messages, special entities like usernames, URLs,
     ///   bot commands, etc. that appear in the text
     /// </summary>
-    [Alias('entities')]
+    [djName('entities')]
     Entities: TObjectList<TtgMessageEntity>;
     /// <summary>
     ///   Optional. Message is an audio file, information about the file
     /// </summary>
-    [Alias('audio')]
+    [djName('audio')]
     Audio: TtgAudio;
     /// <summary>
     ///   Optional. Message is a general file, information about the file
     /// </summary>
-    [Alias('document')]
+    [djName('document')]
     Document: TtgDocument;
     /// <summary>
     ///   Optional. Message is a game, information about the game.
     /// </summary>
-    [Alias('game')]
+    [djName('game')]
     Game: TtgGame;
     /// <summary>
     ///   Optional. Message is a photo, available sizes of the photo
     /// </summary>
-    [Alias('photo')]
+    [djName('photo')]
     Photo: TObjectList<TtgPhotoSize>;
     /// <summary>
     ///   Optional. Message is a sticker, information about the sticker
     /// </summary>
-    [Alias('sticker')]
+    [djName('sticker')]
     Sticker: TtgSticker;
     /// <summary>
     ///   Optional. Message is a video, information about the video
     /// </summary>
-    [Alias('video')]
+    [djName('video')]
     Video: TtgVideo;
     /// <summary>
     ///   Message is a voice message, information about the file
     /// </summary>
-    [Alias('voice')]
+    [djName('voice')]
     Voice: TtgVoice;
     /// <summary>
     ///   Optional. Message is a video note, information about the video
     ///   message
     /// </summary>
-    [Alias('video_note')]
+    [djName('video_note')]
     VideoNote: TtgVideoNote;
     /// <summary>
     ///   Optional. New members that were added to the group or supergroup and
     ///   information about them (the bot itself may be one of these members)
     /// </summary>
-    [Alias('new_chat_members')]
+    [djName('new_chat_members')]
     NewChatMembers: TObjectList<TtgUser>;
     /// <summary>
     ///   Optional. Caption for the document, photo or video, 0-200 characters
     /// </summary>
-    [Alias('caption')]
+    [djName('caption')]
     Caption: string;
     /// <summary>
     ///   Optional. Message is a shared contact, information about the contact
     /// </summary>
-    [Alias('contact')]
+    [djName('contact')]
     Contact: TtgContact;
     /// <summary>
     ///   Optional. Message is a shared location, information about the
     ///   location
     /// </summary>
-    [Alias('location')]
+    [djName('location')]
     Location: TtgLocation;
     /// <summary>
     ///   Optional. Message is a venue, information about the venue
     /// </summary>
-    [Alias('venue')]
+    [djName('venue')]
     Venue: TtgVenue;
     /// <summary>
     ///   Optional. A new member was added to the group, information about them
     ///   (this member may be the bot itself)
     /// </summary>
-    [Alias('new_chat_member')]
+    [djName('new_chat_member')]
     NewChatMember: TtgUser;
     /// <summary>
     ///   Optional. A member was removed from the group, information about them
     ///   (this member may be bot itself)
     /// </summary>
-    [Alias('left_chat_member')]
+    [djName('left_chat_member')]
     LeftChatMember: TtgUser;
     /// <summary>
     ///   Optional. A group title was changed to this value
     /// </summary>
-    [Alias('new_chat_title')]
+    [djName('new_chat_title')]
     NewChatTitle: string;
     /// <summary>
     ///   Optional. A group photo was change to this value
     /// </summary>
-    [Alias('new_chat_photo')]
+    [djName('new_chat_photo')]
     NewChatPhoto: TObjectList<TtgPhotoSize>;
     /// <summary>
     ///   Optional. Informs that the group photo was deleted
     /// </summary>
-    [Alias('delete_chat_photo')]
+    [djName('delete_chat_photo')]
     DeleteChatPhoto: Boolean;
     /// <summary>
     ///   Optional. Informs that the group has been created
     /// </summary>
-    [Alias('group_chat_created')]
+    [djName('group_chat_created')]
     GroupChatCreated: Boolean;
     /// <summary>
     ///   Optional. Service message: the supergroup has been created
     /// </summary>
-    [Alias('supergroup_chat_created')]
+    [djName('supergroup_chat_created')]
     SupergroupChatCreated: Boolean;
     /// <summary>
     ///   Optional. Service message: the channel has been created
     /// </summary>
-    [Alias('channel_chat_created')]
+    [djName('channel_chat_created')]
     ChannelChatCreated: Boolean;
     /// <summary>
     ///   Optional. The group has been migrated to a supergroup with the
     ///   specified identifier
     /// </summary>
-    [Alias('migrate_to_chat_id')]
+    [djName('migrate_to_chat_id')]
     MigrateToChatId: Int64;
     /// <summary>
     ///   Optional. The supergroup has been migrated from a group with the
     ///   specified identifier
     /// </summary>
-    [Alias('migrate_from_chat_id')]
+    [djName('migrate_from_chat_id')]
     MigrateFromChatId: Int64;
     /// <summary>
     ///   Optional. Specified message was pinned. Note that the Message object
     ///   in this field will not contain further reply_to_message fields even
     ///   if it is itself a reply
     /// </summary>
-    [Alias('pinned_message')]
+    [djName('pinned_message')]
     PinnedMessage: TTgMessage;
     /// <summary>
     ///   Optional. Message is an invoice for a <see href="https://core.telegram.org/bots/api#payments">
     ///   payment</see>, information about the invoice. <see href="https://core.telegram.org/bots/api#payments">
     ///   More about payments »</see>
     /// </summary>
-    [Alias('invoice')]
+    [djName('invoice')]
     Invoice: TtgInvoice;
     /// <summary>
     ///   Optional. Message is a service message about a successful payment,
     ///   information about the payment. <see href="https://core.telegram.org/bots/api#payments">
     ///   More about payments »</see>
     /// </summary>
-    [Alias('successful_payment')]
+    [djName('successful_payment')]
     SuccessfulPayment: TtgSuccessfulPayment;
     function &type: TtgMessageType;
     destructor Destroy; override;
@@ -983,18 +983,18 @@ type
   /// <summary>
   ///   This object represent a user's profile pictures.
   /// </summary>
-  [Alias('UserProfilePhotos')]
+  [djName('UserProfilePhotos')]
   TtgUserProfilePhotos = class
   public
     /// <summary>
     ///   Total number of profile pictures the target user has
     /// </summary>
-    [Alias('total_count')]
+    [djName('total_count')]
     TotalCount: Integer;
     /// <summary>
     ///   Requested profile pictures (in up to 4 sizes each)
     /// </summary>
-    [Alias('photos')]
+    [djName('photos')]
     Photos: TObjectList<TObjectList<TtgPhotoSize>>;
     constructor Create;
     destructor Destroy; override;
@@ -1009,26 +1009,26 @@ type
   ///   request_contact and request_location options will only work in Telegram
   ///   versions released after 9 April, 2016. Older clients will ignore them.
   /// </remarks>
-  [Alias('KeyboardButton')]
+  [djName('KeyboardButton')]
   TtgKeyboardButton = class(TObject)
   public
     /// <summary>
     ///   Text of the button. If none of the optional fields are used, it will
     ///   be sent to the bot as a message when the button is pressed
     /// </summary>
-    [Alias('text')]
+    [djName('text')]
     Text: string;
     /// <summary>
     ///   Optional. If True, the user's phone number will be sent as a contact
     ///   when the button is pressed. Available in private chats only
     /// </summary>
-    [Alias('request_contact')]
+    [djName('request_contact')]
     RequestContact: Boolean;
     /// <summary>
     ///   Optional. If True, the user's current location will be sent when the
     ///   button is pressed. Available in private chats only
     /// </summary>
-    [Alias('request_location')]
+    [djName('request_location')]
     RequestLocation: Boolean;
     constructor Create(const AText: string; ARequestContact: Boolean = False; ARequestLocation: Boolean = False); overload;
   end;
@@ -1049,18 +1049,18 @@ type
     /// <summary>
     ///   Label text on the button
     /// </summary>
-    [Alias('text')]
+    [djName('text')]
     Text: string;
     /// <summary>
     ///   Optional. HTTP url to be opened when button is pressed
     /// </summary>
-    [Alias('url')]
+    [djName('url')]
     Url: string;
     /// <summary>
     ///   Optional. Data to be sent in a callback query to the bot when button
     ///   is pressed, 1-64 bytes
     /// </summary>
-    [Alias('callback_data')]
+    [djName('callback_data')]
     CallbackData: string;
     /// <summary>
     ///   Optional. If set, pressing the button will prompt the user to select
@@ -1075,7 +1075,7 @@ type
     ///   case the user will be automatically returned to the chat they
     ///   switched from, skipping the chat selection screen.
     /// </remarks>
-    [Alias('switch_inline_query')]
+    [djName('switch_inline_query')]
     SwitchInlineQuery: string;
     /// <summary>
     ///   Optional. If set, pressing the button will insert the bot‘s username
@@ -1085,7 +1085,7 @@ type
     ///   in the same chat – good for selecting something from multiple
     ///   options.
     /// </summary>
-    [Alias('switch_inline_query_current_chat')]
+    [djName('switch_inline_query_current_chat')]
     SwitchInlineQueryCurrentChat: string;
     /// <summary>
     ///   Optional. Description of the game that will be launched when the user
@@ -1095,7 +1095,7 @@ type
     ///   NOTE: This type of button must always be the first button in the
     ///   first row.
     /// </remarks>
-    [Alias('callback_game')]
+    [djName('callback_game')]
     CallbackGame: TtgCallbackGame;
     /// <summary>
     ///   Optional. Specify True, to send a Pay button. <br /><br />
@@ -1104,7 +1104,7 @@ type
     ///   NOTE: This type of button must always be the first button in the
     ///   first row.
     /// </remarks>
-    [Alias('pay')]
+    [djName('pay')]
     Pay: Boolean;
     /// <summary>
     ///   Initializes a new instance of the <see cref="TelegAPi.Types|TtgKeyboardButton" />
@@ -1144,23 +1144,23 @@ type
     ///   The group has been migrated to a supergroup with the specified
     ///   identifier.
     /// </summary>
-    [Alias('migrate_to_chat_id')]
+    [djName('migrate_to_chat_id')]
     MigrateToChatId: Int64;
     /// <summary>
     ///   In case of exceeding flood control, the number of seconds left to
     ///   wait before the request can be repeated.
     /// </summary>
-    [Alias('retry_after')]
+    [djName('retry_after')]
     RetryAfter: Integer;
   end;
 
-  [Alias('')]
+  [djName('')]
   TtgApiResponse<T> = class
   public
     /// <summary>
     ///   Gets a value indicating whether the request was successful.
     /// </summary>
-    [Alias('ok')]
+    [djName('ok')]
     Ok: Boolean;
     /// <summary>
     ///   Gets the result object.
@@ -1168,7 +1168,7 @@ type
     /// <value>
     ///   The result object.
     /// </value>
-    [Alias('result')]
+    [djName('result')]
     ResultObject: T;
     /// <summary>
     ///   Gets the error message.
@@ -1176,7 +1176,7 @@ type
     /// <value>
     ///   The error message.
     /// </value>
-    [Alias('description')]
+    [djName('description')]
     message: string;
     /// <summary>
     ///   Gets the error code.
@@ -1184,17 +1184,17 @@ type
     /// <value>
     ///   The error code
     /// </value>
-    [Alias('error_code')]
+    [djName('error_code')]
     Code: Integer;
     /// <summary>
     ///   Contains information about why a request was unsuccessfull.
     /// </summary>
-    [Alias('parameters')]
+    [djName('parameters')]
     Parameters: TrgResponseParameters;
     destructor Destroy; override;
   end;
 
-  [Alias('FileToSend')]
+  [djName('FileToSend')]
   TtgFileToSend = class
   public
     FileName: string;
@@ -1208,28 +1208,28 @@ type
   ///   This object represents an incoming inline query. When the user sends an
   ///   empty query, your bot could return some default or trending results.
   /// </summary>
-  [Alias('InlineQuery')]
+  [djName('InlineQuery')]
   TtgInlineQuery = class
   public
     /// <summary>
     ///   Unique identifier for this query
     /// </summary>
-    [Alias('id')]
+    [djName('id')]
     ID: string;
     /// <summary>
     ///   Sender
     /// </summary>
-    [Alias('from')]
+    [djName('from')]
     From: TtgUser;
     /// <summary>
     ///   Text of the query
     /// </summary>
-    [Alias('query')]
+    [djName('query')]
     Query: string;
     /// <summary>
     ///   Offset of the results to be returned, can be controlled by the bot
     /// </summary>
-    [Alias('offset')]
+    [djName('offset')]
     Offset: string;
     destructor Destroy; override;
   end;
@@ -1238,74 +1238,74 @@ type
   ///   Represents a result of an inline query that was chosen by the user and
   ///   sent to their chat partner.
   /// </summary>
-  [Alias('ChosenInlineResult')]
+  [djName('ChosenInlineResult')]
   TtgChosenInlineResult = class
   public
     /// <summary>
     ///   The unique identifier for the result that was chosen.
     /// </summary>
-    [Alias('result_id')]
+    [djName('result_id')]
     ResultId: string;
     /// <summary>
     ///   The user that chose the result.
     /// </summary>
-    [Alias('from')]
+    [djName('from')]
     From: TtgUser;
     /// <summary>
     ///   The query that was used to obtain the result.
     /// </summary>
-    [Alias('location')]
+    [djName('location')]
     Location: TtgLocation;
     /// <summary>
     ///   Optional. Identifier of the sent inline message. Available only if
     ///   there is an inline keyboard attached to the message. Will be also
     ///   received in callback queries and can be used to edit the message.
     /// </summary>
-    [Alias('inline_message_id')]
+    [djName('inline_message_id')]
     InlineMessageId: string;
     /// <summary>
     ///   The query that was used to obtain the result.
     /// </summary>
-    [Alias('query')]
+    [djName('query')]
     Query: string;
   end;
 
-  [Alias('CallbackQuery')]
+  [djName('CallbackQuery')]
   TtgCallbackQuery = class
   public
     /// <summary>
     ///   Unique identifier for this query
     /// </summary>
-    [Alias('id')]
+    [djName('id')]
     ID: string;
     /// <summary>
     ///   Sender
     /// </summary>
-    [Alias('from')]
+    [djName('from')]
     From: TtgUser;
     /// <summary>
     ///   Optional. Message with the callback button that originated the query.
     ///   Note that message content and message date will not be available if
     ///   the message is too old
     /// </summary>
-    [Alias('message')]
+    [djName('message')]
     message: TTgMessage;
     /// <summary>
     ///   Optional. Identifier of the message sent via the bot in inline mode,
     ///   that originated the query
     /// </summary>
-    [Alias('inline_message_id')]
+    [djName('inline_message_id')]
     InlineMessageId: string;
     /// <summary>
     ///   Data associated with the callback button. Be aware that a bad client
     ///   can send arbitrary data in this field
     /// </summary>
-    [Alias('data')]
+    [djName('data')]
     Data: string;
     /// <summary>
     ///   Optional. Short name of a Game to be returned, serves as the unique
     /// </summary>
-    [Alias('game_short_name')]
+    [djName('game_short_name')]
     GameShortName: string;
     destructor Destroy; override;
   end;
@@ -1321,24 +1321,24 @@ type
     /// <summary>
     ///   Product name
     /// </summary>
-    [Alias('title')]
+    [djName('title')]
     Title: string;
     /// <summary>
     ///   Product description
     /// </summary>
-    [Alias('description')]
+    [djName('description')]
     Description: string;
     /// <summary>
     ///   Unique bot deep-linking parameter that can be used to generate this
     ///   invoice
     /// </summary>
-    [Alias('start_parameter')]
+    [djName('start_parameter')]
     StartParameter: string;
     /// <summary>
     ///   Three-letter ISO 4217 <see href="https://core.telegram.org/bots/payments#supported-currencies">
     ///   currency</see> code
     /// </summary>
-    [Alias('currency')]
+    [djName('currency')]
     Currency: string;
     /// <summary>
     ///   Total price in the smallest units of the currency (integer, not
@@ -1347,20 +1347,20 @@ type
     ///   currencies.json</see>, it shows the number of digits past the decimal
     ///   point for each currency (2 for the majority of currencies).
     /// </summary>
-    [Alias('total_amount')]
+    [djName('total_amount')]
     TotalAmount: Integer;
   end;
 
   /// <summary>
   ///   This object represents a portion of the price for goods or services.
   /// </summary>
-  [Alias('LabeledPrice')]
+  [djName('LabeledPrice')]
   TtgLabeledPrice = class
   public
     /// <summary>
     ///   Portion label
     /// </summary>
-    [Alias('label')]
+    [djName('label')]
     Text: string;
     /// <summary>
     ///   Price of the product in the smallest units of the <see href="https://core.telegram.org/bots/payments#supported-currencies">
@@ -1372,7 +1372,7 @@ type
     ///   currencies.json</see>, it shows the number of digits past the decimal
     ///   point for each <br />currency (2 for the majority of currencies). <br />
     /// </example>
-    [Alias('amount')]
+    [djName('amount')]
     Amount: Integer;
     constructor Create; overload;
     constructor Create(const AText: string; AAmount: Integer); overload;
@@ -1386,32 +1386,32 @@ type
     /// <summary>
     ///   ISO 3166-1 alpha-2 country code
     /// </summary>
-    [Alias('country_code')]
+    [djName('country_code')]
     CountryCode: string;
     /// <summary>
     ///   State, if applicable
     /// </summary>
-    [Alias('state')]
+    [djName('state')]
     State: string;
     /// <summary>
     ///   City
     /// </summary>
-    [Alias('city')]
+    [djName('city')]
     City: string;
     /// <summary>
     ///   First line for the address
     /// </summary>
-    [Alias('street_line1')]
+    [djName('street_line1')]
     StreetLine1: string;
     /// <summary>
     ///   Second line for the address
     /// </summary>
-    [Alias('street_line2')]
+    [djName('street_line2')]
     StreetLine2: string;
     /// <summary>
     ///   Address post code
     /// </summary>
-    [Alias('post_code')]
+    [djName('post_code')]
     PostCode: string;
   end;
 
@@ -1423,46 +1423,46 @@ type
     /// <summary>
     ///   Optional. User name
     /// </summary>
-    [Alias('name')]
+    [djName('name')]
     Name: string;
     /// <summary>
     ///   Optional. User's phone number
     /// </summary>
-    [Alias('phone_number')]
+    [djName('phone_number')]
     PhoneNumber: string;
     /// <summary>
     ///   Optional. User email
     /// </summary>
-    [Alias('email')]
+    [djName('email')]
     Email: string;
     /// <summary>
     ///   Optional. User shipping address
     /// </summary>
-    [Alias('shipping_address')]
+    [djName('shipping_address')]
     ShippingAddress: TtgShippingAddress;
   end;
 
   /// <summary>
   ///   This object contains information about an incoming pre-checkout query.
   /// </summary>
-  [Alias('PreCheckoutQuery')]
+  [djName('PreCheckoutQuery')]
   TtgPreCheckoutQuery = class
   public
     /// <summary>
     ///   Unique query identifier
     /// </summary>
-    [Alias('id')]
+    [djName('id')]
     ID: string;
     /// <summary>
     ///   User who sent the query
     /// </summary>
-    [Alias('from')]
+    [djName('from')]
     From: TtgUser;
     /// <summary>
     ///   Three-letter ISO 4217 <see href="https://core.telegram.org/bots/payments#supported-currencies">
     ///   currency</see> code
     /// </summary>
-    [Alias('currency')]
+    [djName('currency')]
     Currency: string;
     /// <summary>
     ///   Total price in the smallest units of the currency (integer, not
@@ -1471,22 +1471,22 @@ type
     ///   currencies.json</see>, it shows the number of digits past the decimal
     ///   point for each currency (2 for the majority of currencies).
     /// </summary>
-    [Alias('total_amount')]
+    [djName('total_amount')]
     TotalAmount: Integer;
     /// <summary>
     ///   Bot specified invoice payload
     /// </summary>
-    [Alias('invoice_payload')]
+    [djName('invoice_payload')]
     InvoicePayload: string;
     /// <summary>
     ///   Optional. Identifier of the shipping option chosen by the user
     /// </summary>
-    [Alias('shipping_option_id')]
+    [djName('shipping_option_id')]
     ShippingOptionId: string;
     /// <summary>
     ///   Optional. Order info provided by the user
     /// </summary>
-    [Alias('order_info')]
+    [djName('order_info')]
     OrderInfo: TtgOrderInfo;
   end;
 
@@ -1498,17 +1498,17 @@ type
     /// <summary>
     ///   Shipping option identifier
     /// </summary>
-    [Alias('id')]
+    [djName('id')]
     ID: string;
     /// <summary>
     ///   Option title
     /// </summary>
-    [Alias('title')]
+    [djName('title')]
     Title: string;
     /// <summary>
     ///   List of price portions
     /// </summary>
-    [Alias('prices')]
+    [djName('prices')]
     Prices: TObjectList<TtgLabeledPrice>;
     constructor Create;
     destructor Destroy; override;
@@ -1522,22 +1522,22 @@ type
     /// <summary>
     ///   Unique query identifier
     /// </summary>
-    [Alias('id')]
+    [djName('id')]
     ID: string;
     /// <summary>
     ///   User who sent the query
     /// </summary>
-    [Alias('from')]
+    [djName('from')]
     From: TtgUser;
     /// <summary>
     ///   Bot specified invoice payload
     /// </summary>
-    [Alias('invoice_payload')]
+    [djName('invoice_payload')]
     InvoicePayload: string;
     /// <summary>
     ///   User specified shipping address
     /// </summary>
-    [Alias('shipping_address')]
+    [djName('shipping_address')]
     ShippingAddress: TtgShippingAddress;
   end;
 
@@ -1550,7 +1550,7 @@ type
     ///   Three-letter ISO 4217 <see href="https://core.telegram.org/bots/payments#supported-currencies">
     ///   currency</see> code
     /// </summary>
-    [Alias('currency')]
+    [djName('currency')]
     Currency: string;
     /// <summary>
     ///   Total price in the smallest units of the currency (integer, not
@@ -1559,32 +1559,32 @@ type
     ///   currencies.json</see>, it shows the number of digits past the decimal
     ///   point for each currency (2 for the majority of currencies).
     /// </summary>
-    [Alias('total_amount')]
+    [djName('total_amount')]
     TotalAmount: Integer;
     /// <summary>
     ///   Bot specified invoice payload
     /// </summary>
-    [Alias('invoice_payload')]
+    [djName('invoice_payload')]
     InvoicePayload: string;
     /// <summary>
     ///   Optional. Identifier of the shipping option chosen by the user
     /// </summary>
-    [Alias('shipping_option_id')]
+    [djName('shipping_option_id')]
     ShippingOptionId: string;
     /// <summary>
     ///   Optional. Order info provided by the user
     /// </summary>
-    [Alias('order_info')]
+    [djName('order_info')]
     OrderInfo: TtgOrderInfo;
     /// <summary>
     ///   Telegram payment identifier
     /// </summary>
-    [Alias('telegram_payment_charge_id')]
+    [djName('telegram_payment_charge_id')]
     TelegramPaymentChargeId: string;
     /// <summary>
     ///   Provider payment identifier
     /// </summary>
-    [Alias('provider_payment_charge_id')]
+    [djName('provider_payment_charge_id')]
     ProviderPaymentChargeId: string;
   end;
 {$ENDREGION}
@@ -1596,7 +1596,7 @@ type
   ///   Only one of the optional parameters can be present in any given update.
   /// </remarks>
 
-  [Alias('Update')]
+  [djName('Update')]
   TtgUpdate = class
   public
     /// <summary>
@@ -1606,59 +1606,59 @@ type
     ///   ignore repeated updates or to restore the correct update sequence,
     ///   should they get out of order.
     /// </summary>
-    [Alias('update_id')]
+    [djName('update_id')]
     ID: Integer;
     /// <summary>
     ///   Optional. New incoming message of any kind — text, photo, sticker,
     ///   etc.
     /// </summary>
-    [Alias('message')]
+    [djName('message')]
     message: TTgMessage;
     /// <summary>
     ///   Optional. New version of a message that is known to the bot and was
     ///   edited
     /// </summary>
-    [Alias('edited_message')]
+    [djName('edited_message')]
     EditedMessage: TTgMessage;
     /// <summary>
     ///   Optional. New incoming inline query
     /// </summary>
-    [Alias('inline_query')]
+    [djName('inline_query')]
     InlineQuery: TtgInlineQuery;
     /// <summary>
     ///   Optional. The result of a inline query that was chosen by a user and
     ///   sent to their chat partner
     /// </summary>
-    [Alias('chosen_inline_result')]
+    [djName('chosen_inline_result')]
     ChosenInlineResult: TtgChosenInlineResult;
     /// <summary>
     ///   Optional. New incoming callback query
     /// </summary>
-    [Alias('callback_query')]
+    [djName('callback_query')]
     CallbackQuery: TtgCallbackQuery;
     /// <summary>
     ///   Optional. New incoming channel post of any kind — text, photo,
     ///   sticker, etc.
     /// </summary>
-    [Alias('channel_post')]
+    [djName('channel_post')]
     ChannelPost: TTgMessage;
     /// <summary>
     ///   Optional. New version of a channel post that is known to the bot and
     ///   was edited
     /// </summary>
-    [Alias('edited_channel_post')]
+    [djName('edited_channel_post')]
     EditedChannelPost: TTgMessage;
     /// <summary>
     ///   Optional. New incoming shipping query. Only for invoices with
     ///   flexible price
     /// </summary>
-    [Alias('shipping_query')]
+    [djName('shipping_query')]
     ShippingQuery: TtgShippingQuery;
     /// <summary>
     ///   Optional. New incoming pre-checkout query. Contains full information
     ///   about checkout
     /// </summary>
-    [Alias('pre_checkout_query')]
+    [djName('pre_checkout_query')]
     PreCheckoutQuery: TtgPreCheckoutQuery;
     /// <summary>
     ///   Gets the update type.
@@ -1679,42 +1679,42 @@ type
     /// <summary>
     ///   Webhook URL, may be empty if webhook is not set up
     /// </summary>
-    [Alias('url')]
+    [djName('url')]
     Url: string;
     /// <summary>
     ///   True, if a custom certificate was provided for webhook certificate
     ///   checks
     /// </summary>
-    [Alias('has_custom_certificate')]
+    [djName('has_custom_certificate')]
     HasCustomCertificate: Boolean;
     /// <summary>
     ///   Number of updates awaiting delivery
     /// </summary>
-    [Alias('pending_update_count')]
+    [djName('pending_update_count')]
     PendingUpdateCount: Integer;
     /// <summary>
     ///   Optional. Unix time for the most recent error that happened when
     ///   trying to deliver an update via webhook
     /// </summary>
-    [Alias('last_error_date')]
+    [djName('last_error_date')]
     LastErrorDate: Integer;
     /// <summary>
     ///   Optional. Error message in human-readable format for the most recent
     ///   error that happened when trying to deliver an update via webhook
     /// </summary>
-    [Alias('last_error_message')]
+    [djName('last_error_message')]
     LastErrorMessage: string;
     /// <summary>
     ///   Optional. Maximum allowed number of simultaneous HTTPS connections to
     ///   the webhook for update delivery
     /// </summary>
-    [Alias('max_connections')]
+    [djName('max_connections')]
     MaxConnections: Integer;
     /// <summary>
     ///   Optional. A list of update types the bot is subscribed to. Defaults
     ///   to all update types
     /// </summary>
-    [Alias('allowed_updates')]
+    [djName('allowed_updates')]
     AllowedUpdates: TList<string>;
     constructor Create;
     destructor Destroy; override;

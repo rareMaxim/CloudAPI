@@ -3,9 +3,9 @@
 interface
 
 uses
-  XSuperObject,
   System.Generics.Collections,
-  TelegaPi.Types;
+  TelegaPi.Types,
+  DJSON.Attributes;
 
 type
   /// <summary>
@@ -31,7 +31,7 @@ type
     ///   to select the new language. Other users in the group don't see the
     ///   keyboard.
     /// </summary>
-    [Alias('selective')]
+    [djName('selective')]
     Selective: Boolean;
   end;
 
@@ -42,14 +42,14 @@ type
   ///   This can be extremely useful if you want to create user-friendly
   ///   step-by-step interfaces without having to sacrifice privacy mode.
   /// </summary>
-  [Alias('ForceReply')]
+  [djName('ForceReply')]
   TtgForceReply = class(TtgReplyMarkup)
   public
     /// <summary>
     ///   Shows reply interface to the user, as if they manually selected the
     ///   bot‘s message and tapped ’Reply'
     /// </summary>
-    [Alias('force_reply')]
+    [djName('force_reply')]
     Force: Boolean;
   end;
 
@@ -93,7 +93,7 @@ type
     ///   to the request with a keyboard to select the new language. Other
     ///   users in the group don't see the keyboard.
     /// </summary>
-    [Alias('selective')]
+    [djName('selective')]
     Selective: Boolean;
   end;
   /// <summary>
@@ -106,7 +106,7 @@ type
   ///   groups.
   /// </remarks>
 
-  [Alias('InlineKeyboardMarkup')]
+  [djName('InlineKeyboardMarkup')]
   TtgInlineKeyboardMarkup = class(TtgButtonedMarkup<TtgInlineKeyboardButton>)
   public
     /// <summary>
@@ -130,7 +130,7 @@ type
     ///   each represented by an Array of <see cref="TelegAPi.Types|TtgInlineKeyboardButton" />
     ///    .
     /// </summary>
-    [Alias('inline_keyboard')]
+    [djName('inline_keyboard')]
     property Keyboard;
   end;
 
@@ -139,7 +139,7 @@ type
   ///   custom keyboard</see> with reply options (see <see cref="https://core.telegram.org/bots#keyboards">
   ///   Introduction to bots</see> for details and examples).
   /// </summary>
-  [Alias('ReplyKeyboardMarkup')]
+  [djName('ReplyKeyboardMarkup')]
   TtgReplyKeyboardMarkup = class(TtgButtonedReplyMarkup<TtgKeyboardButton>)
   public
     /// <summary>
@@ -149,13 +149,13 @@ type
     ///   <c>false</c>, in which case the custom keyboard is always of the same
     ///   height as the app's standard keyboard.
     /// </summary>
-    [Alias('resize_keyboard')]
+    [djName('resize_keyboard')]
     ResizeKeyboard: Boolean;
     /// <summary>
     ///   Optional. Requests clients to hide the keyboard as soon as it's been
     ///   used. Defaults to <c>false</c>.
     /// </summary>
-    [Alias('one_time_keyboard')]
+    [djName('one_time_keyboard')]
     OneTimeKeyboard: Boolean;
     constructor Create(AResizeKeyboard, AOneTimeKeyboard: Boolean); overload;
     /// <summary>
@@ -191,7 +191,7 @@ type
     ///   Array of button rows, each represented by an Array of <see cref="TelegAPi.Types|TtgKeyboardButton">
     ///   KeyboardButton</see> objects
     /// </summary>
-    [Alias('keyboard')]
+    [djName('keyboard')]
     property Keyboard;
   end;
 
@@ -211,7 +211,7 @@ type
     ///   one_time_keyboard</see> in <see cref="TelegaPi.Types.ReplyMarkups|TtgReplyKeyboardMarkup">
     ///   ReplyKeyboardMarkup</see>)
     /// </summary>
-    [Alias('remove_keyboard')]
+    [djName('remove_keyboard')]
     RemoveKeyboard: Boolean;
     constructor Create(ARemoveKeyboard: Boolean = True);
   end;

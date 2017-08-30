@@ -58,7 +58,7 @@ type
 implementation
 
 uses
-  XSuperObject;
+  DJSON;
 { EApiRequestException }
 
 constructor EApiRequestException.Create(const AMessage: string);
@@ -83,14 +83,14 @@ class function EApiRequestException.FromApiResponse<T>(AApiResponse: TtgApiRespo
 begin
   Result := EApiRequestException.Create(AApiResponse.Message, AApiResponse.Code);
   Result.Parameters := AApiResponse.Parameters;
-  Result.RawData := AApiResponse.AsJSON();
+  Result.RawData := dj.From(AApiResponse).ToJson;
 end;
 
 class function EApiRequestException.FromApiResponse<T>(AApiResponse: TtgApiResponse<T>; ASentParam: TDictionary<string, TValue>): EApiRequestException;
 begin
   Result := EApiRequestException.Create(AApiResponse.Message, AApiResponse.Code, ASentParam);
   Result.Parameters := AApiResponse.Parameters;
-  Result.RawData := AApiResponse.AsJSON();
+  Result.RawData := dj.From(AApiResponse).ToJson;
 end;
 
 function EApiRequestException.ToString: string;

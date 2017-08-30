@@ -30,7 +30,8 @@ package TelegaPiBot;
 {$IMPLICITBUILD ON}
 
 requires
-  rtl;
+  rtl,
+  DJSON_Project;
 
 contains
   TelegAPi.Types in '..\Source\TelegAPi.Types.pas',
@@ -43,7 +44,8 @@ contains
   TelegaPi.Types.Enums in '..\Source\TelegaPi.Types.Enums.pas',
   TelegaPi.Exceptions in '..\Source\TelegaPi.Exceptions.pas',
   TelegAPI.Bot.Console in '..\Source\TelegAPI.Bot.Console.pas',
-  TelegAPI.Utils.Params in '..\Source\TelegAPI.Utils.Params.pas';
+  TelegAPI.Utils.Params in '..\Source\TelegAPI.Utils.Params.pas',
+  TelegAPI.Utils.Json in '..\Source\TelegAPI.Utils.Json.pas';
 
 end.
 
