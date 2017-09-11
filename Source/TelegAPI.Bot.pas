@@ -19,237 +19,11 @@ uses
   TelegAPI.Utils.Params;
 
 type
-  TtgOnUpdate = procedure(ASender: TObject; AUpdate: TtgUpdate) of object;
-
-  TtgOnUpdates = procedure(ASender: TObject; AUpdates: TArray<TtgUpdate>) of object;
-
-  TtgOnMessage = procedure(ASender: TObject; AMessage: TTgMessage) of object;
-
-  TtgOnInlineQuery = procedure(ASender: TObject; AInlineQuery: TtgInlineQuery) of object;
-
-  TtgOnInlineResultChosen = procedure(ASender: TObject; AChosenInlineResult: TtgChosenInlineResult) of object;
-
-  TtgOnCallbackQuery = procedure(ASender: TObject; ACallbackQuery: TtgCallbackQuery) of object;
-
-  TtgOnChannelPost = procedure(ASender: TObject; AChanelPost: TTgMessage) of object;
-
   TtgOnReceiveError = procedure(ASender: TObject; AApiRequestException: EApiRequestException) of object;
 
   TtgOnReceiveGeneralError = procedure(ASender: TObject; AException: Exception) of object;
 
   TtgOnReceiveRawData = procedure(ASender: TObject; const AData: string) of object;
-
-  TTelegramBot = class;
-
-  TTelegramBotCore = class(TComponent)
-  private
-    type
-      TtgRecesiver = class(TThread)
-      private
-        FBot: TTelegramBot;
-      protected
-        function GetUpdates: TArray<TtgUpdate>;
-        procedure DoOnUpdates(AUpdates: TArray<TtgUpdate>);
-        procedure DoOnUpdate(AUpdates: TArray<TtgUpdate>);
-        /// <summary>
-        ///   Raises the <see cref="TelegAPI.Bot|TtgOnUpdate" />, <see cref="TelegAPI.Bot|TtgOnMessage" />
-        ///    , <see cref="TelegAPI.Bot|TtgOnInlineQuery" /> , <see cref="TelegAPI.Bot|TtgOnInlineResultChosen" />
-        ///    and <see cref="TelegAPI.Bot|TtgOnCallbackQuery" /> events.
-        /// </summary>
-        /// <param name="AValue">
-        ///   The <see cref="TelegAPi.Types|TtgUpdate">Update</see> instance
-        ///   containing the event data. <br />
-        /// </param>
-        /// <exception cref="TelegaPi.Exceptions|ETelegramException">
-        ///   Возникает если получено неизвестное обновление
-        /// </exception>
-        procedure OnUpdateReceived(AValue: TtgUpdate);
-        procedure Execute; override;
-      public
-        property Bot: TTelegramBot read FBot write FBot;
-      end;
-  private
-    FToken: string;
-    FPollingTimeout: Integer;
-    FMessageOffset: Integer;
-    FRecesiver: TtgRecesiver;
-    FIsReceiving: Boolean;
-    FAllowedUpdates: TAllowedUpdates;
-    FOnConnect: TNotifyEvent;
-    FOnDisconnect: TNotifyEvent;
-    FProxySettings: TProxySettings;
-    FOnUpdate: TtgOnUpdate;
-    FOnMessage: TtgOnMessage;
-    FOnMessageEdited: TtgOnMessage;
-    FOnInlineQuery: TtgOnInlineQuery;
-    FOnInlineResultChosen: TtgOnInlineResultChosen;
-    FOnCallbackQuery: TtgOnCallbackQuery;
-    FOnReceiveError: TtgOnReceiveError;
-    FOnReceiveGeneralError: TtgOnReceiveGeneralError;
-    FOnRawData: TtgOnReceiveRawData;
-    FOnChannelPost: TtgOnChannelPost;
-    FParamLoader: TtgParamLoader;
-    FOnUpdates: TtgOnUpdates;
-    FUseSynchronize: Boolean;
-    function GetVersionAPI: string;
-    /// <summary>
-    ///   Мастер-функция для запросов на сервак
-    /// </summary>
-    function API<T>(const Method: string; Parameters: TDictionary<string, TValue>): T;
-    function SendDataToServer(const Method: string; Parameters: TDictionary<string, TValue>): string;
-    function ParamsToFormData(Parameters: TDictionary<string, TValue>): TMultipartFormData;
-    function ApiTest<T>(const ARequest: string; Parameters: TDictionary<string, TValue>): T;
-    procedure SetUseSynchronize(const Value: Boolean);
-  protected
-    procedure ErrorHandlerGeneral(AException: Exception);
-    procedure ErrorHandlerApi(AError: EApiRequestException);
-    procedure SetIsReceiving(const Value: Boolean);
-    procedure DoDisconnect(ASender: TObject);
-  public
-    constructor Create(AOwner: TComponent); overload; override;
-    destructor Destroy; override;
-    /// <summary>
-    ///   <para>
-    ///     Indicates if receiving updates
-    ///   </para>
-    ///   <para>
-    ///     Асинхронный прием обновлений от сервера
-    ///   </para>
-    /// </summary>
-    property IsReceiving: Boolean read FIsReceiving write SetIsReceiving default False;
-  published
-{$REGION 'Property|Свойства'}
-    /// <summary>
-    ///   Proxy Settings to be used by the client.
-    /// </summary>
-    property ProxySettings: TProxySettings read FProxySettings write FProxySettings;
-    /// <summary>
-    ///   Задержка между опросами
-    /// </summary>
-    property PollingTimeout: Integer read FPollingTimeout write FPollingTimeout default 1000;
-    /// <summary>
-    ///   The current message offset
-    /// </summary>
-    property MessageOffset: Integer read FMessageOffset write FMessageOffset default 0;
-    /// <summary>
-    ///   Асинхронные вызовы событий (небезопасно, если при этом обновляется
-    ///   UI)
-    /// </summary>
-    property UseSynchronize: Boolean read FUseSynchronize write SetUseSynchronize default True;
-    /// <summary>
-    ///   <para>
-    ///     List the types of updates you want your bot to receive.
-    ///   </para>
-    ///   <para>
-    ///     Типы принимаемых сообщений
-    ///   </para>
-    /// </summary>
-    property AllowedUpdates: TAllowedUpdates read FAllowedUpdates write FAllowedUpdates default UPDATES_ALLOWED_ALL;
-    /// <summary>
-    ///   Токен вашего бота.
-    /// </summary>
-    /// <remarks>
-    ///   Создать бота и получить токен можно у @BotFather
-    /// </remarks>
-    /// <example>
-    ///   283107813:AAG4hEElAvIogTSHNHXI6rZtE46A7XQvIH
-    /// </example>
-    property Token: string read FToken write FToken;
-    /// <summary>
-    ///   Поддерживаемая версия платформы BotAPI
-    /// </summary>
-    property VersionAPI: string read GetVersionAPI;
-{$ENDREGION}
-{$REGION 'События|Events'}
-    /// <summary>
-    ///   <para>
-    ///     Событие возникает когда получено <see cref="TelegAPi.Types|TtgUpdate" />
-    ///   </para>
-    ///   <para>
-    ///     Occurs when an <see cref="TelegAPi.Types|TtgUpdate" /> is
-    ///     received.
-    ///   </para>
-    /// </summary>
-    property OnUpdate: TtgOnUpdate read FOnUpdate write FOnUpdate;
-    property OnUpdates: TtgOnUpdates read FOnUpdates write FOnUpdates;
-    /// <summary>
-    ///   <para>
-    ///     Событие возникает когда получено <see cref="TelegAPi.Types|TtgMessage" />
-    ///   </para>
-    ///   <para>
-    ///     Occurs when a <see cref="TelegAPi.Types|TtgMessage" /> is
-    ///     recieved.
-    ///   </para>
-    /// </summary>
-    property OnMessage: TtgOnMessage read FOnMessage write FOnMessage;
-    /// <summary>
-    ///   <para>
-    ///     Возникает когда <see cref="TelegAPi.Types|TtgMessage" /> было
-    ///     изменено.
-    ///   </para>
-    ///   <para>
-    ///     Occurs when <see cref="TelegAPi.Types|TtgMessage" /> was edited.
-    ///   </para>
-    /// </summary>
-    property OnMessageEdited: TtgOnMessage read FOnMessageEdited write FOnMessageEdited;
-    property OnChannelPost: TtgOnChannelPost read FOnChannelPost write FOnChannelPost;
-    /// <summary>
-    ///   <para>
-    ///     Возникает, когда получен <see cref="TelegAPi.Types|TtgInlineQuery" />
-    ///   </para>
-    ///   <para>
-    ///     Occurs when an <see cref="TelegAPi.Types|TtgInlineQuery" /> is
-    ///     received.
-    ///   </para>
-    /// </summary>
-    property OnInlineQuery: TtgOnInlineQuery read FOnInlineQuery write FOnInlineQuery;
-    /// <summary>
-    ///   <para>
-    ///     Возникает когда получен <see cref="TelegAPi.Types|TtgChosenInlineResult" />
-    ///   </para>
-    ///   <para>
-    ///     Occurs when a <see cref="TelegAPi.Types|TtgChosenInlineResult" />
-    ///     is received.
-    ///   </para>
-    /// </summary>
-    property OnInlineResultChosen: TtgOnInlineResultChosen read FOnInlineResultChosen write FOnInlineResultChosen;
-    /// <summary>
-    ///   <para>
-    ///     Возникает когда получен <see cref="TelegAPi.Types|TtgCallbackQuery" />
-    ///   </para>
-    ///   <para>
-    ///     Occurs when an <see cref="TelegAPi.Types|TtgCallbackQuery" /> is
-    ///     received
-    ///   </para>
-    /// </summary>
-    property OnCallbackQuery: TtgOnCallbackQuery read FOnCallbackQuery write FOnCallbackQuery;
-    /// <summary>
-    ///   <para>
-    ///     Возникает при возникновении ошибки во время запроса фоновых
-    ///     обновлений.
-    ///   </para>
-    ///   <para>
-    ///     Occurs when an error occures during the background update
-    ///     pooling.
-    ///   </para>
-    /// </summary>
-    property OnReceiveError: TtgOnReceiveError read FOnReceiveError write FOnReceiveError;
-    /// <summary>
-    ///   <para>
-    ///     Возникает при возникновении ошибки во время запроса фоновых
-    ///     обновлений.
-    ///   </para>
-    ///   <para>
-    ///     Occurs when an error occures during the background update
-    ///     pooling.
-    ///   </para>
-    /// </summary>
-    property OnReceiveGeneralError: TtgOnReceiveGeneralError read FOnReceiveGeneralError write FOnReceiveGeneralError;
-    property OnConnect: TNotifyEvent read FOnConnect write FOnConnect;
-    property OnDisconnect: TNotifyEvent read FOnDisconnect write FOnDisconnect;
-    property OnReceiveRawData: TtgOnReceiveRawData read FOnRawData write FOnRawData;
-{$ENDREGION}
-  end;
 
   /// <summary>
   ///   <para>
@@ -259,8 +33,29 @@ type
   ///     A client to use the Telegram Bot API
   ///   </para>
   /// </summary>
-  TTelegramBot = class(TTelegramBotCore)
+  TTelegramBot = class(TComponent)
+  private
+    FToken: string;
+    FAllowedUpdates: TAllowedUpdates;
+    FProxySettings: TProxySettings;
+    FOnReceiveError: TtgOnReceiveError;
+    FOnReceiveGeneralError: TtgOnReceiveGeneralError;
+    FOnRawData: TtgOnReceiveRawData;
+    FParamLoader: TtgParamLoader;
+    function GetVersionAPI: string;
+  protected
+    /// <summary>
+    ///   Мастер-функция для запросов на сервак
+    /// </summary>
+    function RequestAPI<T>(const Method: string; Parameters: TDictionary<string, TValue>): T;
+    function SendDataToServer(const Method: string; Parameters: TDictionary<string, TValue>): string;
+    function ParamsToFormData(Parameters: TDictionary<string, TValue>): TMultipartFormData;
   public
+    function ApiTest<T>(const ARequest: string; Parameters: TDictionary<string, TValue> = nil): T;
+    procedure ErrorHandlerGeneral(AException: Exception);
+    procedure ErrorHandlerApi(AError: EApiRequestException);
+    constructor Create(AOwner: TComponent); overload; override;
+    destructor Destroy; override;
 {$REGION 'Getting updates'}
     /// <summary>
     ///   <para>
@@ -1782,6 +1577,62 @@ type
     /// </returns>
     function deleteStickerFromSet(const Sticker: string): Boolean;
 {$ENDREGION}
+  published
+{$REGION 'Property|Свойства'}
+    /// <summary>
+    ///   Proxy Settings to be used by the client.
+    /// </summary>
+    property ProxySettings: TProxySettings read FProxySettings write FProxySettings;
+    /// <summary>
+    ///   <para>
+    ///     List the types of updates you want your bot to receive.
+    ///   </para>
+    ///   <para>
+    ///     Типы принимаемых сообщений
+    ///   </para>
+    /// </summary>
+    property AllowedUpdates: TAllowedUpdates read FAllowedUpdates write FAllowedUpdates default UPDATES_ALLOWED_ALL;
+    /// <summary>
+    ///   Токен вашего бота.
+    /// </summary>
+    /// <remarks>
+    ///   Создать бота и получить токен можно у @BotFather
+    /// </remarks>
+    /// <example>
+    ///   283107813:AAG4hEElAvIogTSHNHXI6rZtE46A7XQvIH
+    /// </example>
+    property Token: string read FToken write FToken;
+    /// <summary>
+    ///   Поддерживаемая версия платформы BotAPI
+    /// </summary>
+    property VersionAPI: string read GetVersionAPI;
+{$ENDREGION}
+{$REGION 'События|Events'}
+
+    /// <summary>
+    ///   <para>
+    ///     Возникает при возникновении ошибки во время запроса фоновых
+    ///     обновлений.
+    ///   </para>
+    ///   <para>
+    ///     Occurs when an error occures during the background update
+    ///     pooling.
+    ///   </para>
+    /// </summary>
+    property OnReceiveError: TtgOnReceiveError read FOnReceiveError write FOnReceiveError;
+    /// <summary>
+    ///   <para>
+    ///     Возникает при возникновении ошибки во время запроса фоновых
+    ///     обновлений.
+    ///   </para>
+    ///   <para>
+    ///     Occurs when an error occures during the background update
+    ///     pooling.
+    ///   </para>
+    /// </summary>
+    property OnReceiveGeneralError: TtgOnReceiveGeneralError read FOnReceiveGeneralError write FOnReceiveGeneralError;
+    property OnReceiveRawData: TtgOnReceiveRawData read FOnRawData write FOnRawData;
+{$ENDREGION}
   end;
 
 implementation
@@ -1792,36 +1643,27 @@ uses
   TelegAPI.Utils.Json,
   DJSON.Params;
 
-{ TTelegramBotCore }
-
+{ TTelegramBot }
 {$REGION 'Core'}
-
-constructor TTelegramBotCore.Create(AOwner: TComponent);
+constructor TTelegramBot.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
   FParamLoader := TtgParamLoader.Create;
   AllowedUpdates := UPDATES_ALLOWED_ALL;
-  FIsReceiving := False;
-  PollingTimeout := 1000;
-  MessageOffset := 0;
-  FUseSynchronize := True;
 end;
 
-destructor TTelegramBotCore.Destroy;
+destructor TTelegramBot.Destroy;
 begin
-  Self.PollingTimeout := 0;
-  if IsReceiving then
-    IsReceiving := False;
   FParamLoader.Free;
   inherited;
 end;
 
-function TTelegramBotCore.GetVersionAPI: string;
+function TTelegramBot.GetVersionAPI: string;
 begin
   Result := '3.3.0';
 end;
 
-function TTelegramBotCore.API<T>(const Method: string; Parameters: TDictionary<string, TValue>): T;
+function TTelegramBot.RequestAPI<T>(const Method: string; Parameters: TDictionary<string, TValue>): T;
 var
   LTextResponse: string;
 begin
@@ -1837,7 +1679,7 @@ begin
     Result := ApiTest<T>(LTextResponse, Parameters);
 end;
 
-function TTelegramBotCore.ApiTest<T>(const ARequest: string; Parameters: TDictionary<string, TValue>): T;
+function TTelegramBot.ApiTest<T>(const ARequest: string; Parameters: TDictionary<string, TValue>): T;
 var
   LApiResponse: TtgApiResponse<T>;
   LdjParams: IdjParams;
@@ -1856,7 +1698,7 @@ begin
   end;
 end;
 
-function TTelegramBotCore.ParamsToFormData(Parameters: TDictionary<string, TValue>): TMultipartFormData;
+function TTelegramBot.ParamsToFormData(Parameters: TDictionary<string, TValue>): TMultipartFormData;
 var
   LParameter: TPair<string, TValue>;
   LAddProc: TtgParamLoader.TLoader;
@@ -1884,7 +1726,7 @@ begin
   end;
 end;
 
-function TTelegramBotCore.SendDataToServer(const Method: string; Parameters: TDictionary<string, TValue>): string;
+function TTelegramBot.SendDataToServer(const Method: string; Parameters: TDictionary<string, TValue>): string;
 var
   LHttp: THTTPClient;
   LHttpResponse: IHTTPResponse;
@@ -1918,42 +1760,7 @@ begin
   end;
 end;
 
-procedure TTelegramBotCore.SetIsReceiving(const Value: Boolean);
-begin
-  // duplicate FReceiver creation and freeing protection
-  if (csDesigning in ComponentState) or (FIsReceiving = Value) then
-    Exit;
-  FIsReceiving := Value;
-  if Value then
-  begin
-    FRecesiver := TtgRecesiver.Create(True);
-    FRecesiver.FreeOnTerminate := False;
-    FRecesiver.Bot := TTelegramBot(Self);
-    FRecesiver.OnTerminate := DoDisconnect;
-    FRecesiver.Start;
-  end
-  else
-  begin
-    FreeAndNil(FRecesiver);
-  end;
-end;
-
-procedure TTelegramBotCore.SetUseSynchronize(const Value: Boolean);
-begin
-  if Value = FUseSynchronize then
-    Exit;
-  if IsReceiving then
-    IsReceiving := False;
-  FUseSynchronize := Value;
-end;
-
-procedure TTelegramBotCore.DoDisconnect(ASender: TObject);
-begin
-  if Assigned(OnDisconnect) then
-    OnDisconnect(ASender);
-end;
-
-procedure TTelegramBotCore.ErrorHandlerApi(AError: EApiRequestException);
+procedure TTelegramBot.ErrorHandlerApi(AError: EApiRequestException);
 begin
   if Assigned(OnReceiveError) then
     TThread.Synchronize(nil,
@@ -1967,7 +1774,7 @@ begin
     FreeAndNil(AError);
 end;
 
-procedure TTelegramBotCore.ErrorHandlerGeneral(AException: Exception);
+procedure TTelegramBot.ErrorHandlerGeneral(AException: Exception);
 begin
   if Assigned(OnReceiveGeneralError) then
     TThread.Synchronize(nil,
@@ -1982,7 +1789,6 @@ begin
 end;
 
 {$ENDREGION}
-{ TTelegram }
 {$REGION 'Getting updates'}
 
 procedure TTelegramBot.SetWebhook(const Url: string; Certificate: TtgFileToSend; MaxConnections: Integer; AllowedUpdates: TAllowedUpdates);
@@ -1995,7 +1801,7 @@ begin
     Parameters.Add('certificate', Certificate);
     Parameters.Add('max_connections', MaxConnections);
     Parameters.Add('allowed_updates', AllowedUpdates.ToString);
-    API<Boolean>('setWebhook', Parameters);
+    RequestAPI<Boolean>('setWebhook', Parameters);
   finally
     Parameters.Free;
   end;
@@ -2007,7 +1813,7 @@ var
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
-    Result := API<TtgWebhookInfo>('getWebhookInfo', nil);
+    Result := RequestAPI<TtgWebhookInfo>('getWebhookInfo', nil);
   finally
     Parameters.Free;
   end;
@@ -2023,7 +1829,7 @@ begin
     Parameters.Add('limit', Limit);
     Parameters.Add('timeout', Timeout);
     Parameters.Add('allowed_updates', AllowedUpdates.ToString);
-    Result := API<TArray<TtgUpdate>>('getUpdates', Parameters);
+    Result := RequestAPI<TArray<TtgUpdate>>('getUpdates', Parameters);
   finally
     Parameters.Free;
   end;
@@ -2031,8 +1837,9 @@ end;
 
 function TTelegramBot.DeleteWebhook: Boolean;
 begin
-  Result := API<Boolean>('deleteWebhook', nil);
+  Result := RequestAPI<Boolean>('deleteWebhook', nil);
 end;
+
 {$ENDREGION}
 {$REGION 'Basic methods'}
 
@@ -2044,7 +1851,7 @@ begin
   try
     Parameters.Add('chat_id', ChatId);
     Parameters.Add('user_id', UserId);
-    Result := API<Boolean>('unbanChatMember', Parameters);
+    Result := RequestAPI<Boolean>('unbanChatMember', Parameters);
   finally
     Parameters.Free;
   end;
@@ -2062,7 +1869,7 @@ begin
     Parameters.Add('disable_notification', DisableNotification);
     Parameters.Add('reply_to_message_id', ReplyToMessageId);
     Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-    Result := API<TTgMessage>('sendLocation', Parameters);
+    Result := RequestAPI<TTgMessage>('sendLocation', Parameters);
   finally
     Parameters.Free;
   end;
@@ -2080,7 +1887,7 @@ begin
     Parameters.Add('disable_notification', DisableNotification);
     Parameters.Add('reply_to_message_id', ReplyToMessageId);
     Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-    Result := API<TTgMessage>('sendPhoto', Parameters);
+    Result := RequestAPI<TTgMessage>('sendPhoto', Parameters);
   finally
     Parameters.Free;
   end;
@@ -2097,7 +1904,7 @@ begin
     Parameters.Add('disable_notification', DisableNotification);
     Parameters.Add('reply_to_message_id', ReplyToMessageId);
     Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-    Result := API<TTgMessage>('sendSticker', Parameters);
+    Result := RequestAPI<TTgMessage>('sendSticker', Parameters);
   finally
     Parameters.Free;
   end;
@@ -2116,7 +1923,7 @@ begin
     Parameters.Add('disable_notification', DisableNotification);
     Parameters.Add('reply_to_message_id', ReplyToMessageId);
     Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-    Result := API<TTgMessage>('sendMessage', Parameters);
+    Result := RequestAPI<TTgMessage>('sendMessage', Parameters);
   finally
     Parameters.Free;
   end;
@@ -2137,7 +1944,7 @@ begin
     Parameters.Add('disable_notification', DisableNotification);
     Parameters.Add('reply_to_message_id', ReplyToMessageId);
     Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-    Result := API<TTgMessage>('sendVenue', Parameters);
+    Result := RequestAPI<TTgMessage>('sendVenue', Parameters);
   finally
     Parameters.Free;
   end;
@@ -2158,7 +1965,7 @@ begin
     Parameters.Add('disable_notification', DisableNotification);
     Parameters.Add('reply_to_message_id', ReplyToMessageId);
     Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-    Result := API<TTgMessage>('sendVideo', Parameters);
+    Result := RequestAPI<TTgMessage>('sendVideo', Parameters);
   finally
     Parameters.Free;
   end;
@@ -2177,7 +1984,7 @@ begin
     LParameters.Add('disable_notification', DisableNotification);
     LParameters.Add('reply_to_message_id', ReplyToMessageId);
     LParameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-    Result := API<TTgMessage>('sendVoice', LParameters);
+    Result := RequestAPI<TTgMessage>('sendVoice', LParameters);
   finally
     LParameters.Free;
   end;
@@ -2195,7 +2002,7 @@ begin
     Parameters.Add('disable_notification', DisableNotification);
     Parameters.Add('reply_to_message_id', ReplyToMessageId);
     Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-    Result := API<TTgMessage>('sendVoice', Parameters);
+    Result := RequestAPI<TTgMessage>('sendVoice', Parameters);
   finally
     Parameters.Free;
   end;
@@ -2215,7 +2022,7 @@ begin
     Parameters.Add('disable_notification', DisableNotification);
     Parameters.Add('reply_to_message_id', ReplyToMessageId);
     Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-    Result := API<TTgMessage>('sendAudio', Parameters);
+    Result := RequestAPI<TTgMessage>('sendAudio', Parameters);
   finally
     Parameters.Free;
   end;
@@ -2229,7 +2036,7 @@ begin
   try
     Parameters.Add('chat_id', ChatId);
     Parameters.Add('action', Action.ToString);
-    API<Boolean>('sendChatAction', Parameters);
+    RequestAPI<Boolean>('sendChatAction', Parameters);
   finally
     Parameters.Free;
   end;
@@ -2248,7 +2055,7 @@ begin
     Parameters.Add('disable_notification', DisableNotification);
     Parameters.Add('reply_to_message_id', ReplyToMessageId);
     Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-    Result := API<TTgMessage>('sendContact', Parameters);
+    Result := RequestAPI<TTgMessage>('sendContact', Parameters);
   finally
     Parameters.Free;
   end;
@@ -2266,7 +2073,7 @@ begin
     Parameters.Add('disable_notification', DisableNotification);
     Parameters.Add('reply_to_message_id', ReplyToMessageId);
     Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-    Result := API<TTgMessage>('sendDocument', Parameters);
+    Result := RequestAPI<TTgMessage>('sendDocument', Parameters);
   finally
     Parameters.Free;
   end;
@@ -2281,7 +2088,7 @@ begin
     Parameters.Add('chat_id', ChatId);
     Parameters.Add('user_id', UserId);
     Parameters.Add('until_date', UntilDate);
-    Result := API<Boolean>('kickChatMember', Parameters);
+    Result := RequestAPI<Boolean>('kickChatMember', Parameters);
   finally
     Parameters.Free;
   end;
@@ -2294,7 +2101,7 @@ begin
   Parameters := TDictionary<string, TValue>.Create;
   try
     Parameters.Add('chat_id', ChatId);
-    Result := API<Boolean>('leaveChat', Parameters);
+    Result := RequestAPI<Boolean>('leaveChat', Parameters);
   finally
     Parameters.Free;
   end;
@@ -2309,7 +2116,7 @@ begin
     Parameters.Add('chat_id', ChatId);
     Parameters.Add('offset', Offset);
     Parameters.Add('limit', Limit);
-    Result := API<TtgUserProfilePhotos>('getUserProfilePhotos', Parameters);
+    Result := RequestAPI<TtgUserProfilePhotos>('getUserProfilePhotos', Parameters);
   finally
     Parameters.Free;
   end;
@@ -2317,7 +2124,7 @@ end;
 
 function TTelegramBot.GetMe: TtgUser;
 begin
-  Result := Self.API<TtgUser>('getMe', nil);
+  Result := Self.RequestAPI<TtgUser>('getMe', nil);
 end;
 
 function TTelegramBot.getStickerSet(const name: string): TtgStickerSet;
@@ -2327,7 +2134,7 @@ begin
   Parameters := TDictionary<string, TValue>.Create;
   try
     Parameters.Add('name', name);
-    Result := API<TtgStickerSet>('getStickerSet', Parameters);
+    Result := RequestAPI<TtgStickerSet>('getStickerSet', Parameters);
   finally
     Parameters.Free;
   end;
@@ -2343,7 +2150,7 @@ begin
     Parameters.Add('from_chat_id', FromChatId);
     Parameters.Add('disable_notification', DisableNotification);
     Parameters.Add('message_id', MessageId);
-    Result := API<TTgMessage>('forwardMessage', Parameters);
+    Result := RequestAPI<TTgMessage>('forwardMessage', Parameters);
   finally
     Parameters.Free;
   end;
@@ -2356,7 +2163,7 @@ begin
   Parameters := TDictionary<string, TValue>.Create;
   try
     Parameters.Add('chat_id', ChatId);
-    Result := Self.API<TtgChat>('getChat', Parameters);
+    Result := Self.RequestAPI<TtgChat>('getChat', Parameters);
   finally
     Parameters.Free;
   end;
@@ -2369,7 +2176,7 @@ begin
   Parameters := TDictionary<string, TValue>.Create;
   try
     Parameters.Add('chat_id', ChatId);
-    Result := Self.API<TArray<TtgChatMember>>('getChatAdministrators', Parameters);
+    Result := Self.RequestAPI<TArray<TtgChatMember>>('getChatAdministrators', Parameters);
   finally
     Parameters.Free;
   end;
@@ -2383,7 +2190,7 @@ begin
   try
     Parameters.Add('chat_id', ChatId);
     Parameters.Add('user_id', UserId);
-    Result := Self.API<TtgChatMember>('getChatMember', Parameters);
+    Result := Self.RequestAPI<TtgChatMember>('getChatMember', Parameters);
   finally
     Parameters.Free;
   end;
@@ -2396,7 +2203,7 @@ begin
   Parameters := TDictionary<string, TValue>.Create;
   try
     Parameters.Add('chat_id', ChatId);
-    Result := Self.API<Integer>('getChatMembersCount', Parameters);
+    Result := Self.RequestAPI<Integer>('getChatMembersCount', Parameters);
   finally
     Parameters.Free;
   end;
@@ -2409,7 +2216,7 @@ begin
   Parameters := TDictionary<string, TValue>.Create;
   try
     Parameters.Add('file_id', FileId);
-    Result := Self.API<TtgFile>('getFile', Parameters);
+    Result := Self.RequestAPI<TtgFile>('getFile', Parameters);
   finally
     Parameters.Free;
   end;
@@ -2426,7 +2233,7 @@ begin
     Parameters.Add('png_sticker', PngSticker);
     Parameters.Add('emojis', Emojis);
     Parameters.Add('mask_position', MaskPosition);
-    Result := API<Boolean>('addStickerToSet', Parameters);
+    Result := RequestAPI<Boolean>('addStickerToSet', Parameters);
   finally
     Parameters.Free;
   end;
@@ -2443,7 +2250,7 @@ begin
     Parameters.Add('show_alert', ShowAlert);
     Parameters.Add('url', Url);
     Parameters.Add('cache_time', CacheTime);
-    Result := API<Boolean>('answerCallbackQuery', Parameters);
+    Result := RequestAPI<Boolean>('answerCallbackQuery', Parameters);
   finally
     Parameters.Free;
   end;
@@ -2462,7 +2269,7 @@ begin
     Parameters.Add('parse_mode', ParseMode.ToString);
     Parameters.Add('disable_web_page_preview', DisableWebPagePreview);
     Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-    Result := API<TTgMessage>('editMessageText', Parameters);
+    Result := RequestAPI<TTgMessage>('editMessageText', Parameters);
   finally
     Parameters.Free;
   end;
@@ -2480,7 +2287,7 @@ begin
     Parameters.Add('parse_mode', ParseMode.ToString);
     Parameters.Add('disable_web_page_preview', DisableWebPagePreview);
     Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-    Result := API<TTgMessage>('editMessageText', Parameters);
+    Result := RequestAPI<TTgMessage>('editMessageText', Parameters);
   finally
     Parameters.Free;
   end;
@@ -2494,7 +2301,7 @@ begin
   try
     Parameters.Add('chat_id', ChatId);
     Parameters.Add('message_id', MessageId);
-    Result := API<Boolean>('deleteMessage', Parameters);
+    Result := RequestAPI<Boolean>('deleteMessage', Parameters);
   finally
     Parameters.Free;
   end;
@@ -2507,7 +2314,7 @@ begin
   Parameters := TDictionary<string, TValue>.Create;
   try
     Parameters.Add('sticker', sticker);
-    Result := API<Boolean>('deleteStickerFromSet', Parameters);
+    Result := RequestAPI<Boolean>('deleteStickerFromSet', Parameters);
   finally
     Parameters.Free;
   end;
@@ -2523,7 +2330,7 @@ begin
     Parameters.Add('message_id', MessageId);
     Parameters.Add('caption', Caption);
     Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-    Result := API<Boolean>('editMessageCaption', Parameters);
+    Result := RequestAPI<Boolean>('editMessageCaption', Parameters);
   finally
     Parameters.Free;
   end;
@@ -2537,7 +2344,7 @@ begin
   try
     Parameters.Add('caption', Caption);
     Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-    Result := API<Boolean>('editMessageCaption', Parameters);
+    Result := RequestAPI<Boolean>('editMessageCaption', Parameters);
   finally
     Parameters.Free;
   end;
@@ -2552,7 +2359,7 @@ begin
     Parameters.Add('chat_id', ChatId);
     Parameters.Add('message_id', MessageId);
     Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-    Result := API<TTgMessage>('editMessageReplyMarkup', Parameters);
+    Result := RequestAPI<TTgMessage>('editMessageReplyMarkup', Parameters);
   finally
     Parameters.Free;
   end;
@@ -2566,7 +2373,7 @@ begin
   try
     Parameters.Add('inline_message_id', InlineMessageId);
     Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-    Result := API<TTgMessage>('editMessageReplyMarkup', Parameters);
+    Result := RequestAPI<TTgMessage>('editMessageReplyMarkup', Parameters);
   finally
     Parameters.Free;
   end;
@@ -2588,7 +2395,7 @@ begin
     Parameters.Add('next_offset', NextOffset);
     Parameters.Add('switch_pm_text', SwitchPmText);
     Parameters.Add('switch_pm_parameter', SwitchPmParameter);
-    Result := API<Boolean>('answerInlineQuery', Parameters);
+    Result := RequestAPI<Boolean>('answerInlineQuery', Parameters);
   finally
     Parameters.Free;
   end;
@@ -2622,7 +2429,7 @@ begin
     LParameters.Add('disable_notification', DisableNotification);
     LParameters.Add('reply_to_message_id', ReplyToMessageId);
     LParameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-    Result := API<TTgMessage>('sendInvoice', LParameters);
+    Result := RequestAPI<TTgMessage>('sendInvoice', LParameters);
   finally
     LParameters.Free;
   end;
@@ -2637,7 +2444,7 @@ begin
     Parameters.Add('Pre_checkout_query_id', PreCheckoutQueryId);
     Parameters.Add('Ok', Ok);
     Parameters.Add('Error_message', ErrorMessage);
-    Result := API<Boolean>('AnswerPreCheckoutQuery', Parameters);
+    Result := RequestAPI<Boolean>('AnswerPreCheckoutQuery', Parameters);
   finally
     Parameters.Free;
   end;
@@ -2653,7 +2460,7 @@ begin
     Parameters.Add('Ok', Ok);
     Parameters.Add('Shipping_options', TJsonUtils.ArrayToJString<TtgShippingOption>(ShippingOptions));
     Parameters.Add('Error_message', ErrorMessage);
-    Result := API<Boolean>('answerShippingQuery', Parameters);
+    Result := RequestAPI<Boolean>('answerShippingQuery', Parameters);
   finally
     Parameters.Free;
   end;
@@ -2672,7 +2479,7 @@ begin
     Parameters.Add('emojis', Emojis);
     Parameters.Add('contains_masks', ContainsMasks);
     Parameters.Add('mask_position', MaskPosition);
-    Result := API<Boolean>('createNewStickerSet', Parameters);
+    Result := RequestAPI<Boolean>('createNewStickerSet', Parameters);
   finally
     Parameters.Free;
   end;
@@ -2695,7 +2502,7 @@ begin
     Parameters.Add('chat_id', ChatId);
     Parameters.Add('message_id', MessageId);
     Parameters.Add('inline_message_id', InlineMessageId);
-    Result := API<TTgMessage>('setGameScore', Parameters);
+    Result := RequestAPI<TTgMessage>('setGameScore', Parameters);
   finally
     Parameters.Free;
   end;
@@ -2709,7 +2516,7 @@ begin
   try
     Parameters.Add('sticker', Sticker);
     Parameters.Add('position', position);
-    Result := API<Boolean>('setStickerPositionInSet', Parameters);
+    Result := RequestAPI<Boolean>('setStickerPositionInSet', Parameters);
   finally
     Parameters.Free;
   end;
@@ -2726,7 +2533,7 @@ begin
     Parameters.Add('disable_notification', DisableNotification);
     Parameters.Add('reply_to_message_id', ReplyToMessageId);
     Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-    Result := API<TTgMessage>('sendGame', Parameters);
+    Result := RequestAPI<TTgMessage>('sendGame', Parameters);
   finally
     Parameters.Free;
   end;
@@ -2742,7 +2549,7 @@ begin
     Parameters.Add('chat_id', ChatId);
     Parameters.Add('message_id', MessageId);
     Parameters.Add('inline_message_id', InlineMessageId);
-    Result := API<TArray<TtgGameHighScore>>('getGameHighScores', Parameters);
+    Result := RequestAPI<TArray<TtgGameHighScore>>('getGameHighScores', Parameters);
   finally
     Parameters.Free;
   end;
@@ -2757,7 +2564,7 @@ begin
   Parameters := TDictionary<string, TValue>.Create;
   try
     Parameters.Add('chat_id', ChatId);
-    Result := API<Boolean>('deleteChatPhoto', Parameters);
+    Result := RequestAPI<Boolean>('deleteChatPhoto', Parameters);
   finally
     Parameters.Free;
   end;
@@ -2770,7 +2577,7 @@ begin
   Parameters := TDictionary<string, TValue>.Create;
   try
     Parameters.Add('chat_id', ChatId);
-    Result := API<string>('exportChatInviteLink', Parameters);
+    Result := RequestAPI<string>('exportChatInviteLink', Parameters);
   finally
     Parameters.Free;
   end;
@@ -2785,7 +2592,7 @@ begin
     Parameters.Add('chat_id', ChatId);
     Parameters.Add('message_id', MessageId);
     Parameters.Add('disable_notification', DisableNotification);
-    Result := API<Boolean>('pinChatMessage', Parameters);
+    Result := RequestAPI<Boolean>('pinChatMessage', Parameters);
   finally
     Parameters.Free;
   end;
@@ -2799,7 +2606,7 @@ begin
   try
     Parameters.Add('chat_id', ChatId);
     Parameters.Add('description', Description);
-    Result := API<Boolean>('setChatDescription', Parameters);
+    Result := RequestAPI<Boolean>('setChatDescription', Parameters);
   finally
     Parameters.Free;
   end;
@@ -2813,7 +2620,7 @@ begin
   try
     Parameters.Add('chat_id', ChatId);
     Parameters.Add('photo', Photo);
-    Result := API<Boolean>('setChatPhoto', Parameters);
+    Result := RequestAPI<Boolean>('setChatPhoto', Parameters);
   finally
     Parameters.Free;
   end;
@@ -2827,7 +2634,7 @@ begin
   try
     Parameters.Add('chat_id', ChatId);
     Parameters.Add('title', Title);
-    Result := API<Boolean>('setChatTitle', Parameters);
+    Result := RequestAPI<Boolean>('setChatTitle', Parameters);
   finally
     Parameters.Free;
   end;
@@ -2840,7 +2647,7 @@ begin
   Parameters := TDictionary<string, TValue>.Create;
   try
     Parameters.Add('chat_id', ChatId);
-    Result := API<Boolean>('unpinChatMessage', Parameters);
+    Result := RequestAPI<Boolean>('unpinChatMessage', Parameters);
   finally
     Parameters.Free;
   end;
@@ -2854,7 +2661,7 @@ begin
   try
     Parameters.Add('user_id', UserId);
     Parameters.Add('png_sticker', PngSticker);
-    Result := API<TtgFile>('uploadStickerFile', Parameters);
+    Result := RequestAPI<TtgFile>('uploadStickerFile', Parameters);
   finally
     Parameters.Free;
   end;
@@ -2879,7 +2686,7 @@ begin
     Parameters.Add('can_restrict_members', CanRestrictMembers);
     Parameters.Add('can_pin_messages', CanPinMessages);
     Parameters.Add('can_promote_members', CanPromoteMembers);
-    Result := API<Boolean>('promoteChatMember', Parameters);
+    Result := RequestAPI<Boolean>('promoteChatMember', Parameters);
   finally
     Parameters.Free;
   end;
@@ -2898,105 +2705,10 @@ begin
     Parameters.Add('can_send_media_messages', CanSendMediaMessages);
     Parameters.Add('can_send_other_messages', CanSendOtherMessages);
     Parameters.Add('can_add_web_page_previews', CanAddWebPagePreviews);
-    Result := API<Boolean>('restrictChatMember', Parameters);
+    Result := RequestAPI<Boolean>('restrictChatMember', Parameters);
   finally
     Parameters.Free;
   end;
-end;
-{$ENDREGION}
-
-{$REGION 'Async'}
-{ TTelegramBotCore.TtgRecesiver }
-
-procedure TTelegramBotCore.TtgRecesiver.DoOnUpdate(AUpdates: TArray<TtgUpdate>);
-var
-  I: Integer;
-begin
-  for I := Low(AUpdates) to High(AUpdates) do
-  begin
-    if Bot.UseSynchronize then
-      TThread.Synchronize(nil,
-        procedure
-        begin
-          Self.OnUpdateReceived(AUpdates[I]);
-          FreeAndNil(AUpdates[I]);
-        end)
-    else
-    begin
-      Self.OnUpdateReceived(AUpdates[I]);
-      FreeAndNil(AUpdates[I]);
-    end;
-  end;
-end;
-
-procedure TTelegramBotCore.TtgRecesiver.DoOnUpdates(AUpdates: TArray<TtgUpdate>);
-begin
-  if not Assigned(Bot.OnUpdates) then
-    Exit;
-  if Bot.UseSynchronize then
-    TThread.Synchronize(nil,
-      procedure
-      begin
-        Bot.OnUpdates(Self, AUpdates);
-      end)
-  else
-    Bot.OnUpdates(Self, AUpdates);
-end;
-
-procedure TTelegramBotCore.TtgRecesiver.Execute;
-var
-  LUpdates: TArray<TtgUpdate>;
-begin
-  if Assigned(Bot.OnConnect) then
-    Bot.OnConnect(Bot);
-  repeat
-    LUpdates := Self.GetUpdates;
-    if (Assigned(LUpdates)) and (Length(LUpdates) > 0) and (not Terminated) then
-    begin
-      Bot.MessageOffset := LUpdates[High(LUpdates)].ID + 1;
-      Self.DoOnUpdates(LUpdates);
-      Self.DoOnUpdate(LUpdates);
-    end;
-    Sleep(Bot.PollingTimeout);
-  until (Terminated) or (not Bot.IsReceiving);
-end;
-
-function TTelegramBotCore.TtgRecesiver.GetUpdates: TArray<TtgUpdate>;
-begin
-  try
-    Result := FBot.GetUpdates(Bot.MessageOffset, 100, 0, Bot.AllowedUpdates);
-  except
-    on E: Exception do
-      FBot.ErrorHandlerGeneral(E);
-  end;
-end;
-
-procedure TTelegramBotCore.TtgRecesiver.OnUpdateReceived(AValue: TtgUpdate);
-begin
-  if Assigned(Bot.OnUpdate) then
-    Bot.OnUpdate(Bot, AValue);
-  case AValue.&Type of
-    TtgUpdateType.MessageUpdate:
-      if Assigned(Bot.OnMessage) then
-        Bot.OnMessage(Bot, AValue.Message);
-    TtgUpdateType.InlineQueryUpdate:
-      if Assigned(Bot.OnInlineQuery) then
-        Bot.OnInlineQuery(Bot, AValue.InlineQuery);
-    TtgUpdateType.ChosenInlineResultUpdate:
-      if Assigned(Bot.OnInlineResultChosen) then
-        Bot.OnInlineResultChosen(Bot, AValue.ChosenInlineResult);
-    TtgUpdateType.CallbackQueryUpdate:
-      if Assigned(Bot.OnCallbackQuery) then
-        Bot.OnCallbackQuery(Bot, AValue.CallbackQuery);
-    TtgUpdateType.EditedMessage:
-      if Assigned(Bot.OnMessageEdited) then
-        Bot.OnMessageEdited(Bot, AValue.EditedMessage);
-    TtgUpdateType.ChannelPost:
-      if Assigned(Bot.OnChannelPost) then
-        Bot.OnChannelPost(Self, AValue.ChannelPost);
-  else
-    raise ETelegramException.Create('Unknown update type');
-  end
 end;
 {$ENDREGION}
 

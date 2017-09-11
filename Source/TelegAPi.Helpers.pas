@@ -10,7 +10,7 @@ uses
   System.Net.Mime;
 
 type
-  TTelegramBotHelper = class helper for TTelegramBotCore
+  TTelegramBotHelper = class helper for TTelegramBot
     function IsValidToken: Boolean;
   end;
 

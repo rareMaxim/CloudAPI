@@ -12,6 +12,7 @@ object Main: TMain
   object mmoLog: TMemo
     Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
     DataDetectorTypes = []
+    ReadOnly = True
     Align = Client
     Size.Width = 453.000000000000000000
     Size.Height = 376.000000000000000000
@@ -43,6 +44,7 @@ object Main: TMain
       Touch.InteractiveGestures = [LongTap, DoubleTap]
       Align = Client
       TabOrder = 1
+      Text = '283107814:AAGokguMcF9SaI_f-M7vDmS9E2ugZrjumfk'
       Margins.Right = 5.000000000000000000
       Size.Width = 346.000000000000000000
       Size.Height = 23.000000000000000000
@@ -62,16 +64,20 @@ object Main: TMain
     end
   end
   object tgBot: TTelegramBot
-    OnMessage = tgBotMessage
-    OnMessageEdited = tgBotMessage
-    OnInlineQuery = tgBotInlineQuery
-    OnInlineResultChosen = tgBotInlineResultChosen
-    OnCallbackQuery = tgBotCallbackQuery
     OnReceiveError = tgBotReceiveError
     OnReceiveGeneralError = tgBotReceiveGeneralError
-    OnConnect = tgBotConnect
-    OnDisconnect = tgBotDisconnect
+    Left = 104
+    Top = 168
+  end
+  object TgBotAsync1: TTgBotAsync
+    Bot = tgBot
+    OnMessage = TgBotAsync1Message
+    OnInlineQuery = TgBotAsync1InlineQuery
+    OnInlineResultChosen = TgBotAsync1InlineResultChosen
+    OnCallbackQuery = TgBotAsync1CallbackQuery
+    OnConnect = TgBotAsync1Connect
+    OnDisconnect = TgBotAsync1Disconnect
     Left = 216
-    Top = 88
+    Top = 152
   end
 end

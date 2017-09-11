@@ -1907,6 +1907,7 @@ begin
   FreeAndNil(Entities);
   FreeAndNil(NewChatPhoto);
   FreeAndNil(Game);
+  FreeAndNil(SuccessfulPayment);
   inherited Destroy;
 end;
 

@@ -27,8 +27,7 @@ type
     FRawData: string;
     FSendedParams: TDictionary<string, TValue>;
   public
-    class function FromApiResponse<T>(AApiResponse: TtgApiResponse<T>): EApiRequestException; overload;
-    class function FromApiResponse<T>(AApiResponse: TtgApiResponse<T>; ASentParam: TDictionary<string, TValue>): EApiRequestException; overload;
+    class function FromApiResponse<T>(AApiResponse: TtgApiResponse<T>; ASentParam: TDictionary<string, TValue> = nil): EApiRequestException; overload;
     /// <summary>
     ///   Initializes a new instance of the <see cref="TelegaPi.Exceptions|EApiRequestException" />
     ///    class.
@@ -77,13 +76,6 @@ begin
   inherited Create(AMessage);
   FErrorCode := AErrorCode;
   FSendedParams := ASentParam;
-end;
-
-class function EApiRequestException.FromApiResponse<T>(AApiResponse: TtgApiResponse<T>): EApiRequestException;
-begin
-  Result := EApiRequestException.Create(AApiResponse.Message, AApiResponse.Code);
-  Result.Parameters := AApiResponse.Parameters;
-  Result.RawData := dj.From(AApiResponse).ToJson;
 end;
 
 class function EApiRequestException.FromApiResponse<T>(AApiResponse: TtgApiResponse<T>; ASentParam: TDictionary<string, TValue>): EApiRequestException;

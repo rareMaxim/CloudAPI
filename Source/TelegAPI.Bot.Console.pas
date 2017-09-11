@@ -198,7 +198,7 @@ begin
       Self.DoOnUpdates(LUpdates);
       Self.DoOnUpdate(LUpdates);
     end;
-    Sleep(Bot.PollingTimeout);
+    Sleep(Parrent.Bot.PollingTimeout);
   until (Terminated) or (not Bot.IsReceiving);
 end;
 
