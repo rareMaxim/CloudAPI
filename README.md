@@ -32,9 +32,9 @@ Telega π - Библиотека для работы с Telegram Bot API в Delp
 
 ### [**Donate**](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=5ASFXPC68MS2U)
 - К сожалинию, еще никто не помог материально =(
-
+## Боты, работающие на TelegaPi
+* [🤖ChallengeOfTheDay](https://t.me/cotdbot?start=245903278)
 ## Зависимости
-
 
 * [RAD Studio XE8, 10.0(Seattle) 10.1(Berlin) 10.2(Tokyo)](https://www.embarcadero.com/products/delphi)
 * [XSuperObject](https://github.com/onryldz/x-superobject/)
