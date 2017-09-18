@@ -1,17 +1,14 @@
 program EchoBot;
 
 uses
-{$IFDEF  shadow_cs-leakcheck}
-  LeakCheck,
-{$ENDIF}
   System.StartUpCopy,
   FMX.Forms,
-  EchoBot.Main in 'EchoBot.Main.pas' {Main};
+  Unit3 in 'Unit3.pas' {Form3};
 
 {$R *.res}
 
 begin
   Application.Initialize;
-  Application.CreateForm(TMain, Main);
+  Application.CreateForm(TForm3, Form3);
   Application.Run;
 end.
