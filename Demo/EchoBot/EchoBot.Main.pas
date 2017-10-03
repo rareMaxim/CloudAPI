@@ -100,27 +100,27 @@ var
   usage: string;
 begin
   WriteLine(Msg.From.Username + ': ' + Msg.Text);
-  if Msg.Text.StartsWith('/inline') then // send inline keyboard
+  if Msg.IsCommand('/inline') then // send inline keyboard
   begin
     SendInline(Msg);
   end
-  else if Msg.Text.StartsWith('/keyboard') then // send custom keyboard
+  else if Msg.IsCommand('/keyboard') then // send custom keyboard
   begin
     SendKeyboard(Msg);
   end
-  else if Msg.Text.StartsWith('/photo') then // send custom keyboard
+  else if Msg.IsCommand('/photo') then // send custom keyboard
   begin
     SendPhoto(Msg);
   end
-  else if Msg.Text.StartsWith('/request') then // send custom keyboard
+  else if Msg.IsCommand('/request') then // send custom keyboard
   begin
     SendRequest(Msg);
   end
-  else if Msg.Text.StartsWith('/quest') then // send custom keyboard
+  else if Msg.IsCommand('/quest') then // send custom keyboard
   begin
     SendQuest(Msg);
   end
-  else if Msg.Text.StartsWith('/help') then // send
+  else if Msg.IsCommand('/help') then // send
   begin
     usage := 'Usage:' + #13#10 + //
       '/inline   - send inline keyboard' + #13#10 + //
