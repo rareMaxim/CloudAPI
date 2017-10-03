@@ -1,29 +1,41 @@
 # Telega π #
 
+Telega π - Library for working with Telegram Bot API in Delphi
+
+Version Bot API: *3.3.1*
+
+## Support project
+
+You can help the project:
+
+### [Create issues and requesting futures](https://github.com/ms301/TelegAPI/issues)
+Thank you for your active assistance to the project:
+* [Eldar](https://github.com/deadalice)
+* [Andrei](https://github.com/andb24)
+
+as well as many others who ask / suggest features / points bugs.
+### Ads
+
+### [**Donate**](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=5ASFXPC68MS2U)
+- Unfortunately, no one has helped financially =(
+
+## Dependencies
+
+* [RAD Studio XE8, 10.0(Seattle) 10.1(Berlin) 10.2(Tokyo)](https://www.embarcadero.com/products/delphi)
+* [DJSON](https://github.com/mauriziodm/DJSON)
+
+# Telega π #
+
 Telega π - Библиотека для работы с Telegram Bot API в Delphi
 
 Версия Bot API: *3.3.1*
-
-Пошаговое создание бота: https://github.com/ms301/TelegAPI/wiki/Hello-world
-
-## Что сделано 
-
-| Раздел            | Реализация    | Тест            |
-| ------------------|:-------------:| ---------------:|
-| Getting updates   | Да            | - веб-хуков     | 
-| Базовые методы    | Да            | Не полностью    |
-| Базовые типы      | Да            | Не полностью    | 
-| Updating messages | Да            | Нет             | 
-| Inline mode       | да            | Нет             | 
-| Payments          | Да            | Нет             |  
-| Games             | Да            | Нет             |  
 
 ## Помощь проекту
 
 Вы можете помочь проекту:
 
 ### [Созданием баг-репортов и запросов новых возможностей](https://github.com/ms301/TelegAPI/issues)
-Благодаррю за активную помощь проекту:
+Благодарю за активную помощь проекту:
 * [Эльдар](https://github.com/deadalice)
 * [Андрей](https://github.com/andb24)
 
@@ -37,7 +49,7 @@ Telega π - Библиотека для работы с Telegram Bot API в Delp
 ## Зависимости
 
 * [RAD Studio XE8, 10.0(Seattle) 10.1(Berlin) 10.2(Tokyo)](https://www.embarcadero.com/products/delphi)
-* [XSuperObject](https://github.com/onryldz/x-superobject/)
+* [DJSON](https://github.com/mauriziodm/DJSON)
 
 
-Delphinus-Support
+[Delphinus-Support](https://github.com/Memnarch/Delphinus)
