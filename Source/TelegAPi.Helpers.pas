@@ -10,7 +10,7 @@ uses
   System.Net.Mime;
 
 type
-  TTelegramBotHelper = class helper for TTelegramBotCore
+  TTelegramBotHelper = class helper for TTelegramBot
     function IsValidToken: Boolean;
   end;
 
@@ -154,11 +154,12 @@ begin
   Result := False;
   if Assigned(Self.Entities) then
     for LEnt in Self.Entities do
-    begin
       if (LEnt.TypeMessage = 'bot_command') then
-        if Self.Text.Substring(LEnt.Offset, LEnt.Length).StartsWith(AValue) then
+        if Self.Text.Substring(LEnt.Offset, LEnt.Length).StartsWith(AValue, True) then
+        begin
+          LEnt.Free;
           Exit(True);
-    end;
+        end;
 end;
 
 end.

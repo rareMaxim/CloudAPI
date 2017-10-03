@@ -51,7 +51,7 @@
         <DCC_N>false</DCC_N>
         <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;$(DCC_Namespace)</DCC_Namespace>
         <DCC_S>false</DCC_S>
-        <DCC_UnitSearchPath>..\Source;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_UnitSearchPath>..\Source;..\modules\DJSON\Sources;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <GenDll>true</GenDll>
         <GenPackage>true</GenPackage>
         <PreBuildEvent>
@@ -61,16 +61,16 @@ $(PreBuildEvent)]]>
         <SanitizedProjectName>TelegaPiBot</SanitizedProjectName>
         <VerInfo_AutoIncVersion>true</VerInfo_AutoIncVersion>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <VerInfo_Keys>CompanyName=Максим Сысоев;FileDescription=Компонент для работы с Telegram API;FileVersion=3.3.0.0;InternalName=TelegAπ;LegalCopyright=2016, Maxim Sysoev;LegalTrademarks=2016, Maxim Sysoev;OriginalFilename=TelegramBot;ProductName=Telega Pi;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=Максим Сысоев;FileDescription=Компонент для работы с Telegram API;FileVersion=3.3.0.0;InternalName=TelegAπ;LegalCopyright=2016-2017, Maxim Sysoev;LegalTrademarks=2016-2017, Maxim Sysoev;OriginalFilename=TelegaPiBot.bpl;ProductName=Telega Pi;ProductVersion=3.3.1</VerInfo_Keys>
         <VerInfo_Locale>1049</VerInfo_Locale>
         <VerInfo_MajorVer>3</VerInfo_MajorVer>
         <VerInfo_MinorVer>3</VerInfo_MinorVer>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
         <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
-        <DCC_UsePackage>rtl;dbrtl;IndySystem;IndyProtocols;IndyCore;$(DCC_UsePackage)</DCC_UsePackage>
+        <DCC_UsePackage>rtl;dbrtl;IndySystem;IndyProtocols;IndyCore;DJSON_Project;fmx;$(DCC_UsePackage)</DCC_UsePackage>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <VerInfo_Keys>CompanyName=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(ModuleName);FileDescription=$(ModuleName);ProductName=$(ModuleName)</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=Максим Сысоев;FileVersion=3.3.0.0;InternalName=TelegAπ;LegalCopyright=2016-2017, Maxim Sysoev;LegalTrademarks=2016-2017, Maxim Sysoev;OriginalFilename=TelegaPiBot.bpl;ProductVersion=3.3.1;ProgramID=com.embarcadero.$(ModuleName);FileDescription=Компонент для работы с Telegram API;ProductName=Telega Pi</VerInfo_Keys>
         <VerInfo_Locale>1033</VerInfo_Locale>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1)'!=''">
@@ -83,21 +83,19 @@ $(PreBuildEvent)]]>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
-        <VerInfo_Build>6</VerInfo_Build>
-        <VerInfo_Keys>CompanyName=;FileVersion=1.0.0.6;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName);ProductName=$(MSBuildProjectName)</VerInfo_Keys>
+        <VerInfo_Build>1</VerInfo_Build>
+        <VerInfo_Keys>CompanyName=Максим Сысоев;FileVersion=3.3.0.1;InternalName=TelegAπ;LegalCopyright=2016-2017, Maxim Sysoev;LegalTrademarks=2016-2017, Maxim Sysoev;OriginalFilename=TelegaPiBot.bpl;ProductVersion=3.3.1;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=Компонент для работы с Telegram API;ProductName=Telega Pi</VerInfo_Keys>
         <VerInfo_Locale>1033</VerInfo_Locale>
-        <VerInfo_MajorVer>1</VerInfo_MajorVer>
-        <VerInfo_MinorVer>0</VerInfo_MinorVer>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_DebugInformation>0</DCC_DebugInformation>
         <DCC_Define>RELEASE;$(DCC_Define)</DCC_Define>
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
         <DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
+        <VerInfo_Keys>CompanyName=Максим Сысоев;FileDescription=Компонент для работы с Telegram API;FileVersion=3.3.0.0;InternalName=TelegAπ;LegalCopyright=2016-2017, Maxim Sysoev;LegalTrademarks=2016-2017, Maxim Sysoev;OriginalFilename=TelegaPiBot.bpl;ProductName=Telega Pi;ProductVersion=3.3.1</VerInfo_Keys>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
-        <VerInfo_Build>20</VerInfo_Build>
-        <VerInfo_Keys>CompanyName=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(ModuleName);FileDescription=$(ModuleName);ProductName=$(ModuleName)</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=Максим Сысоев;FileVersion=3.3.0.0;InternalName=TelegAπ;LegalCopyright=2016-2017, Maxim Sysoev;LegalTrademarks=2016-2017, Maxim Sysoev;OriginalFilename=TelegaPiBot.bpl;ProductVersion=3.3.1;ProgramID=com.embarcadero.$(ModuleName);FileDescription=Компонент для работы с Telegram API;ProductName=Telega Pi</VerInfo_Keys>
     </PropertyGroup>
     <ItemGroup>
         <DelphiCompile Include="$(MainSource)">
@@ -105,6 +103,8 @@ $(PreBuildEvent)]]>
         </DelphiCompile>
         <DCCReference Include="TTelegramBot.dcr"/>
         <DCCReference Include="rtl.dcp"/>
+        <DCCReference Include="DJSON_Project.dcp"/>
+        <DCCReference Include="fmx.dcp"/>
         <DCCReference Include="..\Source\TelegAPi.Types.pas"/>
         <DCCReference Include="..\Source\TelegAPi.RegisterIDE.pas"/>
         <DCCReference Include="..\Source\TelegAPI.Bot.pas"/>
@@ -114,8 +114,9 @@ $(PreBuildEvent)]]>
         <DCCReference Include="..\Source\TelegaPi.Types.InlineQueryResults.pas"/>
         <DCCReference Include="..\Source\TelegaPi.Types.Enums.pas"/>
         <DCCReference Include="..\Source\TelegaPi.Exceptions.pas"/>
-        <DCCReference Include="..\Source\TelegAPI.Bot.Console.pas"/>
         <DCCReference Include="..\Source\TelegAPI.Utils.Params.pas"/>
+        <DCCReference Include="..\Source\TelegAPI.Utils.Json.pas"/>
+        <DCCReference Include="..\Source\TelegAPI.Bot.Recesiver.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -137,15 +138,8 @@ $(PreBuildEvent)]]>
                     <Source Name="MainSource">TelegaPiBot.dpk</Source>
                 </Source>
                 <Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k240.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp240.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
-                    <Excluded_Packages Name="C:\DelphiComponents\Experts\DfmCheck\DfmCheckD101.bpl">File C:\DelphiComponents\Experts\DfmCheck\DfmCheckD101.bpl not found</Excluded_Packages>
-                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\18.0\Bpl\EsVclComponentsDesign.bpl">(untitled)</Excluded_Packages>
-                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\18.0\Bpl\TelegaPiBot.bpl">Telegram API for Delphi</Excluded_Packages>
-                    <Excluded_Packages Name="C:\Users\maks4\Desktop\fortesreport-ce-master\Binary\LibD24\frce.bpl">File C:\Users\maks4\Desktop\fortesreport-ce-master\Binary\LibD24\frce.bpl not found</Excluded_Packages>
-                    <Excluded_Packages Name="D:\Repositories\delphi-live-template-engine\bin\AssemblyInfoScriptingEngine.bpl">File D:\Repositories\delphi-live-template-engine\bin\AssemblyInfoScriptingEngine.bpl not found</Excluded_Packages>
-                    <Excluded_Packages Name="D:\Repositories\delphi-live-template-engine\bin\BaseScriptingEngine.bpl">File D:\Repositories\delphi-live-template-engine\bin\BaseScriptingEngine.bpl not found</Excluded_Packages>
-                    <Excluded_Packages Name="D:\Repositories\delphi-live-template-engine\bin\DateTimeScriptEngine.bpl">File D:\Repositories\delphi-live-template-engine\bin\DateTimeScriptEngine.bpl not found</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k250.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp250.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">
