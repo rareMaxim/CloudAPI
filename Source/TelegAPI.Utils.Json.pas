@@ -8,7 +8,7 @@ uses
 type
   TJsonUtils = class
     class function ArrayToJString<T>(LArray: TArray<T>): string;
-    class function DJsonConfig: IdjParams;
+    class function DJsonConfig(const AByProperty: Boolean = False): IdjParams;
   end;
 
 implementation
@@ -32,9 +32,12 @@ begin
   Result := Result + ']';
 end;
 
-class function TJsonUtils.DJsonConfig: IdjParams;
+class function TJsonUtils.DJsonConfig(const AByProperty: Boolean): IdjParams;
 begin
-  Result := dj.DefaultByFields;
+  if AByProperty then
+    Result := dj.DefaultByProperty
+  else
+    Result := dj.DefaultByFields;
   Result.Engine := TdjEngine.eJDO;
 end;
 

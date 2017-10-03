@@ -1698,7 +1698,7 @@ function TTelegramBot.ParamsToFormData(Parameters: TDictionary<string, TValue>):
 var
   LParameter: TPair<string, TValue>;
   LAddProc: TtgParamLoader.TLoader;
-  LTest:string;
+  LTest: string;
 begin
   Result := TMultipartFormData.Create;
   for LParameter in Parameters do
@@ -1718,8 +1718,8 @@ begin
       if not LParameter.Value.IsEmpty then
       begin
       //  Result.AddField(LParameter.Key, dj.From(LParameter.Value.AsObject).ToJson);
-      LTest:=dj.From(LParameter.Value, TJsonUtils.DJsonConfig).ToJson;
-      Result.AddField(LParameter.Key, LTest);
+        LTest := dj.From(LParameter.Value, TJsonUtils.DJsonConfig(True)).ToJson;
+        Result.AddField(LParameter.Key, LTest);
       end
     end
     else

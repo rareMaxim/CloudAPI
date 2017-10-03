@@ -83,7 +83,8 @@ $(PreBuildEvent)]]>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
-        <VerInfo_Keys>CompanyName=Максим Сысоев;FileVersion=3.3.0.0;InternalName=TelegAπ;LegalCopyright=2016-2017, Maxim Sysoev;LegalTrademarks=2016-2017, Maxim Sysoev;OriginalFilename=TelegaPiBot.bpl;ProductVersion=3.3.1;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=Компонент для работы с Telegram API;ProductName=Telega Pi</VerInfo_Keys>
+        <VerInfo_Build>1</VerInfo_Build>
+        <VerInfo_Keys>CompanyName=Максим Сысоев;FileVersion=3.3.0.1;InternalName=TelegAπ;LegalCopyright=2016-2017, Maxim Sysoev;LegalTrademarks=2016-2017, Maxim Sysoev;OriginalFilename=TelegaPiBot.bpl;ProductVersion=3.3.1;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=Компонент для работы с Telegram API;ProductName=Telega Pi</VerInfo_Keys>
         <VerInfo_Locale>1033</VerInfo_Locale>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
