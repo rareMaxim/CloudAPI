@@ -11,7 +11,6 @@ uses
   System.Net.URLClient,
   System.Net.HttpClient,
   System.Generics.Collections,
-  DJSON.Params,
   TelegAPI.Types,
   TelegAPI.Types.Enums,
   TelegAPI.Types.ReplyMarkups,
@@ -51,7 +50,6 @@ type
     function RequestAPI<T>(const Method: string; Parameters: TDictionary<string, TValue>): T;
     function SendDataToServer(const Method: string; Parameters: TDictionary<string, TValue>): string;
     function ParamsToFormData(Parameters: TDictionary<string, TValue>): TMultipartFormData;
-    function JsonConfig: IdjParams;
   public
     function ApiTest<T>(const ARequest: string; Parameters: TDictionary<string, TValue> = nil): T;
     procedure ErrorHandlerGeneral(AException: Exception);
@@ -1661,7 +1659,7 @@ end;
 
 function TTelegramBot.GetVersionAPI: string;
 begin
-  Result := '3.3.0';
+  Result := '3.3.1';
 end;
 
 function TTelegramBot.RequestAPI<T>(const Method: string; Parameters: TDictionary<string, TValue>): T;
@@ -1686,7 +1684,7 @@ var
 begin
   LApiResponse := nil;
   try
-    LApiResponse := dj.FromJson(ARequest, JsonConfig).&To < TtgApiResponse<T> > ;
+    LApiResponse := dj.FromJson(ARequest, TJsonUtils.DJsonConfig).&To < TtgApiResponse<T> > ;
     if not LApiResponse.Ok then
       ErrorHandlerApi(EApiRequestException.FromApiResponse<T>(LApiResponse, Parameters));
     Result := LApiResponse.ResultObject;
@@ -1700,6 +1698,7 @@ function TTelegramBot.ParamsToFormData(Parameters: TDictionary<string, TValue>):
 var
   LParameter: TPair<string, TValue>;
   LAddProc: TtgParamLoader.TLoader;
+  LTest:string;
 begin
   Result := TMultipartFormData.Create;
   for LParameter in Parameters do
@@ -1717,8 +1716,11 @@ begin
     begin
       { TODO -oOwner -cGeneral : Проверить че за херня тут твориться }
       if not LParameter.Value.IsEmpty then
-        Result.AddField(LParameter.Key, dj.From(LParameter.Value.AsObject).ToJson);
-        Result.AddField(LParameter.Key, dj.From(LParameter.Value.AsInterface, JsonConfig).ToJson);
+      begin
+      //  Result.AddField(LParameter.Key, dj.From(LParameter.Value.AsObject).ToJson);
+      LTest:=dj.From(LParameter.Value, TJsonUtils.DJsonConfig).ToJson;
+      Result.AddField(LParameter.Key, LTest);
+      end
     end
     else
       ErrorHandlerGeneral(ETelegramDataConvert.Create('Check parameter type ' + LParameter.Value.ToString));
@@ -1816,12 +1818,6 @@ begin
   finally
     Parameters.Free;
   end;
-end;
-
-function TTelegramBot.JsonConfig: IdjParams;
-begin
-  Result := dj.DefaultByFields;
-  Result.Engine := TdjEngine.eDelphiDOM;
 end;
 
 function TTelegramBot.GetUpdates(const Offset, Limit, Timeout: Integer; AllowedUpdates: TAllowedUpdates): TArray<TtgUpdate>;
