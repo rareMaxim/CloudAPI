@@ -3,12 +3,12 @@ program EchoBot;
 uses
   System.StartUpCopy,
   FMX.Forms,
-  Unit3 in 'Unit3.pas' {Form3};
+  EchoBot.Main in 'EchoBot.Main.pas' {Main};
 
 {$R *.res}
 
 begin
   Application.Initialize;
-  Application.CreateForm(TForm3, Form3);
+  Application.CreateForm(TMain, Main);
   Application.Run;
 end.

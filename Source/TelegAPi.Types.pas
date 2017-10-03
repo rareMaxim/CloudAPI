@@ -175,10 +175,10 @@ type
   end;
 
   TTgMessage = class;
+
   /// <summary>
   ///   This object represents a chat.
   /// </summary>
-
   [djName('Chat')]
   TtgChat = class
   public
@@ -192,7 +192,7 @@ type
     ///   “channel”
     /// </summary>
     [djName('type')]
-    TypeChat: string;
+    TypeChat: TtgChatType;
     /// <summary>
     ///   Optional. Title, for channels and group chats
     /// </summary>
@@ -260,7 +260,7 @@ type
     ///   text_mention (for users without usernames)
     /// </summary>
     [djName('type')]
-    TypeMessage: string;
+    TypeMessage: TtgMessageEntityType;
     /// <summary>
     ///   Offset in UTF-16 code units to the start of the entity
     /// </summary>
@@ -384,8 +384,7 @@ type
     ///   of “forehead”, “eyes”, “mouth”, or “chin”.
     /// </summary>
     [djName('point')]
-    { TODO -oOwner -cGeneral : Заменить строку на перечисление }
-    Point: string;
+    Point: TtgMaskPositionPoint;
     /// <summary>
     ///   Shift by X-axis measured in widths of the mask scaled to the face
     ///   size, from left to right. For example, choosing -1.0 will place mask
@@ -477,7 +476,6 @@ type
   /// <summary>
   ///   This object represents a video file.
   /// </summary>
-  [djName('Video')]
   TtgVideo = class(TtgFile)
   public
     /// <summary>
@@ -514,7 +512,6 @@ type
   /// <remarks>
   ///   available in Telegram apps as of v.4.0
   /// </remarks>
-  [djName('VideoNote')]
   TtgVideoNote = class
   public
     /// <summary>
@@ -547,7 +544,6 @@ type
   /// <summary>
   ///   This object represents a voice note.
   /// </summary>
-  [djName('Voice')]
   TtgVoice = class(TtgFile)
   public
     /// <summary>
@@ -565,7 +561,6 @@ type
   /// <summary>
   ///   This object represents a phone contact.
   /// </summary>
-  [djName('Contact')]
   TtgContact = class
   public
     /// <summary>
@@ -593,7 +588,6 @@ type
   /// <summary>
   ///   This object represents a point on the map.
   /// </summary>
-  [djName('Location')]
   TtgLocation = class
   public
     /// <summary>
@@ -613,7 +607,6 @@ type
   /// <summary>
   ///   This object represents a venue.
   /// </summary>
-  [djName('Venue')]
   TtgVenue = class
   public
     /// <summary>
@@ -644,7 +637,6 @@ type
   ///   chats (check out Lumberjack for an example). This object represents an
   ///   animation file to be displayed in the message containing a game.
   /// </summary>
-  [djName('Animation')]
   TtgAnimation = class
   public
     /// <summary>
@@ -768,7 +760,7 @@ type
     ///   Date the message was sent in Unix time
     /// </summary>
     [djName('date')]
-    Date: Integer;
+    Date: TDateTime;
     /// <summary>
     ///   Conversation the message belongs to
     /// </summary>
@@ -802,7 +794,7 @@ type
     ///   in Unix time
     /// </summary>
     [djName('forward_date')]
-    ForwardDate: Integer;
+    ForwardDate: TDateTime;
     /// <summary>
     ///   Optional. For replies, the original message. Note that the Message
     ///   object in this field will not contain further reply_to_message fields
@@ -814,7 +806,7 @@ type
     ///   Optional. Date the message was last edited in Unix time.
     /// </summary>
     [djName('edit_date')]
-    EditDate: Integer;
+    EditDate: TDateTime;
     /// <summary>
     ///   Optional. Signature of the post author for messages in channels
     /// </summary>
@@ -997,8 +989,6 @@ type
     constructor Create;
     destructor Destroy; override;
   end;
-
-
 
   /// <summary>
   ///   A placeholder, currently holds no information.
@@ -1565,7 +1555,7 @@ type
     ///   trying to deliver an update via webhook
     /// </summary>
     [djName('last_error_date')]
-    LastErrorDate: Integer;
+    LastErrorDate: TDateTime;
     /// <summary>
     ///   Optional. Error message in human-readable format for the most recent
     ///   error that happened when trying to deliver an update via webhook

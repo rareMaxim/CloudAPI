@@ -15,6 +15,8 @@ implementation
 
 uses
   DJSON,
+  TelegAPI.Utils.Converters,
+  TelegAPI.Types.Enums,
   System.Rtti;
 { TJsonUtils }
 
@@ -39,6 +41,13 @@ begin
   else
     Result := dj.DefaultByFields;
   Result.Engine := TdjEngine.eJDO;
+  Result.DateTimeFormat := TdjDateTimeFormat.dfUnix;
+
+  Result.EnableCustomSerializers := True;
+  Result.Serializers.Register<TtgChatType>(TConverterEnums<TtgChatType>);
+  Result.Serializers.Register<TtgMessageEntityType>(TConverterEnums<TtgMessageEntityType>);
+  Result.Serializers.Register<TtgMaskPositionPoint>(TConverterEnums<TtgMaskPositionPoint>);
+  Result.Serializers.Register<TDateTime>(TConverterDate);
 end;
 
 end.

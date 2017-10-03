@@ -117,6 +117,8 @@ $(PreBuildEvent)]]>
         <DCCReference Include="..\Source\TelegAPI.Utils.Params.pas"/>
         <DCCReference Include="..\Source\TelegAPI.Utils.Json.pas"/>
         <DCCReference Include="..\Source\TelegAPI.Bot.Recesiver.pas"/>
+        <DCCReference Include="..\Source\TelegAPI.Utils.Converters.pas"/>
+        <DCCReference Include="..\Source\TelegAPI.Utils.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

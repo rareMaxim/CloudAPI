@@ -46,7 +46,9 @@ contains
   TelegaPi.Exceptions in '..\Source\TelegaPi.Exceptions.pas',
   TelegAPI.Utils.Params in '..\Source\TelegAPI.Utils.Params.pas',
   TelegAPI.Utils.Json in '..\Source\TelegAPI.Utils.Json.pas',
-  TelegAPI.Bot.Recesiver in '..\Source\TelegAPI.Bot.Recesiver.pas';
+  TelegAPI.Bot.Recesiver in '..\Source\TelegAPI.Bot.Recesiver.pas',
+  TelegAPI.Utils.Converters in '..\Source\TelegAPI.Utils.Converters.pas',
+  TelegAPI.Utils in '..\Source\TelegAPI.Utils.pas';
 
 end.
 
