@@ -173,7 +173,7 @@ var
 begin
   for I := Low(AUpdates) to High(AUpdates) do
   begin
-    Bot.OnUpdate(AUpdates[I]);
+    Self.OnUpdateReceived(AUpdates[I]);
     FreeAndNil(AUpdates[I]);
   end;
 end;
@@ -198,7 +198,7 @@ begin
       Self.DoOnUpdates(LUpdates);
       Self.DoOnUpdate(LUpdates);
     end;
-    Sleep(Bot.PollingTimeout);
+    Sleep(Parrent.Bot.PollingTimeout);
   until (Terminated) or (not Bot.IsReceiving);
 end;
 

@@ -4,9 +4,9 @@
         <AppType>Console</AppType>
         <Config Condition="'$(Config)'==''">Debug</Config>
         <FrameworkType>None</FrameworkType>
-        <MainSource>ConsoleBot.dpr</MainSource>
+        <MainSource>DonateMe.dpr</MainSource>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
-        <ProjectGuid>{EFFCD818-0438-4341-BF25-9F686954B7B4}</ProjectGuid>
+        <ProjectGuid>{76ADC628-E337-4E6A-A133-88276E0491CD}</ProjectGuid>
         <ProjectVersion>18.2</ProjectVersion>
         <TargetedPlatforms>1</TargetedPlatforms>
     </PropertyGroup>
@@ -44,7 +44,7 @@
         <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;$(DCC_Namespace)</DCC_Namespace>
         <DCC_S>false</DCC_S>
         <DCC_UnitSearchPath>..\..\Source;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
-        <SanitizedProjectName>ConsoleBot</SanitizedProjectName>
+        <SanitizedProjectName>DonateMe</SanitizedProjectName>
         <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <VerInfo_Locale>1049</VerInfo_Locale>
     </PropertyGroup>
@@ -99,7 +99,7 @@
         <BorlandProject>
             <Delphi.Personality>
                 <Source>
-                    <Source Name="MainSource">ConsoleBot.dpr</Source>
+                    <Source Name="MainSource">DonateMe.dpr</Source>
                 </Source>
                 <Excluded_Packages>
                     <Excluded_Packages Name="$(BDSBIN)\dcloffice2k240.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
@@ -133,9 +133,9 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Win32\Debug\ConsoleBot.exe" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="..\bin\Win32-Debug\DonateMe.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
-                        <RemoteName>ConsoleBot.exe</RemoteName>
+                        <RemoteName>DonateMe.exe</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

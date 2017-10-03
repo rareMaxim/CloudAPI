@@ -4,12 +4,13 @@ interface
 
 uses
   TelegAPi.Bot,
+  TelegAPi.Types,
   TelegAPi.Types.Enums,
   System.Classes,
   System.Net.Mime;
 
 type
-  TTelegramBotHelper = class helper for TTelegramBotCore
+  TTelegramBotHelper = class helper for TTelegramBot
     function IsValidToken: Boolean;
   end;
 
@@ -30,6 +31,10 @@ type
     ///   Add a form data Stream
     /// </summary>
     procedure AddStream(const AFieldName: string; Data: TStream);
+  end;
+
+  TtgMessageHelper = class helper for TTgMessage
+    function IsCommand(const AValue: string): Boolean;
   end;
 
 implementation
@@ -138,6 +143,23 @@ begin
     TtgSendChatAction.Upload_video_note:
       Result := 'upload_video_note';
   end;
+end;
+
+{ TtgMessageHelper }
+
+function TtgMessageHelper.IsCommand(const AValue: string): Boolean;
+var
+  LEnt: TtgMessageEntity;
+begin
+  Result := False;
+  if Assigned(Self.Entities) then
+    for LEnt in Self.Entities do
+      if (LEnt.TypeMessage = TtgMessageEntityType.bot_command) then
+        if Text.Substring(LEnt.Offset, LEnt.Length).StartsWith(AValue, True) then
+        begin
+          LEnt.Free;
+          Exit(True);
+        end;
 end;
 
 end.

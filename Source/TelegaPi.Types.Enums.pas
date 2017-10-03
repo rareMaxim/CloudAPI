@@ -234,6 +234,88 @@ type
     /// </summary>
     All = 255);
 
+
+  /// <summary>
+  ///   Type of a <see cref="MessageEntity" />
+  /// </summary>
+  TtgMessageEntityType = (
+    /// <summary>
+    ///   A mentioned <see cref="User" />
+    /// </summary>
+    mention,
+
+    /// <summary>
+    ///   A searchable Hashtag
+    /// </summary>
+    hashtag,
+
+    /// <summary>
+    ///   A Bot command
+    /// </summary>
+    bot_command,
+
+    /// <summary>
+    ///   An url
+    /// </summary>
+    url,
+
+    /// <summary>
+    ///   An email
+    /// </summary>
+    email,
+
+    /// <summary>
+    ///   Bold text
+    /// </summary>
+    bold,
+
+    /// <summary>
+    ///   Italic text
+    /// </summary>
+    italic,
+
+    /// <summary>
+    ///   Monowidth string
+    /// </summary>
+    code,
+
+    /// <summary>
+    ///   Monowidth block
+    /// </summary>
+    pre,
+
+    /// <summary>
+    ///   Clickable text urls
+    /// </summary>
+    text_link,
+
+    /// <summary>
+    ///   Mentions for a <see cref="User" /> without <see cref="User.Username" />
+    /// </summary>
+    text_mention);
+  /// <summary>
+  ///   The part of the face relative to which the mask should be placed. One
+  ///   of “forehead”, “eyes”, “mouth”, or “chin”.
+  /// </summary>
+
+  TtgMaskPositionPoint = (
+    /// <summary>
+    ///   The forehead
+    /// </summary>
+    forehead,
+    /// <summary>
+    ///   The eyes
+    /// </summary>
+    eyes,
+    /// <summary>
+    ///   The mouth
+    /// </summary>
+    mouth,
+    /// <summary>
+    ///   The chin
+    /// </summary>
+    chin);
+
   TAllowedUpdate = (message, Edited_message, Channel_post, Edited_channel_post, Inline_query, Chosen_inline_result, Callback_query);
 
   TAllowedUpdates = set of TAllowedUpdate;
