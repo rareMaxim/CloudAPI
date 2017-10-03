@@ -31,21 +31,22 @@ type
         FParent: TTgBotAsync;
       protected
         procedure DoOnUpdates(AUpdates: TArray<TtgUpdate>);
-        procedure DoOnUpdate(AUpdates: TArray<TtgUpdate>); virtual;
+        procedure DoOnUpdate(AUpdate: TtgUpdate); virtual;
         function GetUpdates: TArray<TtgUpdate>;
-      /// <summary>
-      ///   Raises the <see cref="TelegAPI.Bot|TtgOnUpdate" />, <see cref="TelegAPI.Bot|TtgOnMessage" />
-      ///    , <see cref="TelegAPI.Bot|TtgOnInlineQuery" /> , <see cref="TelegAPI.Bot|TtgOnInlineResultChosen" />
-      ///    and <see cref="TelegAPI.Bot|TtgOnCallbackQuery" /> events.
-      /// </summary>
-      /// <param name="AValue">
-      ///   The <see cref="TelegAPi.Types|TtgUpdate">Update</see> instance
-      ///   containing the event data. <br />
-      /// </param>
-      /// <exception cref="TelegaPi.Exceptions|ETelegramException">
-      ///   Возникает если получено неизвестное обновление
-      /// </exception>
-        procedure OnUpdateReceived(AValue: TtgUpdate);
+        procedure DoUpdateWorker(AUpdates: TArray<TtgUpdate>);
+        /// <summary>
+        ///   Raises the <see cref="TelegAPI.Bot|TtgOnUpdate" />, <see cref="TelegAPI.Bot|TtgOnMessage" />
+        ///    , <see cref="TelegAPI.Bot|TtgOnInlineQuery" /> , <see cref="TelegAPI.Bot|TtgOnInlineResultChosen" />
+        ///    and <see cref="TelegAPI.Bot|TtgOnCallbackQuery" /> events.
+        /// </summary>
+        /// <param name="AValue">
+        ///   The <see cref="TelegAPi.Types|TtgUpdate">Update</see> instance
+        ///   containing the event data. <br />
+        /// </param>
+        /// <exception cref="TelegaPi.Exceptions|ETelegramException">
+        ///   Возникает если получено неизвестное обновление
+        /// </exception>
+        procedure DoUpdateTypeParser(AValue: TtgUpdate);
         procedure Execute; override;
       public
         property Parent: TTgBotAsync read FParent write FParent;
@@ -102,67 +103,67 @@ type
     property UseSynchronize: Boolean read FUseSynchronize write SetUseSynchronize default True;
 {$ENDREGION}
 {$REGION 'Events|События'}
-/// <summary>
-///   <para>
-///     Событие возникает когда получено <see cref="TelegAPi.Types|TtgUpdate" />
-///   </para>
-///   <para>
-///     Occurs when an <see cref="TelegAPi.Types|TtgUpdate" /> is
-///     received.
-///   </para>
-/// </summary>
+    /// <summary>
+    ///   <para>
+    ///     Событие возникает когда получено <see cref="TelegAPi.Types|TtgUpdate" />
+    ///   </para>
+    ///   <para>
+    ///     Occurs when an <see cref="TelegAPi.Types|TtgUpdate" /> is
+    ///     received.
+    ///   </para>
+    /// </summary>
     property OnUpdate: TtgOnUpdate read FOnUpdate write FOnUpdate;
     property OnUpdates: TtgOnUpdates read FOnUpdates write FOnUpdates;
-/// <summary>
-///   <para>
-///     Событие возникает когда получено <see cref="TelegAPi.Types|TtgMessage" />
-///   </para>
-///   <para>
-///     Occurs when a <see cref="TelegAPi.Types|TtgMessage" /> is
-///     recieved.
-///   </para>
-/// </summary>
+    /// <summary>
+    ///   <para>
+    ///     Событие возникает когда получено <see cref="TelegAPi.Types|TtgMessage" />
+    ///   </para>
+    ///   <para>
+    ///     Occurs when a <see cref="TelegAPi.Types|TtgMessage" /> is
+    ///     recieved.
+    ///   </para>
+    /// </summary>
     property OnMessage: TtgOnMessage read FOnMessage write FOnMessage;
-/// <summary>
-///   <para>
-///     Возникает когда <see cref="TelegAPi.Types|TtgMessage" /> было
-///     изменено.
-///   </para>
-///   <para>
-///     Occurs when <see cref="TelegAPi.Types|TtgMessage" /> was edited.
-///   </para>
-/// </summary>
+    /// <summary>
+    ///   <para>
+    ///     Возникает когда <see cref="TelegAPi.Types|TtgMessage" /> было
+    ///     изменено.
+    ///   </para>
+    ///   <para>
+    ///     Occurs when <see cref="TelegAPi.Types|TtgMessage" /> was edited.
+    ///   </para>
+    /// </summary>
     property OnMessageEdited: TtgOnMessage read FOnMessageEdited write FOnMessageEdited;
     property OnChannelPost: TtgOnChannelPost read FOnChannelPost write FOnChannelPost;
-/// <summary>
-///   <para>
-///     Возникает, когда получен <see cref="TelegAPi.Types|TtgInlineQuery" />
-///   </para>
-///   <para>
-///     Occurs when an <see cref="TelegAPi.Types|TtgInlineQuery" /> is
-///     received.
-///   </para>
-/// </summary>
+    /// <summary>
+    ///   <para>
+    ///     Возникает, когда получен <see cref="TelegAPi.Types|TtgInlineQuery" />
+    ///   </para>
+    ///   <para>
+    ///     Occurs when an <see cref="TelegAPi.Types|TtgInlineQuery" /> is
+    ///     received.
+    ///   </para>
+    /// </summary>
     property OnInlineQuery: TtgOnInlineQuery read FOnInlineQuery write FOnInlineQuery;
-/// <summary>
-///   <para>
-///     Возникает когда получен <see cref="TelegAPi.Types|TtgChosenInlineResult" />
-///   </para>
-///   <para>
-///     Occurs when a <see cref="TelegAPi.Types|TtgChosenInlineResult" />
-///     is received.
-///   </para>
-/// </summary>
+    /// <summary>
+    ///   <para>
+    ///     Возникает когда получен <see cref="TelegAPi.Types|TtgChosenInlineResult" />
+    ///   </para>
+    ///   <para>
+    ///     Occurs when a <see cref="TelegAPi.Types|TtgChosenInlineResult" />
+    ///     is received.
+    ///   </para>
+    /// </summary>
     property OnInlineResultChosen: TtgOnInlineResultChosen read FOnInlineResultChosen write FOnInlineResultChosen;
-/// <summary>
-///   <para>
-///     Возникает когда получен <see cref="TelegAPi.Types|TtgCallbackQuery" />
-///   </para>
-///   <para>
-///     Occurs when an <see cref="TelegAPi.Types|TtgCallbackQuery" /> is
-///     received
-///   </para>
-/// </summary>
+    /// <summary>
+    ///   <para>
+    ///     Возникает когда получен <see cref="TelegAPi.Types|TtgCallbackQuery" />
+    ///   </para>
+    ///   <para>
+    ///     Occurs when an <see cref="TelegAPi.Types|TtgCallbackQuery" /> is
+    ///     received
+    ///   </para>
+    /// </summary>
     property OnCallbackQuery: TtgOnCallbackQuery read FOnCallbackQuery write FOnCallbackQuery;
     property OnConnect: TNotifyEvent read FOnConnect write FOnConnect;
     property OnDisconnect: TNotifyEvent read FOnDisconnect write FOnDisconnect;
@@ -177,38 +178,46 @@ uses
   TelegAPI.Types.Enums;
 { TTgRecesiver.TtgAsync }
 
-procedure TTgBotAsync.TtgRecesiver.DoOnUpdate(AUpdates: TArray<TtgUpdate>);
+procedure TTgBotAsync.TtgRecesiver.DoOnUpdate(AUpdate: TtgUpdate);
 begin
-  if not Assigned(Parent.OnUpdates) then
+  if not Assigned(Parent.OnUpdate) then
     Exit;
   if UseSynchronize then
     TThread.Synchronize(nil,
       procedure
       begin
-        Parent.OnUpdates(Self, AUpdates);
+        Parent.OnUpdate(Self, AUpdate);
       end)
   else
-    Parent.OnUpdates(Self, AUpdates);
+    Parent.OnUpdate(Self, AUpdate);
 end;
 
 procedure TTgBotAsync.TtgRecesiver.DoOnUpdates(AUpdates: TArray<TtgUpdate>);
+begin
+  if not Assigned(Parent.OnUpdates) then
+    Exit;
+  if FUseSynchronize then
+    TThread.Synchronize(nil,
+      procedure
+      begin
+        Parent.OnUpdates(Parent, AUpdates);
+      end)
+  else
+  begin
+    Parent.OnUpdates(Parent, AUpdates);
+  end;
+end;
+
+procedure TTgBotAsync.TtgRecesiver.DoUpdateWorker(AUpdates: TArray<TtgUpdate>);
 var
   I: Integer;
 begin
+  DoOnUpdates(AUpdates); // OnUpdates Fire
   for I := Low(AUpdates) to High(AUpdates) do
   begin
-    if FUseSynchronize then
-      TThread.Synchronize(nil,
-        procedure
-        begin
-          Self.OnUpdateReceived(AUpdates[I]);
-          FreeAndNil(AUpdates[I]);
-        end)
-    else
-    begin
-      Self.OnUpdateReceived(AUpdates[I]);
-      FreeAndNil(AUpdates[I]);
-    end;
+    DoOnUpdate(AUpdates[I]); // OnUpdate Fire
+    DoUpdateTypeParser(AUpdates[I]);
+    FreeAndNil(AUpdates[I]);
   end;
 end;
 
@@ -218,16 +227,19 @@ var
 begin
   if Assigned(Parent.OnConnect) then
     Parent.OnConnect(Self);
-  repeat
-    LUpdates := Parent.Bot.GetUpdates;
-    if (Assigned(LUpdates)) and (Length(LUpdates) > 0) and (not Terminated) then
-    begin
-      Parent.MessageOffset := LUpdates[High(LUpdates)].ID + 1;
-      Self.DoOnUpdates(LUpdates);
-      Self.DoOnUpdate(LUpdates);
-    end;
-    Sleep(Parent.PollingInterval);
-  until (Terminated) or (not Parent.IsReceiving);
+  try
+    repeat
+      LUpdates := Parent.Bot.GetUpdates(Parent.MessageOffset, 100, 0, Parent.Bot.AllowedUpdates);
+      if (Length(LUpdates) > 0) and (not Terminated) then
+      begin
+        Parent.MessageOffset := LUpdates[High(LUpdates)].ID + 1;
+        Self.DoUpdateWorker(LUpdates);  // free update items
+      end;
+      Sleep(Parent.PollingInterval);
+    until (Terminated) or (not Parent.IsReceiving);
+  finally
+    LUpdates := nil;
+  end;
 end;
 
 function TTgBotAsync.TtgRecesiver.GetUpdates: TArray<TtgUpdate>;
@@ -240,10 +252,8 @@ begin
   end;
 end;
 
-procedure TTgBotAsync.TtgRecesiver.OnUpdateReceived(AValue: TtgUpdate);
+procedure TTgBotAsync.TtgRecesiver.DoUpdateTypeParser(AValue: TtgUpdate);
 begin
-  if Assigned(Parent.OnUpdate) then
-    Parent.OnUpdate(Self, AValue);
   case AValue.&Type of
     TtgUpdateType.MessageUpdate:
       if Assigned(Parent.OnMessage) then
@@ -266,7 +276,6 @@ begin
   else
     raise ETelegramException.Create('Unknown update type');
   end
-
 end;
 
 { TTgBotAsync }
@@ -282,7 +291,7 @@ end;
 
 destructor TTgBotAsync.Destroy;
 begin
-  {TODO -oM.E.Sysoev -cGeneral : Проверить, возможно стоит удалить?}
+  { TODO -oM.E.Sysoev -cGeneral : Проверить, возможно стоит удалить? }
   FPollingInterval := 0;
   if IsReceiving then
     IsReceiving := False;
@@ -300,11 +309,11 @@ begin
   // duplicate FReceiver creation and freeing protection
   if (FIsReceiving = Value) then
     Exit;
- // if not Assigned(Bot) then
- //   raise ETelegramException.Create('Property "Bot" must be assigned');
+  // if not Assigned(Bot) then
+  // raise ETelegramException.Create('Property "Bot" must be assigned');
   FIsReceiving := Value;
-  //  if (csDesigning in ComponentState) then
-  //    Exit;
+  // if (csDesigning in ComponentState) then
+  // Exit;
   if Value then
   begin
     FRecesiver := TtgRecesiver.Create(True);

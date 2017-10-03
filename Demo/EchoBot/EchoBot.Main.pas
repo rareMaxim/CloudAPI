@@ -122,10 +122,10 @@ begin
   end
   else if Msg.Text.StartsWith('/help') then // send
   begin
-    usage := 'Usage:' + #13#10 +    //
-      '/inline   - send inline keyboard' + #13#10 +    //
-      '/keyboard - send custom keyboard' + #13#10 +   //
-      '/photo    - send a photo' + #13#10 +       //
+    usage := 'Usage:' + #13#10 + //
+      '/inline   - send inline keyboard' + #13#10 + //
+      '/keyboard - send custom keyboard' + #13#10 + //
+      '/photo    - send a photo' + #13#10 + //
       '/request  - request location or contact';
     tgBot.SendMessage(Msg.Chat.Id, usage, TtgParseMode.default, False, False, 0, TtgReplyKeyboardRemove.Create).Free;
   end;
@@ -136,8 +136,8 @@ var
   kb: IReplyMarkup;
 begin
   kb := TtgReplyKeyboardMarkup.Create([[
-  {} TtgKeyboardButton.Create('Location', False, True),
-  {} TtgKeyboardButton.Create('Contact', True, False)]]);
+    { } TtgKeyboardButton.Create('Location', False, True),
+    { } TtgKeyboardButton.Create('Contact', True, False)]]);
   tgBot.SendMessage(Msg.Chat.Id, 'Who or Where are you?', TtgParseMode.default, False, False, 0, kb).Free;
 end;
 
@@ -182,7 +182,7 @@ begin
   results := [TtgInlineQueryResultLocation.Create, TtgInlineQueryResultLocation.Create];
   with TtgInlineQueryResultLocation(results[0]) do
   begin
-    ID := '1';
+    Id := '1';
     Latitude := 40.7058316; // displayed result
     Longitude := -74.2581888;
     Title := 'New York';
@@ -193,7 +193,7 @@ begin
   end;
   with TtgInlineQueryResultLocation(results[1]) do
   begin
-    ID := '2';
+    Id := '2';
     Latitude := 52.507629; // displayed result
     Longitude := 13.1449577;
     Title := 'Berlin';
@@ -233,9 +233,9 @@ begin
     WriteLine('Change path to photo in metod: TMain.SendPhoto');
   LFile := TtgFileToSend.Create(PATH_PHOTO);
   try
-    tgBot.SendPhoto(Msg.Chat.ID, LFile, 'Nice Picture').Free;
+    tgBot.SendPhoto(Msg.Chat.Id, LFile, 'Nice Picture').Free;
   finally
-    LFile.free;
+    LFile.Free;
   end;
 end;
 
@@ -260,9 +260,9 @@ begin
   keyboard := TtgReplyKeyboardMarkup.Create(False, True);
   with keyboard as TtgReplyKeyboardMarkup do
   begin
-  { first row }
+    { first row }
     AddRow([TtgKeyboardButton.Create('1.1'), TtgKeyboardButton.Create('1.2')]);
-  { second row }
+    { second row }
     AddRow([TtgKeyboardButton.Create('2.1'), TtgKeyboardButton.Create('2.2')]);
     AddRow([TtgKeyboardButton.Create('Contact', True, False), TtgKeyboardButton.Create('Location', False, True)]);
   end;

@@ -13,8 +13,8 @@ uses
 
 type
   /// <summary>
-  ///  This class is used by func. TTelegramBotCore.ParamsToFormData
-  ///  to locate suitable param loader for API request parameters preparation.
+  ///   This class is used by func. TTelegramBotCore.ParamsToFormData to locate
+  ///   suitable param loader for API request parameters preparation.
   /// </summary>
   TtgParamLoader = class
   public

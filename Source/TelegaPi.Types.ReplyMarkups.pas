@@ -42,7 +42,6 @@ type
   ///   This can be extremely useful if you want to create user-friendly
   ///   step-by-step interfaces without having to sacrifice privacy mode.
   /// </summary>
-  [djName('ForceReply')]
   TtgForceReply = class(TtgReplyMarkup)
   public
     /// <summary>
@@ -96,6 +95,7 @@ type
     [djName('selective')]
     Selective: Boolean;
   end;
+
   /// <summary>
   ///   This object represents an inline keyboard that appears right next to
   ///   the <see cref="TelegAPi.Types|TtgMessage" /> it belongs to.
@@ -105,8 +105,6 @@ type
   ///   channels yet. For now, feel free to use them in one-on-one chats or
   ///   groups.
   /// </remarks>
-
-  [djName('InlineKeyboardMarkup')]
   TtgInlineKeyboardMarkup = class(TtgButtonedMarkup<TtgInlineKeyboardButton>)
   public
     /// <summary>
@@ -139,7 +137,6 @@ type
   ///   custom keyboard</see> with reply options (see <see cref="https://core.telegram.org/bots#keyboards">
   ///   Introduction to bots</see> for details and examples).
   /// </summary>
-  [djName('ReplyKeyboardMarkup')]
   TtgReplyKeyboardMarkup = class(TtgButtonedReplyMarkup<TtgKeyboardButton>)
   public
     /// <summary>

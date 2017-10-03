@@ -11,6 +11,7 @@ uses
   System.Net.URLClient,
   System.Net.HttpClient,
   System.Generics.Collections,
+  DJSON.Params,
   TelegAPI.Types,
   TelegAPI.Types.Enums,
   TelegAPI.Types.ReplyMarkups,
@@ -50,6 +51,7 @@ type
     function RequestAPI<T>(const Method: string; Parameters: TDictionary<string, TValue>): T;
     function SendDataToServer(const Method: string; Parameters: TDictionary<string, TValue>): string;
     function ParamsToFormData(Parameters: TDictionary<string, TValue>): TMultipartFormData;
+    function JsonConfig: IdjParams;
   public
     function ApiTest<T>(const ARequest: string; Parameters: TDictionary<string, TValue> = nil): T;
     procedure ErrorHandlerGeneral(AException: Exception);
@@ -392,7 +394,7 @@ type
     ///   this limit may be changed in the future.
     /// </remarks>
     function SendDocument(ChatId: TValue; Document: TValue; const Caption: string = ''; DisableNotification: Boolean = False; ReplyToMessageId: Integer = 0; ReplyMarkup: IReplyMarkup = nil): TTgMessage;
-     /// <summary>
+    /// <summary>
     ///   Use this method to send video files, Telegram clients support mp4
     ///   videos (other formats may be sent as Document).
     /// </summary>
@@ -1447,7 +1449,7 @@ type
     function PromoteChatMember(ChatId: TValue; UserId: Integer; CanChangeInfo: Boolean = False; CanPostMessages: Boolean = False; CanEditMessages: Boolean = False; CanDeleteMessages: Boolean = False; CanInviteUsers: Boolean = False; CanRestrictMembers: Boolean = False; CanPinMessages: Boolean = False; CanPromoteMembers: Boolean = False): Boolean;
 {$ENDREGION}
 {$REGION 'Strickers'}
-  /// <summary>
+    /// <summary>
     ///   Use this method to send .webp stickers.
     /// </summary>
     /// <param name="ChatId">
@@ -1476,7 +1478,7 @@ type
     ///   On success, the sent Message is returned.
     /// </returns>
     function SendSticker(ChatId: TValue; Sticker: TValue; DisableNotification: Boolean = False; ReplyToMessageId: Integer = 0; ReplyMarkup: IReplyMarkup = nil): TTgMessage;
-     /// <summary>
+    /// <summary>
     ///   Use this method to get a sticker set.
     /// </summary>
     /// <param name="name">
@@ -1546,10 +1548,10 @@ type
     /// </returns>
     function createNewStickerSet(UserId: Integer; const Name, Title: string; PngSticker: TValue; const Emojis: string; ContainsMasks: Boolean = False; MaskPosition: TtgMaskPosition = nil): Boolean;
     /// <summary>
-    ///  Use this method to add a new sticker to a set created by the bot.
+    ///   Use this method to add a new sticker to a set created by the bot.
     /// </summary>
     /// <returns>
-    ///  Returns True on success.
+    ///   Returns True on success.
     /// </returns>
     function addStickerToSet(UserId: Integer; const Name: string; PngSticker: TValue; const Emojis: string; MaskPosition: TtgMaskPosition = nil): Boolean;
     /// <summary>
@@ -1640,8 +1642,7 @@ implementation
 uses
   DJSON,
   TelegAPI.Helpers,
-  TelegAPI.Utils.Json,
-  DJSON.Params;
+  TelegAPI.Utils.Json;
 
 { TTelegramBot }
 {$REGION 'Core'}
@@ -1682,13 +1683,10 @@ end;
 function TTelegramBot.ApiTest<T>(const ARequest: string; Parameters: TDictionary<string, TValue>): T;
 var
   LApiResponse: TtgApiResponse<T>;
-  LdjParams: IdjParams;
 begin
   LApiResponse := nil;
-  LdjParams := dj.Default;
-  LdjParams.Engine := TdjEngine.eJDO;
   try
-    LApiResponse := dj.FromJson(ARequest, LdjParams).&To < TtgApiResponse<T> > ;
+    LApiResponse := dj.FromJson(ARequest, JsonConfig).&To < TtgApiResponse<T> > ;
     if not LApiResponse.Ok then
       ErrorHandlerApi(EApiRequestException.FromApiResponse<T>(LApiResponse, Parameters));
     Result := LApiResponse.ResultObject;
@@ -1720,6 +1718,7 @@ begin
       { TODO -oOwner -cGeneral : Проверить че за херня тут твориться }
       if not LParameter.Value.IsEmpty then
         Result.AddField(LParameter.Key, dj.From(LParameter.Value.AsObject).ToJson);
+        Result.AddField(LParameter.Key, dj.From(LParameter.Value.AsInterface, JsonConfig).ToJson);
     end
     else
       ErrorHandlerGeneral(ETelegramDataConvert.Create('Check parameter type ' + LParameter.Value.ToString));
@@ -1817,6 +1816,12 @@ begin
   finally
     Parameters.Free;
   end;
+end;
+
+function TTelegramBot.JsonConfig: IdjParams;
+begin
+  Result := dj.DefaultByFields;
+  Result.Engine := TdjEngine.eDelphiDOM;
 end;
 
 function TTelegramBot.GetUpdates(const Offset, Limit, Timeout: Integer; AllowedUpdates: TAllowedUpdates): TArray<TtgUpdate>;
