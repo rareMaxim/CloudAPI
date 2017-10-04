@@ -19,6 +19,11 @@ as well as many others who ask / suggest features / points bugs.
 ### [**Donate**](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=5ASFXPC68MS2U)
 - Unfortunately, no one has helped financially =(
 
+[![Donate](https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=5ASFXPC68MS2U)
+
+## Powered by TelegaPi
+* [🤖ChallengeOfTheDay](https://goo.gl/4TbFH9)
+
 ## Dependencies
 
 * [RAD Studio XE8, 10.0(Seattle) 10.1(Berlin) 10.2(Tokyo)](https://www.embarcadero.com/products/delphi)
@@ -44,8 +49,12 @@ Telega π - Библиотека для работы с Telegram Bot API в Delp
 
 ### [**Donate**](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=5ASFXPC68MS2U)
 - К сожалинию, еще никто не помог материально =(
+
+[![Donate](https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=5ASFXPC68MS2U)
+
 ## Боты, работающие на TelegaPi
 * [🤖ChallengeOfTheDay](https://t.me/cotdbot?start=245903278)
+
 ## Зависимости
 
 * [RAD Studio XE8, 10.0(Seattle) 10.1(Berlin) 10.2(Tokyo)](https://www.embarcadero.com/products/delphi)
