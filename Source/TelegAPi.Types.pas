@@ -1060,7 +1060,7 @@ type
     FileName: string;
     Content: TStream;
     constructor Create(const AFileName: string); overload;
-    constructor Create(AContent: TStream); overload;
+    constructor Create(AContent: TStream; const AFileName: string = ''); overload;
     destructor Destroy; override;
   end;
 
@@ -1629,9 +1629,9 @@ begin
     raise EFileNotFoundException.CreateFmt('File %S not found!', [AFileName]);
 end;
 
-constructor TtgFileToSend.Create(AContent: TStream);
+constructor TtgFileToSend.Create(AContent: TStream; const AFileName: string);
 begin
-  FileName := string.Empty;
+  FileName := AFileName;
   Content := AContent;
   if not Assigned(AContent) then
     raise EStreamError.Create('Stream not assigned!');

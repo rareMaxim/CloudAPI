@@ -30,7 +30,17 @@ type
     /// <summary>
     ///   Add a form data Stream
     /// </summary>
-    procedure AddStream(const AFieldName: string; Data: TStream);
+    /// <param name="AFieldName">
+    ///   Field Name
+    /// </param>
+    /// <param name="Data">
+    ///   Stream
+    /// </param>
+    /// <param name="AFileName">
+    ///   file name: "File.ext"
+    /// </param>
+    procedure AddStream(const AFieldName: string; Data: TStream; const AFileName: string = '');
+
   end;
 
   TtgMessageHelper = class helper for TTgMessage
@@ -89,12 +99,15 @@ end;
 
 { TtgTMultipartFormDataHelper }
 
-procedure TtgTMultipartFormDataHelper.AddStream(const AFieldName: string; Data: TStream);
+procedure TtgTMultipartFormDataHelper.AddStream(const AFieldName: string; Data: TStream; const AFileName: string);
 var
   lFileName: string;
   LFileStream: TFileStream;
 begin
-  lFileName := TPath.GetTempFileName;
+  if AFieldName.IsEmpty then
+    lFileName := TPath.GetTempFileName
+  else
+    lFileName := TPath.Combine(TPath.GetTempPath, AFieldName);
   try
     LFileStream := TFileStream.Create(lFileName, fmCreate);
     try
