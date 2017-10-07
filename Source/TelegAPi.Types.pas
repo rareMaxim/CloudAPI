@@ -1639,7 +1639,6 @@ end;
 
 destructor TtgFileToSend.Destroy;
 begin
-  FreeAndNil(Content);
   inherited;
 end;
 
