@@ -1060,7 +1060,7 @@ type
     FileName: string;
     Content: TStream;
     constructor Create(const AFileName: string); overload;
-    constructor Create(AContent: TStream); overload;
+    constructor Create(AContent: TStream; const AFileName: string); overload;
     destructor Destroy; override;
   end;
 
@@ -1629,9 +1629,16 @@ begin
     raise EFileNotFoundException.CreateFmt('File %S not found!', [AFileName]);
 end;
 
-constructor TtgFileToSend.Create(AContent: TStream);
+constructor TtgFileToSend.Create(AContent: TStream; const AFileName: string);
 begin
-  FileName := string.Empty;
+  //I guess, in most cases, AFilename param should contain a non-empty string.
+  //It is odd to receive a file with filename and
+  //extension which both are not connected with its content.
+
+  if AFileName.IsEmpty then
+  raise Exception.Create('TtgFileToSend: filename is empty!');
+
+  FileName := AFileName;
   Content := AContent;
   if not Assigned(AContent) then
     raise EStreamError.Create('Stream not assigned!');

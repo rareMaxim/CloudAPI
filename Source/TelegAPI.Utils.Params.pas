@@ -88,7 +88,7 @@ var
 begin
   LFileToSent := AValue.AsType<TtgFileToSend>;
   if Assigned(LFileToSent.Content) then
-    AFormData.AddStream(AKey, LFileToSent.Content)
+    AFormData.AddStream(AKey, LFileToSent.FileName, LFileToSent.Content)
   else
     AFormData.AddFile(AKey, LFileToSent.FileName);
 end;
