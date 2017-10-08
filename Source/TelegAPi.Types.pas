@@ -1061,7 +1061,6 @@ type
     Content: TStream;
     constructor Create(const AFileName: string); overload;
     constructor Create(AContent: TStream; const AFileName: string); overload;
-    destructor Destroy; override;
   end;
 
   /// <summary>
@@ -1634,19 +1633,12 @@ begin
   //I guess, in most cases, AFilename param should contain a non-empty string.
   //It is odd to receive a file with filename and
   //extension which both are not connected with its content.
-
   if AFileName.IsEmpty then
-  raise Exception.Create('TtgFileToSend: filename is empty!');
-
-  FileName := AFileName;
-  Content := AContent;
+    raise Exception.Create('TtgFileToSend: Filename is empty!');
   if not Assigned(AContent) then
     raise EStreamError.Create('Stream not assigned!');
-end;
-
-destructor TtgFileToSend.Destroy;
-begin
-  inherited;
+  FileName := AFileName;
+  Content := AContent;
 end;
 
 { TtgGame }
