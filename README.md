@@ -2,7 +2,7 @@
 
 Telega π - Library for working with Telegram Bot API in Delphi
 
-Version Bot API: *3.4.0*
+Version Bot API: *3.4.1*
 
 ## Support project
 

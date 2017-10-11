@@ -25,7 +25,7 @@ constructor TtgAbstractComponent.Create(AOwner: TComponent);
 begin
   inherited;
   FAutor := 'Maxim Sysoev';
-  FVersion := '3.4.0';
+  FVersion := '3.4.1';
 end;
 
 end.
