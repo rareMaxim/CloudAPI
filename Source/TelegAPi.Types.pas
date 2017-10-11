@@ -244,6 +244,20 @@ type
     /// </summary>
     [djName('pinned_message')]
     PinnedMessage: TTgMessage;
+    /// <summary>
+    ///   Optional. For supergroups, name of Group sticker set. Returned only
+    ///   in <see cref="TelegAPI.Bot|TTelegramBot.GetChat(TValue)">getChat</see>
+    ///    .
+    /// </summary>
+    [djName('sticker_set_name')]
+    StickerSetName: string;
+    /// <summary>
+    ///   Optional. True, if the bot can change group the sticker set. Returned
+    ///   only in <see cref="TelegAPI.Bot|TTelegramBot.GetChat(TValue)">getChat</see>
+    ///    .
+    /// </summary>
+    [djName('can_set_sticker_set')]
+    CanSetStickerSet: Boolean;
   end;
 
   /// <summary>
@@ -824,6 +838,12 @@ type
     [djName('entities')]
     Entities: TObjectList<TtgMessageEntity>;
     /// <summary>
+    ///   Optional. For messages with a caption, special entities like
+    ///   usernames, URLs, bot commands, etc. that appear in the caption
+    /// </summary>
+    [djName('caption_entities')]
+    CaptionEntities: TObjectList<TtgMessageEntity>;
+    /// <summary>
     ///   Optional. Message is an audio file, information about the file
     /// </summary>
     [djName('audio')]
@@ -1061,7 +1081,6 @@ type
     Content: TStream;
     constructor Create(const AFileName: string); overload;
     constructor Create(AContent: TStream; const AFileName: string = ''); overload;
-    destructor Destroy; override;
   end;
 
   /// <summary>
@@ -1633,14 +1652,15 @@ constructor TtgFileToSend.Create(AContent: TStream; const AFileName: string);
 begin
   FileName := AFileName;
   Content := AContent;
+  //I guess, in most cases, AFilename param should contain a non-empty string.
+  //It is odd to receive a file with filename and
+  //extension which both are not connected with its content.
+  if AFileName.IsEmpty then
+    raise Exception.Create('TtgFileToSend: Filename is empty!');
   if not Assigned(AContent) then
     raise EStreamError.Create('Stream not assigned!');
-end;
-
-destructor TtgFileToSend.Destroy;
-begin
-  FreeAndNil(Content);
-  inherited;
+  FileName := AFileName;
+  Content := AContent;
 end;
 
 { TtgGame }
@@ -1713,6 +1733,7 @@ begin
   FreeAndNil(Contact);
   FreeAndNil(Document);
   FreeAndNil(Entities);
+  FreeAndNil(CaptionEntities);
   FreeAndNil(ForwardFrom);
   FreeAndNil(ForwardFromChat);
   FreeAndNil(ForwardFromChat);

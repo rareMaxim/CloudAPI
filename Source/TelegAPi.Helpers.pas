@@ -40,7 +40,6 @@ type
     ///   file name: "File.ext"
     /// </param>
     procedure AddStream(const AFieldName: string; Data: TStream; const AFileName: string = '');
-
   end;
 
   TtgMessageHelper = class helper for TTgMessage
@@ -99,25 +98,31 @@ end;
 
 { TtgTMultipartFormDataHelper }
 
+
 procedure TtgTMultipartFormDataHelper.AddStream(const AFieldName: string; Data: TStream; const AFileName: string);
 var
-  lFileName: string;
-  LFileStream: TFileStream;
+  LFileStream  : TFileStream;
+  LTmpDir      : string;
+  LTmpFilename : string;
 begin
-  if AFieldName.IsEmpty then
-    lFileName := TPath.GetTempFileName
-  else
-    lFileName := TPath.Combine(TPath.GetTempPath, AFieldName);
+  //get filename for tmp folder e.g. ..\AppData\local\temp\4F353A8AC6AB446D9F592A30B157291B
+  LTmpDir      := IncludeTrailingPathDelimiter(TPath.GetTempPath)+TPath.GetGUIDFileName(false);
+  LTmpFilename := IncludeTrailingPathDelimiter(LTmpDir)+ExtractFileName(AFileName);
   try
-    LFileStream := TFileStream.Create(lFileName, fmCreate);
+    TDirectory.CreateDirectory(LTmpDir);
     try
-      LFileStream.CopyFrom(Data, 0);
+      LFileStream := TFileStream.Create(LTmpFilename, fmCreate);
+      try
+        LFileStream.CopyFrom(Data, 0);
+      finally
+        LFileStream.Free;
+      end;
+      AddFile(AFieldName, LTmpFilename);
     finally
-      LFileStream.Free;
+      TFile.Delete(LTmpFilename);
     end;
-    AddFile(AFieldName, lFileName);
   finally
-    TFile.Delete(lFileName);
+    TDirectory.Delete(LTmpDir);
   end;
 end;
 

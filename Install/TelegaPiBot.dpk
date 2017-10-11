@@ -48,7 +48,8 @@ contains
   TelegAPI.Utils.Json in '..\Source\TelegAPI.Utils.Json.pas',
   TelegAPI.Bot.Recesiver in '..\Source\TelegAPI.Bot.Recesiver.pas',
   TelegAPI.Utils.Converters in '..\Source\TelegAPI.Utils.Converters.pas',
-  TelegAPI.Utils in '..\Source\TelegAPI.Utils.pas';
+  TelegAPI.Utils in '..\Source\TelegAPI.Utils.pas',
+  TelegAPi.Ext.Planer in '..\Source\TelegAPi.Ext.Planer.pas';
 
 end.
 
