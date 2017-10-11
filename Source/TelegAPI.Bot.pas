@@ -890,7 +890,7 @@ type
     /// </returns>
     /// <seealso href="https://core.telegram.org/bots/api#editmessagereplymarkup" />
     function EditMessageCaption(ChatId: TValue; MessageId: Integer; const Caption: string; ReplyMarkup: IReplyMarkup = nil): Boolean; overload;
-    {TODO -oM.E.Sysoev -cGeneral : Create Documentatiom}
+    { TODO -oM.E.Sysoev -cGeneral : Create Documentatiom }
     function EditMessageCaption(const InlineMessageId: string; const Caption: string; ReplyMarkup: IReplyMarkup = nil): Boolean; overload;
     /// <summary>
     ///   Use this method to edit only the reply markup of messages sent by the
@@ -1077,7 +1077,7 @@ type
     ///   returned.
     /// </returns>
     /// <seealso href="https://core.telegram.org/bots/api#sendinvoice" />
-    function SendInvoice(ChatId: Integer; const Title: string; const Description: string; const Payload: string; const ProviderToken: string; const StartParameter: string; const Currency: string; Prices: TArray<TtgLabeledPrice>; const PhotoUrl: string = ''; PhotoSize: Integer = 0; PhotoWidth: Integer = 0; PhotoHeight: Integer = 0; NeedName: Boolean = False; NeedPhoneNumber: Boolean = False; NeedEmail: Boolean = False; NeedShippingAddress: Boolean = False; IsFlexible: Boolean = False; DisableNotification: Boolean = False; ReplyToMessageId: Integer = 0; ReplyMarkup: IReplyMarkup = nil): TTgMessage;
+    function SendInvoice(ChatId: Integer; const title: string; const Description: string; const Payload: string; const ProviderToken: string; const StartParameter: string; const Currency: string; Prices: TArray<TtgLabeledPrice>; const PhotoUrl: string = ''; PhotoSize: Integer = 0; PhotoWidth: Integer = 0; PhotoHeight: Integer = 0; NeedName: Boolean = False; NeedPhoneNumber: Boolean = False; NeedEmail: Boolean = False; NeedShippingAddress: Boolean = False; IsFlexible: Boolean = False; DisableNotification: Boolean = False; ReplyToMessageId: Integer = 0; ReplyMarkup: IReplyMarkup = nil): TTgMessage;
     /// <summary>
     ///   If you sent an invoice requesting a shipping address and the
     ///   parameter is_flexible was specified, the Bot API will send an Update
@@ -1544,7 +1544,7 @@ type
     /// <returns>
     ///   Returns True on success.
     /// </returns>
-    function createNewStickerSet(UserId: Integer; const Name, Title: string; PngSticker: TValue; const Emojis: string; ContainsMasks: Boolean = False; MaskPosition: TtgMaskPosition = nil): Boolean;
+    function createNewStickerSet(UserId: Integer; const Name, title: string; PngSticker: TValue; const Emojis: string; ContainsMasks: Boolean = False; MaskPosition: TtgMaskPosition = nil): Boolean;
     /// <summary>
     ///   Use this method to add a new sticker to a set created by the bot.
     /// </summary>
@@ -1576,6 +1576,32 @@ type
     ///   Returns True on success.
     /// </returns>
     function deleteStickerFromSet(const Sticker: string): Boolean;
+    /// <summary>
+    ///   Use this method to set a new group sticker set for a supergroup.
+    /// </summary>
+    /// <returns>
+    ///   Returns True on success.
+    /// </returns>
+    /// <remarks>
+    ///   The bot must be an administrator in the chat for this to work and
+    ///   must have the appropriate admin rights. Use the field <see cref="TelegAPi.Types|TtgChat.CanSetStickerSet">
+    ///   CanSetStickerSet</see> optionally returned in <see cref="TelegAPI.Bot|TTelegramBot.GetChat(TValue)">
+    ///   getChat</see> requests to check if the bot can use this method.
+    /// </remarks>
+    function setChatStickerSet(ChatId: TValue; const StickerSetName: string): Boolean;
+    /// <summary>
+    ///   Use this method to delete a group sticker set from a supergroup.
+    /// </summary>
+    /// <returns>
+    ///   Returns True on success.
+    /// </returns>
+    /// <remarks>
+    ///   The bot must be an administrator in the chat for this to work and
+    ///   must have the appropriate admin rights. Use the field <see cref="TelegAPi.Types|TtgChat.CanSetStickerSet">
+    ///   CanSetStickerSet</see> optionally returned in <see cref="TelegAPI.Bot|TTelegramBot.GetChat(TValue)">
+    ///   getChat</see> requests to check if the bot can use this method.
+    /// </remarks>
+    function deleteChatStickerSet(ChatId: TValue): Boolean;
 {$ENDREGION}
   published
 {$REGION 'Property|Свойства'}
@@ -1608,7 +1634,6 @@ type
     property VersionAPI: string read GetVersionAPI;
 {$ENDREGION}
 {$REGION 'События|Events'}
-
     /// <summary>
     ///   <para>
     ///     Возникает при возникновении ошибки во время запроса фоновых
@@ -1644,6 +1669,7 @@ uses
 
 { TTelegramBot }
 {$REGION 'Core'}
+
 constructor TTelegramBot.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
@@ -1703,21 +1729,21 @@ begin
   Result := TMultipartFormData.Create;
   for LParameter in Parameters do
   begin
-    //skip all empty params
+    // skip all empty params
     if LParameter.Value.IsEmpty then
       Continue;
-    //look for the given parameter type
+    // look for the given parameter type
     if FParamLoader.ParamLoaders.TryGetValue(LParameter.Value.TypeInfo, LAddProc) then
     begin
       LAddProc(Result, LParameter.Value.TypeInfo, LParameter.Key, LParameter.Value);
     end
     else if LParameter.Value.Kind = tkClass then
-    //last variant to search
+    // last variant to search
     begin
       { TODO -oOwner -cGeneral : Проверить че за херня тут твориться }
       if not LParameter.Value.IsEmpty then
       begin
-      //  Result.AddField(LParameter.Key, dj.From(LParameter.Value.AsObject).ToJson);
+        // Result.AddField(LParameter.Key, dj.From(LParameter.Value.AsObject).ToJson);
         LTest := dj.From(LParameter.Value, TJsonUtils.DJsonConfig(True)).ToJson;
         Result.AddField(LParameter.Key, LTest);
       end
@@ -1939,7 +1965,7 @@ begin
     Parameters.Add('chat_id', ChatId);
     Parameters.Add('latitude', Venue.Location.Latitude);
     Parameters.Add('longitude', Venue.Location.Longitude);
-    Parameters.Add('title', Venue.Title);
+    Parameters.Add('title', Venue.title);
     Parameters.Add('address', Venue.Address);
     Parameters.Add('foursquare_id', Venue.FoursquareId);
     Parameters.Add('disable_notification', DisableNotification);
@@ -2009,7 +2035,7 @@ begin
   end;
 end;
 
-function TTelegramBot.SendAudio(ChatId, Audio: TValue; Duration: Integer; const Performer, Title: string; DisableNotification: Boolean; ReplyToMessageId: Integer; ReplyMarkup: IReplyMarkup): TTgMessage;
+function TTelegramBot.SendAudio(ChatId, Audio: TValue; Duration: Integer; const Performer, title: string; DisableNotification: Boolean; ReplyToMessageId: Integer; ReplyMarkup: IReplyMarkup): TTgMessage;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -2019,7 +2045,7 @@ begin
     Parameters.Add('audio', Audio);
     Parameters.Add('duration', Duration);
     Parameters.Add('performer', Performer);
-    Parameters.Add('title', Title);
+    Parameters.Add('title', title);
     Parameters.Add('disable_notification', DisableNotification);
     Parameters.Add('reply_to_message_id', ReplyToMessageId);
     Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
@@ -2128,13 +2154,13 @@ begin
   Result := Self.RequestAPI<TtgUser>('getMe', nil);
 end;
 
-function TTelegramBot.getStickerSet(const name: string): TtgStickerSet;
+function TTelegramBot.getStickerSet(const Name: string): TtgStickerSet;
 var
   Parameters: TDictionary<string, TValue>;
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
-    Parameters.Add('name', name);
+    Parameters.Add('name', Name);
     Result := RequestAPI<TtgStickerSet>('getStickerSet', Parameters);
   finally
     Parameters.Free;
@@ -2308,13 +2334,13 @@ begin
   end;
 end;
 
-function TTelegramBot.deleteStickerFromSet(const sticker: string): Boolean;
+function TTelegramBot.deleteStickerFromSet(const Sticker: string): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
-    Parameters.Add('sticker', sticker);
+    Parameters.Add('sticker', Sticker);
     Result := RequestAPI<Boolean>('deleteStickerFromSet', Parameters);
   finally
     Parameters.Free;
@@ -2404,14 +2430,14 @@ end;
 {$ENDREGION}
 {$REGION 'Payments'}
 
-function TTelegramBot.SendInvoice(ChatId: Integer; const Title: string; const Description: string; const Payload: string; const ProviderToken: string; const StartParameter: string; const Currency: string; Prices: TArray<TtgLabeledPrice>; const PhotoUrl: string; PhotoSize: Integer; PhotoWidth: Integer; PhotoHeight: Integer; NeedName: Boolean; NeedPhoneNumber: Boolean; NeedEmail: Boolean; NeedShippingAddress: Boolean; IsFlexible: Boolean; DisableNotification: Boolean; ReplyToMessageId: Integer; ReplyMarkup: IReplyMarkup): TTgMessage;
+function TTelegramBot.SendInvoice(ChatId: Integer; const title: string; const Description: string; const Payload: string; const ProviderToken: string; const StartParameter: string; const Currency: string; Prices: TArray<TtgLabeledPrice>; const PhotoUrl: string; PhotoSize: Integer; PhotoWidth: Integer; PhotoHeight: Integer; NeedName: Boolean; NeedPhoneNumber: Boolean; NeedEmail: Boolean; NeedShippingAddress: Boolean; IsFlexible: Boolean; DisableNotification: Boolean; ReplyToMessageId: Integer; ReplyMarkup: IReplyMarkup): TTgMessage;
 var
   LParameters: TDictionary<string, TValue>;
 begin
   LParameters := TDictionary<string, TValue>.Create;
   try
     LParameters.Add('chat_id', ChatId);
-    LParameters.Add('title', Title);
+    LParameters.Add('title', title);
     LParameters.Add('description', Description);
     LParameters.Add('payload', Payload);
     LParameters.Add('provider_token', ProviderToken);
@@ -2467,7 +2493,7 @@ begin
   end;
 end;
 
-function TTelegramBot.createNewStickerSet(UserId: Integer; const Name, Title: string; PngSticker: TValue; const Emojis: string; ContainsMasks: Boolean; MaskPosition: TtgMaskPosition): Boolean;
+function TTelegramBot.createNewStickerSet(UserId: Integer; const Name, title: string; PngSticker: TValue; const Emojis: string; ContainsMasks: Boolean; MaskPosition: TtgMaskPosition): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -2475,7 +2501,7 @@ begin
   try
     Parameters.Add('user_id', UserId);
     Parameters.Add('name', Name);
-    Parameters.Add('title', Title);
+    Parameters.Add('title', title);
     Parameters.Add('png_sticker', PngSticker);
     Parameters.Add('emojis', Emojis);
     Parameters.Add('contains_masks', ContainsMasks);
@@ -2509,14 +2535,14 @@ begin
   end;
 end;
 
-function TTelegramBot.setStickerPositionInSet(const Sticker: string; position: Integer): Boolean;
+function TTelegramBot.setStickerPositionInSet(const Sticker: string; Position: Integer): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
     Parameters.Add('sticker', Sticker);
-    Parameters.Add('position', position);
+    Parameters.Add('position', Position);
     Result := RequestAPI<Boolean>('setStickerPositionInSet', Parameters);
   finally
     Parameters.Free;
@@ -2558,6 +2584,7 @@ end;
 
 {$ENDREGION}
 {$REGION 'Manage groups and channels'}
+
 function TTelegramBot.DeleteChatPhoto(ChatId: TValue): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
@@ -2566,6 +2593,19 @@ begin
   try
     Parameters.Add('chat_id', ChatId);
     Result := RequestAPI<Boolean>('deleteChatPhoto', Parameters);
+  finally
+    Parameters.Free;
+  end;
+end;
+
+function TTelegramBot.deleteChatStickerSet(ChatId: TValue): Boolean;
+var
+  Parameters: TDictionary<string, TValue>;
+begin
+  Parameters := TDictionary<string, TValue>.Create;
+  try
+    Parameters.Add('chat_id', ChatId);
+    Result := RequestAPI<Boolean>('deleteChatStickerSet', Parameters);
   finally
     Parameters.Free;
   end;
@@ -2627,14 +2667,28 @@ begin
   end;
 end;
 
-function TTelegramBot.SetChatTitle(ChatId: TValue; const Title: string): Boolean;
+function TTelegramBot.setChatStickerSet(ChatId: TValue; const StickerSetName: string): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
     Parameters.Add('chat_id', ChatId);
-    Parameters.Add('title', Title);
+    Parameters.Add('sticker_set_name', StickerSetName);
+    Result := RequestAPI<Boolean>('setChatStickerSet', Parameters);
+  finally
+    Parameters.Free;
+  end;
+end;
+
+function TTelegramBot.SetChatTitle(ChatId: TValue; const title: string): Boolean;
+var
+  Parameters: TDictionary<string, TValue>;
+begin
+  Parameters := TDictionary<string, TValue>.Create;
+  try
+    Parameters.Add('chat_id', ChatId);
+    Parameters.Add('title', title);
     Result := RequestAPI<Boolean>('setChatTitle', Parameters);
   finally
     Parameters.Free;
