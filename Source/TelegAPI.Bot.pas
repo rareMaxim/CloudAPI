@@ -1783,7 +1783,7 @@ end;
 
 function TTelegramBot.GetVersionAPI: string;
 begin
-  Result := '3.3.1';
+  Result := '3.4.0';
 end;
 
 function TTelegramBot.RequestAPI<T>(const Method: string; Parameters: TDictionary<string, TValue>): T;
