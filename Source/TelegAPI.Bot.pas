@@ -557,7 +557,7 @@ type
     ///   On success, the sent <see cref="TelegAPi.Types|TtgMessage">Message</see>
     ///    is returned.
     /// </returns>
-    function SendLocation(ChatId: TValue; Location: TtgLocation; DisableNotification: Boolean = False; ReplyToMessageId: Integer = 0; ReplyMarkup: IReplyMarkup = nil): TTgMessage;
+    function SendLocation(ChatId: TValue; Location: TtgLocation; LivePeriod: Integer = 0; DisableNotification: Boolean = False; ReplyToMessageId: Integer = 0; ReplyMarkup: IReplyMarkup = nil): TTgMessage;
     /// <summary>
     ///   Use this method to send information about a venue.
     /// </summary>
@@ -892,7 +892,105 @@ type
     function EditMessageCaption(ChatId: TValue; MessageId: Integer; const Caption: string; ReplyMarkup: IReplyMarkup = nil): Boolean; overload;
     { TODO -oM.E.Sysoev -cGeneral : Create Documentatiom }
     function EditMessageCaption(const InlineMessageId: string; const Caption: string; ReplyMarkup: IReplyMarkup = nil): Boolean; overload;
+
     /// <summary>
+    ///   Use this method to edit live location messages sent by the bot or via
+    ///   the bot (for inline bots). A location can be edited until its
+    ///   live_period expires or editing is explicitly disabled by a call to
+    ///   stopMessageLiveLocation.
+    /// </summary>
+    /// <param name="ChatId">
+    ///   Required if inline_message_id is not specified. Unique identifier for
+    ///   the target chat or username of the target channel (in the format
+    ///   @channelusername)
+    /// </param>
+    /// <param name="MessageId">
+    ///   Required if inline_message_id is not specified. Identifier of the
+    ///   sent message
+    /// </param>
+    /// <param name="Location">
+    ///   new location
+    /// </param>
+    /// <param name="ReplyMarkup">
+    ///   A JSON-serialized object for a new inline keyboard.
+    /// </param>
+    /// <returns>
+    ///   On success, if the edited message was sent by the bot, the edited
+    ///   Message is returned, otherwise True is returned.
+    /// </returns>
+    function editMessageLiveLocation(ChatId: TValue; MessageId: Integer; Location: TtgLocation; ReplyMarkup: IReplyMarkup = nil): Boolean; overload;
+    /// <summary>
+    ///   Use this method to edit live location messages sent by the bot or via
+    ///   the bot (for inline bots). A location can be edited until its
+    ///   live_period expires or editing is explicitly disabled by a call to
+    ///   stopMessageLiveLocation.
+    /// </summary>
+    /// <param name="InlineMessageId">
+    ///   Required if chat_id and message_id are not specified. Identifier of
+    ///   the inline message
+    /// </param>
+    /// <param name="Location">
+    ///   new location
+    /// </param>
+    /// <param name="ReplyMarkup">
+    ///   A JSON-serialized object for a new inline keyboard.
+    /// </param>
+    /// <param name="ChatId">
+    ///   Required if inline_message_id is not specified. Unique identifier for
+    ///   the target chat or username of the target channel (in the format
+    ///   @channelusername)
+    /// </param>
+    /// <param name="MessageId">
+    ///   Required if inline_message_id is not specified. Identifier of the
+    ///   sent message
+    /// </param>
+    /// <returns>
+    ///   On success, if the edited message was sent by the bot, the edited
+    ///   Message is returned, otherwise True is returned.
+    /// </returns>
+    function editMessageLiveLocation(const InlineMessageId: string; Location: TtgLocation; ReplyMarkup: IReplyMarkup = nil): Boolean; overload;
+
+
+
+
+ /// <summary>
+ ///   Use this method to stop updating a live location message sent by the bot
+ ///   or via the bot (for inline bots) before live_period expires.
+ /// </summary>
+ /// <param name="ChatId">
+ ///   equired if inline_message_id is not specified. Unique identifier for the
+ ///   target chat or username of the target channel (in the format
+ ///   @channelusername)
+ /// </param>
+ /// <param name="MessageId">
+ ///   Required if inline_message_id is not specified. Identifier of the sent
+ ///   message
+ /// </param>
+ /// <param name="ReplyMarkup">
+ ///   A JSON-serialized object for a new inline keyboard.
+ /// </param>
+ /// <returns>
+ ///   On success, if the message was sent by the bot, the sent Message is
+ ///   returned, otherwise True is returned.
+ /// </returns>
+ function stopMessageLiveLocation(ChatId: TValue; MessageId: Integer; ReplyMarkup: IReplyMarkup = nil): Boolean; overload;
+ /// <summary>
+ ///   Use this method to stop updating a live location message sent by the bot
+ ///   or via the bot (for inline bots) before live_period expires.
+ /// </summary>
+ /// <param name="InlineMessageId">
+ ///   Required if chat_id and message_id are not specified. Identifier of the
+ ///   inline message
+ /// </param>
+ /// <param name="ReplyMarkup">
+ ///   A JSON-serialized object for a new inline keyboard.
+ /// </param>
+ /// <returns>
+ ///   On success, if the message was sent by the bot, the sent Message is
+ ///   returned, otherwise True is returned.
+ /// </returns>
+ function stopMessageLiveLocation(const InlineMessageId: string; ReplyMarkup: IReplyMarkup = nil): Boolean; overload;
+ /// <summary>
     ///   Use this method to edit only the reply markup of messages sent by the
     ///   bot or via the bot (for inline bots).
     /// </summary>
@@ -1834,6 +1932,37 @@ begin
   end;
 end;
 
+function TTelegramBot.stopMessageLiveLocation(ChatId: TValue;
+  MessageId: Integer; ReplyMarkup: IReplyMarkup): Boolean;
+var
+  Parameters: TDictionary<string, TValue>;
+begin
+  Parameters := TDictionary<string, TValue>.Create;
+  try
+    Parameters.Add('chat_id', ChatId);
+    Parameters.Add('message_id', MessageId);
+    Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
+    Result := RequestAPI<Boolean>('stopMessageLiveLocation', Parameters);
+  finally
+    Parameters.Free;
+  end;
+end;
+
+function TTelegramBot.stopMessageLiveLocation(const InlineMessageId: string;
+  ReplyMarkup: IReplyMarkup): Boolean;
+var
+  Parameters: TDictionary<string, TValue>;
+begin
+  Parameters := TDictionary<string, TValue>.Create;
+  try
+    Parameters.Add('inline_message_id', InlineMessageId);
+    Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
+    Result := RequestAPI<Boolean>('stopMessageLiveLocation', Parameters);
+  finally
+    Parameters.Free;
+  end;
+end;
+
 function TTelegramBot.GetWebhookInfo: TtgWebhookInfo;
 var
   Parameters: TDictionary<string, TValue>;
@@ -1884,7 +2013,7 @@ begin
   end;
 end;
 
-function TTelegramBot.SendLocation(ChatId: TValue; Location: TtgLocation; DisableNotification: Boolean; ReplyToMessageId: Integer; ReplyMarkup: IReplyMarkup): TTgMessage;
+function TTelegramBot.SendLocation(ChatId: TValue; Location: TtgLocation; LivePeriod: Integer; DisableNotification: Boolean; ReplyToMessageId: Integer; ReplyMarkup: IReplyMarkup): TTgMessage;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -1893,6 +2022,7 @@ begin
     Parameters.Add('chat_id', ChatId);
     Parameters.Add('latitude', Location.Latitude);
     Parameters.Add('longitude', Location.Longitude);
+    Parameters.Add('live_period', LivePeriod);
     Parameters.Add('disable_notification', DisableNotification);
     Parameters.Add('reply_to_message_id', ReplyToMessageId);
     Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
@@ -2370,8 +2500,42 @@ begin
   Parameters := TDictionary<string, TValue>.Create;
   try
     Parameters.Add('caption', Caption);
+    Parameters.Add('inline_message_id', InlineMessageId);
     Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
     Result := RequestAPI<Boolean>('editMessageCaption', Parameters);
+  finally
+    Parameters.Free;
+  end;
+end;
+
+function TTelegramBot.editMessageLiveLocation(ChatId: TValue; MessageId: Integer; Location: TtgLocation; ReplyMarkup: IReplyMarkup): Boolean;
+var
+  Parameters: TDictionary<string, TValue>;
+begin
+  Parameters := TDictionary<string, TValue>.Create;
+  try
+    Parameters.Add('chat_id', ChatId);
+    Parameters.Add('message_id', MessageId);
+    Parameters.Add('latitude', Location.Latitude);
+    Parameters.Add('longitude', Location.Longitude);
+    Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
+    Result := RequestAPI<Boolean>('editMessageLiveLocation', Parameters);
+  finally
+    Parameters.Free;
+  end;
+end;
+
+function TTelegramBot.editMessageLiveLocation(const InlineMessageId: string; Location: TtgLocation; ReplyMarkup: IReplyMarkup): Boolean;
+var
+  Parameters: TDictionary<string, TValue>;
+begin
+  Parameters := TDictionary<string, TValue>.Create;
+  try
+    Parameters.Add('inline_message_id', InlineMessageId);
+    Parameters.Add('latitude', Location.Latitude);
+    Parameters.Add('longitude', Location.Longitude);
+    Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
+    Result := RequestAPI<Boolean>('editMessageLiveLocation', Parameters);
   finally
     Parameters.Free;
   end;
