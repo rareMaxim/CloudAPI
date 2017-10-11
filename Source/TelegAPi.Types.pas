@@ -244,6 +244,20 @@ type
     /// </summary>
     [djName('pinned_message')]
     PinnedMessage: TTgMessage;
+    /// <summary>
+    ///   Optional. For supergroups, name of Group sticker set. Returned only
+    ///   in <see cref="TelegAPI.Bot|TTelegramBot.GetChat(TValue)">getChat</see>
+    ///    .
+    /// </summary>
+    [djName('sticker_set_name')]
+    StickerSetName: string;
+    /// <summary>
+    ///   Optional. True, if the bot can change group the sticker set. Returned
+    ///   only in <see cref="TelegAPI.Bot|TTelegramBot.GetChat(TValue)">getChat</see>
+    ///    .
+    /// </summary>
+    [djName('can_set_sticker_set')]
+    CanSetStickerSet: Boolean;
   end;
 
   /// <summary>
