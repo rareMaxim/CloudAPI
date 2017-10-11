@@ -824,6 +824,12 @@ type
     [djName('entities')]
     Entities: TObjectList<TtgMessageEntity>;
     /// <summary>
+    ///   Optional. For messages with a caption, special entities like
+    ///   usernames, URLs, bot commands, etc. that appear in the caption
+    /// </summary>
+    [djName('caption_entities')]
+    CaptionEntities: TObjectList<TtgMessageEntity>;
+    /// <summary>
     ///   Optional. Message is an audio file, information about the file
     /// </summary>
     [djName('audio')]
@@ -1711,6 +1717,7 @@ begin
   FreeAndNil(Contact);
   FreeAndNil(Document);
   FreeAndNil(Entities);
+  FreeAndNil(CaptionEntities);
   FreeAndNil(ForwardFrom);
   FreeAndNil(ForwardFromChat);
   FreeAndNil(ForwardFromChat);
