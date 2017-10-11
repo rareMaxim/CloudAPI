@@ -15,7 +15,8 @@ uses
 {$ENDIF}
   System.Classes,
   {Add new components here}
-  TelegAPi.Bot.Recesiver,
+  TelegAPi.Bot.Recesiver.UI,
+  TelegAPI.Bot.Recesiver.Console,
   TelegAPi.Bot;
 
 {$IFDEF REG_IN_LOAD}
@@ -26,7 +27,7 @@ begin
 {$IFDEF REG_IN_LOAD}
   RegisterWithSplashScreen;
 {$ENDIF}
-  RegisterComponents('Telegram', [TTelegramBot, TTgBotAsync]);
+  RegisterComponents('Telegram', [TTelegramBot, TTgBotRecesiverConsole, TTgBotRecesiverUI]);
 end;
 
 end.

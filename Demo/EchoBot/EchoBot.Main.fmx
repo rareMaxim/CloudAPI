@@ -69,15 +69,16 @@ object Main: TMain
     Left = 104
     Top = 168
   end
-  object TgBotAsync1: TTgBotAsync
+  object TgBotRecesiverUI1: TTgBotRecesiverUI
     Bot = tgBot
     OnMessage = TgBotAsync1Message
+    OnMessageEdited = TgBotAsync1Message
     OnInlineQuery = TgBotAsync1InlineQuery
     OnInlineResultChosen = TgBotAsync1InlineResultChosen
     OnCallbackQuery = TgBotAsync1CallbackQuery
     OnConnect = TgBotAsync1Connect
     OnDisconnect = TgBotAsync1Disconnect
-    Left = 216
-    Top = 152
+    Left = 296
+    Top = 96
   end
 end

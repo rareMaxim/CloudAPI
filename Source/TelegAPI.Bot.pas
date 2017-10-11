@@ -11,6 +11,7 @@ uses
   System.Net.URLClient,
   System.Net.HttpClient,
   System.Generics.Collections,
+  TelegAPI.Base,
   TelegAPI.Types,
   TelegAPI.Types.Enums,
   TelegAPI.Types.ReplyMarkups,
@@ -33,7 +34,7 @@ type
   ///     A client to use the Telegram Bot API
   ///   </para>
   /// </summary>
-  TTelegramBot = class(TComponent)
+  TTelegramBot = class(TtgAbstractComponent)
   private
     FToken: string;
     FAllowedUpdates: TAllowedUpdates;

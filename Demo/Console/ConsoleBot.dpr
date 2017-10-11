@@ -5,19 +5,24 @@ program ConsoleBot;
 {$R *.res}
 
 uses
-  TelegAPI.Bot.Console,
+  TelegAPI.Bot,
+  TelegAPI.Bot.Recesiver.Console,
   TelegAPI.Types,
   System.SysUtils;
 
 procedure Main;
 var
-  LBot: TTelegramBotConsole;
+  LBot: TTelegramBot;
+  LRecesiver: TTgBotRecesiverConsole;
   LStop: string;
 begin
-  LBot := TTelegramBotConsole.Create({$I ..\token.inc});
+  LBot := TTelegramBot.Create(nil);
+  LBot.Token := {$I ..\token.inc};
+  LRecesiver := TTgBotRecesiverConsole.Create(nil);
+  LRecesiver.Bot := LBot;
   try
-    LBot.OnMessage :=
-      procedure(AMessage: TtgMessage)
+    LRecesiver.OnMessage :=
+      procedure(AMessage: TTgMessage)
       begin
         Writeln(AMessage.From.Username, ': ', AMessage.Text);
       end;
@@ -26,10 +31,11 @@ begin
       Writeln('Bot nick: ', Username);
       Free;
     end;
-    LBot.IsReceiving := True;
+    LRecesiver.IsReceiving := True;
     while LStop.ToLower.Trim <> 'exit' do
       Readln(LStop);
   finally
+    LRecesiver.Free;
     LBot.Free;
   end;
 end;

@@ -20,7 +20,8 @@ uses
   FMX.Controls.Presentation,
   FMX.ScrollBox,
   FMX.Layouts,
-  TelegAPI.Bot.Recesiver;
+  TelegAPI.Bot.Recesiver, TelegAPI.Bot.Recesiver.abstract,
+  TelegAPI.Bot.Recesiver.UI, TelegAPI.Base;
 
 type
   TMain = class(TForm)
@@ -30,7 +31,7 @@ type
     edtToken: TEdit;
     swtchToken: TSwitch;
     tgBot: TTelegramBot;
-    TgBotAsync1: TTgBotAsync;
+    TgBotRecesiverUI1: TTgBotRecesiverUI;
     procedure tgBotReceiveError(ASender: TObject; AApiRequestException: EApiRequestException);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure tgBotReceiveGeneralError(ASender: TObject; AException: Exception);
@@ -73,7 +74,7 @@ uses
 
 procedure TMain.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
-  TgBotAsync1.IsReceiving := False;
+  TgBotRecesiverUI1.IsReceiving := False;
 end;
 
 procedure TMain.ParseLocationMessage(Msg: TTgMessage);
@@ -146,7 +147,7 @@ begin
   tgBot.Token := edtToken.Text;
   if not tgBot.IsValidToken then
     raise ELoginCredentialError.Create('invalid token format');
-  TgBotAsync1.IsReceiving := swtchToken.IsChecked;
+  TgBotRecesiverUI1.IsReceiving := swtchToken.IsChecked;
 end;
 
 procedure TMain.TgBotAsync1CallbackQuery(ASender: TObject; ACallbackQuery: TtgCallbackQuery);

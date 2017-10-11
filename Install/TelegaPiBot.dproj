@@ -114,10 +114,12 @@ $(PreBuildEvent)]]></PreBuildEvent>
         <DCCReference Include="..\Source\TelegaPi.Exceptions.pas"/>
         <DCCReference Include="..\Source\TelegAPI.Utils.Params.pas"/>
         <DCCReference Include="..\Source\TelegAPI.Utils.Json.pas"/>
-        <DCCReference Include="..\Source\TelegAPI.Bot.Recesiver.pas"/>
+        <DCCReference Include="..\Source\TelegAPI.Bot.Recesiver.Console.pas"/>
         <DCCReference Include="..\Source\TelegAPI.Utils.Converters.pas"/>
         <DCCReference Include="..\Source\TelegAPI.Utils.pas"/>
-        <DCCReference Include="..\Source\TelegAPi.Ext.Planer.pas"/>
+        <DCCReference Include="..\Source\TelegAPI.Bot.Recesiver.UI.pas"/>
+        <DCCReference Include="..\Source\TelegAPI.Base.pas"/>
+        <DCCReference Include="..\Source\TelegAPI.Bot.Recesiver.Abstract.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -170,7 +172,16 @@ $(PreBuildEvent)]]></PreBuildEvent>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployClass Name="ProjectiOSDeviceResourceRules"/>
+                <DeployClass Name="DependencyModule">
+                    <Platform Name="Win32">
+                        <Operation>0</Operation>
+                        <Extensions>.dll;.bpl</Extensions>
+                    </Platform>
+                    <Platform Name="OSX32">
+                        <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
+                    </Platform>
+                </DeployClass>
                 <DeployClass Name="ProjectOSXResource">
                     <Platform Name="OSX32">
                         <RemoteDir>Contents\Resources</RemoteDir>
@@ -509,16 +520,7 @@ $(PreBuildEvent)]]></PreBuildEvent>
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
-                <DeployClass Name="DependencyModule">
-                    <Platform Name="Win32">
-                        <Operation>0</Operation>
-                        <Extensions>.dll;.bpl</Extensions>
-                    </Platform>
-                    <Platform Name="OSX32">
-                        <Operation>1</Operation>
-                        <Extensions>.dylib</Extensions>
-                    </Platform>
-                </DeployClass>
+                <DeployClass Name="ProjectiOSDeviceResourceRules"/>
                 <ProjectRoot Platform="Win64" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="iOSDevice64" Name="$(PROJECTNAME).app"/>
                 <ProjectRoot Platform="iOSDevice32" Name="$(PROJECTNAME).app"/>
