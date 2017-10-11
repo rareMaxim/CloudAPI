@@ -43,7 +43,6 @@ type
     FOnReceiveGeneralError: TtgOnReceiveGeneralError;
     FOnRawData: TtgOnReceiveRawData;
     FParamLoader: TtgParamLoader;
-    function GetVersionAPI: string;
   protected
     /// <summary>
     ///   Мастер-функция для запросов на сервак
@@ -1727,10 +1726,6 @@ type
     ///   283107813:AAG4hEElAvIogTSHNHXI6rZtE46A7XQvIH
     /// </example>
     property Token: string read FToken write FToken;
-    /// <summary>
-    ///   Поддерживаемая версия платформы BotAPI
-    /// </summary>
-    property VersionAPI: string read GetVersionAPI;
 {$ENDREGION}
 {$REGION 'События|Events'}
     /// <summary>
@@ -1780,11 +1775,6 @@ destructor TTelegramBot.Destroy;
 begin
   FParamLoader.Free;
   inherited;
-end;
-
-function TTelegramBot.GetVersionAPI: string;
-begin
-  Result := '3.4.0';
 end;
 
 function TTelegramBot.RequestAPI<T>(const Method: string; Parameters: TDictionary<string, TValue>): T;

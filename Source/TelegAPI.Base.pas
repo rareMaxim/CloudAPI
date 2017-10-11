@@ -1,4 +1,4 @@
-unit TelegAPI.Base;
+﻿unit TelegAPI.Base;
 
 interface
 
@@ -14,6 +14,9 @@ type
     constructor Create(AOwner: TComponent); override;
   published
     property Autor: string read FAutor;
+    /// <summary>
+    ///   Поддерживаемая версия платформы BotAPI
+    /// </summary>
     property Version: string read FVersion;
   end;
 
