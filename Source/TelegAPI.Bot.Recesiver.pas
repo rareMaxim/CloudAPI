@@ -330,7 +330,7 @@ end;
 
 procedure TTgBotAsync.SetUseSynchronize(const Value: Boolean);
 begin
-  if Value = FRecesiver.UseSynchronize then
+  if Assigned(FRecesiver) and (Value = FRecesiver.UseSynchronize) then
     Exit;
   if IsReceiving then
     IsReceiving := False;
