@@ -16,11 +16,9 @@ Thank you for your active assistance to the project:
 as well as many others who ask / suggest features / points bugs.
 ### Ads
 
-### **Donate**
-- [Yandex.Money](https://money.yandex.ru/to/410015514211289)
-- [PayPal](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=WXNV9YAVD697S)
+### **Donate** - [Yandex.Money](https://money.yandex.ru/to/410015514211289)
 
-- Unfortunately, no one has helped financially =(
+- 1️⃣ eugene afx
 
 ## Powered by TelegaPi
 * [🤖ChallengeOfTheDay](https://goo.gl/4TbFH9)
@@ -49,11 +47,9 @@ Telega π - Библиотека для работы с Telegram Bot API в Delp
 а так же многих других, кто спрашивает/предлагает фичи/указывает баги. 
 ### Рекламой проекта
 
-### **Donate**
-- [Яндекс.Деньги](https://money.yandex.ru/to/410015514211289)
-- [PayPal](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=WXNV9YAVD697S) 
+### **Donate** - [Яндекс.Деньги](https://money.yandex.ru/to/410015514211289)
 
-- К сожалинию, еще никто не помог материально =(
+- 1️⃣ eugene afx
 
 ## Боты, работающие на TelegaPi
 
