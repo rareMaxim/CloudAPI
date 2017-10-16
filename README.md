@@ -16,10 +16,11 @@ Thank you for your active assistance to the project:
 as well as many others who ask / suggest features / points bugs.
 ### Ads
 
-### [**Donate**](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=5ASFXPC68MS2U)
-- Unfortunately, no one has helped financially =(
+### **Donate**
+- [Yandex.Money](https://money.yandex.ru/to/410015514211289)
+- [PayPal](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=WXNV9YAVD697S)
 
-[![Donate](https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=5ASFXPC68MS2U)
+- Unfortunately, no one has helped financially =(
 
 ## Powered by TelegaPi
 * [🤖ChallengeOfTheDay](https://goo.gl/4TbFH9)
@@ -47,10 +48,11 @@ Telega π - Библиотека для работы с Telegram Bot API в Delp
 а так же многих других, кто спрашивает/предлагает фичи/указывает баги. 
 ### Рекламой проекта
 
-### [**Donate**](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=5ASFXPC68MS2U)
-- К сожалинию, еще никто не помог материально =(
+### **Donate**
+- [Яндекс.Деньги](https://money.yandex.ru/to/410015514211289)
+- [PayPal](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=WXNV9YAVD697S) 
 
-[![Donate](https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=5ASFXPC68MS2U)
+- К сожалинию, еще никто не помог материально =(
 
 ## Боты, работающие на TelegaPi
 
