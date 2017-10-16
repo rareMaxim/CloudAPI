@@ -24,6 +24,7 @@ as well as many others who ask / suggest features / points bugs.
 
 ## Powered by TelegaPi
 * [🤖ChallengeOfTheDay](https://goo.gl/4TbFH9)
+* [racecontrol](https://t.me/racecontrol)
 
 ## Dependencies
 
@@ -34,7 +35,7 @@ as well as many others who ask / suggest features / points bugs.
 
 Telega π - Библиотека для работы с Telegram Bot API в Delphi
 
-Версия Bot API: *3.4.0*
+Версия Bot API: *3.4.1*
 
 ## Помощь проекту
 
@@ -57,6 +58,7 @@ Telega π - Библиотека для работы с Telegram Bot API в Delp
 ## Боты, работающие на TelegaPi
 
 * [🤖ChallengeOfTheDay](https://goo.gl/4TbFH9)
+* [racecontrol](https://t.me/racecontrol)
 
 
 ## Зависимости
