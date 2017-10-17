@@ -3,13 +3,12 @@ unit TelegAPI.Utils.Params;
 interface
 
 uses
-  System.rtti,
-  System.TypInfo,
-  System.SysUtils,
-  TelegAPI.Types,
-  TelegAPI.Exceptions,
+  System.Generics.Collections,
   System.Net.Mime,
-  System.Generics.Collections;
+  System.rtti,
+  System.SysUtils,
+  System.TypInfo,
+  TelegAPI.Types;
 
 type
   /// <summary>

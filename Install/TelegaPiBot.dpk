@@ -50,8 +50,7 @@ contains
   TelegAPI.Utils.Converters in '..\Source\TelegAPI.Utils.Converters.pas',
   TelegAPI.Utils in '..\Source\TelegAPI.Utils.pas',
   TelegAPI.Bot.Recesiver.UI in '..\Source\TelegAPI.Bot.Recesiver.UI.pas',
-  TelegAPI.Base in '..\Source\TelegAPI.Base.pas',
-  TelegAPI.Bot.Recesiver.Abstract in '..\Source\TelegAPI.Bot.Recesiver.Abstract.pas';
+  TelegAPI.Base in '..\Source\TelegAPI.Base.pas';
 
 end.
 

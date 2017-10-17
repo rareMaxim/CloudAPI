@@ -20,8 +20,8 @@ uses
   FMX.Controls.Presentation,
   FMX.ScrollBox,
   FMX.Layouts,
-  TelegAPI.Bot.Recesiver, TelegAPI.Bot.Recesiver.abstract,
-  TelegAPI.Bot.Recesiver.UI, TelegAPI.Base;
+  TelegAPI.Bot.Recesiver.UI,
+  TelegAPI.Base;
 
 type
   TMain = class(TForm)

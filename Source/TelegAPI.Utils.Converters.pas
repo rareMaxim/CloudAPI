@@ -26,7 +26,7 @@ implementation
 
 uses
   System.DateUtils,
-  TelegAPI.Types.Enums,
+
   TelegAPI.Utils;
 
 { TConverterTgTypeChat<T> }

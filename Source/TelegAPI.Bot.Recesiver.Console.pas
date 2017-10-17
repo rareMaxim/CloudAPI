@@ -4,33 +4,36 @@ interface
 
 uses
   System.Classes,
-  TelegAPI.Bot,
-  TelegAPI.Types,
   System.SysUtils,
-  TelegAPI.Bot.Recesiver.abstract;
+  TelegAPI.Base,
+  TelegAPI.Bot,
+  TelegAPI.Types;
 
 type
   TtgRecesiverConsoleCore = class;
 
-  TTgBotRecesiverConsole = class(TtgAbstractRecesiver)
+  TTgBotRecesiverConsole = class(TtgAbstractComponent)
   private
-    FRecesiver: TtgRecesiverConsoleCore;
+    FBot: TTelegramBot;
     FIsReceiving: Boolean;
-    FOnUpdate: TProc<TtgUpdate>;
-    FOnMessageEdited: TProc<TTgMessage>;
-    FOnChannelPost: TProc<TTgMessage>;
+    FMessageOffset: Integer;
     FOnCallbackQuery: TProc<TtgCallbackQuery>;
-    FOnMessage: TProc<TTgMessage>;
-    FOnInlineQuery: TProc<TtgInlineQuery>;
-    FOnInlineResultChosen: TProc<TtgChosenInlineResult>;
-    FOnUpdates: TProc<TArray<TtgUpdate>>;
+    FOnChannelPost: TProc<TTgMessage>;
     FOnConnect: TProc;
     FOnDisconnect: TProc;
+    FOnInlineQuery: TProc<TtgInlineQuery>;
+    FOnInlineResultChosen: TProc<TtgChosenInlineResult>;
+    FOnMessage: TProc<TTgMessage>;
+    FOnMessageEdited: TProc<TTgMessage>;
+    FOnUpdate: TProc<TtgUpdate>;
+    FOnUpdates: TProc<TArray<TtgUpdate>>;
+    FPollingInterval: Integer;
+    FRecesiver: TtgRecesiverConsoleCore;
   protected
-    procedure SetIsReceiving(const Value: Boolean);
-    procedure DoOnTerminate(Sender: TObject);
-    procedure DoDisconnect;
     procedure DoConnect;
+    procedure DoDisconnect;
+    procedure DoOnTerminate(Sender: TObject);
+    procedure SetIsReceiving(const Value: Boolean);
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -44,6 +47,17 @@ type
   ///   </para>
   /// </summary>
     property IsReceiving: Boolean read FIsReceiving write SetIsReceiving default False;
+    {$REGION 'Property|Свойства'}
+    property Bot: TTelegramBot read FBot write FBot;
+    /// <summary>
+    ///   The current message offset
+    /// </summary>
+    property MessageOffset: Integer read FMessageOffset write FMessageOffset default 0;
+    /// <summary>
+    ///   Задержка между опросами
+    /// </summary>
+    property PollingInterval: Integer read FPollingInterval write FPollingInterval default 1000;
+    {$ENDREGION}
 {$REGION 'Events|События'}
     /// <summary>
     ///   <para>
@@ -112,9 +126,12 @@ type
 {$ENDREGION}
   end;
 
-  TtgRecesiverConsoleCore = class(TtgRecesiverAbstractCore)
+  TtgRecesiverConsoleCore = class(TThread)
   private
     FParent: TTgBotRecesiverConsole;
+    FMessageOffset: Integer;
+    FBot: TTelegramBot;
+    FPollingInterval: Integer;
   protected
     procedure DoOnUpdates(AUpdates: TArray<TtgUpdate>);
     procedure DoOnUpdate(AUpdate: TtgUpdate); virtual;
@@ -135,7 +152,18 @@ type
     procedure DoUpdateTypeParser(AValue: TtgUpdate);
     procedure Execute; override;
   public
+    {$REGION 'Property|Свойства'}
     property Parent: TTgBotRecesiverConsole read FParent write FParent;
+    property Bot: TTelegramBot read FBot write FBot;
+    /// <summary>
+    ///   The current message offset
+    /// </summary>
+    property MessageOffset: Integer read FMessageOffset write FMessageOffset default 0;
+    /// <summary>
+    ///   Задержка между опросами
+    /// </summary>
+    property PollingInterval: Integer read FPollingInterval write FPollingInterval default 1000;
+    {$ENDREGION}
   end;
 
 implementation
@@ -234,6 +262,8 @@ constructor TTgBotRecesiverConsole.Create(AOwner: TComponent);
 begin
   inherited;
   FIsReceiving := False;
+  FPollingInterval := 1000;
+  FMessageOffset := 0;
 end;
 
 destructor TTgBotRecesiverConsole.Destroy;

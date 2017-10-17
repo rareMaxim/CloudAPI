@@ -4,9 +4,9 @@ interface
 
 uses
   System.Classes,
+  TelegAPI.Base,
   TelegAPI.Bot,
-  TelegAPI.Types,
-  TelegAPI.Bot.Recesiver.abstract;
+  TelegAPI.Types;
 
 type
   TtgOnUpdate = procedure(ASender: TObject; AUpdate: TtgUpdate) of object;
@@ -25,24 +25,27 @@ type
 
   TTgBotRecesiverUICore = class;
 
-  TTgBotRecesiverUI = class(TtgAbstractRecesiver)
+  TTgBotRecesiverUI = class(TtgAbstractComponent)
   private
-    FRecesiver: TTgBotRecesiverUICore;
+    FBot: TTelegramBot;
     FIsReceiving: Boolean;
-    FOnUpdate: TtgOnUpdate;
-    FOnMessageEdited: TtgOnMessage;
-    FOnChannelPost: TtgOnChannelPost;
+    FMessageOffset: Integer;
     FOnCallbackQuery: TtgOnCallbackQuery;
-    FOnMessage: TtgOnMessage;
-    FOnInlineQuery: TtgOnInlineQuery;
-    FOnInlineResultChosen: TtgOnInlineResultChosen;
-    FOnUpdates: TtgOnUpdates;
-    FUseSynchronize: Boolean;
+    FOnChannelPost: TtgOnChannelPost;
     FOnConnect: TNotifyEvent;
     FOnDisconnect: TNotifyEvent;
-    procedure SetUseSynchronize(const Value: Boolean);
+    FOnInlineQuery: TtgOnInlineQuery;
+    FOnInlineResultChosen: TtgOnInlineResultChosen;
+    FOnMessage: TtgOnMessage;
+    FOnMessageEdited: TtgOnMessage;
+    FOnUpdate: TtgOnUpdate;
+    FOnUpdates: TtgOnUpdates;
+    FPollingInterval: Integer;
+    FRecesiver: TTgBotRecesiverUICore;
+    FUseSynchronize: Boolean;
   protected
     procedure SetIsReceiving(const Value: Boolean);
+    procedure SetUseSynchronize(const Value: Boolean);
     procedure DoDisconnect(Sender: TObject);
   public
     constructor Create(AOwner: TComponent); override;
@@ -63,6 +66,17 @@ type
     /// UI)
     /// </summary>
     property UseSynchronize: Boolean read FUseSynchronize write SetUseSynchronize default True;
+    {$REGION 'Property|Свойства'}
+    property Bot: TTelegramBot read FBot write FBot;
+    /// <summary>
+    ///   The current message offset
+    /// </summary>
+    property MessageOffset: Integer read FMessageOffset write FMessageOffset default 0;
+    /// <summary>
+    ///   Задержка между опросами
+    /// </summary>
+    property PollingInterval: Integer read FPollingInterval write FPollingInterval default 1000;
+    {$ENDREGION}
 {$ENDREGION}
 {$REGION 'Events|События'}
     /// <summary>
@@ -275,6 +289,8 @@ begin
   inherited;
   FIsReceiving := False;
   FUseSynchronize := True;
+  FPollingInterval := 1000;
+  FMessageOffset := 0;
 end;
 
 destructor TTgBotRecesiverUI.Destroy;

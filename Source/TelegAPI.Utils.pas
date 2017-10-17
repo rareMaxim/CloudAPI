@@ -5,7 +5,7 @@ interface
 type
   TEnumConverter<T> = class
   public
-    function ToString(EnumValue: T): string;
+    function ToString(EnumValue: T): string; reintroduce;
     function ToInt(EnumValue: T): Integer;
     function FromString(const strValue: string): T;
   end;
@@ -27,7 +27,6 @@ begin
   Temp := GetEnumValue(LType, strValue);
   PTemp := @Temp;
   Result := T(PTemp^);
-
 end;
 
 function TEnumConverter<T>.ToInt(EnumValue: T): Integer;
