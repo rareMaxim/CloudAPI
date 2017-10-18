@@ -1,4 +1,4 @@
-﻿unit TelegAPI.Bot.Recesiver.UI;
+﻿unit TelegAPI.Bot.Recesiver.Service;
 
 interface
 
@@ -187,22 +187,14 @@ procedure TTgBotRecesiverUICore.DoOnUpdate(AUpdate: TtgUpdate);
 begin
   if not Assigned(Parent.OnUpdate) then
     Exit;
-  TThread.Synchronize(nil,
-    procedure
-    begin
-      Parent.OnUpdate(Self, AUpdate);
-    end);
+  Parent.OnUpdate(Self, AUpdate);
 end;
 
 procedure TTgBotRecesiverUICore.DoOnUpdates(AUpdates: TArray<TtgUpdate>);
 begin
   if not Assigned(Parent.OnUpdates) then
     Exit;
-  TThread.Synchronize(nil,
-    procedure
-    begin
-      Parent.OnUpdates(Parent, AUpdates);
-    end);
+  Parent.OnUpdates(Parent, AUpdates);
 end;
 
 procedure TTgBotRecesiverUICore.DoUpdateWorker(AUpdates: TArray<TtgUpdate>);
