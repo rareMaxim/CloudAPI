@@ -19,7 +19,7 @@ type
     ///   Unique identifier for this user or bot
     /// </summary>
     [djName('id')]
-    ID: Integer;
+    ID: Int64;
     /// <summary>
     ///   True, if this user is a bot
     /// </summary>
@@ -69,7 +69,7 @@ type
     ///   lifted for this user, unix time
     /// </summary>
     [djName('until_date')]
-    UntilDate: Integer;
+    UntilDate: Int64;
     /// <summary>
     ///   Optional. Administrators only. True, if the bot is allowed to edit
     ///   administrator privileges of that user
@@ -279,12 +279,12 @@ type
     ///   Offset in UTF-16 code units to the start of the entity
     /// </summary>
     [djName('offset')]
-    Offset: Integer;
+    Offset: Int64;
     /// <summary>
     ///   Length of the entity in UTF-16 code units
     /// </summary>
     [djName('length')]
-    Length: Integer;
+    Length: Int64;
     /// <summary>
     ///   Optional. For “text_link” only, url that will be opened after user
     ///   taps on the text
@@ -305,7 +305,7 @@ type
     [djName('file_id')]
     FileId: string;
     [djName('file_size')]
-    FileSize: Integer;
+    FileSize: Int64;
     [djName('file_path')]
     FilePath: string;
     function CanDownload: Boolean;
@@ -323,7 +323,7 @@ type
     ///   Duration of the audio in seconds as defined by sender
     /// </summary>
     [djName('duration')]
-    Duration: Integer;
+    Duration: Int64;
     /// <summary>
     ///   Performer of the audio as defined by sender or by audio tags
     /// </summary>
@@ -355,12 +355,12 @@ type
     ///   Photo width
     /// </summary>
     [djName('width')]
-    Width: Integer;
+    Width: Int64;
     /// <summary>
     ///   Photo height
     /// </summary>
     [djName('Height')]
-    Height: Integer;
+    Height: Int64;
   end;
 
   /// <summary>
@@ -429,12 +429,12 @@ type
     ///   Sticker width
     /// </summary>
     [djName('width')]
-    Width: Integer;
+    Width: Int64;
     /// <summary>
     ///   Sticker height
     /// </summary>
     [djName('width')]
-    Height: Integer;
+    Height: Int64;
     /// <summary>
     ///   Sticker thumbnail in .webp or .jpg format
     /// </summary>
@@ -496,17 +496,17 @@ type
     ///   Video width as defined by sender
     /// </summary>
     [djName('width')]
-    Width: Integer;
+    Width: Int64;
     /// <summary>
     ///   Video height as defined by sender
     /// </summary>
     [djName('height')]
-    Height: Integer;
+    Height: Int64;
     /// <summary>
     ///   Duration of the video in seconds as defined by sender
     /// </summary>
     [djName('duration')]
-    Duration: Integer;
+    Duration: Int64;
     /// <summary>
     ///   Video thumbnail
     /// </summary>
@@ -537,12 +537,12 @@ type
     ///   Video width and height as defined by sender
     /// </summary>
     [djName('length')]
-    Length: Integer;
+    Length: Int64;
     /// <summary>
     ///   Duration of the video in seconds as defined by sender
     /// </summary>
     [djName('duration')]
-    Duration: Integer;
+    Duration: Int64;
     /// <summary>
     ///   Optional. Video thumbnail
     /// </summary>
@@ -552,7 +552,7 @@ type
     ///   Optional. File size
     /// </summary>
     [djName('file_size')]
-    FileSize: Integer;
+    FileSize: Int64;
   end;
 
   /// <summary>
@@ -564,7 +564,7 @@ type
     ///   Duration of the audio in seconds as defined by sender
     /// </summary>
     [djName('duration')]
-    Duration: Integer;
+    Duration: Int64;
     /// <summary>
     ///   Optional. MIME type of the file as defined by sender
     /// </summary>
@@ -596,7 +596,7 @@ type
     ///   Optional. Contact's user identifier in Telegram
     /// </summary>
     [djName('user_id')]
-    UserId: Integer;
+    UserId: Int64;
   end;
 
   /// <summary>
@@ -677,7 +677,7 @@ type
     ///   Optional. File size
     /// </summary>
     [djName('file_size')]
-    FileSize: Integer;
+    FileSize: Int64;
     destructor Destroy; override;
   end;
 
@@ -691,7 +691,7 @@ type
     ///   Position in high score table for the game
     /// </summary>
     [djName('position')]
-    Position: Integer;
+    Position: Int64;
     /// <summary>
     ///   User
     /// </summary>
@@ -701,7 +701,7 @@ type
     ///   Score
     /// </summary>
     [djName('score')]
-    Score: Integer;
+    Score: Int64;
     destructor Destroy; override;
   end;
 
@@ -764,7 +764,7 @@ type
     ///   Unique message identifier
     /// </summary>
     [djName('message_id')]
-    MessageId: Integer;
+    MessageId: Int64;
     /// <summary>
     ///   Sender
     /// </summary>
@@ -796,7 +796,7 @@ type
     ///   original message in the channel
     /// </summary>
     [djName('forward_from_message_id')]
-    ForwardFromMessageId: Integer;
+    ForwardFromMessageId: Int64;
     /// <summary>
     ///   Optional. For messages forwarded from channels, signature of the post
     ///   author if present
@@ -1000,7 +1000,7 @@ type
     ///   Total number of profile pictures the target user has
     /// </summary>
     [djName('total_count')]
-    TotalCount: Integer;
+    TotalCount: Int64;
     /// <summary>
     ///   Requested profile pictures (in up to 4 sizes each)
     /// </summary>
@@ -1033,7 +1033,7 @@ type
     ///   wait before the request can be repeated.
     /// </summary>
     [djName('retry_after')]
-    RetryAfter: Integer;
+    RetryAfter: Int64;
   end;
 
   TtgApiResponse<T> = class
@@ -1066,7 +1066,7 @@ type
     ///   The error code
     /// </value>
     [djName('error_code')]
-    Code: Integer;
+    Code: Int64;
     /// <summary>
     ///   Contains information about why a request was unsuccessfull.
     /// </summary>
@@ -1220,14 +1220,14 @@ type
     [djName('currency')]
     Currency: string;
     /// <summary>
-    ///   Total price in the smallest units of the currency (integer, not
+    ///   Total price in the smallest units of the currency (Int64, not
     ///   float/double). For example, for a price of <c>US$ 1.45</c> pass <c>
     ///   amount = 145</c>. See the <c>exp</c> parameter in <see href="https://core.telegram.org/bots/payments/currencies.json">
     ///   currencies.json</see>, it shows the number of digits past the decimal
     ///   point for each currency (2 for the majority of currencies).
     /// </summary>
     [djName('total_amount')]
-    TotalAmount: Integer;
+    TotalAmount: Int64;
   end;
 
   /// <summary>
@@ -1243,7 +1243,7 @@ type
     Text: string;
     /// <summary>
     ///   Price of the product in the smallest units of the <see href="https://core.telegram.org/bots/payments#supported-currencies">
-    ///   currency</see> (integer, not float/double).
+    ///   currency</see> (Int64, not float/double).
     /// </summary>
     /// <example>
     ///   For example, for a price of <c>US$ 1.45</c> pass <c>amount = 145</c>
@@ -1252,9 +1252,9 @@ type
     ///   point for each <br />currency (2 for the majority of currencies). <br />
     /// </example>
     [djName('amount')]
-    Amount: Integer;
+    Amount: Int64;
     constructor Create; overload;
-    constructor Create(const AText: string; AAmount: Integer); overload;
+    constructor Create(const AText: string; AAmount: Int64); overload;
   end;
 
   /// <summary>
@@ -1344,14 +1344,14 @@ type
     [djName('currency')]
     Currency: string;
     /// <summary>
-    ///   Total price in the smallest units of the currency (integer, not
+    ///   Total price in the smallest units of the currency (Int64, not
     ///   float/double). For example, for a price of <c>US$ 1.45</c> pass <c>
     ///   amount = 145</c>. See the <c>exp</c> parameter in <see href="https://core.telegram.org/bots/payments/currencies.json">
     ///   currencies.json</see>, it shows the number of digits past the decimal
     ///   point for each currency (2 for the majority of currencies).
     /// </summary>
     [djName('total_amount')]
-    TotalAmount: Integer;
+    TotalAmount: Int64;
     /// <summary>
     ///   Bot specified invoice payload
     /// </summary>
@@ -1432,14 +1432,14 @@ type
     [djName('currency')]
     Currency: string;
     /// <summary>
-    ///   Total price in the smallest units of the currency (integer, not
+    ///   Total price in the smallest units of the currency (Int64, not
     ///   float/double). For example, for a price of <c>US$ 1.45</c> pass <c>
     ///   amount = 145</c>. See the <c>exp</c> parameter in <see href="https://core.telegram.org/bots/payments/currencies.json">
     ///   currencies.json</see>, it shows the number of digits past the decimal
     ///   point for each currency (2 for the majority of currencies).
     /// </summary>
     [djName('total_amount')]
-    TotalAmount: Integer;
+    TotalAmount: Int64;
     /// <summary>
     ///   Bot specified invoice payload
     /// </summary>
@@ -1484,7 +1484,7 @@ type
     ///   should they get out of order.
     /// </summary>
     [djName('update_id')]
-    ID: Integer;
+    ID: Int64;
     /// <summary>
     ///   Optional. New incoming message of any kind — text, photo, sticker,
     ///   etc.
@@ -1568,7 +1568,7 @@ type
     ///   Number of updates awaiting delivery
     /// </summary>
     [djName('pending_update_count')]
-    PendingUpdateCount: Integer;
+    PendingUpdateCount: Int64;
     /// <summary>
     ///   Optional. Unix time for the most recent error that happened when
     ///   trying to deliver an update via webhook
@@ -1586,7 +1586,7 @@ type
     ///   the webhook for update delivery
     /// </summary>
     [djName('max_connections')]
-    MaxConnections: Integer;
+    MaxConnections: Int64;
     /// <summary>
     ///   Optional. A list of update types the bot is subscribed to. Defaults
     ///   to all update types
@@ -1888,7 +1888,7 @@ begin
   inherited Create;
 end;
 
-constructor TtgLabeledPrice.Create(const AText: string; AAmount: Integer);
+constructor TtgLabeledPrice.Create(const AText: string; AAmount: Int64);
 begin
   Text := AText;
   Amount := AAmount;

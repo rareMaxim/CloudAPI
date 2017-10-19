@@ -1,4 +1,4 @@
-unit TelegAPI.Bot.Intf;
+Ôªøunit TelegAPI.Bot.Intf;
 
 interface
 
@@ -12,10 +12,11 @@ uses
 type
   ITelegramBot = interface
     ['{12FA5CF8-3723-4ED1-BC1F-F1643B4FA361}']
-{$REGION 'Getting updates'}
+
+    {$REGION 'Getting updates'}
     /// <summary>
     ///   <para>
-    ///     »ÒÔÓÎ¸ÁÛÈÚÂ ˝ÚÓÚ ÏÂÚÓ‰ ‰Îˇ ÔÓÎÛ˜ÂÌËˇ Ó·ÌÓ‚ÎÂÌËÈ ËÒÔÓÎ¸ÁÛˇ long
+    ///     –ò—Å–ø–æ–ª—å–∑—É–π—Ç–µ —ç—Ç–æ—Ç –º–µ—Ç–æ–¥ –¥–ª—è –ø–æ–ª—É—á–µ–Ω–∏—è –æ–±–Ω–æ–≤–ª–µ–Ω–∏–π –∏—Å–ø–æ–ª—å–∑—É—è long
     ///     polling.
     ///   </para>
     ///   <para>
@@ -26,16 +27,16 @@ type
     ///   Identifier of the first update to be returned. Must be greater by one
     ///   than the highest among the identifiers of previously received
     ///   updates. By default, updates starting with the earliest unconfirmed
-    ///   update are returned. An update is considered confirmed as soon as <see cref="TelegAPI.Bot|TTelegramBot.GetUpdates(Integer,Integer,Integer,TAllowedUpdates)">
+    ///   update are returned. An update is considered confirmed as soon as <see cref="TelegAPI.Bot|TTelegramBot.GetUpdates(Int64,Int64,Int64,TAllowedUpdates)">
     ///   getUpdates</see> is called with an offset higher than its update_id.
     ///   The negative offset can be specified to retrieve updates starting
     ///   from -offset update from the end of the updates queue. All previous
     ///   updates will forgotten.
     /// </param>
     /// <param name="Limit">
-    ///    ÓÎË˜ÂÒÚ‚Ó Ó·ÌÓ‚ÎÂÌËÈ ÍÓÚÓ˚Â ÏÓ„ÛÚ ÔËÈÚË ‚ Ó‰ÌÓÏ Á‡ÔÓÒÂ.
-    ///   ƒÓÔÛÒÚËÏÓÂ ÁÌ‡˜ÂÌËÂ ÓÚ 1 ‰Ó 100. œÓ ÛÏÓÎ˜‡ÌË˛ - 100.Limits the number
-    ///   of updates to be retrieved. Values between 1ó100 are accepted.
+    ///   –ö–æ–ª–∏—á–µ—Å—Ç–≤–æ –æ–±–Ω–æ–≤–ª–µ–Ω–∏–π –∫–æ—Ç–æ—Ä—ã–µ –º–æ–≥—É—Ç –ø—Ä–∏–π—Ç–∏ –≤ –æ–¥–Ω–æ–º –∑–∞–ø—Ä–æ—Å–µ.
+    ///   –î–æ–ø—É—Å—Ç–∏–º–æ–µ –∑–Ω–∞—á–µ–Ω–∏–µ –æ—Ç 1 –¥–æ 100. –ü–æ —É–º–æ–ª—á–∞–Ω–∏—é - 100.Limits the number
+    ///   of updates to be retrieved. Values between 1‚Äî100 are accepted.
     ///   Defaults to 100.
     /// </param>
     /// <param name="Timeout">
@@ -44,7 +45,7 @@ type
     /// </param>
     /// <param name="AllowedUpdates">
     ///   List the types of updates you want your bot to receive. For example,
-    ///   specify [ìmessageî, ìedited_channel_postî, ìcallback_queryî] to only
+    ///   specify [‚Äúmessage‚Äù, ‚Äúedited_channel_post‚Äù, ‚Äúcallback_query‚Äù] to only
     ///   receive updates of these types. See Update for a complete list of
     ///   available update types. Specify an empty list to receive all updates
     ///   regardless of type (default). If not specified, the previous setting
@@ -60,7 +61,7 @@ type
     ///   order to avoid getting duplicate updates, recalculate offset after
     ///   each server response.
     /// </remarks>
-    function GetUpdates(const Offset: Integer = 0; const Limit: Integer = 100; const Timeout: Integer = 0; AllowedUpdates: TAllowedUpdates = UPDATES_ALLOWED_ALL): TArray<TtgUpdate>;
+    function GetUpdates(const Offset: Int64 = 0; const Limit: Int64 = 100; const Timeout: Int64 = 0; AllowedUpdates: TAllowedUpdates = UPDATES_ALLOWED_ALL): TArray<TtgUpdate>;
     /// <summary>
     ///   Use this method to specify a url and receive incoming updates via an
     ///   outgoing webhook. Whenever there is an update for the bot, we will
@@ -79,12 +80,12 @@ type
     /// <param name="MaxConnections">
     ///   Maximum allowed number of simultaneous HTTPS connections to the
     ///   webhook for update delivery, 1-100. Defaults to 40. Use lower values
-    ///   to limit the load on your botës server, and higher values to increase
-    ///   your botís throughput.
+    ///   to limit the load on your bot‚Äòs server, and higher values to increase
+    ///   your bot‚Äôs throughput.
     /// </param>
     /// <param name="AllowedUpdates">
     ///   List the types of updates you want your bot to receive. For example,
-    ///   specify [ìmessageî, ìedited_channel_postî, ìcallback_queryî] to only
+    ///   specify [‚Äúmessage‚Äù, ‚Äúedited_channel_post‚Äù, ‚Äúcallback_query‚Äù] to only
     ///   receive updates of these types. See Update for a complete list of
     ///   available update types. Specify an empty list to receive all updates
     ///   regardless of type (default). If not specified, the previous setting
@@ -97,7 +98,7 @@ type
     ///     Notes
     ///   </para>
     ///   <para>
-    ///     1. You will not be able to receive updates using <see cref="TelegAPI.Bot|TTelegramBot.GetUpdates(Integer,Integer,Integer,TAllowedUpdates)">
+    ///     1. You will not be able to receive updates using <see cref="TelegAPI.Bot|TTelegramBot.GetUpdates(Int64,Int64,Int64,TAllowedUpdates)">
     ///     getUpdates</see> for as long as an outgoing webhook is set up.
     ///   </para>
     ///   <para>
@@ -115,10 +116,10 @@ type
     ///     amazing guide to Webhooks</see>.
     ///   </para>
     /// </remarks>
-    procedure SetWebhook(const Url: string; Certificate: TtgFileToSend = nil; MaxConnections: Integer = 40; AllowedUpdates: TAllowedUpdates = UPDATES_ALLOWED_ALL);
+    procedure SetWebhook(const Url: string; Certificate: TtgFileToSend = nil; MaxConnections: Int64 = 40; AllowedUpdates: TAllowedUpdates = UPDATES_ALLOWED_ALL);
     /// <summary>
     ///   Use this method to remove webhook integration if you decide to switch
-    ///   back to <see cref="TelegAPI.Bot|TTelegramBot.GetUpdates(Integer,Integer,Integer,TAllowedUpdates)">
+    ///   back to <see cref="TelegAPI.Bot|TTelegramBot.GetUpdates(Int64,Int64,Int64,TAllowedUpdates)">
     ///   getUpdates</see>.
     /// </summary>
     /// <returns>
@@ -134,15 +135,15 @@ type
     ///   WebhookInfo</see> object
     /// </returns>
     /// <remarks>
-    ///   If the bot is using <see cref="TelegAPI.Bot|TTelegramBot.GetUpdates(Integer,Integer,Integer,TAllowedUpdates)">
+    ///   If the bot is using <see cref="TelegAPI.Bot|TTelegramBot.GetUpdates(Int64,Int64,Int64,TAllowedUpdates)">
     ///   getUpdates</see>, will return an object with the url field empty
     /// </remarks>
     function GetWebhookInfo: TtgWebhookInfo;
-{$ENDREGION}
-{$REGION 'Basic methods'}
+    {$ENDREGION}
+    {$REGION 'Basic methods'}
     /// <summary>
     ///   <para>
-    ///     œÓÒÚÓÈ ÏÂÚÓ‰ ‰Îˇ ÔÓ‚ÂÍË ÚÓÍÂÌ‡ ‚‡¯Â„Ó ·ÓÚ‡
+    ///     –ü—Ä–æ—Å—Ç–æ–π –º–µ—Ç–æ–¥ –¥–ª—è –ø—Ä–æ–≤–µ—Ä–∫–∏ —Ç–æ–∫–µ–Ω–∞ –≤–∞—à–µ–≥–æ –±–æ—Ç–∞
     ///   </para>
     ///   <para>
     ///     A simple method for testing your bot's auth token.
@@ -150,7 +151,7 @@ type
     /// </summary>
     /// <returns>
     ///   <para>
-    ///     ¬ÓÁ‚‡˘‡ÂÚ ÓÒÌÓ‚ÌÛ˛ ËÌÙÓÏ‡ˆË˛ Ó ·ÓÚÂ
+    ///     –í–æ–∑–≤—Ä–∞—â–∞–µ—Ç –æ—Å–Ω–æ–≤–Ω—É—é –∏–Ω—Ñ–æ—Ä–º–∞—Ü–∏—é –æ –±–æ—Ç–µ
     ///   </para>
     ///   <para>
     ///     Returns basic information about the bot in form of a <see cref="TelegAPi.Types|TtgUser">
@@ -162,8 +163,8 @@ type
     ///   Use this method to send text messages.
     /// </summary>
     /// <param name="ChatId">
-    ///   Integer or String. Unique identifier for the target chat or username
-    ///   of the target channel (in the format <c>@channelusername</c> ).
+    ///   Int64 or String. Unique identifier for the target chat or username of
+    ///   the target channel (in the format <c>@channelusername</c> ).
     /// </param>
     /// <param name="Text">
     ///   Text of the message to be sent
@@ -193,7 +194,7 @@ type
     ///   On success, the sent <see cref="TelegAPi.Types|TtgMessage">Message</see>
     ///    is returned.
     /// </returns>
-    function SendMessage(const ChatId: TValue; const Text: string; ParseMode: TtgParseMode = TtgParseMode.Default; DisableWebPagePreview: Boolean = False; DisableNotification: Boolean = False; ReplyToMessageId: Integer = 0; ReplyMarkup: IReplyMarkup = nil): TTgMessage;
+    function SendMessage(const ChatId: TValue; const Text: string; ParseMode: TtgParseMode = TtgParseMode.Default; DisableWebPagePreview: Boolean = False; DisableNotification: Boolean = False; ReplyToMessageId: Int64 = 0; ReplyMarkup: IReplyMarkup = nil): TTgMessage;
     /// <summary>
     ///   Use this method to forward messages of any kind.
     /// </summary>
@@ -216,7 +217,7 @@ type
     /// <returns>
     ///   On success, the sent Message is returned.
     /// </returns>
-    function ForwardMessage(ChatId: TValue; FromChatId: TValue; DisableNotification: Boolean = False; MessageId: Integer = 0): TTgMessage;
+    function ForwardMessage(ChatId: TValue; FromChatId: TValue; MessageId: Int64; DisableNotification: Boolean = False): TTgMessage;
     /// <summary>
     ///   Use this method to send photos.
     /// </summary>
@@ -254,15 +255,15 @@ type
     ///   <code lang="Delphi">var
     /// LMessage: TtgMessage;
     /// Begin
-    /// //≈ÒÎË ÌÂ ËÁ‚ÂÒÚÂÌ »ƒ Ù‡ÈÎ‡
-    /// LMessage := sendPhoto(chatId, TtgFileToSend.Create('œÛÚ¸ Í Ù‡ÈÎÛ'), nil);
-    /// //≈ÒÎË ËÁ‚ÂÒÚÂÌ »ƒ Ù‡ÈÎ‡
-    /// LMessage := sendPhoto(chatId, '»ƒ ‘‡ÈÎ‡');
+    /// //–ï—Å–ª–∏ –Ω–µ –∏–∑–≤–µ—Å—Ç–µ–Ω –ò–î —Ñ–∞–π–ª–∞
+    /// LMessage := sendPhoto(chatId, TtgFileToSend.Create('–ü—É—Ç—å –∫ —Ñ–∞–π–ª—É'), nil);
+    /// //–ï—Å–ª–∏ –∏–∑–≤–µ—Å—Ç–µ–Ω –ò–î —Ñ–∞–π–ª–∞
+    /// LMessage := sendPhoto(chatId, '–ò–î –§–∞–π–ª–∞');
     /// ...
     /// LMessage.Free;
     /// End; </code>
     /// </example>
-    function SendPhoto(ChatId: TValue; Photo: TValue; const Caption: string = ''; DisableNotification: Boolean = False; ReplyToMessageId: Integer = 0; ReplyMarkup: IReplyMarkup = nil): TTgMessage;
+    function SendPhoto(ChatId: TValue; Photo: TValue; const Caption: string = ''; DisableNotification: Boolean = False; ReplyToMessageId: Int64 = 0; ReplyMarkup: IReplyMarkup = nil): TTgMessage;
     /// <summary>
     ///   Use this method to send audio files, if you want Telegram clients to
     ///   display them in the music player. Your audio must be in the .mp3
@@ -306,10 +307,10 @@ type
     /// <remarks>
     ///   Bots can currently send audio files of up to 50 MB in size, this
     ///   limit may be changed in the future. For sending voice messages, use
-    ///   the <see cref="TelegAPI.Bot|TTelegramBot.SendVoice(TValue,TValue,Integer,Boolean,Integer,IReplyMarkup)">
+    ///   the <see cref="TelegAPI.Bot|TTelegramBot.SendVoice(TValue,TValue,Int64,Boolean,Int64,IReplyMarkup)">
     ///   sendVoice</see> method instead.
     /// </remarks>
-    function SendAudio(ChatId: TValue; Audio: TValue; Duration: Integer = 0; const Performer: string = ''; const title: string = ''; DisableNotification: Boolean = False; ReplyToMessageId: Integer = 0; ReplyMarkup: IReplyMarkup = nil): TTgMessage;
+    function SendAudio(ChatId: TValue; Audio: TValue; const Caption: string = ''; Duration: Int64 = 0; const Performer: string = ''; DisableNotification: Boolean = False; ReplyToMessageId: Int64 = 0; ReplyMarkup: IReplyMarkup = nil): TTgMessage;
     /// <summary>
     ///   Use this method to send general files.
     /// </summary>
@@ -347,7 +348,7 @@ type
     ///   Bots can currently send files of any type of up to 50 MB in size,
     ///   this limit may be changed in the future.
     /// </remarks>
-    function SendDocument(ChatId: TValue; Document: TValue; const Caption: string = ''; DisableNotification: Boolean = False; ReplyToMessageId: Integer = 0; ReplyMarkup: IReplyMarkup = nil): TTgMessage;
+    function SendDocument(ChatId: TValue; Document: TValue; const Caption: string = ''; DisableNotification: Boolean = False; ReplyToMessageId: Int64 = 0; ReplyMarkup: IReplyMarkup = nil): TTgMessage;
     /// <summary>
     ///   Use this method to send video files, Telegram clients support mp4
     ///   videos (other formats may be sent as Document).
@@ -394,7 +395,7 @@ type
     ///   Bots can currently send video files of up to 50 MB in size, this
     ///   limit may be changed in the future.
     /// </remarks>
-    function SendVideo(ChatId: TValue; Video: TValue; Duration: Integer = 0; Width: Integer = 0; Height: Integer = 0; const Caption: string = ''; DisableNotification: Boolean = False; ReplyToMessageId: Integer = 0; ReplyMarkup: IReplyMarkup = nil): TTgMessage;
+    function SendVideo(ChatId: TValue; Video: TValue; const Caption: string = ''; Duration: Int64 = 0; Width: Int64 = 0; Height: Int64 = 0; DisableNotification: Boolean = False; ReplyToMessageId: Int64 = 0; ReplyMarkup: IReplyMarkup = nil): TTgMessage;
 
     /// <summary>
     ///   Use this method to send audio files, if you want Telegram clients to
@@ -435,7 +436,7 @@ type
     ///   Bots can currently send voice messages of up to 50 MB in size, this
     ///   limit may be changed in the future.
     /// </remarks>
-    function SendVoice(ChatId: TValue; Voice: TValue; Duration: Integer = 0; DisableNotification: Boolean = False; ReplyToMessageId: Integer = 0; ReplyMarkup: IReplyMarkup = nil): TTgMessage;
+    function SendVoice(ChatId: TValue; Voice: TValue; const Caption: string = ''; Duration: Int64 = 0; DisableNotification: Boolean = False; ReplyToMessageId: Int64 = 0; ReplyMarkup: IReplyMarkup = nil): TTgMessage;
     /// <summary>
     ///   As of <see href="https://telegram.org/blog/video-messages-and-telescope">
     ///   v.4.0</see>, Telegram clients support rounded square mp4 videos of up
@@ -448,7 +449,7 @@ type
     /// <param name="VideoNote">
     ///   Video note to send. Pass a file_id as String to send a video note
     ///   that exists on the Telegram servers (recommended) or upload a new
-    ///   video using multipart/form-data. More info on Sending Files ª.
+    ///   video using multipart/form-data. More info on Sending Files ¬ª.
     ///   Sending video notes by a URL is currently unsupported <br />
     /// </param>
     /// <param name="Duration">
@@ -479,10 +480,10 @@ type
     /// </remarks>
     function SendVideoNote(ChatId: TValue; //
       VideoNote: TValue; //
-      Duration: Integer = 0; //
-      Length: Integer = 0; //
+      Duration: Int64 = 0; //
+      Length: Int64 = 0; //
       DisableNotification: Boolean = False; //
-      ReplyToMessageId: Integer = 0; //
+      ReplyToMessageId: Int64 = 0; //
       ReplyMarkup: IReplyMarkup = nil //
     ): TTgMessage;
 
@@ -513,7 +514,7 @@ type
     ///   On success, the sent <see cref="TelegAPi.Types|TtgMessage">Message</see>
     ///    is returned.
     /// </returns>
-    function SendLocation(ChatId: TValue; Location: TtgLocation; LivePeriod: Integer = 0; DisableNotification: Boolean = False; ReplyToMessageId: Integer = 0; ReplyMarkup: IReplyMarkup = nil): TTgMessage;
+    function SendLocation(ChatId: TValue; Location: TtgLocation; LivePeriod: Int64 = 0; DisableNotification: Boolean = False; ReplyToMessageId: Int64 = 0; ReplyMarkup: IReplyMarkup = nil): TTgMessage;
     /// <summary>
     ///   Use this method to send information about a venue.
     /// </summary>
@@ -549,7 +550,7 @@ type
     /// <returns>
     ///   On success, the sent Message is returned.
     /// </returns>
-    function SendVenue(ChatId: TValue; Venue: TtgVenue; DisableNotification: Boolean = False; ReplyToMessageId: Integer = 0; ReplyMarkup: IReplyMarkup = nil): TTgMessage;
+    function SendVenue(ChatId: TValue; Venue: TtgVenue; DisableNotification: Boolean = False; ReplyToMessageId: Int64 = 0; ReplyMarkup: IReplyMarkup = nil): TTgMessage;
     /// <summary>
     ///   Use this method to send phone contacts.
     /// </summary>
@@ -578,7 +579,7 @@ type
     ///    is returned.
     /// </returns>
     /// <seealso href="https://core.telegram.org/bots/api#sendcontact" />
-    function SendContact(ChatId: TValue; Contact: TtgContact; DisableNotification: Boolean = False; ReplyToMessageId: Integer = 0; ReplyMarkup: IReplyMarkup = nil): TTgMessage;
+    function SendContact(ChatId: TValue; Contact: TtgContact; DisableNotification: Boolean = False; ReplyToMessageId: Int64 = 0; ReplyMarkup: IReplyMarkup = nil): TTgMessage;
     /// <summary>
     ///   Use this method when you need to tell the user that something is
     ///   happening on the bot's side. The status is set for 5 seconds or less
@@ -613,7 +614,7 @@ type
     ///   photos are returned. <br />
     /// </param>
     /// <param name="Limit">
-    ///   Limits the number of photos to be retrieved. Values between 1ó100 are
+    ///   Limits the number of photos to be retrieved. Values between 1‚Äî100 are
     ///   accepted. Defaults to 100. <br />
     /// </param>
     /// <returns>
@@ -621,7 +622,7 @@ type
     ///   UserProfilePhotos</see> object.
     /// </returns>
     /// <seealso href="https://core.telegram.org/bots/api#getuserprofilephotos" />
-    function GetUserProfilePhotos(ChatId: TValue; Offset: Integer; Limit: Integer = 100): TtgUserProfilePhotos;
+    function GetUserProfilePhotos(ChatId: TValue; Offset: Int64; Limit: Int64 = 100): TtgUserProfilePhotos;
     /// <summary>
     ///   Use this method to get basic info about a file and prepare it for
     ///   downloading. For the moment, bots can download files of up to 20MB in
@@ -660,12 +661,12 @@ type
     /// </returns>
     /// <remarks>
     ///   Note: In regular groups (non-supergroups), this method will only work
-    ///   if the ëAll Members Are Adminsí setting is off in the target group.
+    ///   if the ‚ÄòAll Members Are Admins‚Äô setting is off in the target group.
     ///   Otherwise members may only be removed by the group's creator or by
     ///   the member that added them.
     /// </remarks>
     /// <seealso href="https://core.telegram.org/bots/api#kickchatmember" />
-    function KickChatMember(ChatId: TValue; UserId: Integer; UntilDate: Integer = 0): Boolean;
+    function KickChatMember(ChatId: TValue; UserId: Int64; UntilDate: Int64 = 0): Boolean;
     /// <summary>
     ///   Use this method to unban a previously kicked user in a supergroup.
     ///   The user will not return to the group automatically, but will be able
@@ -685,7 +686,7 @@ type
     ///   The bot must be an administrator in the group for this to work.
     /// </remarks>
     /// <seealso href="https://core.telegram.org/bots/api#unbanchatmember" />
-    function UnbanChatMember(ChatId: TValue; UserId: Integer): Boolean;
+    function UnbanChatMember(ChatId: TValue; UserId: Int64): Boolean;
     /// <summary>
     ///   Use this method for your bot to leave a group, supergroup or channel.
     /// </summary>
@@ -737,10 +738,10 @@ type
     ///   supergroup or channel (in the format @channelusername) <br />
     /// </param>
     /// <returns>
-    ///   Returns Integer on success.
+    ///   Returns Int64 on success.
     /// </returns>
     /// <seealso href="https://core.telegram.org/bots/api#getchatmemberscount" />
-    function GetChatMembersCount(const ChatId: TValue): Integer;
+    function GetChatMembersCount(const ChatId: TValue): Int64;
     /// <summary>
     ///   Use this method to get information about a member of a chat.
     /// </summary>
@@ -756,7 +757,7 @@ type
     ///   object on success.
     /// </returns>
     /// <seealso href="https://core.telegram.org/bots/api#getchatmember" />
-    function GetChatMember(ChatId: TValue; UserId: Integer): TtgChatMember;
+    function GetChatMember(ChatId: TValue; UserId: Int64): TtgChatMember;
     /// <summary>
     ///   Use this method to send answers to callback queries sent from inline
     ///   keyboards. The answer will be displayed to the user as a notification
@@ -777,9 +778,9 @@ type
     ///   On success, True is returned.
     /// </returns>
     /// <seealso href="https://core.telegram.org/bots/api#answercallbackquery" />
-    function AnswerCallbackQuery(const CallbackQueryId: string; const Text: string = ''; ShowAlert: Boolean = False; const Url: string = ''; CacheTime: Integer = 0): Boolean;
-{$ENDREGION}
-{$REGION 'Updating messages'}
+    function AnswerCallbackQuery(const CallbackQueryId: string; const Text: string = ''; ShowAlert: Boolean = False; const Url: string = ''; CacheTime: Int64 = 0): Boolean;
+    {$ENDREGION}
+    {$REGION 'Updating messages'}
     /// <summary>
     ///   Use this method to edit text messages sent by the bot or via the bot
     ///   (for inline bots).
@@ -815,7 +816,7 @@ type
     ///   is returned, otherwise True is returned.
     /// </returns>
     /// <seealso href="https://core.telegram.org/bots/api#editmessagetext" />
-    function EditMessageText(ChatId: TValue; MessageId: Integer; const Text: string; ParseMode: TtgParseMode = TtgParseMode.Default; DisableWebPagePreview: Boolean = False; ReplyMarkup: IReplyMarkup = nil): TTgMessage; overload;
+    function EditMessageText(ChatId: TValue; MessageId: Int64; const Text: string; ParseMode: TtgParseMode = TtgParseMode.Default; DisableWebPagePreview: Boolean = False; ReplyMarkup: IReplyMarkup = nil): TTgMessage; overload;
     function EditMessageText(const InlineMessageId: string; const Text: string; ParseMode: TtgParseMode = TtgParseMode.Default; DisableWebPagePreview: Boolean = False; ReplyMarkup: IReplyMarkup = nil): TTgMessage; overload;
     /// <summary>
     ///   Use this method to edit captions of messages sent by the bot or via
@@ -845,8 +846,8 @@ type
     ///   is returned, otherwise True is returned.
     /// </returns>
     /// <seealso href="https://core.telegram.org/bots/api#editmessagereplymarkup" />
-    function EditMessageCaption(ChatId: TValue; MessageId: Integer; const Caption: string; ReplyMarkup: IReplyMarkup = nil): Boolean; overload;
-    { TODO -oM.E.Sysoev -cGeneral : Create Documentatiom }
+    function EditMessageCaption(ChatId: TValue; MessageId: Int64; const Caption: string; ReplyMarkup: IReplyMarkup = nil): Boolean; overload;
+        { TODO -oM.E.Sysoev -cGeneral : Create Documentatiom }
     function EditMessageCaption(const InlineMessageId: string; const Caption: string; ReplyMarkup: IReplyMarkup = nil): Boolean; overload;
 
     /// <summary>
@@ -874,7 +875,7 @@ type
     ///   On success, if the edited message was sent by the bot, the edited
     ///   Message is returned, otherwise True is returned.
     /// </returns>
-    function editMessageLiveLocation(ChatId: TValue; MessageId: Integer; Location: TtgLocation; ReplyMarkup: IReplyMarkup = nil): Boolean; overload;
+    function editMessageLiveLocation(ChatId: TValue; MessageId: Int64; Location: TtgLocation; ReplyMarkup: IReplyMarkup = nil): Boolean; overload;
     /// <summary>
     ///   Use this method to edit live location messages sent by the bot or via
     ///   the bot (for inline bots). A location can be edited until its
@@ -909,44 +910,44 @@ type
 
 
 
- /// <summary>
- ///   Use this method to stop updating a live location message sent by the bot
- ///   or via the bot (for inline bots) before live_period expires.
- /// </summary>
- /// <param name="ChatId">
- ///   equired if inline_message_id is not specified. Unique identifier for the
- ///   target chat or username of the target channel (in the format
- ///   @channelusername)
- /// </param>
- /// <param name="MessageId">
- ///   Required if inline_message_id is not specified. Identifier of the sent
- ///   message
- /// </param>
- /// <param name="ReplyMarkup">
- ///   A JSON-serialized object for a new inline keyboard.
- /// </param>
- /// <returns>
- ///   On success, if the message was sent by the bot, the sent Message is
- ///   returned, otherwise True is returned.
- /// </returns>
-    function stopMessageLiveLocation(ChatId: TValue; MessageId: Integer; ReplyMarkup: IReplyMarkup = nil): Boolean; overload;
- /// <summary>
- ///   Use this method to stop updating a live location message sent by the bot
- ///   or via the bot (for inline bots) before live_period expires.
- /// </summary>
- /// <param name="InlineMessageId">
- ///   Required if chat_id and message_id are not specified. Identifier of the
- ///   inline message
- /// </param>
- /// <param name="ReplyMarkup">
- ///   A JSON-serialized object for a new inline keyboard.
- /// </param>
- /// <returns>
- ///   On success, if the message was sent by the bot, the sent Message is
- ///   returned, otherwise True is returned.
- /// </returns>
+    /// <summary>
+    ///   Use this method to stop updating a live location message sent by the
+    ///   bot or via the bot (for inline bots) before live_period expires.
+    /// </summary>
+    /// <param name="ChatId">
+    ///   equired if inline_message_id is not specified. Unique identifier for
+    ///   the target chat or username of the target channel (in the format
+    ///   @channelusername)
+    /// </param>
+    /// <param name="MessageId">
+    ///   Required if inline_message_id is not specified. Identifier of the
+    ///   sent message
+    /// </param>
+    /// <param name="ReplyMarkup">
+    ///   A JSON-serialized object for a new inline keyboard.
+    /// </param>
+    /// <returns>
+    ///   On success, if the message was sent by the bot, the sent Message is
+    ///   returned, otherwise True is returned.
+    /// </returns>
+    function stopMessageLiveLocation(ChatId: TValue; MessageId: Int64; ReplyMarkup: IReplyMarkup = nil): Boolean; overload;
+    /// <summary>
+    ///   Use this method to stop updating a live location message sent by the
+    ///   bot or via the bot (for inline bots) before live_period expires.
+    /// </summary>
+    /// <param name="InlineMessageId">
+    ///   Required if chat_id and message_id are not specified. Identifier of
+    ///   the inline message
+    /// </param>
+    /// <param name="ReplyMarkup">
+    ///   A JSON-serialized object for a new inline keyboard.
+    /// </param>
+    /// <returns>
+    ///   On success, if the message was sent by the bot, the sent Message is
+    ///   returned, otherwise True is returned.
+    /// </returns>
     function stopMessageLiveLocation(const InlineMessageId: string; ReplyMarkup: IReplyMarkup = nil): Boolean; overload;
- /// <summary>
+    /// <summary>
     ///   Use this method to edit only the reply markup of messages sent by the
     ///   bot or via the bot (for inline bots).
     /// </summary>
@@ -966,7 +967,7 @@ type
     ///   On success, if edited message is sent by the bot, the edited Message
     ///   is returned, otherwise True is returned.
     /// </returns>
-    function EditMessageReplyMarkup(ChatId: TValue; MessageId: Integer; ReplyMarkup: IReplyMarkup = nil): TTgMessage; overload;
+    function EditMessageReplyMarkup(ChatId: TValue; MessageId: Int64; ReplyMarkup: IReplyMarkup = nil): TTgMessage; overload;
     /// <summary>
     ///   Use this method to edit only the reply markup of messages sent by the
     ///   bot or via the bot (for inline bots).
@@ -1007,9 +1008,9 @@ type
     ///   remove their own messages.
     /// </remarks>
     /// <seealso href="https://core.telegram.org/bots/api#deletemessage" />
-    function DeleteMessage(ChatId: TValue; MessageId: Integer): Boolean;
-{$ENDREGION}
-{$REGION 'Inline mode'}
+    function DeleteMessage(ChatId: TValue; MessageId: Int64): Boolean;
+    {$ENDREGION}
+    {$REGION 'Inline mode'}
     /// <summary>
     ///   Use this method to send answers to an inline query.
     /// </summary>
@@ -1031,8 +1032,8 @@ type
     /// <param name="NextOffset">
     ///   Pass the offset that a client should send in the next query with the
     ///   same text to receive more results. Pass an empty string if there are
-    ///   no more results or if you donët support pagination. Offset length
-    ///   canít exceed 64 bytes. <br />
+    ///   no more results or if you don‚Äòt support pagination. Offset length
+    ///   can‚Äôt exceed 64 bytes. <br />
     /// </param>
     /// <param name="SwitchPmText">
     ///   If passed, clients will display a button with specified text that
@@ -1050,9 +1051,9 @@ type
     ///   No more than 50 results per query are allowed.
     /// </remarks>
     /// <seealso href="https://core.telegram.org/bots/api#answerinlinequery" />
-    function AnswerInlineQuery(const InlineQueryId: string; Results: TArray<TtgInlineQueryResult>; CacheTime: Integer = 300; IsPersonal: Boolean = False; const NextOffset: string = ''; const SwitchPmText: string = ''; const SwitchPmParameter: string = ''): Boolean;
-{$ENDREGION}
-{$REGION 'Payments'}
+    function AnswerInlineQuery(const InlineQueryId: string; Results: TArray<TtgInlineQueryResult>; CacheTime: Int64 = 300; IsPersonal: Boolean = False; const NextOffset: string = ''; const SwitchPmText: string = ''; const SwitchPmParameter: string = ''): Boolean;
+    {$ENDREGION}
+    {$REGION 'Payments'}
     /// <summary>
     ///   Use this method to send invoices.
     /// </summary>
@@ -1131,7 +1132,7 @@ type
     ///   returned.
     /// </returns>
     /// <seealso href="https://core.telegram.org/bots/api#sendinvoice" />
-    function SendInvoice(ChatId: Integer; const title: string; const Description: string; const Payload: string; const ProviderToken: string; const StartParameter: string; const Currency: string; Prices: TArray<TtgLabeledPrice>; const PhotoUrl: string = ''; PhotoSize: Integer = 0; PhotoWidth: Integer = 0; PhotoHeight: Integer = 0; NeedName: Boolean = False; NeedPhoneNumber: Boolean = False; NeedEmail: Boolean = False; NeedShippingAddress: Boolean = False; IsFlexible: Boolean = False; DisableNotification: Boolean = False; ReplyToMessageId: Integer = 0; ReplyMarkup: IReplyMarkup = nil): TTgMessage;
+    function SendInvoice(ChatId: Int64; const title: string; const Description: string; const Payload: string; const ProviderToken: string; const StartParameter: string; const Currency: string; Prices: TArray<TtgLabeledPrice>; const PhotoUrl: string = ''; PhotoSize: Int64 = 0; PhotoWidth: Int64 = 0; PhotoHeight: Int64 = 0; NeedName: Boolean = False; NeedPhoneNumber: Boolean = False; NeedEmail: Boolean = False; NeedShippingAddress: Boolean = False; IsFlexible: Boolean = False; DisableNotification: Boolean = False; ReplyToMessageId: Int64 = 0; ReplyMarkup: IReplyMarkup = nil): TTgMessage;
     /// <summary>
     ///   If you sent an invoice requesting a shipping address and the
     ///   parameter is_flexible was specified, the Bot API will send an Update
@@ -1189,8 +1190,8 @@ type
     /// </remarks>
     /// <seealso href="https://core.telegram.org/bots/api#answerprecheckoutquery" />
     function AnswerPreCheckoutQuery(const PreCheckoutQueryId: string; Ok: Boolean; const ErrorMessage: string = ''): Boolean;
-{$ENDREGION}
-{$REGION 'Games'}
+    {$ENDREGION}
+    {$REGION 'Games'}
     /// <summary>
     ///   Use this method to send a game.
     /// </summary>
@@ -1210,15 +1211,15 @@ type
     ///   If the message is a reply, ID of the original message <br />
     /// </param>
     /// <param name="ReplyMarkup">
-    ///   A JSON-serialized object for an inline keyboard. If empty, one ëPlay
-    ///   game_titleí button will be shown. If not empty, the first button must
+    ///   A JSON-serialized object for an inline keyboard. If empty, one ‚ÄòPlay
+    ///   game_title‚Äô button will be shown. If not empty, the first button must
     ///   launch the game. <br />
     /// </param>
     /// <returns>
     ///   On success, the sent Message is returned.
     /// </returns>
     /// <seealso href="https://core.telegram.org/bots/api#sendgame" />
-    function SendGame(ChatId: Integer; const GameShortName: string; DisableNotification: Boolean = False; ReplyToMessageId: Integer = 0; ReplyMarkup: IReplyMarkup = nil): TTgMessage;
+    function SendGame(ChatId: Int64; const GameShortName: string; DisableNotification: Boolean = False; ReplyToMessageId: Int64 = 0; ReplyMarkup: IReplyMarkup = nil): TTgMessage;
     /// <summary>
     ///   Use this method to set the score of the specified user in a game.
     /// </summary>
@@ -1255,7 +1256,7 @@ type
     ///   False.
     /// </returns>
     /// <seealso href="https://core.telegram.org/bots/api#setgamescore" />
-    function SetGameScore(UserId: Integer; Score: Integer; Force: Boolean = False; DisableEditMessage: Boolean = False; ChatId: Integer = 0; MessageId: Integer = 0; const InlineMessageId: string = ''): TTgMessage;
+    function SetGameScore(UserId: Int64; Score: Int64; Force: Boolean = False; DisableEditMessage: Boolean = False; ChatId: Int64 = 0; MessageId: Int64 = 0; const InlineMessageId: string = ''): TTgMessage;
     /// <summary>
     ///   Use this method to get data for high score tables. Will return the
     ///   score of the specified user and several of his neighbors in a game.
@@ -1288,9 +1289,9 @@ type
     /// <seealso href="https://core.telegram.org/bots/api#getgamehighscores">
     ///   Official API
     /// </seealso>
-    function GetGameHighScores(UserId: Integer; ChatId: Integer = 0; MessageId: Integer = 0; const InlineMessageId: string = ''): TArray<TtgGameHighScore>;
-{$ENDREGION}
-{$REGION 'Manage groups and channels'}
+    function GetGameHighScores(UserId: Int64; ChatId: Int64 = 0; MessageId: Int64 = 0; const InlineMessageId: string = ''): TArray<TtgGameHighScore>;
+    {$ENDREGION}
+    {$REGION 'Manage groups and channels'}
     /// <summary>
     ///   Use this method to delete a chat photo.
     /// </summary>
@@ -1342,7 +1343,7 @@ type
     /// <returns>
     ///   Returns True on success.
     /// </returns>
-    function PinChatMessage(ChatId: TValue; MessageId: Integer; DisableNotification: Boolean = False): Boolean;
+    function PinChatMessage(ChatId: TValue; MessageId: Int64; DisableNotification: Boolean = False): Boolean;
     /// <summary>
     ///   Use this method to change the description of a supergroup or a
     ///   channel. The bot must be an administrator in the chat for this to
@@ -1395,7 +1396,7 @@ type
     /// </returns>
     /// <remarks>
     ///   Note: In regular groups (non-supergroups), this method will only work
-    ///   if the ëAll Members Are Adminsí setting is off in the target group.
+    ///   if the ‚ÄòAll Members Are Admins‚Äô setting is off in the target group.
     /// </remarks>
     function SetChatTitle(ChatId: TValue; const title: string): Boolean;
     /// <summary>
@@ -1411,8 +1412,8 @@ type
     ///   Returns True on success.
     /// </returns>
     function UnpinChatMessage(ChatId: TValue): Boolean;
-{$ENDREGION}
-{$REGION 'Manage users and admins'}
+    {$ENDREGION}
+    {$REGION 'Manage users and admins'}
     /// <summary>
     ///   Use this method to restrict a user in a supergroup. The bot must be
     ///   an administrator in the supergroup for this to work and must have the
@@ -1450,7 +1451,7 @@ type
     /// <returns>
     ///   Returns True on success.
     /// </returns>
-    function RestrictChatMember(ChatId: TValue; UserId: Integer; UntilDate: Integer = 0; CanSendMessages: Boolean = False; CanSendMediaMessages: Boolean = False; CanSendOtherMessages: Boolean = False; CanAddWebPagePreviews: Boolean = False): Boolean;
+    function RestrictChatMember(ChatId: TValue; UserId: Int64; UntilDate: Int64 = 0; CanSendMessages: Boolean = False; CanSendMediaMessages: Boolean = False; CanSendOtherMessages: Boolean = False; CanAddWebPagePreviews: Boolean = False): Boolean;
     /// <summary>
     ///   Use this method to restrict a user in a supergroup. The bot must be
     ///   an administrator in the supergroup for this to work and must have the
@@ -1498,9 +1499,9 @@ type
     /// <returns>
     ///   Returns True on success.
     /// </returns>
-    function PromoteChatMember(ChatId: TValue; UserId: Integer; CanChangeInfo: Boolean = False; CanPostMessages: Boolean = False; CanEditMessages: Boolean = False; CanDeleteMessages: Boolean = False; CanInviteUsers: Boolean = False; CanRestrictMembers: Boolean = False; CanPinMessages: Boolean = False; CanPromoteMembers: Boolean = False): Boolean;
-{$ENDREGION}
-{$REGION 'Strickers'}
+    function PromoteChatMember(ChatId: TValue; UserId: Int64; CanChangeInfo: Boolean = False; CanPostMessages: Boolean = False; CanEditMessages: Boolean = False; CanDeleteMessages: Boolean = False; CanInviteUsers: Boolean = False; CanRestrictMembers: Boolean = False; CanPinMessages: Boolean = False; CanPromoteMembers: Boolean = False): Boolean;
+    {$ENDREGION}
+    {$REGION 'Strickers'}
     /// <summary>
     ///   Use this method to send .webp stickers.
     /// </summary>
@@ -1529,7 +1530,7 @@ type
     /// <returns>
     ///   On success, the sent Message is returned.
     /// </returns>
-    function SendSticker(ChatId: TValue; Sticker: TValue; DisableNotification: Boolean = False; ReplyToMessageId: Integer = 0; ReplyMarkup: IReplyMarkup = nil): TTgMessage;
+    function SendSticker(ChatId: TValue; Sticker: TValue; DisableNotification: Boolean = False; ReplyToMessageId: Int64 = 0; ReplyMarkup: IReplyMarkup = nil): TTgMessage;
     /// <summary>
     ///   Use this method to get a sticker set.
     /// </summary>
@@ -1543,8 +1544,8 @@ type
     function getStickerSet(const Name: string): TtgStickerSet;
     /// <summary>
     ///   Use this method to upload a .png file with a sticker for later use in
-    ///   <see cref="TelegAPI.Bot|TTelegramBot.createNewStickerSet(Integer,string,string,TValue,string,Boolean,TtgMaskPosition)">
-    ///   createNewStickerSet</see> and <see cref="TelegAPI.Bot|TTelegramBot.addStickerToSet(Integer,string,TValue,string,TtgMaskPosition)">
+    ///   <see cref="TelegAPI.Bot|TTelegramBot.createNewStickerSet(Int64,string,string,TValue,string,Boolean,TtgMaskPosition)">
+    ///   createNewStickerSet</see> and <see cref="TelegAPI.Bot|TTelegramBot.addStickerToSet(Int64,string,TValue,string,TtgMaskPosition)">
     ///   addStickerToSet</see> methods (can be used multiple times). <br />
     /// </summary>
     /// <param name="UserId">
@@ -1559,7 +1560,7 @@ type
     ///   Returns the uploaded <see cref="TelegAPi.Types|TtgFile">File</see> on
     ///   success.
     /// </returns>
-    function uploadStickerFile(UserId: Integer; PngSticker: TtgFileToSend): TtgFile;
+    function uploadStickerFile(UserId: Int64; PngSticker: TtgFileToSend): TtgFile;
     /// <summary>
     ///   Use this method to create new sticker set owned by a user. The bot
     ///   will be able to edit the created sticker set.
@@ -1571,7 +1572,7 @@ type
     ///   Short name of sticker set, to be used in t.me/addstickers/ URLs
     ///   (e.g., animals). Can contain only english letters, digits and
     ///   underscores. Must begin with a letter, can't contain consecutive
-    ///   underscores and must end in by ì__&lt;bot username&gt;î.
+    ///   underscores and must end in by ‚Äú__&lt;bot username&gt;‚Äù.
     ///   &lt;bot_username&gt; is case insensitive. 1-64 characters. <br />
     /// </param>
     /// <param name="Title">
@@ -1583,7 +1584,7 @@ type
     ///   exactly 512px. Pass a file_id as a String to send a file that already
     ///   exists on the Telegram servers, pass an HTTP URL as a String for
     ///   Telegram to get a file from the Internet, or upload a new one using
-    ///   multipart/form-data. More info on Sending Files ª <br />
+    ///   multipart/form-data. More info on Sending Files ¬ª <br />
     /// </param>
     /// <param name="Emojis">
     ///   One or more emoji corresponding to the sticker <br />
@@ -1598,14 +1599,14 @@ type
     /// <returns>
     ///   Returns True on success.
     /// </returns>
-    function createNewStickerSet(UserId: Integer; const Name, title: string; PngSticker: TValue; const Emojis: string; ContainsMasks: Boolean = False; MaskPosition: TtgMaskPosition = nil): Boolean;
+    function createNewStickerSet(UserId: Int64; const Name, title: string; PngSticker: TValue; const Emojis: string; ContainsMasks: Boolean = False; MaskPosition: TtgMaskPosition = nil): Boolean;
     /// <summary>
     ///   Use this method to add a new sticker to a set created by the bot.
     /// </summary>
     /// <returns>
     ///   Returns True on success.
     /// </returns>
-    function addStickerToSet(UserId: Integer; const Name: string; PngSticker: TValue; const Emojis: string; MaskPosition: TtgMaskPosition = nil): Boolean;
+    function addStickerToSet(UserId: Int64; const Name: string; PngSticker: TValue; const Emojis: string; MaskPosition: TtgMaskPosition = nil): Boolean;
     /// <summary>
     ///   Use this method to move a sticker in a set created by the bot to a
     ///   specific position.
@@ -1619,7 +1620,7 @@ type
     /// <returns>
     ///   Returns True on success.
     /// </returns>
-    function setStickerPositionInSet(const Sticker: string; Position: Integer): Boolean;
+    function setStickerPositionInSet(const Sticker: string; Position: Int64): Boolean;
     /// <summary>
     ///   Use this method to delete a sticker from a set created by the bot.
     /// </summary>
@@ -1656,7 +1657,8 @@ type
     ///   getChat</see> requests to check if the bot can use this method.
     /// </remarks>
     function deleteChatStickerSet(ChatId: TValue): Boolean;
-{$ENDREGION}
+    {$ENDREGION}
+
   end;
 
 implementation
