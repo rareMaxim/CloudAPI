@@ -8,7 +8,7 @@ uses
 type
   TJsonUtils = class
     class function ArrayToJString<T>(LArray: TArray<T>): string;
-    class function DJsonConfig(const AByProperty: Boolean = False): IdjParams;
+    class function DJsonConfig: IdjParams;
   end;
 
 implementation
@@ -27,19 +27,17 @@ begin
   Result := '[';
   for I := Low(LArray) to High(LArray) do
   begin
-    Result := Result + dj.From(TValue.From<T>(LArray[I]), dj.Default).ToJson;
+    Result := Result + dj.From(TValue.From<T>(LArray[I]), DJsonConfig).ToJson;
     if I <> High(LArray) then
       Result := Result + ',';
   end;
   Result := Result + ']';
 end;
 
-class function TJsonUtils.DJsonConfig(const AByProperty: Boolean): IdjParams;
+class function TJsonUtils.DJsonConfig: IdjParams;
 begin
-  if AByProperty then
-    Result := dj.DefaultByProperty
-  else
-    Result := dj.DefaultByFields;
+  Result := dj.Default;
+  Result.SerializationTypes := [stProperties, stFields];
   Result.Engine := TdjEngine.eJDO;
   Result.DateTimeFormat := TdjDateTimeFormat.dfUnix;
 

@@ -1834,7 +1834,7 @@ begin
       if not LParameter.Value.IsEmpty then
       begin
         // Result.AddField(LParameter.Key, dj.From(LParameter.Value.AsObject).ToJson);
-        LTest := dj.From(LParameter.Value, TJsonUtils.DJsonConfig(True)).ToJson;
+        LTest := dj.From(LParameter.Value, TJsonUtils.DJsonConfig).ToJson;
         Result.AddField(LParameter.Key, LTest);
       end
     end
