@@ -183,25 +183,19 @@ begin
   results := [TtgInlineQueryResultLocation.Create, TtgInlineQueryResultLocation.Create];
   with TtgInlineQueryResultLocation(results[0]) do
   begin
-    Id := '1';
+    ID := '1';
     Latitude := 40.7058316; // displayed result
     Longitude := -74.2581888;
     Title := 'New York';
-    InputMessageContent := TtgInputLocationMessageContent.Create;
-    // message if result is selected
-    TtgInputLocationMessageContent(InputMessageContent).Latitude := 40.7058316;
-    TtgInputLocationMessageContent(InputMessageContent).Longitude := -74.2581888;
+    InputMessageContent := TtgInputLocationMessageContent.Create(40.7058316, -74.2581888);  // message if result is selected
   end;
   with TtgInlineQueryResultLocation(results[1]) do
   begin
-    Id := '2';
+    ID := '2';
     Latitude := 52.507629; // displayed result
     Longitude := 13.1449577;
     Title := 'Berlin';
-    InputMessageContent := TtgInputLocationMessageContent.Create;
-    // message if result is selected
-    TtgInputLocationMessageContent(InputMessageContent).Latitude := 52.507629;
-    TtgInputLocationMessageContent(InputMessageContent).Longitude := 13.1449577;
+    InputMessageContent := TtgInputLocationMessageContent.Create(52.507629, 13.1449577); // message if result is selected
   end;
   tgBot.AnswerInlineQuery(AInlineQuery.Id, results, 0, True);
 end;

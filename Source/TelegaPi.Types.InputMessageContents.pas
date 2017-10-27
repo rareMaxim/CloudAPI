@@ -6,20 +6,16 @@ uses
   DJSON.Attributes;
 
 type
-
   /// <summary>
   ///   This object represents the content of a message to be sent as a result
   ///   of an inline query.
   /// </summary>
-  [djName('InputMessageContent')]
-  TtgInputMessageContent = class
-  end;
+  TtgInputMessageContent = class(TObject);
 
   /// <summary>
   ///   Represents the content of a contact message to be sent as the result of
   ///   an inline query.
   /// </summary>
-  [djName('InputContactMessageContent')]
   TtgInputContactMessageContent = class(TtgInputMessageContent)
   public
     /// <summary>
@@ -37,13 +33,13 @@ type
     /// </summary>
     [djName('last_name')]
     LastName: string;
+    constructor Create(const APhoneNumber, AFirstName, ALastName: string);
   end;
 
   /// <summary>
   ///   Represents the content of a location message to be sent as the result
   ///   of an inline query.
   /// </summary>
-  [djName('InputLocationMessageContent')]
   TtgInputLocationMessageContent = class(TtgInputMessageContent)
   public
     /// <summary>
@@ -56,13 +52,13 @@ type
     /// </summary>
     [djName('longitude')]
     Longitude: Single;
+    constructor Create(ALatitude, ALongitude: Single);
   end;
 
   /// <summary>
   ///   Represents the content of a text message to be sent as the result of an
   ///   inline query.
   /// </summary>
-  [djName('InputTextMessageContent')]
   TtgInputTextMessageContent = class(TtgInputMessageContent)
   public
     /// <summary>
@@ -81,13 +77,13 @@ type
     /// </summary>
     [djName('disable_web_page_preview')]
     DisableWebPagePreview: Boolean;
+    constructor Create(const AMessageText, AParseMode: string; ADisableWebPagePreview: Boolean);
   end;
 
   /// <summary>
   ///   Represents the content of a venue message to be sent as the result of
   ///   an inline query.
   /// </summary>
-  [djName('InputVenueMessageContent')]
   TtgInputVenueMessageContent = class(TtgInputMessageContent)
   public
     /// <summary>
@@ -115,9 +111,47 @@ type
     /// </summary>
     [djName('foursquare_id')]
     FoursquareId: string;
+    constructor Create(ALatitude, ALongitude: Single; const ATitle, AAddress, AFoursquareId: string);
   end;
 
 implementation
+
+{ TtgInputTextMessageContent }
+
+constructor TtgInputTextMessageContent.Create(const AMessageText, AParseMode: string; ADisableWebPagePreview: Boolean);
+begin
+  MessageText := AMessageText;
+  ParseMode := AParseMode;
+  DisableWebPagePreview := ADisableWebPagePreview;
+end;
+
+{ TtgInputContactMessageContent }
+
+constructor TtgInputContactMessageContent.Create(const APhoneNumber, AFirstName, ALastName: string);
+begin
+  PhoneNumber := APhoneNumber;
+  FirstName := AFirstName;
+  LastName := ALastName;
+end;
+
+{ TtgInputLocationMessageContent }
+
+constructor TtgInputLocationMessageContent.Create(ALatitude, ALongitude: Single);
+begin
+  Latitude := ALatitude;
+  Longitude := ALongitude;
+end;
+
+{ TtgInputVenueMessageContent }
+
+constructor TtgInputVenueMessageContent.Create(ALatitude, ALongitude: Single; const ATitle, AAddress, AFoursquareId: string);
+begin
+  Latitude := ALatitude;
+  Longitude := ALongitude;
+  Title := ATitle;
+  Address := AAddress;
+  FoursquareId := AFoursquareId;
+end;
 
 end.
 
