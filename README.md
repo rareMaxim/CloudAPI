@@ -16,9 +16,21 @@ Thank you for your active assistance to the project:
 as well as many others who ask / suggest features / points bugs.
 ### Ads
 
-### **Donate** - [Yandex.Money](https://money.yandex.ru/to/410015514211289)
+### **Donate**
 
 - 1️⃣ eugene afx
+
+**Webmoney:**
+- Z575542978432
+- R211879411342
+- U303737697550
+- E114049909444
+
+**Qiwi**
+- +380684985731
+
+**MasterCard**
+- 5168 7551 0848 2486 - Maxim Sysoiev
 
 ## Powered by TelegaPi
 * [🤖ChallengeOfTheDay](https://goo.gl/4TbFH9)
@@ -45,11 +57,22 @@ Telega π - Библиотека для работы с Telegram Bot API в Delp
 * [Андрей](https://github.com/andb24)
 
 а так же многих других, кто спрашивает/предлагает фичи/указывает баги. 
-### Рекламой проекта
 
-### **Donate** - [Яндекс.Деньги](https://money.yandex.ru/to/410015514211289)
+### **Donate**
 
 - 1️⃣ eugene afx
+
+**Webmoney:**
+- Z575542978432
+- R211879411342
+- U303737697550
+- E114049909444
+
+**Qiwi**
+- +380684985731
+
+**MasterCard**
+- 5168 7551 0848 2486 - Maxim Sysoiev
 
 ## Боты, работающие на TelegaPi
 
