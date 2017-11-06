@@ -170,14 +170,15 @@ var
   LEnt: TtgMessageEntity;
 begin
   Result := False;
-  if Assigned(Self.Entities) then
-    for LEnt in Self.Entities do
-      if (LEnt.TypeMessage = TtgMessageEntityType.bot_command) then
-        if Text.Substring(LEnt.Offset, LEnt.Length).StartsWith(AValue, True) then
-        begin
-          LEnt.Free;
-          Exit(True);
-        end;
+  if not Assigned(Self.Entities) then exit;
+
+  for LEnt in Self.Entities do
+    if (LEnt.TypeMessage = TtgMessageEntityType.bot_command) then
+      if Text.Substring(LEnt.Offset, LEnt.Length).StartsWith(AValue, True) then
+      begin
+        LEnt.Free;
+        Exit(True);
+      end;
 end;
 
 end.
