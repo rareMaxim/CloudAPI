@@ -16,290 +16,73 @@ type
   private
     FJSON: TJSONObject;
   protected
-    function InitIntf<T: constructor, TBaseJson; Y: IInterface>(const AKey: string): Y;
+    function CreateIfExists<T: class, constructor>(const AKey: string): T;
+    function ReadToDateTime(const AKey: string): TDateTime;
   public
     constructor Create(const AJson: string);
     destructor Destroy; override;
   end;
-  /// <summary>
-  /// This object represents a Telegram user or bot.
-  /// </summary>
 
   TtgUser = class(TBaseJson, ItgUser)
   public
-    /// <summary>
-    /// Unique identifier for this user or bot
-    /// </summary>
     function ID: Int64;
-    /// <summary>
-    /// True, if this user is a bot
-    /// </summary>
     function IsBot: Boolean;
-    /// <summary>
-    /// User‘s or bot’s first name
-    /// </summary>
     function FirstName: string;
-    /// <summary>
-    /// Optional. User‘s or bot’s last name
-    /// </summary>
     function LastName: string;
-    /// <summary>
-    /// Optional. User‘s or bot’s username
-    /// </summary>
     function Username: string;
-    /// <summary>
-    /// Optional. IETF language tag of the user's language
-    /// </summary>
     function LanguageCode: string;
   end;
 
-  /// <summary>
-  /// This object contains information about one member of the chat.
-  /// </summary>
-  TtgChatMember = class
+  TtgChatMember = class(TBaseJson, ItgChatMember)
   public
-    /// <summary>
-    /// Information about the user
-    /// </summary>
-    [djName('user')]
-    User: TtgUser;
-    /// <summary>
-    /// The member's status in the chat. Can be “creator”, “administrator”,
-    /// “member”, “left” or “kicked”
-    /// </summary>
-    [djName('status')]
-    Status: string;
-    /// <summary>
-    /// Optional. Restictred and kicked only. Date when restrictions will be
-    /// lifted for this user, unix time
-    /// </summary>
-    [djName('until_date')]
-    UntilDate: Int64;
-    /// <summary>
-    /// Optional. Administrators only. True, if the bot is allowed to edit
-    /// administrator privileges of that user
-    /// </summary>
-    [djName('can_be_edited')]
-    CanBeEdited: Boolean;
-    /// <summary>
-    /// Optional. Administrators only. True, if the administrator can change
-    /// the chat title, photo and other settings
-    /// </summary>
-    [djName('can_change_info')]
-    CanChangeInfo: Boolean;
-    /// <summary>
-    /// Optional. Administrators only. True, if the administrator can post in
-    /// the channel, channels only
-    /// </summary>
-    [djName('can_post_messages')]
-    CanPostMessages: Boolean;
-    /// <summary>
-    /// Optional. Administrators only. True, if the administrator can edit
-    /// messages of other users, channels only
-    /// </summary>
-    [djName('can_edit_messages')]
-    CanEditMessages: Boolean;
-    /// <summary>
-    /// Optional. Administrators only. True, if the administrator can delete
-    /// messages of other users
-    /// </summary>
-    [djName('can_delete_messages')]
-    CanDeleteMessages: Boolean;
-    /// <summary>
-    /// Optional. Administrators only. True, if the administrator can invite
-    /// new users to the chat
-    /// </summary>
-    [djName('can_invite_users')]
-    CanInviteUsers: Boolean;
-    /// <summary>
-    /// Optional. Administrators only. True, if the administrator can
-    /// restrict, ban or unban chat members
-    /// </summary>
-    [djName('can_restrict_members')]
-    CanRestrictMembers: Boolean;
-    /// <summary>
-    /// Optional. Administrators only. True, if the administrator can pin
-    /// messages, supergroups only
-    /// </summary>
-    [djName('can_pin_messages')]
-    CanPinMessages: Boolean;
-    /// <summary>
-    /// Optional. Administrators only. True, if the administrator can add new
-    /// administrators with a subset of his own privileges or demote
-    /// administrators that he has promoted, directly or indirectly (promoted
-    /// by administrators that were appointed by the user)
-    /// </summary>
-    [djName('can_promote_members')]
-    CanPromoteMembers: Boolean;
-    /// <summary>
-    /// Optional. Restricted only. True, if the user can send text messages,
-    /// contacts, locations and venues
-    /// </summary>
-    [djName('can_send_messages')]
-    CanSendMessages: Boolean;
-    /// <summary>
-    /// Optional. Restricted only. True, if the user can send audios,
-    /// documents, photos, videos, video notes and voice notes, implies <see cref="TelegAPi.Types|TtgChatMember.CanSendMessages">
-    /// CanSendMessages</see>
-    /// </summary>
-    [djName('can_send_media_messages')]
-    CanSendMediaMessages: Boolean;
-    /// <summary>
-    /// Optional. Restricted only. True, if the user can send animations,
-    /// games, stickers and use inline bots, implies <see cref="TelegAPi.Types|TtgChatMember.CanSendMediaMessages">
-    /// CanSendMediaMessages</see>
-    /// </summary>
-    [djName('can_send_other_messages')]
-    CanSendOtherMessages: Boolean;
-    /// <summary>
-    /// Optional. Restricted only. True, if user may add web page previews to
-    /// his messages, implies <see cref="TelegAPi.Types|TtgChatMember.CanSendMediaMessages">
-    /// CanSendMediaMessages</see>
-    /// </summary>
-    [djName('can_add_web_page_previews')]
-    CanAddWebPagePreviews: Boolean;
-    destructor Destroy; override;
+    function User: ItgUser;
+    function Status: string;
+    function UntilDate: TDateTime;
+    function CanBeEdited: Boolean;
+    function CanChangeInfo: Boolean;
+    function CanPostMessages: Boolean;
+    function CanEditMessages: Boolean;
+    function CanDeleteMessages: Boolean;
+    function CanInviteUsers: Boolean;
+    function CanRestrictMembers: Boolean;
+    function CanPinMessages: Boolean;
+    function CanPromoteMembers: Boolean;
+    function CanSendMessages: Boolean;
+    function CanSendMediaMessages: Boolean;
+    function CanSendOtherMessages: Boolean;
+    function CanAddWebPagePreviews: Boolean;
   end;
 
-  /// <summary>
-  /// This object represents a chat photo.
-  /// </summary>
-  TtgChatPhoto = class
-    /// <summary>
-    /// Unique file identifier of small (160x160) chat photo. This file_id
-    /// can be used only for photo download.
-    /// </summary>
-    [djName('small_file_id')]
-    SmallFileId: string;
-    /// <summary>
-    /// Unique file identifier of big (640x640) chat photo. This file_id can
-    /// be used only for photo download.
-    /// </summary>
-    [djName('big_file_id')]
-    BigFileId: string;
+  TtgChatPhoto = class(TBaseJson, ItgChatPhoto)
+    function SmallFileId: string;
+    function BigFileId: string;
   end;
 
-  /// <summary>
-  /// This object represents a chat.
-  /// </summary>
-  [djName('Chat')]
-  TtgChat = class
+  TtgChat = class(TBaseJson, ItgChat)
   public
-    /// <summary>
-    /// Unique identifier for this chat, not exceeding 1e13 by absolute value
-    /// </summary>
-    [djName('id')]
-    ID: Int64;
-    /// <summary>
-    /// Type of chat, can be either “private”, “group”, “supergroup” or
-    /// “channel”
-    /// </summary>
+    function ID: Int64;
+    function TypeChat: TtgChatType;
+    function Title: string;
+    function Username: string;
+    function FirstName: string;
+    function LastName: string;
+    function AllMembersAreAdministrators: Boolean;
+    function Photo: ItgChatPhoto;
+    function Description: string;
+    function InviteLink: string;
+    function PinnedMessage: ITgMessage;
+    function StickerSetName: string;
+    function CanSetStickerSet: Boolean;
+  end;
+
+  TtgMessageEntity = class(TBaseJson, ItgMessageEntity)
+  public
     [djName('type')]
-    TypeChat: TtgChatType;
-    /// <summary>
-    /// Optional. Title, for channels and group chats
-    /// </summary>
-    [djName('title')]
-    Title: string;
-    /// <summary>
-    /// Optional. Username, for private chats and channels if available
-    /// </summary>
-    [djName('username')]
-    Username: string;
-    /// <summary>
-    /// Optional. First name of the other party in a private chat
-    /// </summary>
-    [djName('first_name')]
-    FirstName: string;
-    /// <summary>
-    /// Optional. Last name of the other party in a private chat
-    /// </summary>
-    [djName('last_name')]
-    LastName: string;
-    /// <summary>
-    /// Optional. True if a group has ‘All Members Are Admins’ enabled.
-    /// </summary>
-    [djName('all_members_are_administrators')]
-    AllMembersAreAdministrators: Boolean;
-    /// <summary>
-    /// Optional. Chat photo. Returned only in <see cref="TelegAPI.Bot|TTelegramBot.GetChat(TValue)">
-    /// getChat</see>.
-    /// </summary>
-    [djName('photo')]
-    Photo: TtgChatPhoto;
-    /// <summary>
-    /// Optional. Description, for supergroups and channel chats. Returned
-    /// only in <see cref="TelegAPI.Bot|TTelegramBot.GetChat(TValue)">getChat</see>
-    /// .
-    /// </summary>
-    [djName('description')]
-    Description: string;
-    /// <summary>
-    /// Optional. Chat invite link, for supergroups and channel chats.
-    /// Returned only in <see cref="TelegAPI.Bot|TTelegramBot.GetChat(TValue)">
-    /// getChat</see>.
-    /// </summary>
-    [djName('invite_link')]
-    InviteLink: string;
-    /// <summary>
-    /// Optional. Pinned message, for supergroups. Returned only in <see cref="TelegAPI.Bot|TTelegramBot.GetChat(TValue)">
-    /// getChat</see>.
-    /// </summary>
-    [djName('pinned_message')]
-    PinnedMessage: ITgMessage;
-    /// <summary>
-    /// Optional. For supergroups, name of Group sticker set. Returned only
-    /// in <see cref="TelegAPI.Bot|TTelegramBot.GetChat(TValue)">getChat</see>
-    /// .
-    /// </summary>
-    [djName('sticker_set_name')]
-    StickerSetName: string;
-    /// <summary>
-    /// Optional. True, if the bot can change group the sticker set. Returned
-    /// only in <see cref="TelegAPI.Bot|TTelegramBot.GetChat(TValue)">getChat</see>
-    /// .
-    /// </summary>
-    [djName('can_set_sticker_set')]
-    CanSetStickerSet: Boolean;
-  end;
-
-  /// <summary>
-  /// This object represents one special entity in a text message. For
-  /// example, hashtags, usernames, URLs, etc.
-  /// </summary>
-  [djName('MessageEntity')]
-  TtgMessageEntity = class
-  public
-    /// <summary>
-    /// Type of the entity. One of mention (@username), hashtag, bot_command,
-    /// url, email, bold (bold text), italic (italic text), code (monowidth
-    /// string), pre (monowidth block), text_link (for clickable text URLs),
-    /// text_mention (for users without usernames)
-    /// </summary>
-    [djName('type')]
-    TypeMessage: TtgMessageEntityType;
-    /// <summary>
-    /// Offset in UTF-16 code units to the start of the entity
-    /// </summary>
-    [djName('offset')]
-    Offset: Int64;
-    /// <summary>
-    /// Length of the entity in UTF-16 code units
-    /// </summary>
-    [djName('length')]
-    Length: Int64;
-    /// <summary>
-    /// Optional. For “text_link” only, url that will be opened after user
-    /// taps on the text
-    /// </summary>
-    [djName('url')]
-    Url: string;
-    /// <summary>
-    /// Optional. For “text_mention” only, the mentioned user
-    /// </summary>
-    [djName('user')]
-    User: TtgUser;
-    destructor Destroy; override;
+    function TypeMessage: TtgMessageEntityType;
+    function Offset: Int64;
+    function Length: Int64;
+    function Url: string;
+    function User: ItgUser;
   end;
 
   [djName('File')]
@@ -752,10 +535,6 @@ type
     destructor Destroy; override;
   end;
 
-  TtgInvoice = class;
-
-  TtgSuccessfulPayment = class;
-
   /// <summary>
   /// This object represents a message.
   /// </summary>
@@ -974,17 +753,16 @@ type
     /// payment</see>, information about the invoice. <see href="https://core.telegram.org/bots/api#payments">
     /// More about payments »</see>
     /// </summary>
-  //  [djName('invoice')]
- //   function Invoice: ItgInvoice;
-    /// <summary>
+    [djName('invoice')]
+    function Invoice: ItgInvoice;
+        /// <summary>
     /// Optional. Message is a service message about a successful payment,
     /// information about the payment. <see href="https://core.telegram.org/bots/api#payments">
     /// More about payments »</see>
     /// </summary>
-  //  [djName('successful_payment')]
-  //  function SuccessfulPayment: ItgSuccessfulPayment;
+    [djName('successful_payment')]
+    function SuccessfulPayment: ItgSuccessfulPayment;
     function &type: TtgMessageType;
-    destructor Destroy; override;
   end;
 
   /// <summary>
@@ -1037,65 +815,41 @@ type
   /// empty query, your bot could return some default or trending results.
   /// </summary>
   [djName('InlineQuery')]
-  TtgInlineQuery = class
+  TtgInlineQuery = class(TBaseJson, ItgInlineQuery)
   public
     /// <summary>
     /// Unique identifier for this query
     /// </summary>
     [djName('id')]
-    ID: string;
+    function ID: string;
     /// <summary>
     /// Sender
     /// </summary>
     [djName('from')]
-    From: TtgUser;
+    function From: ItgUser;
     /// <summary>
     /// Text of the query
     /// </summary>
     [djName('query')]
-    Query: string;
+    function Query: string;
     /// <summary>
     /// Offset of the results to be returned, can be controlled by the bot
     /// </summary>
     [djName('offset')]
-    Offset: string;
-    destructor Destroy; override;
+    function Offset: string;
   end;
 
   /// <summary>
   /// Represents a result of an inline query that was chosen by the user and
   /// sent to their chat partner.
   /// </summary>
-  [djName('ChosenInlineResult')]
-  TtgChosenInlineResult = class
+  TtgChosenInlineResult = class(TBaseJson, ItgChosenInlineResult)
   public
-    /// <summary>
-    /// The unique identifier for the result that was chosen.
-    /// </summary>
-    [djName('result_id')]
-    ResultId: string;
-    /// <summary>
-    /// The user that chose the result.
-    /// </summary>
-    [djName('from')]
-    From: TtgUser;
-    /// <summary>
-    /// The query that was used to obtain the result.
-    /// </summary>
-    [djName('location')]
-    Location: TtgLocation;
-    /// <summary>
-    /// Optional. Identifier of the sent inline message. Available only if
-    /// there is an inline keyboard attached to the message. Will be also
-    /// received in callback queries and can be used to edit the message.
-    /// </summary>
-    [djName('inline_message_id')]
-    InlineMessageId: string;
-    /// <summary>
-    /// The query that was used to obtain the result.
-    /// </summary>
-    [djName('query')]
-    Query: string;
+    function ResultId: string;
+    function From: ItgUser;
+    function Location: ItgLocation;
+    function InlineMessageId: string;
+    function Query: string;
   end;
 
   TtgCallbackQuery = class(TBaseJson, ItgCallbackQuery)
@@ -1244,24 +998,24 @@ type
   /// This object contains information about an incoming pre-checkout query.
   /// </summary>
   [djName('PreCheckoutQuery')]
-  TtgPreCheckoutQuery = class
+  TtgPreCheckoutQuery = class(TBaseJson, ItgPreCheckoutQuery)
   public
     /// <summary>
     /// Unique query identifier
     /// </summary>
     [djName('id')]
-    ID: string;
+    function ID: string;
     /// <summary>
     /// User who sent the query
     /// </summary>
     [djName('from')]
-    From: TtgUser;
+    function From: ItgUser;
     /// <summary>
     /// Three-letter ISO 4217 <see href="https://core.telegram.org/bots/payments#supported-currencies">
     /// currency</see> code
     /// </summary>
     [djName('currency')]
-    Currency: string;
+    function Currency: string;
     /// <summary>
     /// Total price in the smallest units of the currency (Int64, not
     /// float/double). For example, for a price of <c>US$ 1.45</c> pass <c>
@@ -1270,86 +1024,84 @@ type
     /// point for each currency (2 for the majority of currencies).
     /// </summary>
     [djName('total_amount')]
-    TotalAmount: Int64;
+    function TotalAmount: Int64;
     /// <summary>
     /// Bot specified invoice payload
     /// </summary>
     [djName('invoice_payload')]
-    InvoicePayload: string;
+    function InvoicePayload: string;
     /// <summary>
     /// Optional. Identifier of the shipping option chosen by the user
     /// </summary>
     [djName('shipping_option_id')]
-    ShippingOptionId: string;
+    function ShippingOptionId: string;
     /// <summary>
     /// Optional. Order info provided by the user
     /// </summary>
     [djName('order_info')]
-    OrderInfo: TtgOrderInfo;
+    function OrderInfo: ItgOrderInfo;
   end;
 
   /// <summary>
   /// This object represents one shipping option.
   /// </summary>
-  TtgShippingOption = class
+  TtgShippingOption = class(TBaseJson, ItgShippingOption)
   public
     /// <summary>
     /// Shipping option identifier
     /// </summary>
     [djName('id')]
-    ID: string;
+    function ID: string;
     /// <summary>
     /// Option title
     /// </summary>
     [djName('title')]
-    Title: string;
+    function Title: string;
     /// <summary>
     /// List of price portions
     /// </summary>
     [djName('prices')]
-    Prices: TObjectList<TtgLabeledPrice>;
-    constructor Create;
-    destructor Destroy; override;
+    function Prices: TArray<ItgLabeledPrice>;
   end;
 
   /// <summary>
   /// This object contains information about an incoming shipping query.
   /// </summary>
-  TtgShippingQuery = class
+  TtgShippingQuery = class(TBaseJson, ItgShippingQuery)
   public
     /// <summary>
     /// Unique query identifier
     /// </summary>
     [djName('id')]
-    ID: string;
+    function ID: string;
     /// <summary>
     /// User who sent the query
     /// </summary>
     [djName('from')]
-    From: TtgUser;
+    function From: ItgUser;
     /// <summary>
     /// Bot specified invoice payload
     /// </summary>
     [djName('invoice_payload')]
-    InvoicePayload: string;
+    function InvoicePayload: string;
     /// <summary>
     /// User specified shipping address
     /// </summary>
     [djName('shipping_address')]
-    ShippingAddress: TtgShippingAddress;
+    function ShippingAddress: ItgShippingAddress;
   end;
 
   /// <summary>
   /// This object contains basic information about a successful payment.
   /// </summary>
-  TtgSuccessfulPayment = class
+  TtgSuccessfulPayment = class(TBaseJson, ItgSuccessfulPayment)
   public
     /// <summary>
     /// Three-letter ISO 4217 <see href="https://core.telegram.org/bots/payments#supported-currencies">
     /// currency</see> code
     /// </summary>
     [djName('currency')]
-    Currency: string;
+    function Currency: string;
     /// <summary>
     /// Total price in the smallest units of the currency (Int64, not
     /// float/double). For example, for a price of <c>US$ 1.45</c> pass <c>
@@ -1358,32 +1110,32 @@ type
     /// point for each currency (2 for the majority of currencies).
     /// </summary>
     [djName('total_amount')]
-    TotalAmount: Int64;
+    function TotalAmount: Int64;
     /// <summary>
     /// Bot specified invoice payload
     /// </summary>
     [djName('invoice_payload')]
-    InvoicePayload: string;
+    function InvoicePayload: string;
     /// <summary>
     /// Optional. Identifier of the shipping option chosen by the user
     /// </summary>
     [djName('shipping_option_id')]
-    ShippingOptionId: string;
+    function ShippingOptionId: string;
     /// <summary>
     /// Optional. Order info provided by the user
     /// </summary>
     [djName('order_info')]
-    OrderInfo: TtgOrderInfo;
+    function OrderInfo: ItgOrderInfo;
     /// <summary>
     /// Telegram payment identifier
     /// </summary>
     [djName('telegram_payment_charge_id')]
-    TelegramPaymentChargeId: string;
+    function TelegramPaymentChargeId: string;
     /// <summary>
     /// Provider payment identifier
     /// </summary>
     [djName('provider_payment_charge_id')]
-    ProviderPaymentChargeId: string;
+    function ProviderPaymentChargeId: string;
   end;
 {$ENDREGION}
   /// <summary>
@@ -1411,50 +1163,48 @@ type
   /// <summary>
   /// Contains information about the current status of a webhook.
   /// </summary>
-  TtgWebhookInfo = class
+  TtgWebhookInfo = class(TBaseJson, ItgWebhookInfo)
   public
     /// <summary>
     /// Webhook URL, may be empty if webhook is not set up
     /// </summary>
     [djName('url')]
-    Url: string;
+    function Url: string;
     /// <summary>
     /// True, if a custom certificate was provided for webhook certificate
     /// checks
     /// </summary>
     [djName('has_custom_certificate')]
-    HasCustomCertificate: Boolean;
+    function HasCustomCertificate: Boolean;
     /// <summary>
     /// Number of updates awaiting delivery
     /// </summary>
     [djName('pending_update_count')]
-    PendingUpdateCount: Int64;
+    function PendingUpdateCount: Int64;
     /// <summary>
     /// Optional. Unix time for the most recent error that happened when
     /// trying to deliver an update via webhook
     /// </summary>
     [djName('last_error_date')]
-    LastErrorDate: TDateTime;
+    function LastErrorDate: TDateTime;
     /// <summary>
     /// Optional. Error message in human-readable format for the most recent
     /// error that happened when trying to deliver an update via webhook
     /// </summary>
     [djName('last_error_message')]
-    LastErrorMessage: string;
+    function LastErrorMessage: string;
     /// <summary>
     /// Optional. Maximum allowed number of simultaneous HTTPS connections to
     /// the webhook for update delivery
     /// </summary>
     [djName('max_connections')]
-    MaxConnections: Int64;
+    function MaxConnections: Int64;
     /// <summary>
     /// Optional. A list of update types the bot is subscribed to. Defaults
     /// to all update types
     /// </summary>
     [djName('allowed_updates')]
-    AllowedUpdates: TList<string>;
-    constructor Create;
-    destructor Destroy; override;
+    function AllowedUpdates: TArray<string>;
   end;
 
 implementation
@@ -1462,7 +1212,8 @@ implementation
 uses
   FMX.Types,
   System.DateUtils,
-  System.TypInfo;
+  System.TypInfo,
+  System.Rtti;
 { TtgAnimation }
 
 destructor TtgAnimation.Destroy;
@@ -1502,13 +1253,6 @@ begin
   Result := TTgMessage.Create(FJSON.GetValue<string>('message'));
 end;
 
-{ TtgChatMember }
-
-destructor TtgChatMember.Destroy;
-begin
-  FreeAndNil(User);
-  inherited;
-end;
 
 { TtgDocument }
 
@@ -1600,12 +1344,6 @@ begin
   inherited;
 end;
 
-{ TtgInlineQuery }
-destructor TtgInlineQuery.Destroy;
-begin
-  FreeAndNil(From);
-  inherited;
-end;
 
 { TtgMessage }
 
@@ -1663,6 +1401,11 @@ begin
 end;
 
 function TTgMessage.GroupChatCreated: Boolean;
+begin
+
+end;
+
+function TTgMessage.Invoice: ItgInvoice;
 begin
 
 end;
@@ -1732,6 +1475,11 @@ begin
 
 end;
 
+function TTgMessage.SuccessfulPayment: ItgSuccessfulPayment;
+begin
+
+end;
+
 function TTgMessage.SupergroupChatCreated: Boolean;
 begin
 
@@ -1746,34 +1494,34 @@ function TTgMessage.&type: TtgMessageType;
 begin
   if Audio <> nil then
     Exit(TtgMessageType.AudioMessage);
-  if Assigned(Contact) then
+  if Contact <> nil then
     Exit(TtgMessageType.ContactMessage);
-  if Assigned(Document) then
+  if Document <> nil then
     Exit(TtgMessageType.DocumentMessage);
-  if Assigned(Game) then
+  if Game <> nil then
     Exit(TtgMessageType.GameMessage);
-  if Assigned(Location) then
-    Exit(TtgMessageType.LocationMessage);
-  if Assigned(NewChatMember) or Assigned(LeftChatMember) or (Assigned(NewChatPhoto) and (NewChatPhoto.Count > 0)) or (Assigned(NewChatMembers) and (NewChatMembers.Count > 0)) or (not NewChatTitle.IsEmpty) or DeleteChatPhoto or GroupChatCreated or SupergroupChatCreated or ChannelChatCreated or (MigrateToChatId <> 0) or (MigrateFromChatId <> 0) or Assigned(PinnedMessage) then
-    Exit(TtgMessageType.ServiceMessage);
-  if Assigned(Photo) and (Photo.Count > 0) then
-    Exit(TtgMessageType.PhotoMessage);
-  if Assigned(Sticker) then
-    Exit(TtgMessageType.StickerMessage);
-  if Assigned(Venue) then
-    Exit(TtgMessageType.VenueMessage);
-  if Assigned(Video) then
-    Exit(TtgMessageType.VideoMessage);
-  if Assigned(VideoNote) then
-    Exit(TtgMessageType.VideoNoteMessage);
-  if Assigned(Voice) then
-    Exit(TtgMessageType.VoiceMessage);
-  if not Text.IsEmpty then
-    Exit(TtgMessageType.TextMessage);
+//  if Assigned(Location) then
+//    Exit(TtgMessageType.LocationMessage);
+//  if Assigned(NewChatMember) or Assigned(LeftChatMember) or (Assigned(NewChatPhoto) and (NewChatPhoto.Count > 0)) or (Assigned(NewChatMembers) and (NewChatMembers.Count > 0)) or (not NewChatTitle.IsEmpty) or DeleteChatPhoto or GroupChatCreated or SupergroupChatCreated or ChannelChatCreated or (MigrateToChatId <> 0) or (MigrateFromChatId <> 0) or Assigned(PinnedMessage) then
+//    Exit(TtgMessageType.ServiceMessage);
+//  if Assigned(Photo) and (Photo.Count > 0) then
+//    Exit(TtgMessageType.PhotoMessage);
+//  if Assigned(Sticker) then
+//    Exit(TtgMessageType.StickerMessage);
+//  if Assigned(Venue) then
+//    Exit(TtgMessageType.VenueMessage);
+//  if Assigned(Video) then
+//    Exit(TtgMessageType.VideoMessage);
+//  if Assigned(VideoNote) then
+//    Exit(TtgMessageType.VideoNoteMessage);
+//  if Assigned(Voice) then
+//    Exit(TtgMessageType.VoiceMessage);
+//  if not Text.IsEmpty then
+//    Exit(TtgMessageType.TextMessage);
   Result := TtgMessageType.UnknownMessage;
 end;
 
-function TTgMessage.Audio: TtgAudio;
+function TTgMessage.Audio: ItgAudio;
 begin
 
 end;
@@ -1788,7 +1536,7 @@ begin
 
 end;
 
-function TTgMessage.CaptionEntities: TObjectList<TtgMessageEntity>;
+function TTgMessage.CaptionEntities: TArray<ItgMessageEntity>;
 begin
 
 end;
@@ -1798,12 +1546,12 @@ begin
 
 end;
 
-function TTgMessage.Chat: TtgChat;
+function TTgMessage.Chat: ItgChat;
 begin
 
 end;
 
-function TTgMessage.Contact: TtgContact;
+function TTgMessage.Contact: ItgContact;
 begin
 
 end;
@@ -1818,61 +1566,26 @@ begin
 
 end;
 
-function TTgMessage.Venue: TtgVenue;
+function TTgMessage.Venue: ItgVenue;
 begin
 
 end;
 
-function TTgMessage.Video: TtgVideo;
+function TTgMessage.Video: ItgVideo;
 begin
 
 end;
 
-function TTgMessage.VideoNote: TtgVideoNote;
+function TTgMessage.VideoNote: ItgVideoNote;
 begin
 
 end;
 
-function TTgMessage.Voice: TtgVoice;
+function TTgMessage.Voice: ItgVoice;
 begin
 
 end;
 
-destructor TTgMessage.Destroy;
-begin
-  FreeAndNil(Audio);
-  FreeAndNil(Chat);
-  FreeAndNil(Contact);
-  FreeAndNil(Document);
-  FreeAndNil(Entities);
-  FreeAndNil(CaptionEntities);
-  FreeAndNil(ForwardFrom);
-  FreeAndNil(ForwardFromChat);
-  FreeAndNil(ForwardFromChat);
-  FreeAndNil(From);
-  FreeAndNil(Game);
-  FreeAndNil(LeftChatMember);
-  FreeAndNil(Location);
-  FreeAndNil(NewChatMember);
-  FreeAndNil(NewChatMembers);
-  FreeAndNil(NewChatPhoto);
-  FreeAndNil(Photo);
-  FreeAndNil(PinnedMessage);
-  FreeAndNil(ReplyToMessage);
-  FreeAndNil(Sticker);
-  FreeAndNil(SuccessfulPayment);
-  FreeAndNil(Venue);
-  FreeAndNil(Video);
-  FreeAndNil(Voice);
-  inherited Destroy;
-end;
-
-{ TtgMessageEntity }
-destructor TtgMessageEntity.Destroy;
-begin
-  FreeAndNil(User);
-  inherited;
-end;
 
 { TtgVenue }
 destructor TtgVenue.Destroy;
@@ -1889,15 +1602,20 @@ begin
 end;
 
 { TtgShippingOption }
-constructor TtgShippingOption.Create;
+
+function TtgShippingOption.ID: string;
 begin
-  Prices := TObjectList<TtgLabeledPrice>.Create;
+
 end;
 
-destructor TtgShippingOption.Destroy;
+function TtgShippingOption.Prices: TArray<ItgLabeledPrice>;
 begin
-  FreeAndNil(Prices);
-  inherited;
+
+end;
+
+function TtgShippingOption.Title: string;
+begin
+
 end;
 
 { TtgSticker }
@@ -1910,75 +1628,75 @@ end;
 { TtgUpdate }
 function TtgUpdate.CallbackQuery: ItgCallbackQuery;
 begin
-  Result := TtgCallbackQuery.Create();
+  Result := CreateIfExists<TtgCallbackQuery>('callback_query');
 end;
 
 function TtgUpdate.ChannelPost: ITgMessage;
 begin
-
+  Result := CreateIfExists<TTgMessage>('channel_post');
 end;
 
 function TtgUpdate.ChosenInlineResult: ItgChosenInlineResult;
 begin
-
+  Result := CreateIfExists<TtgChosenInlineResult>('chosen_inline_result');
 end;
 
 function TtgUpdate.EditedChannelPost: ITgMessage;
 begin
-
+  Result := CreateIfExists<TTgMessage>('edited_channel_post');
 end;
 
 function TtgUpdate.EditedMessage: ITgMessage;
 begin
-
+  Result := CreateIfExists<TTgMessage>('edited_message');
 end;
 
 function TtgUpdate.ID: Int64;
 begin
-  Result := FJSON.GetValue<Int64>('id');
+  FJSON.TryGetValue<Int64>('id', Result);
 end;
 
 function TtgUpdate.InlineQuery: ItgInlineQuery;
 begin
-
+  Result := CreateIfExists<TtgInlineQuery>('inline_query');
 end;
 
 function TtgUpdate.Message: ITgMessage;
 begin
-
+  Result := CreateIfExists<TTgMessage>('message');
 end;
 
 function TtgUpdate.PreCheckoutQuery: ItgPreCheckoutQuery;
 begin
-
+  Result := CreateIfExists<TtgPreCheckoutQuery>('pre_checkout_query');
 end;
 
 function TtgUpdate.ShippingQuery: ItgShippingQuery;
 begin
-
+  Result := CreateIfExists<TtgShippingQuery>('shipping_query');
 end;
 
 function TtgUpdate.&type: TtgUpdateType;
 begin
-  // if Assigned(CallbackQuery) then
-  // Exit(TtgUpdateType.CallbackQueryUpdate);
-  // if Assigned(ChannelPost) then
-  // Exit(TtgUpdateType.ChannelPost);
-  // if Assigned(ChosenInlineResult) then
-  // Exit(TtgUpdateType.ChosenInlineResultUpdate);
-  // if Assigned(EditedChannelPost) then
-  // Exit(TtgUpdateType.EditedChannelPost);
-  // if Assigned(EditedMessage) then
-  // Exit(TtgUpdateType.EditedMessage);
-  // if Assigned(InlineQuery) then
-  // Exit(TtgUpdateType.InlineQueryUpdate);
-  // if Assigned(message) then
-  // Exit(TtgUpdateType.MessageUpdate);
-  // if Assigned(PreCheckoutQuery) then
-  // Exit(TtgUpdateType.PreCheckoutQueryUpdate);
-  // if Assigned(ShippingQuery) then
-  // Exit(TtgUpdateType.ShippingQueryUpdate);
-  // Result := TtgUpdateType.UnknownUpdate;
+  if CallbackQuery <> nil then
+    Exit(TtgUpdateType.CallbackQueryUpdate);
+  if ChannelPost <> nil then
+    Exit(TtgUpdateType.ChannelPost);
+  if ChosenInlineResult <> nil then
+    Exit(TtgUpdateType.ChosenInlineResultUpdate);
+  if EditedChannelPost <> nil then
+    Exit(TtgUpdateType.EditedChannelPost);
+  if EditedMessage <> nil then
+    Exit(TtgUpdateType.EditedMessage);
+  if InlineQuery <> nil then
+    Exit(TtgUpdateType.InlineQueryUpdate);
+  if message <> nil then
+    Exit(TtgUpdateType.MessageUpdate);
+  if PreCheckoutQuery <> nil then
+    Exit(TtgUpdateType.PreCheckoutQueryUpdate);
+  if ShippingQuery <> nil then
+    Exit(TtgUpdateType.ShippingQueryUpdate);
+  Result := TtgUpdateType.UnknownUpdate;
 end;
 
 { TtgUserProfilePhotos }
@@ -1993,17 +1711,6 @@ begin
   inherited;
 end;
 
-{ TtgWebhookInfo }
-constructor TtgWebhookInfo.Create;
-begin
-  AllowedUpdates := TList<string>.Create;
-end;
-
-destructor TtgWebhookInfo.Destroy;
-begin
-  FreeAndNil(AllowedUpdates);
-  inherited;
-end;
 
 { TtgLocation }
 
@@ -2052,19 +1759,28 @@ begin
   Log.d(FJSON.ToJSON)
 end;
 
+function TBaseJson.CreateIfExists<T>(const AKey: string): T;
+var
+  LValue: string;
+begin
+  if FJSON.TryGetValue<string>(AKey, LValue) then
+    Result := T(TBaseJson.Create(LValue))
+  else
+    Result := nil;
+end;
+
 destructor TBaseJson.Destroy;
 begin
   FJSON.Free;
   inherited;
 end;
 
-function TBaseJson.InitIntf<T, Y>(const AKey: string): Y;
+function TBaseJson.ReadToDateTime(const AKey: string): TDateTime;
 var
-  LValue: string;
+  LValue: Int64;
 begin
-  if FJSON.TryGetValue<string>(AKey, LValue) then
-    Result := T(TBaseJson.Create(LValue));
-
+  if FJSON.TryGetValue<Int64>(AKey, LValue) then
+    Result := UnixToDateTime(LValue, False);
 end;
 
 { TtgResponseParameters }
@@ -2109,6 +1825,376 @@ end;
 function TtgUser.Username: string;
 begin
   Result := FJSON.GetValue<string>('username');
+end;
+
+{ TtgInlineQuery }
+
+function TtgInlineQuery.From: ItgUser;
+begin
+
+end;
+
+function TtgInlineQuery.ID: string;
+begin
+
+end;
+
+function TtgInlineQuery.Offset: string;
+begin
+
+end;
+
+function TtgInlineQuery.Query: string;
+begin
+
+end;
+
+{ TtgChosenInlineResult }
+
+function TtgChosenInlineResult.From: ItgUser;
+begin
+
+end;
+
+function TtgChosenInlineResult.InlineMessageId: string;
+begin
+
+end;
+
+function TtgChosenInlineResult.Location: ItgLocation;
+begin
+
+end;
+
+function TtgChosenInlineResult.Query: string;
+begin
+
+end;
+
+function TtgChosenInlineResult.ResultId: string;
+begin
+
+end;
+
+{ TtgPreCheckoutQuery }
+
+function TtgPreCheckoutQuery.Currency: string;
+begin
+
+end;
+
+function TtgPreCheckoutQuery.From: ItgUser;
+begin
+
+end;
+
+function TtgPreCheckoutQuery.ID: string;
+begin
+
+end;
+
+function TtgPreCheckoutQuery.InvoicePayload: string;
+begin
+
+end;
+
+function TtgPreCheckoutQuery.OrderInfo: ItgOrderInfo;
+begin
+
+end;
+
+function TtgPreCheckoutQuery.ShippingOptionId: string;
+begin
+
+end;
+
+function TtgPreCheckoutQuery.TotalAmount: Int64;
+begin
+
+end;
+
+{ TtgShippingQuery }
+
+function TtgShippingQuery.From: ItgUser;
+begin
+
+end;
+
+function TtgShippingQuery.ID: string;
+begin
+
+end;
+
+function TtgShippingQuery.InvoicePayload: string;
+begin
+
+end;
+
+function TtgShippingQuery.ShippingAddress: ItgShippingAddress;
+begin
+
+end;
+
+{ TtgChatPhoto }
+
+function TtgChatPhoto.BigFileId: string;
+begin
+  FJSON.TryGetValue<string>('big_file_id', Result);
+end;
+
+function TtgChatPhoto.SmallFileId: string;
+begin
+  FJSON.TryGetValue<string>('small_file_id', Result);
+end;
+
+{ TtgChatMember }
+
+function TtgChatMember.CanAddWebPagePreviews: Boolean;
+begin
+  FJSON.TryGetValue<Boolean>('can_add_web_page_previews', Result);
+end;
+
+function TtgChatMember.CanBeEdited: Boolean;
+begin
+  FJSON.TryGetValue<Boolean>('can_change_info', Result);
+end;
+
+function TtgChatMember.CanChangeInfo: Boolean;
+begin
+  FJSON.TryGetValue<Boolean>('can_change_info', Result);
+end;
+
+function TtgChatMember.CanDeleteMessages: Boolean;
+begin
+  FJSON.TryGetValue<Boolean>('can_delete_messages', Result);
+end;
+
+function TtgChatMember.CanEditMessages: Boolean;
+begin
+  FJSON.TryGetValue<Boolean>('can_edit_messages', Result);
+end;
+
+function TtgChatMember.CanInviteUsers: Boolean;
+begin
+  FJSON.TryGetValue<Boolean>('can_invite_users', Result);
+end;
+
+function TtgChatMember.CanPinMessages: Boolean;
+begin
+  FJSON.TryGetValue<Boolean>('can_pin_messages', Result);
+end;
+
+function TtgChatMember.CanPostMessages: Boolean;
+begin
+  FJSON.TryGetValue<Boolean>('can_post_messages', Result);
+end;
+
+function TtgChatMember.CanPromoteMembers: Boolean;
+begin
+  FJSON.TryGetValue<Boolean>('can_promote_members', Result);
+end;
+
+function TtgChatMember.CanRestrictMembers: Boolean;
+begin
+  FJSON.TryGetValue<Boolean>('can_restrict_members', Result);
+end;
+
+function TtgChatMember.CanSendMediaMessages: Boolean;
+begin
+  FJSON.TryGetValue<Boolean>('can_send_media_messages', Result);
+end;
+
+function TtgChatMember.CanSendMessages: Boolean;
+begin
+  FJSON.TryGetValue<Boolean>('can_send_messages', Result);
+end;
+
+function TtgChatMember.CanSendOtherMessages: Boolean;
+begin
+  FJSON.TryGetValue<Boolean>('can_send_other_messages', Result);
+end;
+
+function TtgChatMember.Status: string;
+begin
+  FJSON.TryGetValue<string>('status', Result);
+end;
+
+function TtgChatMember.UntilDate: TDateTime;
+begin
+  Result := ReadToDateTime('until_date');
+end;
+
+function TtgChatMember.User: ItgUser;
+begin
+  Result := CreateIfExists<TtgUser>('user');
+end;
+
+{ TtgChat }
+
+function TtgChat.AllMembersAreAdministrators: Boolean;
+begin
+  FJSON.TryGetValue<Boolean>('all_members_are_administrators', Result);
+end;
+
+function TtgChat.CanSetStickerSet: Boolean;
+begin
+  FJSON.TryGetValue<Boolean>('can_set_sticker_set', Result);
+end;
+
+function TtgChat.Description: string;
+begin
+  FJSON.TryGetValue<string>('description', Result);
+end;
+
+function TtgChat.FirstName: string;
+begin
+  FJSON.TryGetValue<string>('first_name', Result);
+end;
+
+function TtgChat.ID: Int64;
+begin
+  FJSON.TryGetValue<Int64>('id', Result);
+end;
+
+function TtgChat.InviteLink: string;
+begin
+  FJSON.TryGetValue<string>('invite_link', Result);
+end;
+
+function TtgChat.LastName: string;
+begin
+  FJSON.TryGetValue<string>('last_name', Result);
+end;
+
+function TtgChat.Photo: ItgChatPhoto;
+begin
+  Result := CreateIfExists<TtgChatPhoto>('photo');
+end;
+
+function TtgChat.PinnedMessage: ITgMessage;
+begin
+  Result := CreateIfExists<TTgMessage>('pinned_message');
+end;
+
+function TtgChat.StickerSetName: string;
+begin
+  FJSON.TryGetValue<string>('sticker_set_name', Result);
+end;
+
+function TtgChat.Title: string;
+begin
+  FJSON.TryGetValue<string>('title', Result);
+end;
+
+function TtgChat.TypeChat: TtgChatType;
+begin
+
+end;
+
+function TtgChat.Username: string;
+begin
+  FJSON.TryGetValue<string>('username', Result);
+end;
+
+{ TtgSuccessfulPayment }
+
+function TtgSuccessfulPayment.Currency: string;
+begin
+
+end;
+
+function TtgSuccessfulPayment.InvoicePayload: string;
+begin
+
+end;
+
+function TtgSuccessfulPayment.OrderInfo: ItgOrderInfo;
+begin
+
+end;
+
+function TtgSuccessfulPayment.ProviderPaymentChargeId: string;
+begin
+
+end;
+
+function TtgSuccessfulPayment.ShippingOptionId: string;
+begin
+
+end;
+
+function TtgSuccessfulPayment.TelegramPaymentChargeId: string;
+begin
+
+end;
+
+function TtgSuccessfulPayment.TotalAmount: Int64;
+begin
+
+end;
+
+{ TtgWebhookInfo }
+
+function TtgWebhookInfo.AllowedUpdates: TArray<string>;
+begin
+
+end;
+
+function TtgWebhookInfo.HasCustomCertificate: Boolean;
+begin
+
+end;
+
+function TtgWebhookInfo.LastErrorDate: TDateTime;
+begin
+
+end;
+
+function TtgWebhookInfo.LastErrorMessage: string;
+begin
+
+end;
+
+function TtgWebhookInfo.MaxConnections: Int64;
+begin
+
+end;
+
+function TtgWebhookInfo.PendingUpdateCount: Int64;
+begin
+
+end;
+
+function TtgWebhookInfo.Url: string;
+begin
+
+end;
+
+{ TtgMessageEntity }
+
+function TtgMessageEntity.Length: Int64;
+begin
+  FJSON.TryGetValue<Int64>('length', Result);
+end;
+
+function TtgMessageEntity.Offset: Int64;
+begin
+  FJSON.TryGetValue<Int64>('offset', Result);
+end;
+
+function TtgMessageEntity.TypeMessage: TtgMessageEntityType;
+begin
+
+end;
+
+function TtgMessageEntity.Url: string;
+begin
+  FJSON.TryGetValue<string>('url', Result);
+end;
+
+function TtgMessageEntity.User: ItgUser;
+begin
+  Result := CreateIfExists<TtgUser>('user');
 end;
 
 end.

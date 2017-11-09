@@ -6,22 +6,23 @@ uses
   System.Classes,
   TelegAPI.Base,
   TelegAPI.Bot,
-  TelegAPI.Types;
+  TelegAPI.Types,
+  TelegAPI.Types.Intf;
 
 type
-  TtgOnUpdate = procedure(ASender: TObject; AUpdate: TtgUpdate) of object;
+  TtgOnUpdate = procedure(ASender: TObject; AUpdate: ItgUpdate) of object;
 
-  TtgOnUpdates = procedure(ASender: TObject; AUpdates: TArray<TtgUpdate>) of object;
+  TtgOnUpdates = procedure(ASender: TObject; AUpdates: TArray<ItgUpdate>) of object;
 
-  TtgOnMessage = procedure(ASender: TObject; AMessage: TTgMessage) of object;
+  TtgOnMessage = procedure(ASender: TObject; AMessage: ITgMessage) of object;
 
-  TtgOnInlineQuery = procedure(ASender: TObject; AInlineQuery: TtgInlineQuery) of object;
+  TtgOnInlineQuery = procedure(ASender: TObject; AInlineQuery: ItgInlineQuery) of object;
 
-  TtgOnInlineResultChosen = procedure(ASender: TObject; AChosenInlineResult: TtgChosenInlineResult) of object;
+  TtgOnInlineResultChosen = procedure(ASender: TObject; AChosenInlineResult: ItgChosenInlineResult) of object;
 
-  TtgOnCallbackQuery = procedure(ASender: TObject; ACallbackQuery: TtgCallbackQuery) of object;
+  TtgOnCallbackQuery = procedure(ASender: TObject; ACallbackQuery: ItgCallbackQuery) of object;
 
-  TtgOnChannelPost = procedure(ASender: TObject; AChanelPost: TTgMessage) of object;
+  TtgOnChannelPost = procedure(ASender: TObject; AChanelPost: ITgMessage) of object;
 
   TTgBotRecesiverUICore = class;
 
@@ -143,10 +144,10 @@ type
   private
     FParent: TTgBotRecesiverUI;
   protected
-    procedure DoOnUpdates(AUpdates: TArray<TtgUpdate>);
-    procedure DoOnUpdate(AUpdate: TtgUpdate); virtual;
-    procedure DoUpdateWorker(AUpdates: TArray<TtgUpdate>);
-    function DoGetUpdates: TArray<TtgUpdate>;
+    procedure DoOnUpdates(AUpdates: TArray<ItgUpdate>);
+    procedure DoOnUpdate(AUpdate: ItgUpdate); virtual;
+    procedure DoUpdateWorker(AUpdates: TArray<ItgUpdate>);
+    function DoGetUpdates: TArray<ItgUpdate>;
     /// <summary>
     /// Raises the <see cref="TelegAPI.Bot|TtgOnUpdate" />, <see cref="TelegAPI.Bot|TtgOnMessage" />
     /// , <see cref="TelegAPI.Bot|TtgOnInlineQuery" /> , <see cref="TelegAPI.Bot|TtgOnInlineResultChosen" />
@@ -159,7 +160,7 @@ type
     /// <exception cref="TelegaPi.Exceptions|ETelegramException">
     /// Возникает если получено неизвестное обновление
     /// </exception>
-    procedure DoUpdateTypeParser(AValue: TtgUpdate);
+    procedure DoUpdateTypeParser(AValue: ItgUpdate);
     procedure Execute; override;
   public
     property Parent: TTgBotRecesiverUI read FParent write FParent;
@@ -173,7 +174,7 @@ uses
   TelegAPI.Types.Enums;
 { TTgRecesiver.TtgAsync }
 
-function TTgBotRecesiverUICore.DoGetUpdates: TArray<TtgUpdate>;
+function TTgBotRecesiverUICore.DoGetUpdates: TArray<ItgUpdate>;
 begin
   try
     Result := Parent.Bot.GetUpdates(Parent.MessageOffset, 100, 0, Parent.Bot.AllowedUpdates);
@@ -183,7 +184,7 @@ begin
   end;
 end;
 
-procedure TTgBotRecesiverUICore.DoOnUpdate(AUpdate: TtgUpdate);
+procedure TTgBotRecesiverUICore.DoOnUpdate(AUpdate: ItgUpdate);
 begin
   if not Assigned(Parent.OnUpdate) then
     Exit;
@@ -194,7 +195,7 @@ begin
     end);
 end;
 
-procedure TTgBotRecesiverUICore.DoOnUpdates(AUpdates: TArray<TtgUpdate>);
+procedure TTgBotRecesiverUICore.DoOnUpdates(AUpdates: TArray<ItgUpdate>);
 begin
   if not Assigned(Parent.OnUpdates) then
     Exit;
@@ -205,7 +206,7 @@ begin
     end);
 end;
 
-procedure TTgBotRecesiverUICore.DoUpdateWorker(AUpdates: TArray<TtgUpdate>);
+procedure TTgBotRecesiverUICore.DoUpdateWorker(AUpdates: TArray<ItgUpdate>);
 var
   I: Integer;
 begin
@@ -220,7 +221,7 @@ end;
 
 procedure TTgBotRecesiverUICore.Execute;
 var
-  LUpdates: TArray<TtgUpdate>;
+  LUpdates: TArray<ItgUpdate>;
 begin
   if Assigned(Parent.OnConnect) then
     Parent.OnConnect(Self);
@@ -239,7 +240,7 @@ begin
   end;
 end;
 
-procedure TTgBotRecesiverUICore.DoUpdateTypeParser(AValue: TtgUpdate);
+procedure TTgBotRecesiverUICore.DoUpdateTypeParser(AValue: ItgUpdate);
 begin
   case AValue.&Type of
     TtgUpdateType.MessageUpdate:

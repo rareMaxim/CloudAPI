@@ -48,5 +48,7 @@ begin
   Result.Serializers.Register<TDateTime>(TConverterDate);
 end;
 
+{ NameAttribut }
+
 end.
 

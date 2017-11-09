@@ -22,14 +22,11 @@ uses
   TelegAPI.Types.Intf;
 
 type
-  TtgOnReceiveError = procedure(ASender: TObject;
-    AApiRequestException: EApiRequestException) of object;
+  TtgOnReceiveError = procedure(ASender: TObject; AApiRequestException: EApiRequestException) of object;
 
-  TtgOnReceiveGeneralError = procedure(ASender: TObject; AException: Exception)
-    of object;
+  TtgOnReceiveGeneralError = procedure(ASender: TObject; AException: Exception) of object;
 
-  TtgOnReceiveRawData = procedure(ASender: TObject; const AData: string)
-    of object;
+  TtgOnReceiveRawData = procedure(ASender: TObject; const AData: string) of object;
 
   /// <summary>
   /// <para>
@@ -48,19 +45,17 @@ type
     FOnReceiveGeneralError: TtgOnReceiveGeneralError;
     FOnRawData: TtgOnReceiveRawData;
     FParamLoader: TtgParamLoader;
+    function GetToken: string;
+    procedure SetToken(const Value: string);
   protected
     /// <summary>
     /// Мастер-функция для запросов на сервак
     /// </summary>
-    function RequestAPI(const Method: string;
-      Parameters: TDictionary<string, TValue>): string;
-    function SendDataToServer(const Method: string;
-      Parameters: TDictionary<string, TValue>): string;
-    function ParamsToFormData(Parameters: TDictionary<string, TValue>)
-      : TMultipartFormData;
+    function RequestAPI(const Method: string; Parameters: TDictionary<string, TValue>): string;
+    function SendDataToServer(const Method: string; Parameters: TDictionary<string, TValue>): string;
+    function ParamsToFormData(Parameters: TDictionary<string, TValue>): TMultipartFormData;
   public
-    function ApiTest(const ARequest: string;
-      Parameters: TDictionary<string, TValue> = nil): string;
+    function ApiTest(const ARequest: string; Parameters: TDictionary<string, TValue> = nil): string;
     procedure ErrorHandlerGeneral(AException: Exception);
     procedure ErrorHandlerApi(AError: EApiRequestException);
     constructor Create(AOwner: TComponent); overload; override;
@@ -113,9 +108,7 @@ type
     /// order to avoid getting duplicate updates, recalculate offset after
     /// each server response.
     /// </remarks>
-    function GetUpdates(const Offset: Int64 = 0; const Limit: Int64 = 100;
-      const Timeout: Int64 = 0;
-      AllowedUpdates: TAllowedUpdates = UPDATES_ALLOWED_ALL): TArray<ItgUpdate>;
+    function GetUpdates(const Offset: Int64 = 0; const Limit: Int64 = 100; const Timeout: Int64 = 0; AllowedUpdates: TAllowedUpdates = UPDATES_ALLOWED_ALL): TArray<ItgUpdate>;
     /// <summary>
     /// Use this method to specify a url and receive incoming updates via an
     /// outgoing webhook. Whenever there is an update for the bot, we will
@@ -1804,8 +1797,7 @@ type
     /// <summary>
     /// Proxy Settings to be used by the client.
     /// </summary>
-    property ProxySettings: TProxySettings read FProxySettings
-      write FProxySettings;
+    property ProxySettings: TProxySettings read FProxySettings write FProxySettings;
     /// <summary>
     /// <para>
     /// List the types of updates you want your bot to receive.
@@ -1814,8 +1806,7 @@ type
     /// Типы принимаемых сообщений
     /// </para>
     /// </summary>
-    property AllowedUpdates: TAllowedUpdates read FAllowedUpdates
-      write FAllowedUpdates default UPDATES_ALLOWED_ALL;
+    property AllowedUpdates: TAllowedUpdates read FAllowedUpdates write FAllowedUpdates default UPDATES_ALLOWED_ALL;
     /// <summary>
     /// Токен вашего бота.
     /// </summary>
@@ -1825,7 +1816,7 @@ type
     /// <example>
     /// 283107813:AAG4hEElAvIogTSHNHXI6rZtE46A7XQvIH
     /// </example>
-    property Token: string read FToken write FToken;
+    property Token: string read GetToken write SetToken;
 {$ENDREGION}
 {$REGION 'События|Events'}
     /// <summary>
@@ -1838,8 +1829,7 @@ type
     /// pooling.
     /// </para>
     /// </summary>
-    property OnReceiveError: TtgOnReceiveError read FOnReceiveError
-      write FOnReceiveError;
+    property OnReceiveError: TtgOnReceiveError read FOnReceiveError write FOnReceiveError;
     /// <summary>
     /// <para>
     /// Возникает при возникновении ошибки во время запроса фоновых
@@ -1850,10 +1840,8 @@ type
     /// pooling.
     /// </para>
     /// </summary>
-    property OnReceiveGeneralError: TtgOnReceiveGeneralError
-      read FOnReceiveGeneralError write FOnReceiveGeneralError;
-    property OnReceiveRawData: TtgOnReceiveRawData read FOnRawData
-      write FOnRawData;
+    property OnReceiveGeneralError: TtgOnReceiveGeneralError read FOnReceiveGeneralError write FOnReceiveGeneralError;
+    property OnReceiveRawData: TtgOnReceiveRawData read FOnRawData write FOnRawData;
 {$ENDREGION}
   end;
 
@@ -1862,7 +1850,8 @@ implementation
 uses
   DJSON,
   TelegAPI.Helpers,
-  TelegAPI.Utils.Json, System.Json;
+  TelegAPI.Utils.Json,
+  System.Json;
 
 { TTelegramBot }
 {$REGION 'Core'}
@@ -1880,8 +1869,7 @@ begin
   inherited;
 end;
 
-function TTelegramBot.RequestAPI(const Method: string;
-  Parameters: TDictionary<string, TValue>): string;
+function TTelegramBot.RequestAPI(const Method: string; Parameters: TDictionary<string, TValue>): string;
 var
   LTextResponse: string;
 begin
@@ -1896,8 +1884,7 @@ begin
     Result := ApiTest(LTextResponse, Parameters);
 end;
 
-function TTelegramBot.ApiTest(const ARequest: string;
-  Parameters: TDictionary<string, TValue>): string;
+function TTelegramBot.ApiTest(const ARequest: string; Parameters: TDictionary<string, TValue>): string;
 var
   FJSON: TJSONObject;
 begin
@@ -1913,8 +1900,7 @@ begin
   end;
 end;
 
-function TTelegramBot.ParamsToFormData(Parameters: TDictionary<string, TValue>)
-  : TMultipartFormData;
+function TTelegramBot.ParamsToFormData(Parameters: TDictionary<string, TValue>): TMultipartFormData;
 var
   LParameter: TPair<string, TValue>;
   LAddProc: TtgParamLoader.TLoader;
@@ -1927,11 +1913,9 @@ begin
     if LParameter.Value.IsEmpty then
       Continue;
     // look for the given parameter type
-    if FParamLoader.ParamLoaders.TryGetValue(LParameter.Value.TypeInfo, LAddProc)
-    then
+    if FParamLoader.ParamLoaders.TryGetValue(LParameter.Value.TypeInfo, LAddProc) then
     begin
-      LAddProc(Result, LParameter.Value.TypeInfo, LParameter.Key,
-        LParameter.Value);
+      LAddProc(Result, LParameter.Value.TypeInfo, LParameter.Key, LParameter.Value);
     end
     else if LParameter.Value.Kind = tkClass then
     // last variant to search
@@ -1945,13 +1929,11 @@ begin
       end
     end
     else
-      ErrorHandlerGeneral(ETelegramDataConvert.Create('Check parameter type ' +
-        LParameter.Value.ToString));
+      ErrorHandlerGeneral(ETelegramDataConvert.Create('Check parameter type ' + LParameter.Value.ToString));
   end;
 end;
 
-function TTelegramBot.SendDataToServer(const Method: string;
-  Parameters: TDictionary<string, TValue>): string;
+function TTelegramBot.SendDataToServer(const Method: string; Parameters: TDictionary<string, TValue>): string;
 var
   LHttp: THTTPClient;
   LHttpResponse: IHTTPResponse;
@@ -1983,6 +1965,11 @@ begin
     FreeAndNil(LParamToDate);
     FreeAndNil(LHttp);
   end;
+end;
+
+procedure TTelegramBot.SetToken(const Value: string);
+begin
+  FToken := Value;
 end;
 
 procedure TTelegramBot.ErrorHandlerApi(AError: EApiRequestException);
@@ -2077,8 +2064,7 @@ end;
 // end;
 // end;
 //
-function TTelegramBot.GetUpdates(const Offset, Limit, Timeout: Int64;
-AllowedUpdates: TAllowedUpdates): TArray<ItgUpdate>;
+function TTelegramBot.GetUpdates(const Offset, Limit, Timeout: Int64; AllowedUpdates: TAllowedUpdates): TArray<ItgUpdate>;
 var
   Parameters: TDictionary<string, TValue>;
   LJson: TJSONArray;
@@ -2090,12 +2076,11 @@ begin
     Parameters.Add('limit', Limit);
     Parameters.Add('timeout', Timeout);
     Parameters.Add('allowed_updates', AllowedUpdates.ToString);
-    LJson := TJSONObject.ParseJSONValue(RequestAPI('getUpdates', Parameters))
-      as TJSONArray;
+    LJson := TJSONObject.ParseJSONValue(RequestAPI('getUpdates', Parameters)) as TJSONArray;
     try
       SetLength(Result, LJson.Count);
       for I := 0 to High(Result) do
-        Result[I] := TTgUpdate.Create(LJson.Items[i].ToJSON);
+        Result[I] := TTgUpdate.Create(LJson.Items[I].ToJSON);
     finally
       LJson.Free;
     end;
@@ -2422,6 +2407,11 @@ end;
 function TTelegramBot.GetMe: ItgUser;
 begin
   Result := TtgUser.Create(RequestAPI('getMe', nil));
+end;
+
+function TTelegramBot.GetToken: string;
+begin
+
 end;
 
 // function TTelegramBot.getStickerSet(const Name: string): TtgStickerSet;
@@ -3124,3 +3114,4 @@ end;
 // {$ENDREGION}
 
 end.
+

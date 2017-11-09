@@ -21,7 +21,7 @@ type
     ['{BE073F97-DA34-43E6-A15E-14A2B90CAB7E}']
     function User: ItgUser;
     function Status: string;
-    function UntilDate: Int64;
+    function UntilDate: TDateTime;
     function CanBeEdited: Boolean;
     function CanChangeInfo: Boolean;
     function CanPostMessages: Boolean;
@@ -197,9 +197,18 @@ type
     function Animation: ItgAnimation;
   end;
 
-  // ItgInvoice = interface;
+  ItgInvoice = interface
+    function Title: string;
+    function Description: string;
+    function StartParameter: string;
+    function Currency: string;
+    function TotalAmount: Int64;
+  end;
 
-  // ItgSuccessfulPayment = interface;
+  ItgSuccessfulPayment = interface
+    function Currency: string;
+    function TotalAmount: Int64;
+  end;
 
   ITgMessage = interface
     ['{66BC2558-00C0-4BDD-BDDE-E83249787B30}']
@@ -242,8 +251,8 @@ type
     function MigrateToChatId: Int64;
     function MigrateFromChatId: Int64;
     function PinnedMessage: ITgMessage;
-    // function Invoice: ItgInvoice;
-    // function SuccessfulPayment: ItgSuccessfulPayment;
+    function Invoice: ItgInvoice;
+    function SuccessfulPayment: ItgSuccessfulPayment;
     function &type: TtgMessageType;
   end;
 
@@ -338,6 +347,31 @@ type
     function &type: TtgUpdateType;
   end;
 
+  ItgLabeledPrice = interface
+    ['{3EB70EDB-1D5D-42E4-AACD-A225316482E3}']
+    function &Label: string;
+    function Amount: Int64;
+  end;
+
+  ItgShippingOption = interface
+    ['{1E1BCD22-8F26-4EA7-BDB6-770250DF5BF6}']
+    function ID: string;
+    function Title: string;
+    function Prices: TArray<ItgLabeledPrice>;
+  end;
+
+  ItgWebhookInfo = interface
+    ['{C77FA5C3-EF01-4571-AA1B-2BE80724BE3B}']
+    function URL: string;
+    function HasCustomCertificate: Boolean;
+    function PendingUpdateCount: Int64;
+    function LastErrorDate: TDateTime;
+    function LastErrorMessage: string;
+    function MaxConnections: Int64;
+    function AllowedUpdates: TArray<string>;
+  end;
+
 implementation
 
 end.
+

@@ -7,12 +7,16 @@ uses
   TelegAPI.Types,
   TelegAPI.Types.Enums,
   TelegAPI.Types.InlineQueryResults,
-  TelegAPI.Types.ReplyMarkups, TelegAPI.Types.Intf;
+  TelegAPI.Types.ReplyMarkups,
+  TelegAPI.Types.Intf;
 
 type
   ITelegramBot = interface
     ['{12FA5CF8-3723-4ED1-BC1F-F1643B4FA361}']
-
+      // private
+    function GetToken: string;
+    procedure SetToken(const Value: string);
+      // public
      {$REGION 'Getting updates'}
      /// <summary>
      /// <para>
@@ -61,9 +65,7 @@ type
      /// order to avoid getting duplicate updates, recalculate offset after
      /// each server response.
      /// </remarks>
-     function GetUpdates(const Offset: Int64 = 0; const Limit: Int64 = 100;
-     const Timeout: Int64 = 0;
-     AllowedUpdates: TAllowedUpdates = UPDATES_ALLOWED_ALL): TArray<ItgUpdate>;
+    function GetUpdates(const Offset: Int64 = 0; const Limit: Int64 = 100; const Timeout: Int64 = 0; AllowedUpdates: TAllowedUpdates = UPDATES_ALLOWED_ALL): TArray<ItgUpdate>;
     // /// <summary>
     // /// Use this method to specify a url and receive incoming updates via an
     // /// outgoing webhook. Whenever there is an update for the bot, we will
@@ -1747,8 +1749,10 @@ type
     // /// </remarks>
     // function deleteChatStickerSet(ChatId: TValue): Boolean;
     // {$ENDREGION}
+    property Token: string read GetToken write SetToken;
   end;
 
 implementation
 
 end.
+

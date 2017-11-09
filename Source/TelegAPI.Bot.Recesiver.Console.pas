@@ -7,7 +7,7 @@ uses
   System.SysUtils,
   TelegAPI.Base,
   TelegAPI.Bot,
-  TelegAPI.Types;
+  TelegAPI.Types, TelegAPi.Types.Intf;
 
 type
   TtgRecesiverConsoleCore = class;
@@ -17,16 +17,16 @@ type
     FBot: TTelegramBot;
     FIsReceiving: Boolean;
     FMessageOffset: Integer;
-    FOnCallbackQuery: TProc<TtgCallbackQuery>;
-    FOnChannelPost: TProc<TTgMessage>;
+    FOnCallbackQuery: TProc<ItgCallbackQuery>;
+    FOnChannelPost: TProc<ITgMessage>;
     FOnConnect: TProc;
     FOnDisconnect: TProc;
-    FOnInlineQuery: TProc<TtgInlineQuery>;
-    FOnInlineResultChosen: TProc<TtgChosenInlineResult>;
-    FOnMessage: TProc<TTgMessage>;
-    FOnMessageEdited: TProc<TTgMessage>;
-    FOnUpdate: TProc<TtgUpdate>;
-    FOnUpdates: TProc<TArray<TtgUpdate>>;
+    FOnInlineQuery: TProc<ItgInlineQuery>;
+    FOnInlineResultChosen: TProc<ItgChosenInlineResult>;
+    FOnMessage: TProc<ITgMessage>;
+    FOnMessageEdited: TProc<ITgMessage>;
+    FOnUpdate: TProc<ItgUpdate>;
+    FOnUpdates: TProc<TArray<ItgUpdate>>;
     FPollingInterval: Integer;
     FRecesiver: TtgRecesiverConsoleCore;
   protected
@@ -68,8 +68,8 @@ type
     ///     received.
     ///   </para>
     /// </summary>
-    property OnUpdate: TProc<TtgUpdate> read FOnUpdate write FOnUpdate;
-    property OnUpdates: TProc<TArray<TtgUpdate>> read FOnUpdates write FOnUpdates;
+    property OnUpdate: TProc<ItgUpdate> read FOnUpdate write FOnUpdate;
+    property OnUpdates: TProc<TArray<ItgUpdate>> read FOnUpdates write FOnUpdates;
     /// <summary>
     ///   <para>
     ///     Событие возникает когда получено <see cref="TelegAPi.Types|TtgMessage" />
@@ -79,7 +79,7 @@ type
     ///     recieved.
     ///   </para>
     /// </summary>
-    property OnMessage: TProc<TTgMessage> read FOnMessage write FOnMessage;
+    property OnMessage: TProc<ITgMessage> read FOnMessage write FOnMessage;
     /// <summary>
     ///   <para>
     ///     Возникает когда <see cref="TelegAPi.Types|TtgMessage" /> было
@@ -89,8 +89,8 @@ type
     ///     Occurs when <see cref="TelegAPi.Types|TtgMessage" /> was edited.
     ///   </para>
     /// </summary>
-    property OnMessageEdited: TProc<TTgMessage> read FOnMessageEdited write FOnMessageEdited;
-    property OnChannelPost: TProc<TTgMessage> read FOnChannelPost write FOnChannelPost;
+    property OnMessageEdited: TProc<ITgMessage> read FOnMessageEdited write FOnMessageEdited;
+    property OnChannelPost: TProc<ITgMessage> read FOnChannelPost write FOnChannelPost;
     /// <summary>
     ///   <para>
     ///     Возникает, когда получен <see cref="TelegAPi.Types|TtgInlineQuery" />
@@ -100,7 +100,7 @@ type
     ///     received.
     ///   </para>
     /// </summary>
-    property OnInlineQuery: TProc<TtgInlineQuery> read FOnInlineQuery write FOnInlineQuery;
+    property OnInlineQuery: TProc<ItgInlineQuery> read FOnInlineQuery write FOnInlineQuery;
     /// <summary>
     ///   <para>
     ///     Возникает когда получен <see cref="TelegAPi.Types|TtgChosenInlineResult" />
@@ -110,7 +110,7 @@ type
     ///     is received.
     ///   </para>
     /// </summary>
-    property OnInlineResultChosen: TProc<TtgChosenInlineResult> read FOnInlineResultChosen write FOnInlineResultChosen;
+    property OnInlineResultChosen: TProc<ItgChosenInlineResult> read FOnInlineResultChosen write FOnInlineResultChosen;
     /// <summary>
     ///   <para>
     ///     Возникает когда получен <see cref="TelegAPi.Types|TtgCallbackQuery" />
@@ -120,7 +120,7 @@ type
     ///     received
     ///   </para>
     /// </summary>
-    property OnCallbackQuery: TProc<TtgCallbackQuery> read FOnCallbackQuery write FOnCallbackQuery;
+    property OnCallbackQuery: TProc<ItgCallbackQuery> read FOnCallbackQuery write FOnCallbackQuery;
     property OnConnect: TProc read FOnConnect write FOnConnect;
     property OnDisconnect: TProc read FOnDisconnect write FOnDisconnect;
 {$ENDREGION}
@@ -133,10 +133,10 @@ type
     FBot: TTelegramBot;
     FPollingInterval: Integer;
   protected
-    procedure DoOnUpdates(AUpdates: TArray<TtgUpdate>);
-    procedure DoOnUpdate(AUpdate: TtgUpdate); virtual;
-    procedure DoUpdateWorker(AUpdates: TArray<TtgUpdate>);
-    function DoGetUpdates: TArray<TtgUpdate>;
+    procedure DoOnUpdates(AUpdates: TArray<ItgUpdate>);
+    procedure DoOnUpdate(AUpdate: ItgUpdate); virtual;
+    procedure DoUpdateWorker(AUpdates: TArray<ItgUpdate>);
+    function DoGetUpdates: TArray<ItgUpdate>;
     /// <summary>
     ///   Raises the <see cref="TelegAPI.Bot|TtgOnUpdate" />, <see cref="TelegAPI.Bot|TtgOnMessage" />
     ///    , <see cref="TelegAPI.Bot|TtgOnInlineQuery" /> , <see cref="TelegAPI.Bot|TtgOnInlineResultChosen" />
@@ -149,7 +149,7 @@ type
     /// <exception cref="TelegaPi.Exceptions|ETelegramException">
     ///   Возникает если получено неизвестное обновление
     /// </exception>
-    procedure DoUpdateTypeParser(AValue: TtgUpdate);
+    procedure DoUpdateTypeParser(AValue: ItgUpdate);
     procedure Execute; override;
   public
     {$REGION 'Property|Свойства'}
@@ -173,7 +173,7 @@ uses
   TelegAPI.Types.Enums;
 { TTgRecesiver.TtgAsync }
 
-function TtgRecesiverConsoleCore.DoGetUpdates: TArray<TtgUpdate>;
+function TtgRecesiverConsoleCore.DoGetUpdates: TArray<ItgUpdate>;
 begin
   try
     Result := Parent.Bot.GetUpdates(Parent.MessageOffset, 100, 0, Parent.Bot.AllowedUpdates);
@@ -183,21 +183,21 @@ begin
   end;
 end;
 
-procedure TtgRecesiverConsoleCore.DoOnUpdate(AUpdate: TtgUpdate);
+procedure TtgRecesiverConsoleCore.DoOnUpdate(AUpdate: ItgUpdate);
 begin
   if not Assigned(Parent.OnUpdate) then
     Exit;
   Parent.OnUpdate(AUpdate);
 end;
 
-procedure TtgRecesiverConsoleCore.DoOnUpdates(AUpdates: TArray<TtgUpdate>);
+procedure TtgRecesiverConsoleCore.DoOnUpdates(AUpdates: TArray<ItgUpdate>);
 begin
   if not Assigned(Parent.OnUpdates) then
     Exit;
   Parent.OnUpdates(AUpdates);
 end;
 
-procedure TtgRecesiverConsoleCore.DoUpdateWorker(AUpdates: TArray<TtgUpdate>);
+procedure TtgRecesiverConsoleCore.DoUpdateWorker(AUpdates: TArray<ItgUpdate>);
 var
   I: Integer;
 begin
@@ -212,7 +212,7 @@ end;
 
 procedure TtgRecesiverConsoleCore.Execute;
 var
-  LUpdates: TArray<TtgUpdate>;
+  LUpdates: TArray<ItgUpdate>;
 begin
   Parent.DoConnect;
   try
@@ -230,7 +230,7 @@ begin
   end;
 end;
 
-procedure TtgRecesiverConsoleCore.DoUpdateTypeParser(AValue: TtgUpdate);
+procedure TtgRecesiverConsoleCore.DoUpdateTypeParser(AValue: ItgUpdate);
 begin
   case AValue.&Type of
     TtgUpdateType.MessageUpdate:

@@ -13,6 +13,7 @@ uses
   FMX.Memo,
   TelegAPI.Bot,
   TelegAPI.Types,
+  TelegAPI.Types.Intf,
   TelegAPI.Exceptions,
   FMX.Edit,
   FMX.StdCtrls,
@@ -40,20 +41,20 @@ type
     procedure TgBotAsync1Connect(Sender: TObject);
     procedure TgBotAsync1Disconnect(Sender: TObject);
     procedure TgBotAsync1InlineQuery(ASender: TObject; AInlineQuery: TtgInlineQuery);
-    procedure TgBotAsync1Message(ASender: TObject; AMessage: TTgMessage);
+    procedure TgBotAsync1Message(ASender: TObject; AMessage: iTgMessage);
     procedure TgBotAsync1InlineResultChosen(ASender: TObject; AChosenInlineResult: TtgChosenInlineResult);
   private
     { Private declarations }
     procedure WriteLine(const AValue: string);
-    procedure SendInline(Msg: TTgMessage);
-    procedure SendKeyboard(Msg: TTgMessage);
-    procedure SendPhoto(Msg: TTgMessage);
-    procedure SendRequest(Msg: TTgMessage);
-    procedure SendQuest(Msg: TTgMessage);
+    procedure SendInline(Msg: iTgMessage);
+    procedure SendKeyboard(Msg: iTgMessage);
+    procedure SendPhoto(Msg: iTgMessage);
+    procedure SendRequest(Msg: iTgMessage);
+    procedure SendQuest(Msg: iTgMessage);
     // parsing
-    procedure ParseTextMessage(Msg: TTgMessage);
-    procedure ParsePhotoMessage(Msg: TTgMessage);
-    procedure ParseLocationMessage(Msg: TTgMessage);
+    procedure ParseTextMessage(Msg: iTgMessage);
+    procedure ParsePhotoMessage(Msg: iTgMessage);
+    procedure ParseLocationMessage(Msg: iTgMessage);
   public
     { Public declarations }
   end;
@@ -77,12 +78,12 @@ begin
   TgBotRecesiverUI1.IsReceiving := False;
 end;
 
-procedure TMain.ParseLocationMessage(Msg: TTgMessage);
+procedure TMain.ParseLocationMessage(Msg: iTgMessage);
 begin
   WriteLine('Location: ' + Msg.Location.Longitude.ToString + ' ' + Msg.Location.Latitude.ToString);
 end;
 
-procedure TMain.ParsePhotoMessage(Msg: TTgMessage);
+procedure TMain.ParsePhotoMessage(Msg: iTgMessage);
 var
   LFile: TtgFile;
 begin
