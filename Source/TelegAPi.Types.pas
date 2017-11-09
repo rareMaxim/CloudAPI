@@ -18,6 +18,8 @@ type
   protected
     function CreateIfExists<T: class, constructor>(const AKey: string): T;
     function ReadToDateTime(const AKey: string): TDateTime;
+    function InitArray<T>(const AKey: string): TArray<T>;
+    function InitArrayClass<T: class>(const AKey: string): TArray<T>;
   public
     constructor Create(const AJson: string);
     destructor Destroy; override;
@@ -77,7 +79,6 @@ type
 
   TtgMessageEntity = class(TBaseJson, ItgMessageEntity)
   public
-    [djName('type')]
     function TypeMessage: TtgMessageEntityType;
     function Offset: Int64;
     function Length: Int64;
@@ -85,91 +86,33 @@ type
     function User: ItgUser;
   end;
 
-  [djName('File')]
   TtgFile = class(TBaseJson, ItgFile)
   public
-    [djName('file_id')]
     function FileId: string;
-    [djName('file_size')]
     function FileSize: Int64;
-    [djName('file_path')]
     function FilePath: string;
     function CanDownload: Boolean;
     function GetFileUrl(const AToken: string): string;
   end;
 
-  /// <summary>
-  /// This object represents an audio file to be treated as music by the
-  /// Telegram clients.
-  /// </summary>
-  [djName('Audio')]
-  TtgAudio = class(TtgFile)
+  TtgAudio = class(TtgFile, ItgAudio)
   public
-    /// <summary>
-    /// Duration of the audio in seconds as defined by sender
-    /// </summary>
-    [djName('duration')]
-    Duration: Int64;
-    /// <summary>
-    /// Performer of the audio as defined by sender or by audio tags
-    /// </summary>
-    [djName('performer')]
-    Performer: string;
-    /// <summary>
-    /// Title of the audio as defined by sender or by audio tags
-    /// </summary>
-    [djName('title')]
-    Title: string;
-    /// <summary>
-    /// Optional. MIME type of the file as defined by sender
-    /// </summary>
-    [djName('mime_type')]
-    MimeType: string;
+    function Duration: Int64;
+    function Performer: string;
+    function Title: string;
+    function MimeType: string;
   end;
 
-  /// <summary>
-  /// This object represents one size of a photo or a file/sticker thumbnail.
-  /// </summary>
-  /// <remarks>
-  /// A missing thumbnail for a file (or sticker) is presented as an empty
-  /// object.
-  /// </remarks>
-  [djName('PhotoSize')]
-  TtgPhotoSize = class(TtgFile)
+  TtgPhotoSize = class(TtgFile, ItgPhotoSize)
   public
-    /// <summary>
-    /// Photo width
-    /// </summary>
-    [djName('width')]
-    Width: Int64;
-    /// <summary>
-    /// Photo height
-    /// </summary>
-    [djName('Height')]
-    Height: Int64;
+    function Width: Int64;
+    function Height: Int64;
   end;
 
-  /// <summary>
-  /// This object represents a general file (as opposed to photos, voice
-  /// messages and audio files).
-  /// </summary>
-  [djName('Document')]
   TtgDocument = class(TtgFile, ItgDocument)
   public
-    /// <summary>
-    /// Document thumbnail as defined by sender
-    /// </summary>
-    [djName('thumb')]
     function Thumb: ItgPhotoSize;
-    /// <summary>
-    /// Optional. Original filename as defined by sender
-    /// </summary>
-    [djName('file_name')]
     function FileName: string;
-    /// <summary>
-    /// Optional. MIME type of the file as defined by sender
-    /// </summary>
-    [djName('mime_type')]
     function MimeType: string;
   end;
 
@@ -177,99 +120,50 @@ type
   /// This object describes the position on faces where a mask should be
   /// placed by default.
   /// </summary>
-  TtgMaskPosition = class
+  TtgMaskPosition = class(TBaseJson, ItgMaskPosition)
     /// <summary>
     /// The part of the face relative to which the mask should be placed. One
     /// of “forehead”, “eyes”, “mouth”, or “chin”.
     /// </summary>
     [djName('point')]
-    Point: TtgMaskPositionPoint;
-    /// <summary>
-    /// Shift by X-axis measured in widths of the mask scaled to the face
-    /// size, from left to right. For example, choosing -1.0 will place mask
-    /// just to the left of the default mask position.
-    /// </summary>
-    [djName('x_shift')]
-    XShift: Single;
-    /// <summary>
-    /// Shift by Y-axis measured in heights of the mask scaled to the face
-    /// size, from top to bottom. For example, 1.0 will place the mask just
-    /// below the default mask position.
-    /// </summary>
-    [djName('y_shift')]
-    YShift: Single;
-    /// <summary>
-    /// Mask scaling coefficient. For example, 2.0 means double size.
-    /// </summary>
-    [djName('scale')]
-    Scale: Single;
+    function Point: TtgMaskPositionPoint;
+    function XShift: Single;
+    function YShift: Single;
+    function Scale: Single;
   end;
 
-  /// <summary>
-  /// This object represents a sticker.
-  /// </summary>
-  TtgSticker = class(TtgFile)
+  TtgSticker = class(TtgFile, ItgSticker)
   public
-    /// <summary>
-    /// Sticker width
-    /// </summary>
-    [djName('width')]
-    Width: Int64;
-    /// <summary>
-    /// Sticker height
-    /// </summary>
-    [djName('width')]
-    Height: Int64;
-    /// <summary>
-    /// Sticker thumbnail in .webp or .jpg format
-    /// </summary>
-    [djName('thumb')]
-    Thumb: TtgPhotoSize;
-    /// <summary>
-    /// Optional. Emoji associated with the sticker
-    /// </summary>
-    [djName('emoji')]
-    Emoji: string;
-    /// <summary>
-    /// Optional. Name of the sticker set to which the sticker belongs
-    /// </summary>
-    [djName('set_name')]
-    SetName: string;
-    /// <summary>
-    /// Optional. For mask stickers, the position where the mask should be
-    /// placed
-    /// </summary>
-    [djName('mask_position')]
-    MaskPosition: TtgMaskPosition;
-    destructor Destroy; override;
+    function Width: Int64;
+    function Height: Int64;
+    function Thumb: ItgPhotoSize;
+    function Emoji: string;
+    function SetName: string;
+    function MaskPosition: ItgMaskPosition;
   end;
 
-  /// <summary>
-  /// This object represents a sticker set.
-  /// </summary>
-  TtgStickerSet = class
+  TtgStickerSet = class(TBaseJson, ItgStickerSet)
+  public
     /// <summary>
     /// Sticker set name
     /// </summary>
     [djName('name')]
-    Name: string;
+    function Name: string;
     /// <summary>
     /// Sticker set title
     /// </summary>
     [djName('title')]
-    Title: string;
+    function Title: string;
     /// <summary>
     /// True, if the sticker set contains masks
     /// </summary>
     [djName('contains_masks')]
-    ContainsMasks: Boolean;
+    function ContainsMasks: Boolean;
     /// <summary>
     /// List of all set stickers
     /// </summary>
     [djName('stickers')]
-    Stickers: TObjectList<TtgSticker>;
-    constructor Create;
-    destructor Destroy; override;
+    function Stickers: TArray<ItgSticker>;
   end;
 
   /// <summary>
@@ -466,51 +360,34 @@ type
     destructor Destroy; override;
   end;
 
-  /// <summary>
-  /// This object represents one row of the high scores table for a game.
-  /// </summary>
-  [djName('Game')]
-  TtgGameHighScore = class
+  TtgGameHighScore = class(TBaseJson, ItgGameHighScore)
   public
-    /// <summary>
-    /// Position in high score table for the game
-    /// </summary>
-    [djName('position')]
-    Position: Int64;
-    /// <summary>
-    /// User
-    /// </summary>
-    [djName('user')]
-    User: TtgUser;
-    /// <summary>
-    /// Score
-    /// </summary>
-    [djName('score')]
-    Score: Int64;
-    destructor Destroy; override;
+    function Position: Int64;
+    function User: ItgUser;
+    function Score: Int64;
   end;
 
   /// <summary>
   /// This object represents a game. Use BotFather to create and edit games,
   /// their short names will act as unique identifiers.
   /// </summary>
-  TtgGame = class
+  TtgGame = class(TBaseJson, ItgGame)
   public
     /// <summary>
     /// Title of the game
     /// </summary>
     [djName('title')]
-    Title: string;
+    function Title: string;
     /// <summary>
     /// Description of the game
     /// </summary>
     [djName('description')]
-    Description: string;
+    function Description: string;
     /// <summary>
     /// Photo that will be displayed in the game message in chats.
     /// </summary>
     [djName('photo')]
-    Photo: TObjectList<TtgPhotoSize>;
+    function Photo: TArray<ItgPhotoSize>;
     /// <summary>
     /// Optional. Brief description of the game or high scores included in
     /// the game message. Can be automatically edited to include current high
@@ -518,21 +395,19 @@ type
     /// edited using editMessageText. 0-4096 characters.
     /// </summary>
     [djName('text')]
-    Text: string;
+    function Text: string;
     /// <summary>
     /// Optional. Special entities that appear in text, such as usernames,
     /// URLs, bot commands, etc.
     /// </summary>
     [djName('text_entities')]
-    TextEntities: TObjectList<TtgMessageEntity>;
+    function TextEntities: TArray<ItgMessageEntity>;
     /// <summary>
     /// Optional. Animation that will be displayed in the game message in
     /// chats. Upload via BotFather
     /// </summary>
     [djName('animation')]
-    Animation: TtgAnimation;
-    constructor Create;
-    destructor Destroy; override;
+    function Animation: ItgAnimation;
   end;
 
   /// <summary>
@@ -1225,7 +1100,7 @@ end;
 { TtgCallbackQuery }
 function TtgCallbackQuery.Data: string;
 begin
-  Result := FJSON.GetValue<string>('data');
+  FJSON.TryGetValue<string>('data', Result);
 end;
 
 function TtgCallbackQuery.From: ItgUser;
@@ -1235,22 +1110,22 @@ end;
 
 function TtgCallbackQuery.GameShortName: string;
 begin
-  Result := FJSON.GetValue<string>('game_short_name');
+  FJSON.TryGetValue<string>('game_short_name', Result);
 end;
 
 function TtgCallbackQuery.ID: string;
 begin
-  Result := FJSON.GetValue<string>('id');
+  FJSON.TryGetValue<string>('id', Result);
 end;
 
 function TtgCallbackQuery.InlineMessageId: string;
 begin
-  Result := FJSON.GetValue<string>('inline_message_id');
+  FJSON.TryGetValue<string>('inline_message_id', Result);
 end;
 
 function TtgCallbackQuery.Message: ITgMessage;
 begin
-  Result := TTgMessage.Create(FJSON.GetValue<string>('message'));
+  Result := CreateIfExists<TTgMessage>('message');
 end;
 
 
@@ -1258,17 +1133,17 @@ end;
 
 function TtgDocument.FileName: string;
 begin
-
+  FJSON.TryGetValue<string>('file_name', Result);
 end;
 
 function TtgDocument.MimeType: string;
 begin
-
+  FJSON.TryGetValue<string>('mime_type', Result);
 end;
 
 function TtgDocument.Thumb: ItgPhotoSize;
 begin
-
+  Result := CreateIfExists<TtgPhotoSize>('thumb');
 end;
 
 { TtgFile }
@@ -1279,17 +1154,17 @@ end;
 
 function TtgFile.FileId: string;
 begin
-
+  FJSON.TryGetValue<string>('file_id', Result);
 end;
 
 function TtgFile.FilePath: string;
 begin
-
+  FJSON.TryGetValue<string>('file_path', Result);
 end;
 
 function TtgFile.FileSize: Int64;
 begin
-
+  FJSON.TryGetValue<Int64>('file_size', Result);
 end;
 
 function TtgFile.GetFileUrl(const AToken: string): string;
@@ -1321,123 +1196,125 @@ begin
   Content := AContent;
 end;
 
-{ TtgGame }
-constructor TtgGame.Create;
+function TtgGameHighScore.Position: Int64;
 begin
-  inherited Create;
-  Photo := TObjectList<TtgPhotoSize>.Create;
-  TextEntities := TObjectList<TtgMessageEntity>.Create;
+  FJSON.TryGetValue<Int64>('position', Result);
 end;
 
-destructor TtgGame.Destroy;
+function TtgGameHighScore.Score: Int64;
 begin
-  FreeAndNil(Animation);
-  FreeAndNil(Photo);
-  FreeAndNil(TextEntities);
-  inherited;
+  FJSON.TryGetValue<Int64>('score', Result);
 end;
 
-{ TtgGameHighScore }
-destructor TtgGameHighScore.Destroy;
+function TtgGameHighScore.User: ItgUser;
 begin
-  FreeAndNil(User);
-  inherited;
+  Result := CreateIfExists<TtgUser>('user');
 end;
-
 
 { TtgMessage }
 
 function TTgMessage.Document: ItgDocument;
-var
-  LValue: string;
 begin
-  if FJSON.TryGetValue<string>('document', LValue) then
-    Result := TtgDocument.Create(LValue);
+  Result := CreateIfExists<TtgDocument>('document');
 end;
 
 function TTgMessage.EditDate: TDateTime;
 begin
-  Result := UnixToDateTime(FJSON.GetValue<Int64>('edit_date'), False);
+  Result := ReadToDateTime('edit_date');
 end;
 
 function TTgMessage.Entities: TArray<ItgMessageEntity>;
+var
+  LValue: string;
+  LJsonArray: TJSONArray;
+  I: Integer;
 begin
-
+  if FJSON.TryGetValue<string>('entities', LValue) then
+  begin
+    LJsonArray := TJSONObject.ParseJSONValue(LValue) as TJSONArray;
+    try
+      SetLength(Result, LJsonArray.Count);
+      for I := 0 to LJsonArray.Count - 1 do
+        Result[I] := CreateIfExists<TtgMessageEntity>('entities');
+    finally
+      LJsonArray.Free;
+    end;
+  end;
 end;
 
 function TTgMessage.ForwardDate: TDateTime;
 begin
-
+  Result := ReadToDateTime('forward_date');
 end;
 
 function TTgMessage.ForwardFrom: ItgUser;
 begin
-
+  Result := CreateIfExists<TtgUser>('forward_from');
 end;
 
 function TTgMessage.ForwardFromChat: ItgChat;
 begin
-
+  Result := CreateIfExists<TtgChat>('forward_from_chat');
 end;
 
 function TTgMessage.ForwardFromMessageId: Int64;
 begin
-
+  FJSON.TryGetValue<Int64>('forward_from_message_id', Result);
 end;
 
 function TTgMessage.ForwardSignature: string;
 begin
-
+  FJSON.TryGetValue<string>('forward_signature', Result);
 end;
 
 function TTgMessage.From: ItgUser;
 begin
-
+  Result := CreateIfExists<TtgUser>('from');
 end;
 
 function TTgMessage.Game: ItgGame;
 begin
-
+  Result := CreateIfExists<TtgUser>('game');
 end;
 
 function TTgMessage.GroupChatCreated: Boolean;
 begin
-
+  FJSON.TryGetValue<Boolean>('group_chat_created', Result);
 end;
 
 function TTgMessage.Invoice: ItgInvoice;
 begin
-
+  Result := CreateIfExists<TtgInvoice>('invoice');
 end;
 
 function TTgMessage.LeftChatMember: ItgUser;
 begin
-
+  Result := CreateIfExists<TtgUser>('left_chat_member');
 end;
 
 function TTgMessage.Location: ItgLocation;
 begin
-
+  Result := CreateIfExists<TtgLocation>('location');
 end;
 
 function TTgMessage.MessageId: Int64;
 begin
-
+  FJSON.TryGetValue<Int64>('message_id', Result);
 end;
 
 function TTgMessage.MigrateFromChatId: Int64;
 begin
-
+  FJSON.TryGetValue<Int64>('migrate_from_chat_id', Result);
 end;
 
 function TTgMessage.MigrateToChatId: Int64;
 begin
-
+  FJSON.TryGetValue<Int64>('migrate_to_chat_id', Result);
 end;
 
 function TTgMessage.NewChatMember: ItgUser;
 begin
-
+  Result := CreateIfExists<TtgUser>('new_chat_member');
 end;
 
 function TTgMessage.NewChatMembers: TArray<ItgUser>;
@@ -1618,12 +1495,6 @@ begin
 
 end;
 
-{ TtgSticker }
-destructor TtgSticker.Destroy;
-begin
-  FreeAndNil(Thumb);
-  inherited;
-end;
 
 { TtgUpdate }
 function TtgUpdate.CallbackQuery: ItgCallbackQuery;
@@ -1690,7 +1561,7 @@ begin
     Exit(TtgUpdateType.EditedMessage);
   if InlineQuery <> nil then
     Exit(TtgUpdateType.InlineQueryUpdate);
-  if message <> nil then
+  if Message <> nil then
     Exit(TtgUpdateType.MessageUpdate);
   if PreCheckoutQuery <> nil then
     Exit(TtgUpdateType.PreCheckoutQueryUpdate);
@@ -1727,15 +1598,24 @@ end;
 
 { TtgStickerSet }
 
-constructor TtgStickerSet.Create;
+function TtgStickerSet.ContainsMasks: Boolean;
 begin
-  Stickers := TObjectList<TtgSticker>.Create;
+  FJSON.TryGetValue<Boolean>('contains_masks', Result);
 end;
 
-destructor TtgStickerSet.Destroy;
+function TtgStickerSet.Name: string;
 begin
-  Stickers.Free;
-  inherited;
+  FJSON.TryGetValue<string>('name', Result);
+end;
+
+function TtgStickerSet.Stickers: TArray<ItgSticker>;
+begin
+
+end;
+
+function TtgStickerSet.Title: string;
+begin
+  FJSON.TryGetValue<string>('title', Result);
 end;
 
 { TtgLabeledPrice }
@@ -1773,6 +1653,40 @@ destructor TBaseJson.Destroy;
 begin
   FJSON.Free;
   inherited;
+end;
+
+function TBaseJson.InitArray<T>(const AKey: string): TArray<T>;
+var
+  LValue: string;
+  LJsonArray: TJSONArray;
+  I: Integer;
+begin
+  if FJSON.TryGetValue<string>(AKey, LValue) then
+  begin
+    LJsonArray := TJSONObject.ParseJSONValue(LValue) as TJSONArray;
+    SetLength(Result, LJsonArray.Count);
+    for I := 0 to LJsonArray.Count - 1 do
+      FJSON.TryGetValue<T>(AKey, Result[I]);
+  end;
+end;
+
+function TBaseJson.InitArrayClass<T>(const AKey: string): TArray<T>;
+var
+  LValue: string;
+  LJsonArray: TJSONArray;
+  I: Integer;
+begin
+  if FJSON.TryGetValue<string>(AKey, LValue) then
+  begin
+    LJsonArray := TJSONObject.ParseJSONValue(LValue) as TJSONArray;
+    try
+      SetLength(Result, LJsonArray.Count);
+      for I := 0 to LJsonArray.Count - 1 do
+        Result[I] := CreateIfExists<T>(AKey);
+    finally
+      LJsonArray.Free;
+    end;
+  end;
 end;
 
 function TBaseJson.ReadToDateTime(const AKey: string): TDateTime;
@@ -2195,6 +2109,126 @@ end;
 function TtgMessageEntity.User: ItgUser;
 begin
   Result := CreateIfExists<TtgUser>('user');
+end;
+
+{ TtgAudio }
+
+function TtgAudio.Duration: Int64;
+begin
+  FJSON.TryGetValue<Int64>('duration', Result);
+end;
+
+function TtgAudio.MimeType: string;
+begin
+  FJSON.TryGetValue<string>('mime_type', Result);
+end;
+
+function TtgAudio.Performer: string;
+begin
+  FJSON.TryGetValue<string>('performer', Result);
+end;
+
+function TtgAudio.Title: string;
+begin
+  FJSON.TryGetValue<string>('title', Result);
+end;
+
+{ TtgPhotoSize }
+
+function TtgPhotoSize.Height: Int64;
+begin
+  FJSON.TryGetValue<Int64>('height', Result);
+end;
+
+function TtgPhotoSize.Width: Int64;
+begin
+  FJSON.TryGetValue<Int64>('width', Result);
+end;
+
+{ TtgMaskPosition }
+
+function TtgMaskPosition.Point: TtgMaskPositionPoint;
+begin
+
+end;
+
+function TtgMaskPosition.Scale: Single;
+begin
+  FJSON.TryGetValue<Single>('scale', Result);
+end;
+
+function TtgMaskPosition.XShift: Single;
+begin
+  FJSON.TryGetValue<Single>('x_shift', Result);
+end;
+
+function TtgMaskPosition.YShift: Single;
+begin
+  FJSON.TryGetValue<Single>('y_shift', Result);
+end;
+
+{ TtgSticker }
+
+function TtgSticker.Emoji: string;
+begin
+  FJSON.TryGetValue<string>('emoji', Result);
+end;
+
+function TtgSticker.Height: Int64;
+begin
+  FJSON.TryGetValue<Int64>('height', Result);
+end;
+
+function TtgSticker.MaskPosition: ItgMaskPosition;
+begin
+  Result := CreateIfExists<TtgMaskPosition>('mask_position');
+end;
+
+function TtgSticker.SetName: string;
+begin
+  FJSON.TryGetValue<string>('set_name', Result);
+end;
+
+function TtgSticker.Thumb: ItgPhotoSize;
+begin
+  Result := CreateIfExists<TtgPhotoSize>('thumb');
+end;
+
+function TtgSticker.Width: Int64;
+begin
+  FJSON.TryGetValue<Int64>('width', Result);
+end;
+
+{ TtgGame }
+
+function TtgGame.Animation: ItgAnimation;
+begin
+
+end;
+
+function TtgGame.Description: string;
+begin
+
+end;
+
+function TtgGame.Photo: TArray<ItgPhotoSize>;
+begin
+
+end;
+
+function TtgGame.Text: string;
+begin
+
+end;
+
+function TtgGame.TextEntities: TArray<ItgMessageEntity>;
+begin
+
+end;
+
+function TtgGame.Title: string;
+begin
+
 end;
 
 end.
