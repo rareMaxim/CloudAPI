@@ -104,6 +104,7 @@ $(PreBuildEvent)]]>
         <DCCReference Include="TTelegramBot.dcr"/>
         <DCCReference Include="rtl.dcp"/>
         <DCCReference Include="DJSON_Project.dcp"/>
+        <DCCReference Include="fmx.dcp"/>
         <DCCReference Include="..\Source\TelegAPI.Base.pas"/>
         <DCCReference Include="..\Source\TelegAPI.Bot.pas"/>
         <DCCReference Include="..\Source\TelegAPI.Bot.Intf.pas"/>
@@ -121,6 +122,7 @@ $(PreBuildEvent)]]>
         <DCCReference Include="..\Source\TelegAPI.Utils.Converters.pas"/>
         <DCCReference Include="..\Source\TelegAPI.Utils.Json.pas"/>
         <DCCReference Include="..\Source\TelegAPI.Utils.Params.pas"/>
+        <DCCReference Include="..\Source\TelegAPi.Types.Intf.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -167,7 +169,7 @@ $(PreBuildEvent)]]>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="C:\Users\Public\Documents\Embarcadero\Studio\19.0\Bpl\TelegaPiBot.bpl" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="C:\Users\Public\Documents\Embarcadero\Studio\18.0\Bpl\TelegaPiBot.bpl" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
                         <RemoteName>TelegaPiBot.bpl</RemoteName>
                         <Overwrite>true</Overwrite>

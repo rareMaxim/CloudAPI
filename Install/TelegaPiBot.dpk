@@ -31,7 +31,8 @@ package TelegaPiBot;
 
 requires
   rtl,
-  DJSON_Project;
+  DJSON_Project,
+  fmx;
 
 contains
   TelegAPI.Base in '..\Source\TelegAPI.Base.pas',
@@ -50,6 +51,8 @@ contains
   TelegAPI.Utils in '..\Source\TelegAPI.Utils.pas',
   TelegAPI.Utils.Converters in '..\Source\TelegAPI.Utils.Converters.pas',
   TelegAPI.Utils.Json in '..\Source\TelegAPI.Utils.Json.pas',
-  TelegAPI.Utils.Params in '..\Source\TelegAPI.Utils.Params.pas';
+  TelegAPI.Utils.Params in '..\Source\TelegAPI.Utils.Params.pas',
+  TelegAPi.Types.Intf in '..\Source\TelegAPi.Types.Intf.pas';
+
 end.
 

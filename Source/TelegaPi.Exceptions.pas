@@ -6,7 +6,7 @@ uses
   System.SysUtils,
   System.Rtti,
   System.Generics.Collections,
-  TelegaPi.Types;
+  TelegaPi.Types, TelegAPi.Types.Intf;
 
 type
   ETelegramException = class(Exception);
@@ -23,11 +23,10 @@ type
   EApiRequestException = class(Exception)
   private
     FErrorCode: Integer;
-    FParameters: TrgResponseParameters;
+    FParameters: ItgResponseParameters;
     FRawData: string;
     FSendedParams: TDictionary<string, TValue>;
   public
-    class function FromApiResponse<T>(AApiResponse: TtgApiResponse<T>; ASentParam: TDictionary<string, TValue> = nil): EApiRequestException; overload;
     /// <summary>
     ///   Initializes a new instance of the <see cref="TelegaPi.Exceptions|EApiRequestException" />
     ///    class.
@@ -49,7 +48,7 @@ type
     /// <summary>
     ///   Contains information about why a request was unsuccessfull.
     /// </summary>
-    property Parameters: TrgResponseParameters read FParameters write FParameters;
+    property Parameters: ItgResponseParameters read FParameters write FParameters;
     property SentParams: TDictionary<string, TValue> read FSendedParams;
     property RawData: string read FRawData write FRawData;
   end;
@@ -76,13 +75,6 @@ begin
   inherited Create(AMessage);
   FErrorCode := AErrorCode;
   FSendedParams := ASentParam;
-end;
-
-class function EApiRequestException.FromApiResponse<T>(AApiResponse: TtgApiResponse<T>; ASentParam: TDictionary<string, TValue>): EApiRequestException;
-begin
-  Result := EApiRequestException.Create(AApiResponse.Message, AApiResponse.Code, ASentParam);
-  Result.Parameters := AApiResponse.Parameters;
-  Result.RawData := dj.From(AApiResponse).ToJson;
 end;
 
 function EApiRequestException.ToString: string;
