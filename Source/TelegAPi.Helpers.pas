@@ -42,17 +42,13 @@ type
     procedure AddStream(const AFieldName: string; Data: TStream; const AFileName: string = '');
   end;
 
-//  TtgMessageHelper = class helper for TTgMessage
-   // function IsCommand(const AValue: string): Boolean;
-//  end;
-
 implementation
 
 uses
   System.IOUtils,
   System.SysUtils,
   System.Generics.Collections,
-  System.RegularExpressions;
+  System.RegularExpressions, TelegAPi.Types.Intf;
 
 { TtgParseModeHelper }
 
@@ -162,22 +158,6 @@ begin
   end;
 end;
 
-{ TtgMessageHelper }
-//
-//function TtgMessageHelper.IsCommand(const AValue: string): Boolean;
-//var
-//  LEnt: ItgMessageEntity;
-//begin
-//  Result := False;
-//  if Self.Entities = nil then
-//    exit;
-//  for LEnt in Self.Entities do
-//    if (LEnt.TypeMessage = TtgMessageEntityType.bot_command) then
-//      if Text.Substring(LEnt.Offset, LEnt.Length).StartsWith(AValue, True) then
-//      begin
-//        Exit(True);
-//      end;
-//end;
 
 end.
 

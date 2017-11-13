@@ -28,14 +28,6 @@ type
 
   TtgOnReceiveRawData = procedure(ASender: TObject; const AData: string) of object;
 
-  /// <summary>
-  /// <para>
-  /// Клиент для работы с Telegram Bot API
-  /// </para>
-  /// <para>
-  /// A client to use the Telegram Bot API
-  /// </para>
-  /// </summary>
   TTelegramBot = class(TtgAbstractComponent, ITelegramBot)
   private
     FToken: string;
@@ -109,23 +101,21 @@ type
     function EditMessageReplyMarkup(ChatId: TValue; MessageId: Int64; ReplyMarkup: IReplyMarkup = nil): ITgMessage; overload;
     function EditMessageReplyMarkup(const InlineMessageId: string; ReplyMarkup: IReplyMarkup = nil): ITgMessage; overload;
     function DeleteMessage(ChatId: TValue; MessageId: Int64): Boolean;
-     {$ENDREGION}
-     {$REGION 'Inline mode'}
+{$ENDREGION}
+{$REGION 'Inline mode'}
     function AnswerInlineQuery(const InlineQueryId: string; Results: TArray<TtgInlineQueryResult>; CacheTime: Int64 = 300; IsPersonal: Boolean = False; const NextOffset: string = ''; const SwitchPmText: string = ''; const SwitchPmParameter: string = ''): Boolean;
-     {$ENDREGION}
-     {$REGION 'Payments'}
+{$ENDREGION}
+{$REGION 'Payments'}
     function SendInvoice(ChatId: Int64; const title: string; const Description: string; const Payload: string; const ProviderToken: string; const StartParameter: string; const Currency: string; Prices: TArray<TtgLabeledPrice>; const PhotoUrl: string = ''; PhotoSize: Int64 = 0; PhotoWidth: Int64 = 0; PhotoHeight: Int64 = 0; NeedName: Boolean = False; NeedPhoneNumber: Boolean = False; NeedEmail: Boolean = False; NeedShippingAddress: Boolean = False; IsFlexible: Boolean = False; DisableNotification: Boolean = False; ReplyToMessageId: Int64 = 0; ReplyMarkup: IReplyMarkup = nil): ITgMessage;
     function AnswerShippingQuery(const ShippingQueryId: string; Ok: Boolean; ShippingOptions: TArray<TtgShippingOption>; const ErrorMessage: string): Boolean;
     function AnswerPreCheckoutQuery(const PreCheckoutQueryId: string; Ok: Boolean; const ErrorMessage: string = ''): Boolean;
-     {$ENDREGION}
-     {$REGION 'Games'}
-
+{$ENDREGION}
+{$REGION 'Games'}
     function SendGame(ChatId: Int64; const GameShortName: string; DisableNotification: Boolean = False; ReplyToMessageId: Int64 = 0; ReplyMarkup: IReplyMarkup = nil): ITgMessage;
     function SetGameScore(UserId: Int64; Score: Int64; Force: Boolean = False; DisableEditMessage: Boolean = False; ChatId: Int64 = 0; MessageId: Int64 = 0; const InlineMessageId: string = ''): ITgMessage;
     function GetGameHighScores(UserId: Int64; ChatId: Int64 = 0; MessageId: Int64 = 0; const InlineMessageId: string = ''): TArray<TtgGameHighScore>;
-     {$ENDREGION}
-     {$REGION 'Manage groups and channels'}
-
+{$ENDREGION}
+{$REGION 'Manage groups and channels'}
     function DeleteChatPhoto(ChatId: TValue): Boolean;
     function ExportChatInviteLink(ChatId: TValue): string;
     function PinChatMessage(ChatId: TValue; MessageId: Int64; DisableNotification: Boolean = False): Boolean;
@@ -133,17 +123,15 @@ type
     function SetChatPhoto(ChatId: TValue; Photo: TtgFileToSend): Boolean;
     function SetChatTitle(ChatId: TValue; const title: string): Boolean;
     function UnpinChatMessage(ChatId: TValue): Boolean;
-     {$ENDREGION}
-     {$REGION 'Manage users and admins'}
-
+{$ENDREGION}
+{$REGION 'Manage users and admins'}
     function RestrictChatMember(ChatId: TValue; UserId: Int64; UntilDate: Int64 = 0; CanSendMessages: Boolean = False; CanSendMediaMessages: Boolean = False; CanSendOtherMessages: Boolean = False; CanAddWebPagePreviews: Boolean = False): Boolean;
     function PromoteChatMember(ChatId: TValue; UserId: Int64; CanChangeInfo: Boolean = False; CanPostMessages: Boolean = False; CanEditMessages: Boolean = False; CanDeleteMessages: Boolean = False; CanInviteUsers: Boolean = False; CanRestrictMembers: Boolean = False; CanPinMessages: Boolean = False; CanPromoteMembers: Boolean = False): Boolean;
-     {$ENDREGION}
-     {$REGION 'Strickers'}
-
+{$ENDREGION}
+{$REGION 'Strickers'}
     function SendSticker(ChatId: TValue; Sticker: TValue; DisableNotification: Boolean = False; ReplyToMessageId: Int64 = 0; ReplyMarkup: IReplyMarkup = nil): ITgMessage;
     function getStickerSet(const Name: string): TtgStickerSet;
-    function uploadStickerFile(UserId: Int64; PngSticker: TtgFileToSend): TtgFile;
+    function uploadStickerFile(UserId: Int64; PngSticker: TtgFileToSend): ItgFile;
     function createNewStickerSet(UserId: Int64; const Name, title: string; PngSticker: TValue; const Emojis: string; ContainsMasks: Boolean = False; MaskPosition: TtgMaskPosition = nil): Boolean;
     function addStickerToSet(UserId: Int64; const Name: string; PngSticker: TValue; const Emojis: string; MaskPosition: TtgMaskPosition = nil): Boolean;
     function setStickerPositionInSet(const Sticker: string; Position: Int64): Boolean;
@@ -386,36 +374,46 @@ begin
   end;
 end;
 
-// function TTelegramBot.stopMessageLiveLocation(ChatId: TValue; MessageId: Int64;
-// ReplyMarkup: IReplyMarkup): Boolean;
-// var
-// Parameters: TDictionary<string, TValue>;
-// begin
-// Parameters := TDictionary<string, TValue>.Create;
-// try
-// Parameters.Add('chat_id', ChatId);
-// Parameters.Add('message_id', MessageId);
-// Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-// Result := RequestAPI<Boolean>('stopMessageLiveLocation', Parameters);
-// finally
-// Parameters.Free;
-// end;
-// end;
-//
-// function TTelegramBot.stopMessageLiveLocation(const InlineMessageId: string;
-// ReplyMarkup: IReplyMarkup): Boolean;
-// var
-// Parameters: TDictionary<string, TValue>;
-// begin
-// Parameters := TDictionary<string, TValue>.Create;
-// try
-// Parameters.Add('inline_message_id', InlineMessageId);
-// Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-// Result := RequestAPI<Boolean>('stopMessageLiveLocation', Parameters);
-// finally
-// Parameters.Free;
-// end;
-// end;
+function TTelegramBot.stopMessageLiveLocation(ChatId: TValue; MessageId: Int64; ReplyMarkup: IReplyMarkup): Boolean;
+var
+  Parameters: TDictionary<string, TValue>;
+  LJson: TJSONValue;
+begin
+  Parameters := TDictionary<string, TValue>.Create;
+  try
+    Parameters.Add('chat_id', ChatId);
+    Parameters.Add('message_id', MessageId);
+    Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
+    LJson := TJSONObject.ParseJSONValue(RequestAPI('stopMessageLiveLocation', Parameters));
+    try
+      Result := LJson is TJSONTrue;
+    finally
+      LJson.Free;
+    end;
+  finally
+    Parameters.Free;
+  end;
+end;
+
+function TTelegramBot.stopMessageLiveLocation(const InlineMessageId: string; ReplyMarkup: IReplyMarkup): Boolean;
+var
+  Parameters: TDictionary<string, TValue>;
+  LJson: TJSONValue;
+begin
+  Parameters := TDictionary<string, TValue>.Create;
+  try
+    Parameters.Add('inline_message_id', InlineMessageId);
+    Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
+    LJson := TJSONObject.ParseJSONValue(RequestAPI('stopMessageLiveLocation', Parameters));
+    try
+      Result := LJson is TJSONTrue;
+    finally
+      LJson.Free;
+    end;
+  finally
+    Parameters.Free;
+  end;
+end;
 
 function TTelegramBot.GetWebhookInfo: ItgWebhookInfo;
 var
@@ -526,24 +524,22 @@ begin
   end;
 end;
 
-// function TTelegramBot.SendSticker(ChatId, Sticker: TValue;
-// DisableNotification: Boolean; ReplyToMessageId: Int64;
-// ReplyMarkup: IReplyMarkup): ITgMessage;
-// var
-// Parameters: TDictionary<string, TValue>;
-// begin
-// Parameters := TDictionary<string, TValue>.Create;
-// try
-// Parameters.Add('chat_id', ChatId);
-// Parameters.Add('sticker', Sticker);
-// Parameters.Add('disable_notification', DisableNotification);
-// Parameters.Add('reply_to_message_id', ReplyToMessageId);
-// Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-// Result := RequestAPI<ITgMessage>('sendSticker', Parameters);
-// finally
-// Parameters.Free;
-// end;
-// end;
+function TTelegramBot.SendSticker(ChatId, Sticker: TValue; DisableNotification: Boolean; ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
+var
+  Parameters: TDictionary<string, TValue>;
+begin
+  Parameters := TDictionary<string, TValue>.Create;
+  try
+    Parameters.Add('chat_id', ChatId);
+    Parameters.Add('sticker', Sticker);
+    Parameters.Add('disable_notification', DisableNotification);
+    Parameters.Add('reply_to_message_id', ReplyToMessageId);
+    Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
+    Result := TTgMessage.Create(RequestAPI('sendSticker', Parameters));
+  finally
+    Parameters.Free;
+  end;
+end;
 
 function TTelegramBot.SendMessage(const ChatId: TValue; const Text: string; ParseMode: TtgParseMode; DisableWebPagePreview, DisableNotification: Boolean; ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
 var
@@ -889,24 +885,28 @@ begin
   end;
 end;
 
-// function TTelegramBot.addStickerToSet(UserId: Int64; const Name: string;
-// PngSticker: TValue; const Emojis: string;
-// MaskPosition: TtgMaskPosition): Boolean;
-// var
-// Parameters: TDictionary<string, TValue>;
-// begin
-// Parameters := TDictionary<string, TValue>.Create;
-// try
-// Parameters.Add('user_id', UserId);
-// Parameters.Add('name', Name);
-// Parameters.Add('png_sticker', PngSticker);
-// Parameters.Add('emojis', Emojis);
-// Parameters.Add('mask_position', MaskPosition);
-// Result := RequestAPI<Boolean>('addStickerToSet', Parameters);
-// finally
-// Parameters.Free;
-// end;
-// end;
+function TTelegramBot.addStickerToSet(UserId: Int64; const Name: string; PngSticker: TValue; const Emojis: string; MaskPosition: TtgMaskPosition): Boolean;
+var
+  Parameters: TDictionary<string, TValue>;
+  LJson: TJSONValue;
+begin
+  Parameters := TDictionary<string, TValue>.Create;
+  try
+    Parameters.Add('user_id', UserId);
+    Parameters.Add('name', Name);
+    Parameters.Add('png_sticker', PngSticker);
+    Parameters.Add('emojis', Emojis);
+    Parameters.Add('mask_position', MaskPosition);
+    LJson := TJSONObject.ParseJSONValue(RequestAPI('addStickerToSet', Parameters));
+    try
+      Result := LJson is TJSONTrue;
+    finally
+      LJson.Free;
+    end;
+  finally
+    Parameters.Free;
+  end;
+end;
 
 function TTelegramBot.AnswerCallbackQuery(const CallbackQueryId, Text: string; ShowAlert: Boolean; const Url: string; CacheTime: Int64): Boolean;
 var
@@ -968,32 +968,44 @@ begin
   end;
 end;
 
-// function TTelegramBot.DeleteMessage(ChatId: TValue; MessageId: Int64): Boolean;
-// var
-// Parameters: TDictionary<string, TValue>;
-// begin
-// Parameters := TDictionary<string, TValue>.Create;
-// try
-// Parameters.Add('chat_id', ChatId);
-// Parameters.Add('message_id', MessageId);
-// Result := RequestAPI<Boolean>('deleteMessage', Parameters);
-// finally
-// Parameters.Free;
-// end;
-// end;
-//
-// function TTelegramBot.deleteStickerFromSet(const Sticker: string): Boolean;
-// var
-// Parameters: TDictionary<string, TValue>;
-// begin
-// Parameters := TDictionary<string, TValue>.Create;
-// try
-// Parameters.Add('sticker', Sticker);
-// Result := RequestAPI<Boolean>('deleteStickerFromSet', Parameters);
-// finally
-// Parameters.Free;
-// end;
-// end;
+function TTelegramBot.DeleteMessage(ChatId: TValue; MessageId: Int64): Boolean;
+var
+  Parameters: TDictionary<string, TValue>;
+  LJson: TJSONValue;
+begin
+  Parameters := TDictionary<string, TValue>.Create;
+  try
+    Parameters.Add('chat_id', ChatId);
+    Parameters.Add('message_id', MessageId);
+    LJson := TJSONObject.ParseJSONValue(RequestAPI('deleteMessage', Parameters));
+    try
+      Result := LJson is TJSONTrue;
+    finally
+      LJson.Free;
+    end;
+  finally
+    Parameters.Free;
+  end;
+end;
+
+function TTelegramBot.deleteStickerFromSet(const Sticker: string): Boolean;
+var
+  Parameters: TDictionary<string, TValue>;
+  LJson: TJSONValue;
+begin
+  Parameters := TDictionary<string, TValue>.Create;
+  try
+    Parameters.Add('sticker', Sticker);
+    LJson := TJSONObject.ParseJSONValue(RequestAPI('deleteStickerFromSet', Parameters));
+    try
+      Result := LJson is TJSONTrue;
+    finally
+      LJson.Free;
+    end;
+  finally
+    Parameters.Free;
+  end;
+end;
 
 function TTelegramBot.EditMessageCaption(ChatId: TValue; MessageId: Int64; const Caption: string; ReplyMarkup: IReplyMarkup): Boolean;
 var
@@ -1177,13 +1189,20 @@ end;
 function TTelegramBot.AnswerPreCheckoutQuery(const PreCheckoutQueryId: string; Ok: Boolean; const ErrorMessage: string): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
+  LJson: TJSONValue;
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
     Parameters.Add('Pre_checkout_query_id', PreCheckoutQueryId);
     Parameters.Add('Ok', Ok);
     Parameters.Add('Error_message', ErrorMessage);
-    Result := RequestAPI<Boolean>('AnswerPreCheckoutQuery', Parameters);
+
+    LJson := TJSONObject.ParseJSONValue(RequestAPI('AnswerPreCheckoutQuery', Parameters));
+    try
+      Result := LJson is TJSONTrue;
+    finally
+      LJson.Free;
+    end;
   finally
     Parameters.Free;
   end;
@@ -1192,6 +1211,7 @@ end;
 function TTelegramBot.AnswerShippingQuery(const ShippingQueryId: string; Ok: Boolean; ShippingOptions: TArray<TtgShippingOption>; const ErrorMessage: string): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
+  LJson: TJSONValue;
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
@@ -1199,7 +1219,13 @@ begin
     Parameters.Add('Ok', Ok);
     Parameters.Add('Shipping_options', TJsonUtils.ArrayToJString<TtgShippingOption>(ShippingOptions));
     Parameters.Add('Error_message', ErrorMessage);
-    Result := RequestAPI<Boolean>('answerShippingQuery', Parameters);
+
+    LJson := TJSONObject.ParseJSONValue(RequestAPI('answerShippingQuery', Parameters));
+    try
+      Result := LJson is TJSONTrue;
+    finally
+      LJson.Free;
+    end;
   finally
     Parameters.Free;
   end;
@@ -1208,6 +1234,7 @@ end;
 function TTelegramBot.createNewStickerSet(UserId: Int64; const Name, title: string; PngSticker: TValue; const Emojis: string; ContainsMasks: Boolean; MaskPosition: TtgMaskPosition): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
+  LJson: TJSONValue;
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
@@ -1218,7 +1245,13 @@ begin
     Parameters.Add('emojis', Emojis);
     Parameters.Add('contains_masks', ContainsMasks);
     Parameters.Add('mask_position', MaskPosition);
-    Result := RequestAPI<Boolean>('createNewStickerSet', Parameters);
+
+    LJson := TJSONObject.ParseJSONValue(RequestAPI('createNewStickerSet', Parameters));
+    try
+      Result := LJson is TJSONTrue;
+    finally
+      LJson.Free;
+    end;
   finally
     Parameters.Free;
   end;
@@ -1231,6 +1264,7 @@ end;
 function TTelegramBot.SetGameScore(UserId, Score: Int64; Force, DisableEditMessage: Boolean; ChatId, MessageId: Int64; const InlineMessageId: string): ITgMessage;
 var
   Parameters: TDictionary<string, TValue>;
+  LJson: TJSONValue;
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
@@ -1241,7 +1275,7 @@ begin
     Parameters.Add('chat_id', ChatId);
     Parameters.Add('message_id', MessageId);
     Parameters.Add('inline_message_id', InlineMessageId);
-    Result := RequestAPI<ITgMessage>('setGameScore', Parameters);
+    Result := TTgMessage.Create(RequestAPI('setGameScore', Parameters));
   finally
     Parameters.Free;
   end;
@@ -1250,12 +1284,18 @@ end;
 function TTelegramBot.setStickerPositionInSet(const Sticker: string; Position: Int64): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
+  LJson: TJSONValue;
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
     Parameters.Add('sticker', Sticker);
     Parameters.Add('position', Position);
-    Result := RequestAPI<Boolean>('setStickerPositionInSet', Parameters);
+    LJson := TJSONObject.ParseJSONValue(RequestAPI('setStickerPositionInSet', Parameters));
+    try
+      Result := LJson is TJSONTrue;
+    finally
+      LJson.Free;
+    end;
   finally
     Parameters.Free;
   end;
@@ -1272,7 +1312,7 @@ begin
     Parameters.Add('disable_notification', DisableNotification);
     Parameters.Add('reply_to_message_id', ReplyToMessageId);
     Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-    Result := RequestAPI<ITgMessage>('sendGame', Parameters);
+    Result := TTgMessage.Create(RequestAPI('sendGame', Parameters));
   finally
     Parameters.Free;
   end;
@@ -1288,7 +1328,8 @@ begin
     Parameters.Add('chat_id', ChatId);
     Parameters.Add('message_id', MessageId);
     Parameters.Add('inline_message_id', InlineMessageId);
-    Result := RequestAPI<TArray<TtgGameHighScore>>('getGameHighScores', Parameters);
+ //   Result := RequestAPI<TArray<TtgGameHighScore>>('getGameHighScores', Parameters);
+    TBaseJson.UnSupported;
   finally
     Parameters.Free;
   end;
@@ -1300,11 +1341,17 @@ end;
 function TTelegramBot.DeleteChatPhoto(ChatId: TValue): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
+  LJson: TJSONValue;
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
     Parameters.Add('chat_id', ChatId);
-    Result := RequestAPI<Boolean>('deleteChatPhoto', Parameters);
+    LJson := TJSONObject.ParseJSONValue(RequestAPI('deleteChatPhoto', Parameters));
+    try
+      Result := LJson is TJSONTrue;
+    finally
+      LJson.Free;
+    end;
   finally
     Parameters.Free;
   end;
@@ -1313,11 +1360,17 @@ end;
 function TTelegramBot.deleteChatStickerSet(ChatId: TValue): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
+  LJson: TJSONValue;
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
     Parameters.Add('chat_id', ChatId);
-    Result := RequestAPI<Boolean>('deleteChatStickerSet', Parameters);
+    LJson := TJSONObject.ParseJSONValue(RequestAPI('deleteChatStickerSet', Parameters));
+    try
+      Result := LJson is TJSONTrue;
+    finally
+      LJson.Free;
+    end;
   finally
     Parameters.Free;
   end;
@@ -1326,11 +1379,17 @@ end;
 function TTelegramBot.ExportChatInviteLink(ChatId: TValue): string;
 var
   Parameters: TDictionary<string, TValue>;
+  LJson: TJSONValue;
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
     Parameters.Add('chat_id', ChatId);
-    Result := RequestAPI<string>('exportChatInviteLink', Parameters);
+    LJson := TJSONObject.ParseJSONValue(RequestAPI('exportChatInviteLink', Parameters));
+    try
+      Result := LJson.Value;
+    finally
+      LJson.Free;
+    end;
   finally
     Parameters.Free;
   end;
@@ -1339,13 +1398,19 @@ end;
 function TTelegramBot.PinChatMessage(ChatId: TValue; MessageId: Int64; DisableNotification: Boolean): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
+  LJson: TJSONValue;
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
     Parameters.Add('chat_id', ChatId);
     Parameters.Add('message_id', MessageId);
     Parameters.Add('disable_notification', DisableNotification);
-    Result := RequestAPI<Boolean>('pinChatMessage', Parameters);
+    LJson := TJSONObject.ParseJSONValue(RequestAPI('pinChatMessage', Parameters));
+    try
+      Result := LJson is TJSONTrue;
+    finally
+      LJson.Free;
+    end;
   finally
     Parameters.Free;
   end;
@@ -1354,12 +1419,18 @@ end;
 function TTelegramBot.SetChatDescription(ChatId: TValue; const Description: string): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
+  LJson: TJSONValue;
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
     Parameters.Add('chat_id', ChatId);
     Parameters.Add('description', Description);
-    Result := RequestAPI<Boolean>('setChatDescription', Parameters);
+    LJson := TJSONObject.ParseJSONValue(RequestAPI('setChatDescription', Parameters));
+    try
+      Result := LJson is TJSONTrue;
+    finally
+      LJson.Free;
+    end;
   finally
     Parameters.Free;
   end;
@@ -1368,12 +1439,18 @@ end;
 function TTelegramBot.SetChatPhoto(ChatId: TValue; Photo: TtgFileToSend): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
+  LJson: TJSONValue;
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
     Parameters.Add('chat_id', ChatId);
     Parameters.Add('photo', Photo);
-    Result := RequestAPI<Boolean>('setChatPhoto', Parameters);
+    LJson := TJSONObject.ParseJSONValue(RequestAPI('setChatPhoto', Parameters));
+    try
+      Result := LJson is TJSONTrue;
+    finally
+      LJson.Free;
+    end;
   finally
     Parameters.Free;
   end;
@@ -1382,12 +1459,18 @@ end;
 function TTelegramBot.setChatStickerSet(ChatId: TValue; const StickerSetName: string): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
+  LJson: TJSONValue;
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
     Parameters.Add('chat_id', ChatId);
     Parameters.Add('sticker_set_name', StickerSetName);
-    Result := RequestAPI<Boolean>('setChatStickerSet', Parameters);
+    LJson := TJSONObject.ParseJSONValue(RequestAPI('setChatStickerSet', Parameters));
+    try
+      Result := LJson is TJSONTrue;
+    finally
+      LJson.Free;
+    end;
   finally
     Parameters.Free;
   end;
@@ -1396,12 +1479,18 @@ end;
 function TTelegramBot.SetChatTitle(ChatId: TValue; const title: string): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
+  LJson: TJSONValue;
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
     Parameters.Add('chat_id', ChatId);
     Parameters.Add('title', title);
-    Result := RequestAPI<Boolean>('setChatTitle', Parameters);
+    LJson := TJSONObject.ParseJSONValue(RequestAPI('setChatTitle', Parameters));
+    try
+      Result := LJson is TJSONTrue;
+    finally
+      LJson.Free;
+    end;
   finally
     Parameters.Free;
   end;
@@ -1410,25 +1499,32 @@ end;
 function TTelegramBot.UnpinChatMessage(ChatId: TValue): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
+  LJson: TJSONValue;
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
     Parameters.Add('chat_id', ChatId);
-    Result := RequestAPI<Boolean>('unpinChatMessage', Parameters);
+    LJson := TJSONObject.ParseJSONValue(RequestAPI('unpinChatMessage', Parameters));
+    try
+      Result := LJson is TJSONTrue;
+    finally
+      LJson.Free;
+    end;
   finally
     Parameters.Free;
   end;
 end;
 
-function TTelegramBot.uploadStickerFile(UserId: Int64; PngSticker: TtgFileToSend): TtgFile;
+function TTelegramBot.uploadStickerFile(UserId: Int64; PngSticker: TtgFileToSend): ItgFile;
 var
   Parameters: TDictionary<string, TValue>;
+  LJson: TJSONValue;
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
     Parameters.Add('user_id', UserId);
     Parameters.Add('png_sticker', PngSticker);
-    Result := RequestAPI<TtgFile>('uploadStickerFile', Parameters);
+    Result := TtgFile.Create(RequestAPI('uploadStickerFile', Parameters));
   finally
     Parameters.Free;
   end;
@@ -1440,6 +1536,7 @@ end;
 function TTelegramBot.PromoteChatMember(ChatId: TValue; UserId: Int64; CanChangeInfo, CanPostMessages, CanEditMessages, CanDeleteMessages, CanInviteUsers, CanRestrictMembers, CanPinMessages, CanPromoteMembers: Boolean): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
+  LJson: TJSONValue;
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
@@ -1453,7 +1550,12 @@ begin
     Parameters.Add('can_restrict_members', CanRestrictMembers);
     Parameters.Add('can_pin_messages', CanPinMessages);
     Parameters.Add('can_promote_members', CanPromoteMembers);
-    Result := RequestAPI<Boolean>('promoteChatMember', Parameters);
+    LJson := TJSONObject.ParseJSONValue(RequestAPI('promoteChatMember', Parameters));
+    try
+      Result := LJson is TJSONTrue;
+    finally
+      LJson.Free;
+    end;
   finally
     Parameters.Free;
   end;
@@ -1462,6 +1564,7 @@ end;
 function TTelegramBot.RestrictChatMember(ChatId: TValue; UserId, UntilDate: Int64; CanSendMessages, CanSendMediaMessages, CanSendOtherMessages, CanAddWebPagePreviews: Boolean): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
+  LJson: TJSONValue;
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
@@ -1472,7 +1575,12 @@ begin
     Parameters.Add('can_send_media_messages', CanSendMediaMessages);
     Parameters.Add('can_send_other_messages', CanSendOtherMessages);
     Parameters.Add('can_add_web_page_previews', CanAddWebPagePreviews);
-    Result := RequestAPI<Boolean>('restrictChatMember', Parameters);
+    LJson := TJSONObject.ParseJSONValue(RequestAPI('restrictChatMember', Parameters));
+    try
+      Result := LJson is TJSONTrue;
+    finally
+      LJson.Free;
+    end;
   finally
     Parameters.Free;
   end;

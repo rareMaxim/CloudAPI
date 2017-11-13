@@ -71,6 +71,7 @@ object Main: TMain
   end
   object TgBotRecesiverUI1: TTgBotRecesiverUI
     Bot = tgBot
+    AllowedUpdates = []
     OnMessage = TgBotAsync1Message
     OnMessageEdited = TgBotAsync1Message
     OnInlineQuery = TgBotAsync1InlineQuery

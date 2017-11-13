@@ -266,6 +266,7 @@ type
     function Invoice: ItgInvoice;
     function SuccessfulPayment: ItgSuccessfulPayment;
     function &type: TtgMessageType;
+    function IsCommand(const AValue: string): Boolean;
   end;
 
   TtgUserProfilePhotos = class(TBaseJson, ItgUserProfilePhotos)
@@ -642,6 +643,19 @@ end;
 function TTgMessage.Invoice: ItgInvoice;
 begin
   Result := ReadToClass<TtgInvoice>('invoice');
+end;
+
+function TTgMessage.IsCommand(const AValue: string): Boolean;
+var
+  LEnt: ItgMessageEntity;
+begin
+  Result := False;
+  if Self.Entities = nil then
+    Exit;
+  for LEnt in Self.Entities do
+    if (LEnt.TypeMessage = TtgMessageEntityType.bot_command) then
+      if Text.Substring(LEnt.Offset, LEnt.Length).StartsWith(AValue, True) then
+        Exit(True);
 end;
 
 function TTgMessage.LeftChatMember: ItgUser;

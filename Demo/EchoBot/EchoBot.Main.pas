@@ -41,20 +41,20 @@ type
     procedure TgBotAsync1Connect(Sender: TObject);
     procedure TgBotAsync1Disconnect(Sender: TObject);
     procedure TgBotAsync1InlineQuery(ASender: TObject; AInlineQuery: TtgInlineQuery);
-    procedure TgBotAsync1Message(ASender: TObject; AMessage: iTgMessage);
+    procedure TgBotAsync1Message(ASender: TObject; AMessage: ITgMessage);
     procedure TgBotAsync1InlineResultChosen(ASender: TObject; AChosenInlineResult: TtgChosenInlineResult);
   private
     { Private declarations }
     procedure WriteLine(const AValue: string);
-    procedure SendInline(Msg: iTgMessage);
-    procedure SendKeyboard(Msg: iTgMessage);
-    procedure SendPhoto(Msg: iTgMessage);
-    procedure SendRequest(Msg: iTgMessage);
-    procedure SendQuest(Msg: iTgMessage);
+    procedure SendInline(Msg: ITgMessage);
+    procedure SendKeyboard(Msg: ITgMessage);
+    procedure SendPhoto(Msg: ITgMessage);
+    procedure SendRequest(Msg: ITgMessage);
+    procedure SendQuest(Msg: ITgMessage);
     // parsing
-    procedure ParseTextMessage(Msg: iTgMessage);
-    procedure ParsePhotoMessage(Msg: iTgMessage);
-    procedure ParseLocationMessage(Msg: iTgMessage);
+    procedure ParseTextMessage(Msg: ITgMessage);
+    procedure ParsePhotoMessage(Msg: ITgMessage);
+    procedure ParseLocationMessage(Msg: ITgMessage);
   public
     { Public declarations }
   end;
@@ -78,26 +78,22 @@ begin
   TgBotRecesiverUI1.IsReceiving := False;
 end;
 
-procedure TMain.ParseLocationMessage(Msg: iTgMessage);
+procedure TMain.ParseLocationMessage(Msg: ITgMessage);
 begin
   WriteLine('Location: ' + Msg.Location.Longitude.ToString + ' ' + Msg.Location.Latitude.ToString);
 end;
 
-procedure TMain.ParsePhotoMessage(Msg: iTgMessage);
-var
-  LFile: TtgFile;
+procedure TMain.ParsePhotoMessage(Msg: ITgMessage);
 begin
-  if Msg.Photo.Last.CanDownload then
-    WriteLine(Msg.Photo.Last.GetFileUrl(tgBot.Token))
+  if Msg.Photo[High(Msg.Photo)].CanDownload then
+    WriteLine(Msg.Photo[High(Msg.Photo)].GetFileUrl(tgBot.Token))
   else
   begin
-    LFile := tgBot.GetFile(Msg.Photo.Last.FileId);
-    WriteLine(LFile.GetFileUrl(tgBot.Token));
-    LFile.Free;
+    WriteLine(tgBot.GetFile(Msg.Photo[High(Msg.Photo)].FileId).GetFileUrl(tgBot.Token));
   end;
 end;
 
-procedure TMain.ParseTextMessage(Msg: TTgMessage);
+procedure TMain.ParseTextMessage(Msg: ITgMessage);
 var
   usage: string;
 begin
@@ -129,18 +125,18 @@ begin
       '/keyboard - send custom keyboard' + #13#10 + //
       '/photo    - send a photo' + #13#10 + //
       '/request  - request location or contact';
-    tgBot.SendMessage(Msg.Chat.Id, usage, TtgParseMode.default, False, False, 0, TtgReplyKeyboardRemove.Create).Free;
+    tgBot.SendMessage(Msg.Chat.Id, usage, TtgParseMode.default, False, False, 0, TtgReplyKeyboardRemove.Create);
   end;
 end;
 
-procedure TMain.SendRequest(Msg: TTgMessage);
+procedure TMain.SendRequest(Msg: ITgMessage);
 var
   kb: IReplyMarkup;
 begin
   kb := TtgReplyKeyboardMarkup.Create([[
     { } TtgKeyboardButton.Create('Location', False, True),
     { } TtgKeyboardButton.Create('Contact', True, False)]]);
-  tgBot.SendMessage(Msg.Chat.Id, 'Who or Where are you?', TtgParseMode.default, False, False, 0, kb).Free;
+  tgBot.SendMessage(Msg.Chat.Id, 'Who or Where are you?', TtgParseMode.default, False, False, 0, kb);
 end;
 
 procedure TMain.swtchTokenSwitch(Sender: TObject);
@@ -157,19 +153,9 @@ begin
 end;
 
 procedure TMain.TgBotAsync1Connect(Sender: TObject);
-var
-  LMe: TtgUser;
 begin
   WriteLine('Bot connected');
-  try
-    LMe := tgBot.GetMe;
-    if Assigned(LMe) then
-    begin
-      Caption := LMe.Username;
-    end;
-  finally
-    FreeAndNil(LMe);
-  end;
+ Caption := tgBot.GetMe.Username;
 end;
 
 procedure TMain.TgBotAsync1Disconnect(Sender: TObject);
@@ -206,7 +192,7 @@ begin
   WriteLine('Received choosen inline result: ' + AChosenInlineResult.ResultId);
 end;
 
-procedure TMain.TgBotAsync1Message(ASender: TObject; AMessage: TTgMessage);
+procedure TMain.TgBotAsync1Message(ASender: TObject; AMessage: ITgMessage);
 begin
   case AMessage.&Type of
     TtgMessageType.TextMessage:
@@ -218,7 +204,7 @@ begin
   end;
 end;
 
-procedure TMain.SendPhoto(Msg: TTgMessage);
+procedure TMain.SendPhoto(Msg: ITgMessage);
 const
   PATH_PHOTO = 'C:\Users\Public\Pictures\Sample Pictures\Tulips.jpg';
 var
@@ -229,7 +215,7 @@ begin
     WriteLine('Change path to photo in metod: TMain.SendPhoto');
   LFile := TtgFileToSend.Create(PATH_PHOTO);
   try
-    tgBot.SendPhoto(Msg.Chat.Id, LFile, 'Nice Picture').Free;
+    tgBot.SendPhoto(Msg.Chat.Id, LFile, 'Nice Picture');
   finally
     LFile.Free;
   end;
@@ -246,10 +232,10 @@ begin
     { second row }
     [TtgInlineKeyboardButton.Create('2.1', '3'), TtgInlineKeyboardButton.Create('2.2', '4')]]);
   Sleep(500); // simulate longer running task
-  tgBot.SendMessage(Msg.Chat.Id, 'Choose', TtgParseMode.default, False, False, 0, keyboard).Free;
+  tgBot.SendMessage(Msg.Chat.Id, 'Choose', TtgParseMode.default, False, False, 0, keyboard);
 end;
 
-procedure TMain.SendKeyboard(Msg: TTgMessage);
+procedure TMain.SendKeyboard(Msg: ITgMessage);
 var
   keyboard: IReplyMarkup;
 begin
@@ -262,7 +248,7 @@ begin
     AddRow([TtgKeyboardButton.Create('2.1'), TtgKeyboardButton.Create('2.2')]);
     AddRow([TtgKeyboardButton.Create('Contact', True, False), TtgKeyboardButton.Create('Location', False, True)]);
   end;
-  tgBot.SendMessage(Msg.Chat.Id, 'Choose', TtgParseMode.default, False, False, 0, keyboard).Free;
+  tgBot.SendMessage(Msg.Chat.Id, 'Choose', TtgParseMode.default, False, False, 0, keyboard);
 end;
 
 procedure TMain.SendQuest(Msg: TTgMessage);
@@ -274,7 +260,7 @@ begin
     [TtgKeyboardButton.Create('1.1'), TtgKeyboardButton.Create('1.2')],
     { second row }
     [TtgKeyboardButton.Create('2.1'), TtgKeyboardButton.Create('2.2')]], False);
-  tgBot.SendMessage(Msg.Chat.Id, 'Выбери:', TtgParseMode.default, False, False, 0, keyboard).Free;
+  tgBot.SendMessage(Msg.Chat.Id, 'Выбери:', TtgParseMode.default, False, False, 0, keyboard);
 end;
 
 procedure TMain.tgBotReceiveError(ASender: TObject; AApiRequestException: EApiRequestException);

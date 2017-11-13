@@ -784,7 +784,7 @@ type
      /// <seealso href="https://core.telegram.org/bots/api#answercallbackquery" />
     function AnswerCallbackQuery(const CallbackQueryId: string; const Text: string = ''; ShowAlert: Boolean = False; const Url: string = ''; CacheTime: Int64 = 0): Boolean;
      {$ENDREGION}
-     {$REGION 'Updating messages'}
+{$REGION 'Updating messages'}
      /// <summary>
      /// Use this method to edit text messages sent by the bot or via the bot
      /// (for inline bots).
@@ -1561,7 +1561,7 @@ type
      /// Returns the uploaded <see cref="TelegAPi.Types|TtgFile">File</see> on
      /// success.
      /// </returns>
-    function uploadStickerFile(UserId: Int64; PngSticker: TtgFileToSend): TtgFile;
+    function uploadStickerFile(UserId: Int64; PngSticker: TtgFileToSend): ItgFile;
      /// <summary>
      /// Use this method to create new sticker set owned by a user. The bot
      /// will be able to edit the created sticker set.
