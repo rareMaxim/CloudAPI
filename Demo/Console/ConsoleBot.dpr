@@ -1,42 +1,45 @@
 program ConsoleBot;
 
 {$APPTYPE CONSOLE}
-
 {$R *.res}
 
 uses
   TelegAPI.Bot,
+  TelegAPI.Bot.Intf,
   TelegAPI.Bot.Recesiver.Console,
   TelegAPI.Types,
-  System.SysUtils;
+  System.SysUtils, TelegAPI.Types.Intf;
 
 procedure Main;
 var
-  LBot: TTelegramBot;
-  LRecesiver: TTgBotRecesiverConsole;
+  LBot: ITelegramBot;
+  // LRecesiver: TTgBotRecesiverConsole;
+  LUpd: TArray<ItgUpdate>;
   LStop: string;
+  I: integer;
 begin
   LBot := TTelegramBot.Create(nil);
-  LBot.Token := {$I ..\token.inc};
-  LRecesiver := TTgBotRecesiverConsole.Create(nil);
-  LRecesiver.Bot := LBot;
+  LBot.Token := !!!;
+  // LRecesiver := TTgBotRecesiverConsole.Create(nil);
+  // LRecesiver.Bot := LBot;
   try
-    LRecesiver.OnMessage :=
-      procedure(AMessage: TTgMessage)
-      begin
-        Writeln(AMessage.From.Username, ': ', AMessage.Text);
-      end;
-    with LBot.GetMe do
-    begin
-      Writeln('Bot nick: ', Username);
-      Free;
-    end;
-    LRecesiver.IsReceiving := True;
+    LUpd := LBot.GetUpdates(0, 100, 0);
+    for I := Low(LUpd) to High(LUpd) do
+      Writeln(LUpd[I].message.Text);
+    // LRecesiver.OnMessage :=
+    // procedure(AMessage: ITgMessage)
+    // begin
+    // Writeln(AMessage.From.Username, ': ', AMessage.Text);
+    // end;
+    // with LBot.GetMe do
+    // begin
+    // Writeln('Bot nick: ', Username);
+    // end;
+    // LRecesiver.IsReceiving := True;
     while LStop.ToLower.Trim <> 'exit' do
       Readln(LStop);
   finally
-    LRecesiver.Free;
-    LBot.Free;
+    // LRecesiver.Free;
   end;
 end;
 
@@ -46,7 +49,7 @@ begin
     Main;
   except
     on E: Exception do
-      Writeln(E.ClassName, ': ', E.Message);
+      Writeln(E.ClassName, ': ', E.message);
   end;
-end.
 
+end.

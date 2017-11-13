@@ -159,8 +159,14 @@ type
 
   ItgLocation = interface
     ['{6FE14ED9-0C53-4C24-8033-390A5F31B414}']
-    function Longitude: Single;
-    function Latitude: Single;
+    //
+    function GetLongitude: Single;
+    function GetLatitude: Single;
+    procedure SetLatitude(const Value: Single);
+    procedure SetLongitude(const Value: Single);
+    //
+    property Longitude: Single read GetLongitude write SetLongitude;
+    property Latitude: Single read GetLatitude write SetLatitude;
   end;
 
   ItgVenue = interface
@@ -362,7 +368,7 @@ type
 
   ItgWebhookInfo = interface
     ['{C77FA5C3-EF01-4571-AA1B-2BE80724BE3B}']
-    function URL: string;
+    function Url: string;
     function HasCustomCertificate: Boolean;
     function PendingUpdateCount: Int64;
     function LastErrorDate: TDateTime;
@@ -374,4 +380,3 @@ type
 implementation
 
 end.
-

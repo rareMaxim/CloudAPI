@@ -9,6 +9,7 @@ type
   TJsonUtils = class
     class function ArrayToJString<T>(LArray: TArray<T>): string;
     class function DJsonConfig: IdjParams;
+
   end;
 
 implementation

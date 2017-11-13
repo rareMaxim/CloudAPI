@@ -22,11 +22,14 @@ uses
   TelegAPI.Types.Intf;
 
 type
-  TtgOnReceiveError = procedure(ASender: TObject; AApiRequestException: EApiRequestException) of object;
+  TtgOnReceiveError = procedure(ASender: TObject;
+    AApiRequestException: EApiRequestException) of object;
 
-  TtgOnReceiveGeneralError = procedure(ASender: TObject; AException: Exception) of object;
+  TtgOnReceiveGeneralError = procedure(ASender: TObject; AException: Exception)
+    of object;
 
-  TtgOnReceiveRawData = procedure(ASender: TObject; const AData: string) of object;
+  TtgOnReceiveRawData = procedure(ASender: TObject; const AData: string)
+    of object;
 
   /// <summary>
   /// <para>
@@ -51,11 +54,15 @@ type
     /// <summary>
     /// Мастер-функция для запросов на сервак
     /// </summary>
-    function RequestAPI(const Method: string; Parameters: TDictionary<string, TValue>): string;
-    function SendDataToServer(const Method: string; Parameters: TDictionary<string, TValue>): string;
-    function ParamsToFormData(Parameters: TDictionary<string, TValue>): TMultipartFormData;
+    function RequestAPI(const Method: string;
+      Parameters: TDictionary<string, TValue>): string;
+    function SendDataToServer(const Method: string;
+      Parameters: TDictionary<string, TValue>): string;
+    function ParamsToFormData(Parameters: TDictionary<string, TValue>)
+      : TMultipartFormData;
   public
-    function ApiTest(const ARequest: string; Parameters: TDictionary<string, TValue> = nil): string;
+    function ApiTest(const ARequest: string;
+      Parameters: TDictionary<string, TValue> = nil): string;
     procedure ErrorHandlerGeneral(AException: Exception);
     procedure ErrorHandlerApi(AError: EApiRequestException);
     constructor Create(AOwner: TComponent); overload; override;
@@ -108,7 +115,9 @@ type
     /// order to avoid getting duplicate updates, recalculate offset after
     /// each server response.
     /// </remarks>
-    function GetUpdates(const Offset: Int64 = 0; const Limit: Int64 = 100; const Timeout: Int64 = 0; AllowedUpdates: TAllowedUpdates = UPDATES_ALLOWED_ALL): TArray<ItgUpdate>;
+    function GetUpdates(const Offset: Int64 = 0; const Limit: Int64 = 100;
+      const Timeout: Int64 = 0;
+      AllowedUpdates: TAllowedUpdates = UPDATES_ALLOWED_ALL): TArray<ItgUpdate>;
     /// <summary>
     /// Use this method to specify a url and receive incoming updates via an
     /// outgoing webhook. Whenever there is an update for the bot, we will
@@ -174,7 +183,7 @@ type
     /// <returns>
     /// Returns <c>True</c> on success.
     /// </returns>
-    // function DeleteWebhook: Boolean;
+    function DeleteWebhook: Boolean;
 
     /// <summary>
     /// Use this method to get current webhook status.
@@ -1797,7 +1806,8 @@ type
     /// <summary>
     /// Proxy Settings to be used by the client.
     /// </summary>
-    property ProxySettings: TProxySettings read FProxySettings write FProxySettings;
+    property ProxySettings: TProxySettings read FProxySettings
+      write FProxySettings;
     /// <summary>
     /// <para>
     /// List the types of updates you want your bot to receive.
@@ -1806,7 +1816,7 @@ type
     /// Типы принимаемых сообщений
     /// </para>
     /// </summary>
-    property AllowedUpdates: TAllowedUpdates read FAllowedUpdates write FAllowedUpdates default UPDATES_ALLOWED_ALL;
+
     /// <summary>
     /// Токен вашего бота.
     /// </summary>
@@ -1829,7 +1839,8 @@ type
     /// pooling.
     /// </para>
     /// </summary>
-    property OnReceiveError: TtgOnReceiveError read FOnReceiveError write FOnReceiveError;
+    property OnReceiveError: TtgOnReceiveError read FOnReceiveError
+      write FOnReceiveError;
     /// <summary>
     /// <para>
     /// Возникает при возникновении ошибки во время запроса фоновых
@@ -1840,8 +1851,10 @@ type
     /// pooling.
     /// </para>
     /// </summary>
-    property OnReceiveGeneralError: TtgOnReceiveGeneralError read FOnReceiveGeneralError write FOnReceiveGeneralError;
-    property OnReceiveRawData: TtgOnReceiveRawData read FOnRawData write FOnRawData;
+    property OnReceiveGeneralError: TtgOnReceiveGeneralError
+      read FOnReceiveGeneralError write FOnReceiveGeneralError;
+    property OnReceiveRawData: TtgOnReceiveRawData read FOnRawData
+      write FOnRawData;
 {$ENDREGION}
   end;
 
@@ -1860,7 +1873,6 @@ constructor TTelegramBot.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
   FParamLoader := TtgParamLoader.Create;
-  AllowedUpdates := UPDATES_ALLOWED_ALL;
 end;
 
 destructor TTelegramBot.Destroy;
@@ -1869,7 +1881,8 @@ begin
   inherited;
 end;
 
-function TTelegramBot.RequestAPI(const Method: string; Parameters: TDictionary<string, TValue>): string;
+function TTelegramBot.RequestAPI(const Method: string;
+  Parameters: TDictionary<string, TValue>): string;
 var
   LTextResponse: string;
 begin
@@ -1884,9 +1897,11 @@ begin
     Result := ApiTest(LTextResponse, Parameters);
 end;
 
-function TTelegramBot.ApiTest(const ARequest: string; Parameters: TDictionary<string, TValue>): string;
+function TTelegramBot.ApiTest(const ARequest: string;
+  Parameters: TDictionary<string, TValue>): string;
 var
   FJSON: TJSONObject;
+  FResult: TJSONValue;
 begin
   FJSON := TJSONObject.ParseJSONValue(ARequest) as TJSONObject;
   try
@@ -1894,13 +1909,16 @@ begin
       // ErrorHandlerApi(EApiRequestException.FromApiResponse<T>(LApiResponse,
       // Parameters));
       raise Exception.Create(ARequest);
-    Result := (FJSON.GetValue('result') as TJSONObject).ToJSON;
+
+    FResult := FJSON.GetValue('result');
+    Result := FResult.ToJSON;
   finally
     FJSON.Free;
   end;
 end;
 
-function TTelegramBot.ParamsToFormData(Parameters: TDictionary<string, TValue>): TMultipartFormData;
+function TTelegramBot.ParamsToFormData(Parameters: TDictionary<string, TValue>)
+  : TMultipartFormData;
 var
   LParameter: TPair<string, TValue>;
   LAddProc: TtgParamLoader.TLoader;
@@ -1913,9 +1931,11 @@ begin
     if LParameter.Value.IsEmpty then
       Continue;
     // look for the given parameter type
-    if FParamLoader.ParamLoaders.TryGetValue(LParameter.Value.TypeInfo, LAddProc) then
+    if FParamLoader.ParamLoaders.TryGetValue(LParameter.Value.TypeInfo, LAddProc)
+    then
     begin
-      LAddProc(Result, LParameter.Value.TypeInfo, LParameter.Key, LParameter.Value);
+      LAddProc(Result, LParameter.Value.TypeInfo, LParameter.Key,
+        LParameter.Value);
     end
     else if LParameter.Value.Kind = tkClass then
     // last variant to search
@@ -1929,11 +1949,13 @@ begin
       end
     end
     else
-      ErrorHandlerGeneral(ETelegramDataConvert.Create('Check parameter type ' + LParameter.Value.ToString));
+      ErrorHandlerGeneral(ETelegramDataConvert.Create('Check parameter type ' +
+        LParameter.Value.ToString));
   end;
 end;
 
-function TTelegramBot.SendDataToServer(const Method: string; Parameters: TDictionary<string, TValue>): string;
+function TTelegramBot.SendDataToServer(const Method: string;
+  Parameters: TDictionary<string, TValue>): string;
 var
   LHttp: THTTPClient;
   LHttpResponse: IHTTPResponse;
@@ -2064,7 +2086,8 @@ end;
 // end;
 // end;
 //
-function TTelegramBot.GetUpdates(const Offset, Limit, Timeout: Int64; AllowedUpdates: TAllowedUpdates): TArray<ItgUpdate>;
+function TTelegramBot.GetUpdates(const Offset, Limit, Timeout: Int64;
+AllowedUpdates: TAllowedUpdates): TArray<ItgUpdate>;
 var
   Parameters: TDictionary<string, TValue>;
   LJson: TJSONArray;
@@ -2076,7 +2099,8 @@ begin
     Parameters.Add('limit', Limit);
     Parameters.Add('timeout', Timeout);
     Parameters.Add('allowed_updates', AllowedUpdates.ToString);
-    LJson := TJSONObject.ParseJSONValue(RequestAPI('getUpdates', Parameters)) as TJSONArray;
+    LJson := TJSONObject.ParseJSONValue(RequestAPI('getUpdates', Parameters))
+      as TJSONArray;
     try
       SetLength(Result, LJson.Count);
       for I := 0 to High(Result) do
@@ -2088,11 +2112,18 @@ begin
     Parameters.Free;
   end;
 end;
-//
-// function TTelegramBot.DeleteWebhook: Boolean;
-// begin
-// Result := RequestAPI<Boolean>('deleteWebhook', nil);
-// end;
+
+function TTelegramBot.DeleteWebhook: Boolean;
+var
+  LJson: TJSONValue;
+begin
+  LJson := TJSONObject.ParseJSONValue(RequestAPI('deleteWebhook', nil));
+  try
+    Result := LJson is TJSONTrue;
+  finally
+    LJson.Free;
+  end;
+end;
 //
 // {$ENDREGION}
 // {$REGION 'Basic methods'}
@@ -3114,4 +3145,3 @@ end;
 // {$ENDREGION}
 
 end.
-

@@ -7,22 +7,27 @@ uses
   TelegAPI.Base,
   TelegAPI.Bot,
   TelegAPI.Types,
-  TelegAPI.Types.Intf;
+  TelegAPI.Types.Intf, TelegaPi.Types.Enums;
 
 type
   TtgOnUpdate = procedure(ASender: TObject; AUpdate: ItgUpdate) of object;
 
-  TtgOnUpdates = procedure(ASender: TObject; AUpdates: TArray<ItgUpdate>) of object;
+  TtgOnUpdates = procedure(ASender: TObject; AUpdates: TArray<ItgUpdate>)
+    of object;
 
   TtgOnMessage = procedure(ASender: TObject; AMessage: ITgMessage) of object;
 
-  TtgOnInlineQuery = procedure(ASender: TObject; AInlineQuery: ItgInlineQuery) of object;
+  TtgOnInlineQuery = procedure(ASender: TObject; AInlineQuery: ItgInlineQuery)
+    of object;
 
-  TtgOnInlineResultChosen = procedure(ASender: TObject; AChosenInlineResult: ItgChosenInlineResult) of object;
+  TtgOnInlineResultChosen = procedure(ASender: TObject;
+    AChosenInlineResult: ItgChosenInlineResult) of object;
 
-  TtgOnCallbackQuery = procedure(ASender: TObject; ACallbackQuery: ItgCallbackQuery) of object;
+  TtgOnCallbackQuery = procedure(ASender: TObject;
+    ACallbackQuery: ItgCallbackQuery) of object;
 
-  TtgOnChannelPost = procedure(ASender: TObject; AChanelPost: ITgMessage) of object;
+  TtgOnChannelPost = procedure(ASender: TObject; AChanelPost: ITgMessage)
+    of object;
 
   TTgBotRecesiverUICore = class;
 
@@ -43,6 +48,7 @@ type
     FOnUpdates: TtgOnUpdates;
     FPollingInterval: Integer;
     FRecesiver: TTgBotRecesiverUICore;
+    FAllowedUpdates: TAllowedUpdates;
   protected
     procedure SetIsReceiving(const Value: Boolean);
     procedure DoDisconnect(Sender: TObject);
@@ -59,18 +65,23 @@ type
     /// Асинхронный прием обновлений от сервера
     /// </para>
     /// </summary>
-    property IsReceiving: Boolean read FIsReceiving write SetIsReceiving default False;
-    {$REGION 'Property|Свойства'}
+    property IsReceiving: Boolean read FIsReceiving write SetIsReceiving
+      default False;
+{$REGION 'Property|Свойства'}
     property Bot: TTelegramBot read FBot write FBot;
+    property AllowedUpdates: TAllowedUpdates read FAllowedUpdates
+      write FAllowedUpdates default UPDATES_ALLOWED_ALL;
     /// <summary>
-    ///   The current message offset
+    /// The current message offset
     /// </summary>
-    property MessageOffset: Integer read FMessageOffset write FMessageOffset default 0;
+    property MessageOffset: Integer read FMessageOffset write FMessageOffset
+      default 0;
     /// <summary>
-    ///   Задержка между опросами
+    /// Задержка между опросами
     /// </summary>
-    property PollingInterval: Integer read FPollingInterval write FPollingInterval default 1000;
-    {$ENDREGION}
+    property PollingInterval: Integer read FPollingInterval
+      write FPollingInterval default 1000;
+{$ENDREGION}
 {$ENDREGION}
 {$REGION 'Events|События'}
     /// <summary>
@@ -103,8 +114,10 @@ type
     /// Occurs when <see cref="TelegAPi.Types|TtgMessage" /> was edited.
     /// </para>
     /// </summary>
-    property OnMessageEdited: TtgOnMessage read FOnMessageEdited write FOnMessageEdited;
-    property OnChannelPost: TtgOnChannelPost read FOnChannelPost write FOnChannelPost;
+    property OnMessageEdited: TtgOnMessage read FOnMessageEdited
+      write FOnMessageEdited;
+    property OnChannelPost: TtgOnChannelPost read FOnChannelPost
+      write FOnChannelPost;
     /// <summary>
     /// <para>
     /// Возникает, когда получен <see cref="TelegAPi.Types|TtgInlineQuery" />
@@ -114,7 +127,8 @@ type
     /// received.
     /// </para>
     /// </summary>
-    property OnInlineQuery: TtgOnInlineQuery read FOnInlineQuery write FOnInlineQuery;
+    property OnInlineQuery: TtgOnInlineQuery read FOnInlineQuery
+      write FOnInlineQuery;
     /// <summary>
     /// <para>
     /// Возникает когда получен <see cref="TelegAPi.Types|TtgChosenInlineResult" />
@@ -124,7 +138,8 @@ type
     /// is received.
     /// </para>
     /// </summary>
-    property OnInlineResultChosen: TtgOnInlineResultChosen read FOnInlineResultChosen write FOnInlineResultChosen;
+    property OnInlineResultChosen: TtgOnInlineResultChosen
+      read FOnInlineResultChosen write FOnInlineResultChosen;
     /// <summary>
     /// <para>
     /// Возникает когда получен <see cref="TelegAPi.Types|TtgCallbackQuery" />
@@ -134,7 +149,8 @@ type
     /// received
     /// </para>
     /// </summary>
-    property OnCallbackQuery: TtgOnCallbackQuery read FOnCallbackQuery write FOnCallbackQuery;
+    property OnCallbackQuery: TtgOnCallbackQuery read FOnCallbackQuery
+      write FOnCallbackQuery;
     property OnConnect: TNotifyEvent read FOnConnect write FOnConnect;
     property OnDisconnect: TNotifyEvent read FOnDisconnect write FOnDisconnect;
 {$ENDREGION}
@@ -170,14 +186,14 @@ implementation
 
 uses
   System.SysUtils,
-  TelegAPI.Exceptions,
-  TelegAPI.Types.Enums;
+  TelegAPI.Exceptions;
 { TTgRecesiver.TtgAsync }
 
 function TTgBotRecesiverUICore.DoGetUpdates: TArray<ItgUpdate>;
 begin
   try
-    Result := Parent.Bot.GetUpdates(Parent.MessageOffset, 100, 0, Parent.Bot.AllowedUpdates);
+    Result := Parent.Bot.GetUpdates(Parent.MessageOffset, 100, 0,
+      Parent.AllowedUpdates);
   except
     on E: Exception do
       Parent.Bot.ErrorHandlerGeneral(E);
@@ -315,4 +331,3 @@ begin
 end;
 
 end.
-

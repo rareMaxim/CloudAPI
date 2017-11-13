@@ -6,15 +6,16 @@ uses
   System.Classes,
   System.SysUtils,
   TelegAPI.Base,
-  TelegAPI.Bot,
-  TelegAPI.Types, TelegAPi.Types.Intf;
+  TelegAPI.Bot.Intf,
+  TelegAPI.Types,
+  TelegAPI.Types.Intf, TelegAPI.Types.Enums;
 
 type
   TtgRecesiverConsoleCore = class;
 
   TTgBotRecesiverConsole = class(TtgAbstractComponent)
   private
-    FBot: TTelegramBot;
+    FBot: ITelegramBot;
     FIsReceiving: Boolean;
     FMessageOffset: Integer;
     FOnCallbackQuery: TProc<ItgCallbackQuery>;
@@ -29,6 +30,7 @@ type
     FOnUpdates: TProc<TArray<ItgUpdate>>;
     FPollingInterval: Integer;
     FRecesiver: TtgRecesiverConsoleCore;
+    FAllowedUpdates: TAllowedUpdates;
   protected
     procedure DoConnect;
     procedure DoDisconnect;
@@ -36,91 +38,103 @@ type
     procedure SetIsReceiving(const Value: Boolean);
   public
     constructor Create(AOwner: TComponent); override;
+    // constructor Create(ABot:ITelegramBot) ;
     destructor Destroy; override;
   published
-  /// <summary>
-  ///   <para>
-  ///     Indicates if receiving updates
-  ///   </para>
-  ///   <para>
-  ///     Асинхронный прием обновлений от сервера
-  ///   </para>
-  /// </summary>
-    property IsReceiving: Boolean read FIsReceiving write SetIsReceiving default False;
-    {$REGION 'Property|Свойства'}
-    property Bot: TTelegramBot read FBot write FBot;
     /// <summary>
-    ///   The current message offset
+    /// <para>
+    /// Indicates if receiving updates
+    /// </para>
+    /// <para>
+    /// Асинхронный прием обновлений от сервера
+    /// </para>
     /// </summary>
-    property MessageOffset: Integer read FMessageOffset write FMessageOffset default 0;
+    property IsReceiving: Boolean read FIsReceiving write SetIsReceiving
+      default False;
+{$REGION 'Property|Свойства'}
+    property Bot: ITelegramBot read FBot write FBot;
+    property AllowedUpdates: TAllowedUpdates read FAllowedUpdates
+      write FAllowedUpdates default UPDATES_ALLOWED_ALL;
     /// <summary>
-    ///   Задержка между опросами
+    /// The current message offset
     /// </summary>
-    property PollingInterval: Integer read FPollingInterval write FPollingInterval default 1000;
-    {$ENDREGION}
+    property MessageOffset: Integer read FMessageOffset write FMessageOffset
+      default 0;
+    /// <summary>
+    /// Задержка между опросами
+    /// </summary>
+    property PollingInterval: Integer read FPollingInterval
+      write FPollingInterval default 1000;
+{$ENDREGION}
 {$REGION 'Events|События'}
     /// <summary>
-    ///   <para>
-    ///     Событие возникает когда получено <see cref="TelegAPi.Types|TtgUpdate" />
-    ///   </para>
-    ///   <para>
-    ///     Occurs when an <see cref="TelegAPi.Types|TtgUpdate" /> is
-    ///     received.
-    ///   </para>
+    /// <para>
+    /// Событие возникает когда получено <see cref="TelegAPi.Types|TtgUpdate" />
+    /// </para>
+    /// <para>
+    /// Occurs when an <see cref="TelegAPi.Types|TtgUpdate" /> is
+    /// received.
+    /// </para>
     /// </summary>
     property OnUpdate: TProc<ItgUpdate> read FOnUpdate write FOnUpdate;
-    property OnUpdates: TProc<TArray<ItgUpdate>> read FOnUpdates write FOnUpdates;
+    property OnUpdates: TProc < TArray < ItgUpdate >> read FOnUpdates
+      write FOnUpdates;
     /// <summary>
-    ///   <para>
-    ///     Событие возникает когда получено <see cref="TelegAPi.Types|TtgMessage" />
-    ///   </para>
-    ///   <para>
-    ///     Occurs when a <see cref="TelegAPi.Types|TtgMessage" /> is
-    ///     recieved.
-    ///   </para>
+    /// <para>
+    /// Событие возникает когда получено <see cref="TelegAPi.Types|TtgMessage" />
+    /// </para>
+    /// <para>
+    /// Occurs when a <see cref="TelegAPi.Types|TtgMessage" /> is
+    /// recieved.
+    /// </para>
     /// </summary>
     property OnMessage: TProc<ITgMessage> read FOnMessage write FOnMessage;
     /// <summary>
-    ///   <para>
-    ///     Возникает когда <see cref="TelegAPi.Types|TtgMessage" /> было
-    ///     изменено.
-    ///   </para>
-    ///   <para>
-    ///     Occurs when <see cref="TelegAPi.Types|TtgMessage" /> was edited.
-    ///   </para>
+    /// <para>
+    /// Возникает когда <see cref="TelegAPi.Types|TtgMessage" /> было
+    /// изменено.
+    /// </para>
+    /// <para>
+    /// Occurs when <see cref="TelegAPi.Types|TtgMessage" /> was edited.
+    /// </para>
     /// </summary>
-    property OnMessageEdited: TProc<ITgMessage> read FOnMessageEdited write FOnMessageEdited;
-    property OnChannelPost: TProc<ITgMessage> read FOnChannelPost write FOnChannelPost;
+    property OnMessageEdited: TProc<ITgMessage> read FOnMessageEdited
+      write FOnMessageEdited;
+    property OnChannelPost: TProc<ITgMessage> read FOnChannelPost
+      write FOnChannelPost;
     /// <summary>
-    ///   <para>
-    ///     Возникает, когда получен <see cref="TelegAPi.Types|TtgInlineQuery" />
-    ///   </para>
-    ///   <para>
-    ///     Occurs when an <see cref="TelegAPi.Types|TtgInlineQuery" /> is
-    ///     received.
-    ///   </para>
+    /// <para>
+    /// Возникает, когда получен <see cref="TelegAPi.Types|TtgInlineQuery" />
+    /// </para>
+    /// <para>
+    /// Occurs when an <see cref="TelegAPi.Types|TtgInlineQuery" /> is
+    /// received.
+    /// </para>
     /// </summary>
-    property OnInlineQuery: TProc<ItgInlineQuery> read FOnInlineQuery write FOnInlineQuery;
+    property OnInlineQuery: TProc<ItgInlineQuery> read FOnInlineQuery
+      write FOnInlineQuery;
     /// <summary>
-    ///   <para>
-    ///     Возникает когда получен <see cref="TelegAPi.Types|TtgChosenInlineResult" />
-    ///   </para>
-    ///   <para>
-    ///     Occurs when a <see cref="TelegAPi.Types|TtgChosenInlineResult" />
-    ///     is received.
-    ///   </para>
+    /// <para>
+    /// Возникает когда получен <see cref="TelegAPi.Types|TtgChosenInlineResult" />
+    /// </para>
+    /// <para>
+    /// Occurs when a <see cref="TelegAPi.Types|TtgChosenInlineResult" />
+    /// is received.
+    /// </para>
     /// </summary>
-    property OnInlineResultChosen: TProc<ItgChosenInlineResult> read FOnInlineResultChosen write FOnInlineResultChosen;
+    property OnInlineResultChosen: TProc<ItgChosenInlineResult>
+      read FOnInlineResultChosen write FOnInlineResultChosen;
     /// <summary>
-    ///   <para>
-    ///     Возникает когда получен <see cref="TelegAPi.Types|TtgCallbackQuery" />
-    ///   </para>
-    ///   <para>
-    ///     Occurs when an <see cref="TelegAPi.Types|TtgCallbackQuery" /> is
-    ///     received
-    ///   </para>
+    /// <para>
+    /// Возникает когда получен <see cref="TelegAPi.Types|TtgCallbackQuery" />
+    /// </para>
+    /// <para>
+    /// Occurs when an <see cref="TelegAPi.Types|TtgCallbackQuery" /> is
+    /// received
+    /// </para>
     /// </summary>
-    property OnCallbackQuery: TProc<ItgCallbackQuery> read FOnCallbackQuery write FOnCallbackQuery;
+    property OnCallbackQuery: TProc<ItgCallbackQuery> read FOnCallbackQuery
+      write FOnCallbackQuery;
     property OnConnect: TProc read FOnConnect write FOnConnect;
     property OnDisconnect: TProc read FOnDisconnect write FOnDisconnect;
 {$ENDREGION}
@@ -130,7 +144,7 @@ type
   private
     FParent: TTgBotRecesiverConsole;
     FMessageOffset: Integer;
-    FBot: TTelegramBot;
+    FBot: ITelegramBot;
     FPollingInterval: Integer;
   protected
     procedure DoOnUpdates(AUpdates: TArray<ItgUpdate>);
@@ -138,49 +152,51 @@ type
     procedure DoUpdateWorker(AUpdates: TArray<ItgUpdate>);
     function DoGetUpdates: TArray<ItgUpdate>;
     /// <summary>
-    ///   Raises the <see cref="TelegAPI.Bot|TtgOnUpdate" />, <see cref="TelegAPI.Bot|TtgOnMessage" />
-    ///    , <see cref="TelegAPI.Bot|TtgOnInlineQuery" /> , <see cref="TelegAPI.Bot|TtgOnInlineResultChosen" />
-    ///    and <see cref="TelegAPI.Bot|TtgOnCallbackQuery" /> events.
+    /// Raises the <see cref="TelegAPI.Bot|TtgOnUpdate" />, <see cref="TelegAPI.Bot|TtgOnMessage" />
+    /// , <see cref="TelegAPI.Bot|TtgOnInlineQuery" /> , <see cref="TelegAPI.Bot|TtgOnInlineResultChosen" />
+    /// and <see cref="TelegAPI.Bot|TtgOnCallbackQuery" /> events.
     /// </summary>
     /// <param name="AValue">
-    ///   The <see cref="TelegAPi.Types|TtgUpdate">Update</see> instance
-    ///   containing the event data. <br />
+    /// The <see cref="TelegAPi.Types|TtgUpdate">Update</see> instance
+    /// containing the event data. <br />
     /// </param>
     /// <exception cref="TelegaPi.Exceptions|ETelegramException">
-    ///   Возникает если получено неизвестное обновление
+    /// Возникает если получено неизвестное обновление
     /// </exception>
     procedure DoUpdateTypeParser(AValue: ItgUpdate);
     procedure Execute; override;
   public
-    {$REGION 'Property|Свойства'}
+{$REGION 'Property|Свойства'}
     property Parent: TTgBotRecesiverConsole read FParent write FParent;
-    property Bot: TTelegramBot read FBot write FBot;
+    property Bot: ITelegramBot read FBot write FBot;
     /// <summary>
-    ///   The current message offset
+    /// The current message offset
     /// </summary>
-    property MessageOffset: Integer read FMessageOffset write FMessageOffset default 0;
+    property MessageOffset: Integer read FMessageOffset write FMessageOffset
+      default 0;
     /// <summary>
-    ///   Задержка между опросами
+    /// Задержка между опросами
     /// </summary>
-    property PollingInterval: Integer read FPollingInterval write FPollingInterval default 1000;
-    {$ENDREGION}
+    property PollingInterval: Integer read FPollingInterval
+      write FPollingInterval default 1000;
+{$ENDREGION}
   end;
 
 implementation
 
 uses
-  TelegAPI.Exceptions,
-  TelegAPI.Types.Enums;
+  TelegAPI.Exceptions;
 { TTgRecesiver.TtgAsync }
 
 function TtgRecesiverConsoleCore.DoGetUpdates: TArray<ItgUpdate>;
 begin
-  try
-    Result := Parent.Bot.GetUpdates(Parent.MessageOffset, 100, 0, Parent.Bot.AllowedUpdates);
-  except
-    on E: Exception do
-      Parent.Bot.ErrorHandlerGeneral(E);
-  end;
+  // try
+  Result := Parent.Bot.GetUpdates(Parent.MessageOffset, 100, 0,
+    Parent.AllowedUpdates);
+  // except
+  // on E: Exception do
+  // Parent.Bot.ErrorHandlerGeneral(E);
+  // end;
 end;
 
 procedure TtgRecesiverConsoleCore.DoOnUpdate(AUpdate: ItgUpdate);
@@ -206,7 +222,6 @@ begin
   begin
     DoOnUpdate(AUpdates[I]); // OnUpdate Fire
     DoUpdateTypeParser(AUpdates[I]);
-    FreeAndNil(AUpdates[I]);
   end;
 end;
 
@@ -215,19 +230,17 @@ var
   LUpdates: TArray<ItgUpdate>;
 begin
   Parent.DoConnect;
-  try
-    repeat
-      LUpdates := DoGetUpdates;
-      if (Length(LUpdates) > 0) and (not Terminated) then
-      begin
-        Parent.MessageOffset := LUpdates[High(LUpdates)].ID + 1;
-        Self.DoUpdateWorker(LUpdates);  // free update items
-      end;
-      Sleep(Parent.PollingInterval);
-    until (Terminated) or (not Parent.IsReceiving);
-  finally
-    LUpdates := nil;
-  end;
+
+  repeat
+    LUpdates := DoGetUpdates;
+    if (Length(LUpdates) > 0) and (not Terminated) then
+    begin
+      Parent.MessageOffset := LUpdates[High(LUpdates)].ID + 1;
+      Self.DoUpdateWorker(LUpdates); // free update items
+    end;
+    Sleep(Parent.PollingInterval);
+  until (Terminated) or (not Parent.IsReceiving);
+
 end;
 
 procedure TtgRecesiverConsoleCore.DoUpdateTypeParser(AValue: ItgUpdate);
@@ -316,4 +329,3 @@ begin
 end;
 
 end.
-
