@@ -16,7 +16,7 @@ var
   LBot: ITelegramBot;
   LRecesiver: TTgBotRecesiverConsole;
   LStop: string;
-  I: integer;
+  I: Integer;
 begin
   LBot := TTelegramBot.Create(nil);
   LBot.Token := '283107814:AAF9VZC6TRv6qKmOMCsLFoI8SBlV_xFMI80';
@@ -27,6 +27,7 @@ begin
       procedure(AMessage: ITgMessage)
       begin
         Writeln(AMessage.From.Username, ': ', AMessage.Text);
+        LBot.SendMessage(AMessage.Chat.ID, '345t6yu');
       end;
     with LBot.GetMe do
     begin

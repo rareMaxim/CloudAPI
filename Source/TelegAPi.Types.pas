@@ -21,8 +21,9 @@ type
     function ReadToClass<T: class, constructor>(const AKey: string): T;
     function ReadToSimpleType<T>(const AKey: string): T;
     function ReadToDateTime(const AKey: string): TDateTime;
-    procedure UnSupported;
   public
+    class function FromJson(const AJson: string): TBaseJson;
+    class procedure UnSupported;
     constructor Create(const AJson: string);
     destructor Destroy; override;
   end;
@@ -1007,10 +1008,16 @@ begin
   inherited;
 end;
 
+class function TBaseJson.FromJson(const AJson: string): TBaseJson;
+begin
+  Result := TBaseJson.Create(AJson);
+end;
+
 function TBaseJson.ReadToDateTime(const AKey: string): TDateTime;
 var
   LValue: Int64;
 begin
+  Result := 0;
   if FJSON.TryGetValue<Int64>(AKey, LValue) then
     Result := UnixToDateTime(LValue, False);
 end;
@@ -1021,7 +1028,7 @@ begin
   FJSON.TryGetValue<T>(AKey, Result);
 end;
 
-procedure TBaseJson.UnSupported;
+class procedure TBaseJson.UnSupported;
 begin
   raise Exception.Create('Telegram method not supported in TelegaPi Library. Sorry.');
 end;
