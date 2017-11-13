@@ -8,34 +8,31 @@ uses
   TelegAPI.Bot.Intf,
   TelegAPI.Bot.Recesiver.Console,
   TelegAPI.Types,
-  System.SysUtils, TelegAPI.Types.Intf;
+  System.SysUtils,
+  TelegAPI.Types.Intf;
 
 procedure Main;
 var
   LBot: ITelegramBot;
-  // LRecesiver: TTgBotRecesiverConsole;
-  LUpd: TArray<ItgUpdate>;
+  LRecesiver: TTgBotRecesiverConsole;
   LStop: string;
   I: integer;
 begin
   LBot := TTelegramBot.Create(nil);
-  LBot.Token := !!!;
-  // LRecesiver := TTgBotRecesiverConsole.Create(nil);
-  // LRecesiver.Bot := LBot;
+  LBot.Token := '283107814:AAF9VZC6TRv6qKmOMCsLFoI8SBlV_xFMI80';
+  LRecesiver := TTgBotRecesiverConsole.Create(nil);
+  LRecesiver.Bot := LBot;
   try
-    LUpd := LBot.GetUpdates(0, 100, 0);
-    for I := Low(LUpd) to High(LUpd) do
-      Writeln(LUpd[I].message.Text);
-    // LRecesiver.OnMessage :=
-    // procedure(AMessage: ITgMessage)
-    // begin
-    // Writeln(AMessage.From.Username, ': ', AMessage.Text);
-    // end;
-    // with LBot.GetMe do
-    // begin
-    // Writeln('Bot nick: ', Username);
-    // end;
-    // LRecesiver.IsReceiving := True;
+    LRecesiver.OnMessage :=
+      procedure(AMessage: ITgMessage)
+      begin
+        Writeln(AMessage.From.Username, ': ', AMessage.Text);
+      end;
+    with LBot.GetMe do
+    begin
+      Writeln('Bot nick: ', Username);
+    end;
+    LRecesiver.IsReceiving := True;
     while LStop.ToLower.Trim <> 'exit' do
       Readln(LStop);
   finally
@@ -53,3 +50,4 @@ begin
   end;
 
 end.
+

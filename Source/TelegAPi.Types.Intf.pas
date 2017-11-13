@@ -355,7 +355,7 @@ type
 
   ItgLabeledPrice = interface
     ['{3EB70EDB-1D5D-42E4-AACD-A225316482E3}']
-    function &Label: string;
+    function Text: string;
     function Amount: Int64;
   end;
 
@@ -380,3 +380,4 @@ type
 implementation
 
 end.
+
