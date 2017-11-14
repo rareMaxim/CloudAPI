@@ -1315,17 +1315,12 @@ end;
 function TTelegramBot.ExportChatInviteLink(ChatId: TValue): string;
 var
   Parameters: TDictionary<string, TValue>;
-  LJson: TJSONValue;
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
     Parameters.Add('chat_id', ChatId);
-    LJson := TJSONObject.ParseJSONValue(RequestAPI('exportChatInviteLink', Parameters));
-    try
-      Result := LJson.Value;
-    finally
-      LJson.Free;
-    end;
+
+    Result:=GetResponseFromMethod('exportChatInviteLink', Parameters);
   finally
     Parameters.Free;
   end;
