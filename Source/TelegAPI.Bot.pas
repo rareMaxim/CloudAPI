@@ -39,9 +39,8 @@ type
     FParamLoader: TtgParamLoader;
     function GetToken: string;
     procedure SetToken(const Value: string);
-
     //Create TBaseJ
-    function CreateBaseJSONClass<T:class, constructor>(const params: string): T;
+    function CreateBaseJSONClass<T:TBaseJson>(const params: string): T;
 
     //Returns TJSONValue as method request result
     function GetJSONFromMethod(const Method: string; Parameters: TDictionary<string, TValue>): TJSONValue;
@@ -55,7 +54,8 @@ type
     //Returns response JSON from server as result of request
 
     function GetValueFromMethod(const Method: string; Parameters: TDictionary<string, TValue>): string;
-    function GetArrayFromMethod<T:class, constructor>(const Method: string; Parameters: TDictionary<string, TValue>):TArray<T>;
+
+    function GetArrayFromMethod<T:TBaseJson, TI:IInterface>(const Method: string; Parameters: TDictionary<string, TValue>):TArray<TI>;
 
   protected
     /// <summary>
@@ -475,9 +475,7 @@ begin
   c.Free;
 end;
 
-
-
-function TTelegramBot.GetArrayFromMethod<T>(const Method: string; Parameters: TDictionary<string, TValue>): TArray<T>;
+function TTelegramBot.GetArrayFromMethod<T, TI>(BJClass:TBaseJsonClass; const Method: string; Parameters: TDictionary<string, TValue>): TArray<TI>;
 var LJsonArr: TJSONArray;
     I: Integer;
 begin
@@ -486,7 +484,7 @@ begin
     SetLength(Result, LJsonArr.Count);
     for I := 0 to High(Result) do
     begin
-      Result[I] := CreateBaseJsonClass<T>(LJsonArr.Items[I].ToJSON);
+      Result[I] := BJClass.Create(LJsonArr.Items[I].ToJSON);
     end;
   finally
     LJsonArr.Free;
@@ -507,7 +505,7 @@ begin
     Parameters.Add('timeout', Timeout);
     Parameters.Add('allowed_updates', AllowedUpdates.ToString);
 
-
+    {
     LJson := TJSONObject.ParseJSONValue(RequestAPI('getUpdates', Parameters)) as TJSONArray;
     try
       SetLength(Result, LJson.Count);
@@ -516,6 +514,8 @@ begin
     finally
       LJson.Free;
     end;
+    }
+    Result:=GetArrayFromMethod<ItgUpdate>('getUpdates', Parameters);
   finally
     Parameters.Free;
   end;
