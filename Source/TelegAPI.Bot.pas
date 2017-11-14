@@ -38,6 +38,7 @@ type
     FParamLoader: TtgParamLoader;
     function GetToken: string;
     procedure SetToken(const Value: string);
+    function ExecuteAPI(const Method: string; Parameters: TDictionary<string, TValue>): boolean;
   protected
     /// <summary>
     /// Мастер-функция для запросов на сервак
@@ -373,12 +374,7 @@ begin
   end;
 end;
 
-function TTelegramBot.stopMessageLiveLocation(ChatId: TValue; MessageId: Int64; ReplyMarkup: IReplyMarkup): Boolean;
-var
-  Parameters: TDictionary<string, TValue>;
-  LJson: TJSONValue;
-
-function ExecuteAPI(const Method:string; Parameters: TDictionary<string, TValue>):boolean;
+function TTelegramBot.ExecuteAPI(const Method:string; Parameters: TDictionary<string, TValue>):boolean;
 var LJson: TJSONValue;
 begin
   LJson := TJSONObject.ParseJSONValue(RequestAPI(Method, Parameters));
@@ -389,6 +385,9 @@ begin
   end;
 end;
 
+function TTelegramBot.stopMessageLiveLocation(ChatId: TValue; MessageId: Int64; ReplyMarkup: IReplyMarkup): Boolean;
+var
+  Parameters: TDictionary<string, TValue>;
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
@@ -396,12 +395,7 @@ begin
     Parameters.Add('message_id', MessageId);
     Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
 
-    LJson := TJSONObject.ParseJSONValue(RequestAPI('stopMessageLiveLocation', Parameters));
-    try
-      Result := LJson is TJSONTrue;
-    finally
-      LJson.Free;
-    end;
+    Result:=ExecuteAPI('stopMessageLiveLocation', Parameters);
   finally
     Parameters.Free;
   end;
@@ -410,18 +404,13 @@ end;
 function TTelegramBot.stopMessageLiveLocation(const InlineMessageId: string; ReplyMarkup: IReplyMarkup): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
-  LJson: TJSONValue;
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
     Parameters.Add('inline_message_id', InlineMessageId);
     Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-    LJson := TJSONObject.ParseJSONValue(RequestAPI('stopMessageLiveLocation', Parameters));
-    try
-      Result := LJson is TJSONTrue;
-    finally
-      LJson.Free;
-    end;
+
+    Result:=ExecuteAPI('stopMessageLiveLocation', Parameters);
   finally
     Parameters.Free;
   end;
@@ -465,15 +454,8 @@ begin
 end;
 
 function TTelegramBot.DeleteWebhook: Boolean;
-var
-  LJson: TJSONValue;
 begin
-  LJson := TJSONObject.ParseJSONValue(RequestAPI('deleteWebhook', nil));
-  try
-    Result := LJson is TJSONTrue;
-  finally
-    LJson.Free;
-  end;
+  Result:=ExecuteAPI('deleteWebhook', nil);
 end;
 
  {$ENDREGION}
@@ -675,18 +657,13 @@ end;
 function TTelegramBot.SendChatAction(ChatId: TValue; const Action: TtgSendChatAction): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
-  LJson: TJSONValue;
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
     Parameters.Add('chat_id', ChatId);
     Parameters.Add('action', Action.ToString);
-    LJson := TJSONObject.ParseJSONValue(RequestAPI('sendChatAction', Parameters));
-    try
-      Result := LJson is TJSONTrue;
-    finally
-      LJson.Free;
-    end;
+
+    Result:=ExecuteAPI('sendChatAction', Parameters);
   finally
     Parameters.Free;
   end;
@@ -732,19 +709,14 @@ end;
 function TTelegramBot.KickChatMember(ChatId: TValue; UserId, UntilDate: Int64): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
-  LJson: TJSONValue;
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
     Parameters.Add('chat_id', ChatId);
     Parameters.Add('user_id', UserId);
     Parameters.Add('until_date', UntilDate);
-    LJson := TJSONObject.ParseJSONValue(RequestAPI('kickChatMember', Parameters));
-    try
-      Result := LJson is TJSONTrue;
-    finally
-      LJson.Free;
-    end;
+
+    Result:=ExecuteAPI('kickChatMember', Parameters);
   finally
     Parameters.Free;
   end;
@@ -753,17 +725,12 @@ end;
 function TTelegramBot.LeaveChat(ChatId: TValue): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
-  LJson: TJSONValue;
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
     Parameters.Add('chat_id', ChatId);
-    LJson := TJSONObject.ParseJSONValue(RequestAPI('leaveChat', Parameters));
-    try
-      Result := LJson is TJSONTrue;
-    finally
-      LJson.Free;
-    end;
+
+    Result:=ExecuteAPI('leaveChat', Parameters);
   finally
     Parameters.Free;
   end;
@@ -845,6 +812,9 @@ begin
   Parameters := TDictionary<string, TValue>.Create;
   try
     Parameters.Add('chat_id', ChatId);
+
+
+
     LJson := TJSONObject.ParseJSONValue(RequestAPI('getChatAdministrators', Parameters)) as TJSONArray;
     try
       SetLength(Result, LJson.Count);
@@ -908,7 +878,6 @@ end;
 function TTelegramBot.addStickerToSet(UserId: Int64; const Name: string; PngSticker: TValue; const Emojis: string; MaskPosition: TtgMaskPosition): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
-  LJson: TJSONValue;
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
@@ -917,12 +886,8 @@ begin
     Parameters.Add('png_sticker', PngSticker);
     Parameters.Add('emojis', Emojis);
     Parameters.Add('mask_position', MaskPosition);
-    LJson := TJSONObject.ParseJSONValue(RequestAPI('addStickerToSet', Parameters));
-    try
-      Result := LJson is TJSONTrue;
-    finally
-      LJson.Free;
-    end;
+
+    Result:=ExecuteAPI('addStickerToSet', Parameters);
   finally
     Parameters.Free;
   end;
@@ -931,7 +896,6 @@ end;
 function TTelegramBot.AnswerCallbackQuery(const CallbackQueryId, Text: string; ShowAlert: Boolean; const Url: string; CacheTime: Int64): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
-  LJson: TJSONValue;
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
@@ -940,12 +904,8 @@ begin
     Parameters.Add('show_alert', ShowAlert);
     Parameters.Add('url', Url);
     Parameters.Add('cache_time', CacheTime);
-    LJson := TJSONObject.ParseJSONValue(RequestAPI('answerCallbackQuery', Parameters));
-    try
-      Result := LJson is TJSONTrue;
-    finally
-      LJson.Free;
-    end;
+
+    Result:=ExecuteAPI('answerCallbackQuery', Parameters);
   finally
     Parameters.Free;
   end;
@@ -991,18 +951,13 @@ end;
 function TTelegramBot.DeleteMessage(ChatId: TValue; MessageId: Int64): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
-  LJson: TJSONValue;
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
     Parameters.Add('chat_id', ChatId);
     Parameters.Add('message_id', MessageId);
-    LJson := TJSONObject.ParseJSONValue(RequestAPI('deleteMessage', Parameters));
-    try
-      Result := LJson is TJSONTrue;
-    finally
-      LJson.Free;
-    end;
+
+    Result:=ExecuteAPI('deleteMessage', Parameters);
   finally
     Parameters.Free;
   end;
@@ -1011,17 +966,11 @@ end;
 function TTelegramBot.deleteStickerFromSet(const Sticker: string): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
-  LJson: TJSONValue;
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
     Parameters.Add('sticker', Sticker);
-    LJson := TJSONObject.ParseJSONValue(RequestAPI('deleteStickerFromSet', Parameters));
-    try
-      Result := LJson is TJSONTrue;
-    finally
-      LJson.Free;
-    end;
+    Result:=ExecuteAPI('deleteStickerFromSet', Parameters);
   finally
     Parameters.Free;
   end;
@@ -1030,7 +979,6 @@ end;
 function TTelegramBot.EditMessageCaption(ChatId: TValue; MessageId: Int64; const Caption: string; ReplyMarkup: IReplyMarkup): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
-  LJson: TJSONValue;
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
@@ -1038,12 +986,8 @@ begin
     Parameters.Add('message_id', MessageId);
     Parameters.Add('caption', Caption);
     Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-    LJson := TJSONObject.ParseJSONValue(RequestAPI('editMessageCaption', Parameters));
-    try
-      Result := LJson is TJSONTrue;
-    finally
-      LJson.Free;
-    end;
+
+    Result:=ExecuteAPI('editMessageCaption', Parameters);
   finally
     Parameters.Free;
   end;
@@ -1052,19 +996,14 @@ end;
 function TTelegramBot.EditMessageCaption(const InlineMessageId, Caption: string; ReplyMarkup: IReplyMarkup): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
-  LJson: TJSONValue;
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
     Parameters.Add('caption', Caption);
     Parameters.Add('inline_message_id', InlineMessageId);
     Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-    LJson := TJSONObject.ParseJSONValue(RequestAPI('editMessageCaption', Parameters));
-    try
-      Result := LJson is TJSONTrue;
-    finally
-      LJson.Free;
-    end;
+
+    Result:=ExecuteAPI('editMessageCaption', Parameters);
   finally
     Parameters.Free;
   end;
@@ -1073,7 +1012,6 @@ end;
 function TTelegramBot.editMessageLiveLocation(ChatId: TValue; MessageId: Int64; Location: TtgLocation; ReplyMarkup: IReplyMarkup): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
-  LJson: TJSONValue;
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
@@ -1082,12 +1020,8 @@ begin
     Parameters.Add('latitude', Location.Latitude);
     Parameters.Add('longitude', Location.Longitude);
     Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-    LJson := TJSONObject.ParseJSONValue(RequestAPI('editMessageLiveLocation', Parameters));
-    try
-      Result := LJson is TJSONTrue;
-    finally
-      LJson.Free;
-    end;
+
+    Result:=ExecuteAPI('editMessageLiveLocation', Parameters);
   finally
     Parameters.Free;
   end;
@@ -1104,12 +1038,8 @@ begin
     Parameters.Add('latitude', Location.Latitude);
     Parameters.Add('longitude', Location.Longitude);
     Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-    LJson := TJSONObject.ParseJSONValue(RequestAPI('editMessageLiveLocation', Parameters));
-    try
-      Result := LJson is TJSONTrue;
-    finally
-      LJson.Free;
-    end;
+
+    Result:=ExecuteAPI('editMessageLiveLocation', Parameters);
   finally
     Parameters.Free;
   end;
@@ -1150,7 +1080,6 @@ end;
 function TTelegramBot.AnswerInlineQuery(const InlineQueryId: string; Results: TArray<TtgInlineQueryResult>; CacheTime: Int64; IsPersonal: Boolean; const NextOffset, SwitchPmText, SwitchPmParameter: string): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
-  LJson: TJSONValue;
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
@@ -1161,12 +1090,8 @@ begin
     Parameters.Add('next_offset', NextOffset);
     Parameters.Add('switch_pm_text', SwitchPmText);
     Parameters.Add('switch_pm_parameter', SwitchPmParameter);
-    LJson := TJSONObject.ParseJSONValue(RequestAPI('answerInlineQuery', Parameters));
-    try
-      Result := LJson is TJSONTrue;
-    finally
-      LJson.Free;
-    end;
+
+    Result:=ExecuteAPI('answerInlineQuery', Parameters);
   finally
     Parameters.Free;
   end;
@@ -1209,7 +1134,6 @@ end;
 function TTelegramBot.AnswerPreCheckoutQuery(const PreCheckoutQueryId: string; Ok: Boolean; const ErrorMessage: string): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
-  LJson: TJSONValue;
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
@@ -1217,12 +1141,7 @@ begin
     Parameters.Add('Ok', Ok);
     Parameters.Add('Error_message', ErrorMessage);
 
-    LJson := TJSONObject.ParseJSONValue(RequestAPI('AnswerPreCheckoutQuery', Parameters));
-    try
-      Result := LJson is TJSONTrue;
-    finally
-      LJson.Free;
-    end;
+    Result:=ExecuteAPI('AnswerPreCheckoutQuery', Parameters);
   finally
     Parameters.Free;
   end;
@@ -1231,7 +1150,6 @@ end;
 function TTelegramBot.AnswerShippingQuery(const ShippingQueryId: string; Ok: Boolean; ShippingOptions: TArray<TtgShippingOption>; const ErrorMessage: string): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
-  LJson: TJSONValue;
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
@@ -1240,12 +1158,7 @@ begin
     Parameters.Add('Shipping_options', TJsonUtils.ArrayToJString<TtgShippingOption>(ShippingOptions));
     Parameters.Add('Error_message', ErrorMessage);
 
-    LJson := TJSONObject.ParseJSONValue(RequestAPI('answerShippingQuery', Parameters));
-    try
-      Result := LJson is TJSONTrue;
-    finally
-      LJson.Free;
-    end;
+    Result:=ExecuteAPI('answerShippingQuery', Parameters);
   finally
     Parameters.Free;
   end;
@@ -1254,7 +1167,6 @@ end;
 function TTelegramBot.createNewStickerSet(UserId: Int64; const Name, title: string; PngSticker: TValue; const Emojis: string; ContainsMasks: Boolean; MaskPosition: TtgMaskPosition): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
-  LJson: TJSONValue;
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
@@ -1266,12 +1178,7 @@ begin
     Parameters.Add('contains_masks', ContainsMasks);
     Parameters.Add('mask_position', MaskPosition);
 
-    LJson := TJSONObject.ParseJSONValue(RequestAPI('createNewStickerSet', Parameters));
-    try
-      Result := LJson is TJSONTrue;
-    finally
-      LJson.Free;
-    end;
+    Result:=ExecuteAPI('createNewStickerSet', Parameters);
   finally
     Parameters.Free;
   end;
@@ -1303,18 +1210,13 @@ end;
 function TTelegramBot.setStickerPositionInSet(const Sticker: string; Position: Int64): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
-  LJson: TJSONValue;
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
     Parameters.Add('sticker', Sticker);
     Parameters.Add('position', Position);
-    LJson := TJSONObject.ParseJSONValue(RequestAPI('setStickerPositionInSet', Parameters));
-    try
-      Result := LJson is TJSONTrue;
-    finally
-      LJson.Free;
-    end;
+
+    Result:=ExecuteAPI('setStickerPositionInSet', Parameters);
   finally
     Parameters.Free;
   end;
@@ -1368,17 +1270,12 @@ end;
 function TTelegramBot.DeleteChatPhoto(ChatId: TValue): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
-  LJson: TJSONValue;
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
     Parameters.Add('chat_id', ChatId);
-    LJson := TJSONObject.ParseJSONValue(RequestAPI('deleteChatPhoto', Parameters));
-    try
-      Result := LJson is TJSONTrue;
-    finally
-      LJson.Free;
-    end;
+
+    Result:=ExecuteAPI('deleteChatPhoto', Parameters);
   finally
     Parameters.Free;
   end;
@@ -1387,17 +1284,12 @@ end;
 function TTelegramBot.deleteChatStickerSet(ChatId: TValue): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
-  LJson: TJSONValue;
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
     Parameters.Add('chat_id', ChatId);
-    LJson := TJSONObject.ParseJSONValue(RequestAPI('deleteChatStickerSet', Parameters));
-    try
-      Result := LJson is TJSONTrue;
-    finally
-      LJson.Free;
-    end;
+
+    Result:=ExecuteAPI('deleteChatStickerSet', Parameters);
   finally
     Parameters.Free;
   end;
@@ -1466,18 +1358,13 @@ end;
 function TTelegramBot.SetChatPhoto(ChatId: TValue; Photo: TtgFileToSend): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
-  LJson: TJSONValue;
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
     Parameters.Add('chat_id', ChatId);
     Parameters.Add('photo', Photo);
-    LJson := TJSONObject.ParseJSONValue(RequestAPI('setChatPhoto', Parameters));
-    try
-      Result := LJson is TJSONTrue;
-    finally
-      LJson.Free;
-    end;
+
+    Result:=ExecuteAPI('setChatPhoto', Parameters);
   finally
     Parameters.Free;
   end;
@@ -1486,18 +1373,13 @@ end;
 function TTelegramBot.setChatStickerSet(ChatId: TValue; const StickerSetName: string): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
-  LJson: TJSONValue;
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
     Parameters.Add('chat_id', ChatId);
     Parameters.Add('sticker_set_name', StickerSetName);
-    LJson := TJSONObject.ParseJSONValue(RequestAPI('setChatStickerSet', Parameters));
-    try
-      Result := LJson is TJSONTrue;
-    finally
-      LJson.Free;
-    end;
+
+    Result:=ExecuteAPI('setChatStickerSet', Parameters);
   finally
     Parameters.Free;
   end;
@@ -1506,18 +1388,13 @@ end;
 function TTelegramBot.SetChatTitle(ChatId: TValue; const title: string): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
-  LJson: TJSONValue;
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
     Parameters.Add('chat_id', ChatId);
     Parameters.Add('title', title);
-    LJson := TJSONObject.ParseJSONValue(RequestAPI('setChatTitle', Parameters));
-    try
-      Result := LJson is TJSONTrue;
-    finally
-      LJson.Free;
-    end;
+
+    Result:=ExecuteAPI('setChatTitle', Parameters);
   finally
     Parameters.Free;
   end;
@@ -1526,17 +1403,12 @@ end;
 function TTelegramBot.UnpinChatMessage(ChatId: TValue): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
-  LJson: TJSONValue;
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
     Parameters.Add('chat_id', ChatId);
-    LJson := TJSONObject.ParseJSONValue(RequestAPI('unpinChatMessage', Parameters));
-    try
-      Result := LJson is TJSONTrue;
-    finally
-      LJson.Free;
-    end;
+
+    Result:=ExecuteAPI('unpinChatMessage', Parameters);
   finally
     Parameters.Free;
   end;
@@ -1562,7 +1434,6 @@ end;
 function TTelegramBot.PromoteChatMember(ChatId: TValue; UserId: Int64; CanChangeInfo, CanPostMessages, CanEditMessages, CanDeleteMessages, CanInviteUsers, CanRestrictMembers, CanPinMessages, CanPromoteMembers: Boolean): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
-  LJson: TJSONValue;
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
@@ -1576,12 +1447,8 @@ begin
     Parameters.Add('can_restrict_members', CanRestrictMembers);
     Parameters.Add('can_pin_messages', CanPinMessages);
     Parameters.Add('can_promote_members', CanPromoteMembers);
-    LJson := TJSONObject.ParseJSONValue(RequestAPI('promoteChatMember', Parameters));
-    try
-      Result := LJson is TJSONTrue;
-    finally
-      LJson.Free;
-    end;
+
+    Result:=ExecuteAPI('promoteChatMember', Parameters);
   finally
     Parameters.Free;
   end;
@@ -1590,7 +1457,6 @@ end;
 function TTelegramBot.RestrictChatMember(ChatId: TValue; UserId, UntilDate: Int64; CanSendMessages, CanSendMediaMessages, CanSendOtherMessages, CanAddWebPagePreviews: Boolean): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
-  LJson: TJSONValue;
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
@@ -1601,12 +1467,8 @@ begin
     Parameters.Add('can_send_media_messages', CanSendMediaMessages);
     Parameters.Add('can_send_other_messages', CanSendOtherMessages);
     Parameters.Add('can_add_web_page_previews', CanAddWebPagePreviews);
-    LJson := TJSONObject.ParseJSONValue(RequestAPI('restrictChatMember', Parameters));
-    try
-      Result := LJson is TJSONTrue;
-    finally
-      LJson.Free;
-    end;
+
+    Result:=ExecuteAPI('restrictChatMember', Parameters);
   finally
     Parameters.Free;
   end;
