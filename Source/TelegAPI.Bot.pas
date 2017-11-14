@@ -377,12 +377,25 @@ function TTelegramBot.stopMessageLiveLocation(ChatId: TValue; MessageId: Int64; 
 var
   Parameters: TDictionary<string, TValue>;
   LJson: TJSONValue;
+
+function ExecuteAPI(const Method:string; Parameters: TDictionary<string, TValue>):boolean;
+var LJson: TJSONValue;
+begin
+  LJson := TJSONObject.ParseJSONValue(RequestAPI(Method, Parameters));
+  try
+    Result := LJson is TJSONTrue;
+  finally
+    LJson.Free;
+  end;
+end;
+
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
     Parameters.Add('chat_id', ChatId);
     Parameters.Add('message_id', MessageId);
     Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
+
     LJson := TJSONObject.ParseJSONValue(RequestAPI('stopMessageLiveLocation', Parameters));
     try
       Result := LJson is TJSONTrue;
