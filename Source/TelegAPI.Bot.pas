@@ -38,7 +38,13 @@ type
     FParamLoader: TtgParamLoader;
     function GetToken: string;
     procedure SetToken(const Value: string);
-    function ExecuteAPI(const Method: string; Parameters: TDictionary<string, TValue>): boolean;
+
+    //Returns true when given Method executed successfully
+    function ExecuteMethod(const Method: string; Parameters: TDictionary<string, TValue>): boolean;
+
+    //Returns response JSON from server as result of request
+    function GetResponseFromMethod(const Method: string; Parameters: TDictionary<string, TValue>): string;
+
   protected
     /// <summary>
     /// Мастер-функция для запросов на сервак
@@ -374,12 +380,23 @@ begin
   end;
 end;
 
-function TTelegramBot.ExecuteAPI(const Method:string; Parameters: TDictionary<string, TValue>):boolean;
+function TTelegramBot.ExecuteMethod(const Method:string; Parameters: TDictionary<string, TValue>):boolean;
 var LJson: TJSONValue;
 begin
   LJson := TJSONObject.ParseJSONValue(RequestAPI(Method, Parameters));
   try
     Result := LJson is TJSONTrue;
+  finally
+    LJson.Free;
+  end;
+end;
+
+function TTelegramBot.GetResponseFromMethod(const Method:string; Parameters: TDictionary<string, TValue>):string;
+var LJson: TJSONValue;
+begin
+  LJson := TJSONObject.ParseJSONValue(RequestAPI(Method, Parameters));
+  try
+    Result := LJson.Value;
   finally
     LJson.Free;
   end;
@@ -395,7 +412,7 @@ begin
     Parameters.Add('message_id', MessageId);
     Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
 
-    Result:=ExecuteAPI('stopMessageLiveLocation', Parameters);
+    Result:=ExecuteMethod('stopMessageLiveLocation', Parameters);
   finally
     Parameters.Free;
   end;
@@ -410,7 +427,7 @@ begin
     Parameters.Add('inline_message_id', InlineMessageId);
     Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
 
-    Result:=ExecuteAPI('stopMessageLiveLocation', Parameters);
+    Result:=ExecuteMethod('stopMessageLiveLocation', Parameters);
   finally
     Parameters.Free;
   end;
@@ -455,7 +472,7 @@ end;
 
 function TTelegramBot.DeleteWebhook: Boolean;
 begin
-  Result:=ExecuteAPI('deleteWebhook', nil);
+  Result:=ExecuteMethod('deleteWebhook', nil);
 end;
 
  {$ENDREGION}
@@ -663,7 +680,7 @@ begin
     Parameters.Add('chat_id', ChatId);
     Parameters.Add('action', Action.ToString);
 
-    Result:=ExecuteAPI('sendChatAction', Parameters);
+    Result:=ExecuteMethod('sendChatAction', Parameters);
   finally
     Parameters.Free;
   end;
@@ -716,7 +733,7 @@ begin
     Parameters.Add('user_id', UserId);
     Parameters.Add('until_date', UntilDate);
 
-    Result:=ExecuteAPI('kickChatMember', Parameters);
+    Result:=ExecuteMethod('kickChatMember', Parameters);
   finally
     Parameters.Free;
   end;
@@ -730,7 +747,7 @@ begin
   try
     Parameters.Add('chat_id', ChatId);
 
-    Result:=ExecuteAPI('leaveChat', Parameters);
+    Result:=ExecuteMethod('leaveChat', Parameters);
   finally
     Parameters.Free;
   end;
@@ -887,7 +904,7 @@ begin
     Parameters.Add('emojis', Emojis);
     Parameters.Add('mask_position', MaskPosition);
 
-    Result:=ExecuteAPI('addStickerToSet', Parameters);
+    Result:=ExecuteMethod('addStickerToSet', Parameters);
   finally
     Parameters.Free;
   end;
@@ -905,7 +922,7 @@ begin
     Parameters.Add('url', Url);
     Parameters.Add('cache_time', CacheTime);
 
-    Result:=ExecuteAPI('answerCallbackQuery', Parameters);
+    Result:=ExecuteMethod('answerCallbackQuery', Parameters);
   finally
     Parameters.Free;
   end;
@@ -957,7 +974,7 @@ begin
     Parameters.Add('chat_id', ChatId);
     Parameters.Add('message_id', MessageId);
 
-    Result:=ExecuteAPI('deleteMessage', Parameters);
+    Result:=ExecuteMethod('deleteMessage', Parameters);
   finally
     Parameters.Free;
   end;
@@ -970,7 +987,7 @@ begin
   Parameters := TDictionary<string, TValue>.Create;
   try
     Parameters.Add('sticker', Sticker);
-    Result:=ExecuteAPI('deleteStickerFromSet', Parameters);
+    Result:=ExecuteMethod('deleteStickerFromSet', Parameters);
   finally
     Parameters.Free;
   end;
@@ -987,7 +1004,7 @@ begin
     Parameters.Add('caption', Caption);
     Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
 
-    Result:=ExecuteAPI('editMessageCaption', Parameters);
+    Result:=ExecuteMethod('editMessageCaption', Parameters);
   finally
     Parameters.Free;
   end;
@@ -1003,7 +1020,7 @@ begin
     Parameters.Add('inline_message_id', InlineMessageId);
     Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
 
-    Result:=ExecuteAPI('editMessageCaption', Parameters);
+    Result:=ExecuteMethod('editMessageCaption', Parameters);
   finally
     Parameters.Free;
   end;
@@ -1021,7 +1038,7 @@ begin
     Parameters.Add('longitude', Location.Longitude);
     Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
 
-    Result:=ExecuteAPI('editMessageLiveLocation', Parameters);
+    Result:=ExecuteMethod('editMessageLiveLocation', Parameters);
   finally
     Parameters.Free;
   end;
@@ -1039,7 +1056,7 @@ begin
     Parameters.Add('longitude', Location.Longitude);
     Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
 
-    Result:=ExecuteAPI('editMessageLiveLocation', Parameters);
+    Result:=ExecuteMethod('editMessageLiveLocation', Parameters);
   finally
     Parameters.Free;
   end;
@@ -1091,7 +1108,7 @@ begin
     Parameters.Add('switch_pm_text', SwitchPmText);
     Parameters.Add('switch_pm_parameter', SwitchPmParameter);
 
-    Result:=ExecuteAPI('answerInlineQuery', Parameters);
+    Result:=ExecuteMethod('answerInlineQuery', Parameters);
   finally
     Parameters.Free;
   end;
@@ -1141,7 +1158,7 @@ begin
     Parameters.Add('Ok', Ok);
     Parameters.Add('Error_message', ErrorMessage);
 
-    Result:=ExecuteAPI('AnswerPreCheckoutQuery', Parameters);
+    Result:=ExecuteMethod('AnswerPreCheckoutQuery', Parameters);
   finally
     Parameters.Free;
   end;
@@ -1158,7 +1175,7 @@ begin
     Parameters.Add('Shipping_options', TJsonUtils.ArrayToJString<TtgShippingOption>(ShippingOptions));
     Parameters.Add('Error_message', ErrorMessage);
 
-    Result:=ExecuteAPI('answerShippingQuery', Parameters);
+    Result:=ExecuteMethod('answerShippingQuery', Parameters);
   finally
     Parameters.Free;
   end;
@@ -1178,7 +1195,7 @@ begin
     Parameters.Add('contains_masks', ContainsMasks);
     Parameters.Add('mask_position', MaskPosition);
 
-    Result:=ExecuteAPI('createNewStickerSet', Parameters);
+    Result:=ExecuteMethod('createNewStickerSet', Parameters);
   finally
     Parameters.Free;
   end;
@@ -1216,7 +1233,7 @@ begin
     Parameters.Add('sticker', Sticker);
     Parameters.Add('position', Position);
 
-    Result:=ExecuteAPI('setStickerPositionInSet', Parameters);
+    Result:=ExecuteMethod('setStickerPositionInSet', Parameters);
   finally
     Parameters.Free;
   end;
@@ -1275,7 +1292,7 @@ begin
   try
     Parameters.Add('chat_id', ChatId);
 
-    Result:=ExecuteAPI('deleteChatPhoto', Parameters);
+    Result:=ExecuteMethod('deleteChatPhoto', Parameters);
   finally
     Parameters.Free;
   end;
@@ -1289,7 +1306,7 @@ begin
   try
     Parameters.Add('chat_id', ChatId);
 
-    Result:=ExecuteAPI('deleteChatStickerSet', Parameters);
+    Result:=ExecuteMethod('deleteChatStickerSet', Parameters);
   finally
     Parameters.Free;
   end;
@@ -1317,19 +1334,14 @@ end;
 function TTelegramBot.PinChatMessage(ChatId: TValue; MessageId: Int64; DisableNotification: Boolean): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
-  LJson: TJSONValue;
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
     Parameters.Add('chat_id', ChatId);
     Parameters.Add('message_id', MessageId);
     Parameters.Add('disable_notification', DisableNotification);
-    LJson := TJSONObject.ParseJSONValue(RequestAPI('pinChatMessage', Parameters));
-    try
-      Result := LJson is TJSONTrue;
-    finally
-      LJson.Free;
-    end;
+
+    Result:=ExecuteMethod('pinChatMessage', Parameters);
   finally
     Parameters.Free;
   end;
@@ -1338,18 +1350,13 @@ end;
 function TTelegramBot.SetChatDescription(ChatId: TValue; const Description: string): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
-  LJson: TJSONValue;
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
     Parameters.Add('chat_id', ChatId);
     Parameters.Add('description', Description);
-    LJson := TJSONObject.ParseJSONValue(RequestAPI('setChatDescription', Parameters));
-    try
-      Result := LJson is TJSONTrue;
-    finally
-      LJson.Free;
-    end;
+
+    Result:=ExecuteMethod('setChatDescription', Parameters);
   finally
     Parameters.Free;
   end;
@@ -1364,7 +1371,7 @@ begin
     Parameters.Add('chat_id', ChatId);
     Parameters.Add('photo', Photo);
 
-    Result:=ExecuteAPI('setChatPhoto', Parameters);
+    Result:=ExecuteMethod('setChatPhoto', Parameters);
   finally
     Parameters.Free;
   end;
@@ -1379,7 +1386,7 @@ begin
     Parameters.Add('chat_id', ChatId);
     Parameters.Add('sticker_set_name', StickerSetName);
 
-    Result:=ExecuteAPI('setChatStickerSet', Parameters);
+    Result:=ExecuteMethod('setChatStickerSet', Parameters);
   finally
     Parameters.Free;
   end;
@@ -1394,7 +1401,7 @@ begin
     Parameters.Add('chat_id', ChatId);
     Parameters.Add('title', title);
 
-    Result:=ExecuteAPI('setChatTitle', Parameters);
+    Result:=ExecuteMethod('setChatTitle', Parameters);
   finally
     Parameters.Free;
   end;
@@ -1408,7 +1415,7 @@ begin
   try
     Parameters.Add('chat_id', ChatId);
 
-    Result:=ExecuteAPI('unpinChatMessage', Parameters);
+    Result:=ExecuteMethod('unpinChatMessage', Parameters);
   finally
     Parameters.Free;
   end;
@@ -1448,7 +1455,7 @@ begin
     Parameters.Add('can_pin_messages', CanPinMessages);
     Parameters.Add('can_promote_members', CanPromoteMembers);
 
-    Result:=ExecuteAPI('promoteChatMember', Parameters);
+    Result:=ExecuteMethod('promoteChatMember', Parameters);
   finally
     Parameters.Free;
   end;
@@ -1468,7 +1475,7 @@ begin
     Parameters.Add('can_send_other_messages', CanSendOtherMessages);
     Parameters.Add('can_add_web_page_previews', CanAddWebPagePreviews);
 
-    Result:=ExecuteAPI('restrictChatMember', Parameters);
+    Result:=ExecuteMethod('restrictChatMember', Parameters);
   finally
     Parameters.Free;
   end;
