@@ -113,7 +113,7 @@ type
 {$REGION 'Games'}
     function SendGame(ChatId: Int64; const GameShortName: string; DisableNotification: Boolean = False; ReplyToMessageId: Int64 = 0; ReplyMarkup: IReplyMarkup = nil): ITgMessage;
     function SetGameScore(UserId: Int64; Score: Int64; Force: Boolean = False; DisableEditMessage: Boolean = False; ChatId: Int64 = 0; MessageId: Int64 = 0; const InlineMessageId: string = ''): ITgMessage;
-    function GetGameHighScores(UserId: Int64; ChatId: Int64 = 0; MessageId: Int64 = 0; const InlineMessageId: string = ''): TArray<TtgGameHighScore>;
+    function GetGameHighScores(UserId: Int64; ChatId: Int64 = 0; MessageId: Int64 = 0; const InlineMessageId: string = ''): TArray<ItgGameHighScore>;
 {$ENDREGION}
 {$REGION 'Manage groups and channels'}
     function DeleteChatPhoto(ChatId: TValue): Boolean;
@@ -195,7 +195,6 @@ type
 implementation
 
 uses
-  DJSON,
   TelegAPI.Helpers,
   TelegAPI.Utils.Json,
   System.Json;
@@ -253,7 +252,6 @@ function TTelegramBot.ParamsToFormData(Parameters: TDictionary<string, TValue>):
 var
   LParameter: TPair<string, TValue>;
   LAddProc: TtgParamLoader.TLoader;
-  LTest: string;
 begin
   Result := TMultipartFormData.Create;
   for LParameter in Parameters do
@@ -272,9 +270,10 @@ begin
       { TODO -oOwner -cGeneral : Проверить че за херня тут твориться }
       if not LParameter.Value.IsEmpty then
       begin
+        raise Exception.Create('Error Message');
         // Result.AddField(LParameter.Key, dj.From(LParameter.Value.AsObject).ToJson);
-        LTest := dj.From(LParameter.Value, TJsonUtils.DJsonConfig).ToJSON;
-        Result.AddField(LParameter.Key, LTest);
+       // LTest := dj.From(LParameter.Value, TJsonUtils.DJsonConfig).ToJSON;
+     //   Result.AddField(LParameter.Key, LTest);
       end
     end
     else
@@ -827,12 +826,20 @@ end;
 function TTelegramBot.GetChatAdministrators(const ChatId: TValue): TArray<ItgChatMember>;
 var
   Parameters: TDictionary<string, TValue>;
+  LJson: TJSONArray;
+  i: Integer;
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
     Parameters.Add('chat_id', ChatId);
- //   Result := Self.RequestAPI<TArray<TtgChatMember>>('getChatAdministrators', Parameters);
-    TBaseJson.UnSupported;
+    LJson := TJSONObject.ParseJSONValue(RequestAPI('getChatAdministrators', Parameters)) as TJSONArray;
+    try
+      SetLength(Result, LJson.Count);
+      for i := 0 to High(Result) do
+        Result[i] := TtgChatMember.Create(LJson.Items[i].ToJSON);
+    finally
+      LJson.Free;
+    end;
   finally
     Parameters.Free;
   end;
@@ -1264,7 +1271,6 @@ end;
 function TTelegramBot.SetGameScore(UserId, Score: Int64; Force, DisableEditMessage: Boolean; ChatId, MessageId: Int64; const InlineMessageId: string): ITgMessage;
 var
   Parameters: TDictionary<string, TValue>;
-  LJson: TJSONValue;
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
@@ -1318,9 +1324,11 @@ begin
   end;
 end;
 
-function TTelegramBot.GetGameHighScores(UserId, ChatId, MessageId: Int64; const InlineMessageId: string): TArray<TtgGameHighScore>;
+function TTelegramBot.GetGameHighScores(UserId, ChatId, MessageId: Int64; const InlineMessageId: string): TArray<ItgGameHighScore>;
 var
   Parameters: TDictionary<string, TValue>;
+  LJson: TJSONArray;
+  i: Integer;
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
@@ -1328,8 +1336,14 @@ begin
     Parameters.Add('chat_id', ChatId);
     Parameters.Add('message_id', MessageId);
     Parameters.Add('inline_message_id', InlineMessageId);
- //   Result := RequestAPI<TArray<TtgGameHighScore>>('getGameHighScores', Parameters);
-    TBaseJson.UnSupported;
+    LJson := TJSONObject.ParseJSONValue(RequestAPI('getGameHighScores', Parameters)) as TJSONArray;
+    try
+      SetLength(Result, LJson.Count);
+      for i := 0 to High(Result) do
+        Result[i] := TtgGameHighScore.Create(LJson.Items[i].ToJSON);
+    finally
+      LJson.Free;
+    end;
   finally
     Parameters.Free;
   end;
@@ -1518,7 +1532,6 @@ end;
 function TTelegramBot.uploadStickerFile(UserId: Int64; PngSticker: TtgFileToSend): ItgFile;
 var
   Parameters: TDictionary<string, TValue>;
-  LJson: TJSONValue;
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try

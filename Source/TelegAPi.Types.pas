@@ -6,9 +6,7 @@ uses
   System.JSON,
   System.SysUtils,
   System.Classes,
-  System.Generics.Collections,
   TelegAPi.Types.Enums,
-  DJSON.Attributes,
   TelegAPi.Types.Intf;
 
 type
@@ -1351,8 +1349,21 @@ begin
 end;
 
 function TtgChat.TypeChat: TtgChatType;
+var
+  LValue: string;
 begin
-  UnSupported;
+  LValue := ReadToSimpleType<string>('type_chat');
+  Result := TtgChatType.&private;
+  if LValue = 'private' then
+    Result := TtgChatType.&private
+  else if LValue = 'Group' then
+    Result := TtgChatType.Group
+  else if LValue = 'Channel' then
+    Result := TtgChatType.Channel
+  else if LValue = 'Supergroup' then
+    Result := TtgChatType.Supergroup
+  else
+    UnSupported;
 end;
 
 function TtgChat.Username: string;
@@ -1447,8 +1458,33 @@ begin
 end;
 
 function TtgMessageEntity.TypeMessage: TtgMessageEntityType;
+var
+  LValue: string;
 begin
-  UnSupported;
+  LValue := ReadToSimpleType<string>('type_message');
+  Result := TtgMessageEntityType.mention;
+  if LValue = 'mention' then
+    Result := TtgMessageEntityType.mention
+  else if LValue = 'hashtag' then
+    Result := TtgMessageEntityType.hashtag
+  else if LValue = 'bot_command' then
+    Result := TtgMessageEntityType.bot_command
+  else if LValue = 'url' then
+    Result := TtgMessageEntityType.url
+  else if LValue = 'bold' then
+    Result := TtgMessageEntityType.bold
+  else if LValue = 'italic' then
+    Result := TtgMessageEntityType.italic
+  else if LValue = 'code' then
+    Result := TtgMessageEntityType.code
+  else if LValue = 'pre' then
+    Result := TtgMessageEntityType.pre
+  else if LValue = 'text_link' then
+    Result := TtgMessageEntityType.text_link
+  else if LValue = 'text_mention' then
+    Result := TtgMessageEntityType.text_mention
+  else
+    UnSupported;
 end;
 
 function TtgMessageEntity.Url: string;
@@ -1498,8 +1534,21 @@ end;
 { TtgMaskPosition }
 
 function TtgMaskPosition.Point: TtgMaskPositionPoint;
+var
+  LValue: string;
 begin
-  UnSupported;
+  LValue := ReadToSimpleType<string>('point');
+  Result := TtgMaskPositionPoint.forehead;
+  if LValue = 'forehead' then
+    Result := TtgMaskPositionPoint.forehead
+  else if LValue = 'eyes' then
+    Result := TtgMaskPositionPoint.eyes
+  else if LValue = 'mouth' then
+    Result := TtgMaskPositionPoint.mouth
+  else if LValue = 'chin' then
+    Result := TtgMaskPositionPoint.chin
+  else
+    UnSupported;
 end;
 
 function TtgMaskPosition.Scale: Single;

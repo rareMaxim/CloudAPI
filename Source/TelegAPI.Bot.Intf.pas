@@ -1290,7 +1290,7 @@ type
      /// <seealso href="https://core.telegram.org/bots/api#getgamehighscores">
      /// Official API
      /// </seealso>
-    function GetGameHighScores(UserId: Int64; ChatId: Int64 = 0; MessageId: Int64 = 0; const InlineMessageId: string = ''): TArray<TtgGameHighScore>;
+    function GetGameHighScores(UserId: Int64; ChatId: Int64 = 0; MessageId: Int64 = 0; const InlineMessageId: string = ''): TArray<ItgGameHighScore>;
      {$ENDREGION}
      {$REGION 'Manage groups and channels'}
      /// <summary>
