@@ -19,7 +19,8 @@ uses
   TelegAPI.Types.InlineQueryResults,
   TelegAPI.Exceptions,
   TelegAPI.Utils.Params,
-  TelegAPI.Types.Intf;
+  TelegAPI.Types.Intf,
+  System.Json;
 
 type
   TtgOnReceiveError = procedure(ASender: TObject; AApiRequestException: EApiRequestException) of object;
@@ -39,11 +40,22 @@ type
     function GetToken: string;
     procedure SetToken(const Value: string);
 
+    //Create TBaseJ
+    function CreateBaseJSONClass<T:class, constructor>(const params: string): T;
+
+    //Returns TJSONValue as method request result
+    function GetJSONFromMethod(const Method: string; Parameters: TDictionary<string, TValue>): TJSONValue;
+
+    //Returns TJSONArray as method request result
+    function GetJSONArrayFromMethod(const Method: string; Parameters: TDictionary<string, TValue>): TJSONArray;
+
     //Returns true when given Method executed successfully
     function ExecuteMethod(const Method: string; Parameters: TDictionary<string, TValue>): boolean;
 
     //Returns response JSON from server as result of request
-    function GetResponseFromMethod(const Method: string; Parameters: TDictionary<string, TValue>): string;
+
+    function GetValueFromMethod(const Method: string; Parameters: TDictionary<string, TValue>): string;
+    function GetArrayFromMethod<T:class, constructor>(const Method: string; Parameters: TDictionary<string, TValue>):TArray<T>;
 
   protected
     /// <summary>
@@ -203,8 +215,7 @@ implementation
 
 uses
   TelegAPI.Helpers,
-  TelegAPI.Utils.Json,
-  System.Json;
+  TelegAPI.Utils.Json;
 
 { TTelegramBot }
 {$REGION 'Core'}
@@ -361,7 +372,6 @@ end;
 function TTelegramBot.SetWebhook(const Url: string; Certificate: TtgFileToSend; MaxConnections: Int64; AllowedUpdates: TAllowedUpdates): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
-  LJson: TJSONValue;
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
@@ -369,21 +379,27 @@ begin
     Parameters.Add('certificate', Certificate);
     Parameters.Add('max_connections', MaxConnections);
     Parameters.Add('allowed_updates', AllowedUpdates.ToString);
-    LJson := TJSONObject.ParseJSONValue(RequestAPI('setWebhook', Parameters));
-    try
-      Result := LJson is TJSONTrue;
-    finally
-      LJson.Free;
-    end;
+
+    Result:=ExecuteMethod('setWebhook', Parameters);
   finally
     Parameters.Free;
   end;
 end;
 
+function TTelegramBot.GetJSONFromMethod(const Method:string; Parameters: TDictionary<string, TValue>):TJSONValue;
+begin
+  Result := TJSONObject.ParseJSONValue(RequestAPI(Method, Parameters));
+end;
+
+function TTelegramBot.GetJSONArrayFromMethod(const Method:string; Parameters: TDictionary<string, TValue>):TJSONArray;
+begin
+  Result:=TJSONObject.ParseJSONValue(RequestAPI(Method, Parameters)) as TJSONArray;
+end;
+
 function TTelegramBot.ExecuteMethod(const Method:string; Parameters: TDictionary<string, TValue>):boolean;
 var LJson: TJSONValue;
 begin
-  LJson := TJSONObject.ParseJSONValue(RequestAPI(Method, Parameters));
+  LJson := GetJSONFromMethod(Method, Parameters);
   try
     Result := LJson is TJSONTrue;
   finally
@@ -391,10 +407,10 @@ begin
   end;
 end;
 
-function TTelegramBot.GetResponseFromMethod(const Method:string; Parameters: TDictionary<string, TValue>):string;
+function TTelegramBot.GetValueFromMethod(const Method:string; Parameters: TDictionary<string, TValue>):string;
 var LJson: TJSONValue;
 begin
-  LJson := TJSONObject.ParseJSONValue(RequestAPI(Method, Parameters));
+  LJson := GetJSONFromMethod(Method, Parameters);
   try
     Result := LJson.Value;
   finally
@@ -437,11 +453,43 @@ function TTelegramBot.GetWebhookInfo: ItgWebhookInfo;
 var
   LJson: TJSONValue;
 begin
-  LJson := TJSONObject.ParseJSONValue(RequestAPI('getWebhookInfo', nil));
+  LJson := GetJSONFromMethod('getWebhookInfo', nil);
   try
     Result := TBaseJsonClass(TtgWebhookInfo).Create(LJson.ToJSON) as TtgWebhookInfo;
   finally
     LJson.Free;
+  end;
+end;
+
+function TTelegramBot.CreateBaseJSONClass<T>(const params:string):T;
+var c : TRttiContext;
+    rt: TRttiType;
+    v : TValue;
+begin
+  // Invoke RTTI
+  c:= TRttiContext.Create;
+  rt:= c.GetType(T);
+  v:= rt.GetMethod('Create').Invoke(rt.AsInstance.MetaclassType,[params]);
+  result:= T(v.AsObject);
+  // free RttiContext record
+  c.Free;
+end;
+
+
+
+function TTelegramBot.GetArrayFromMethod<T>(const Method: string; Parameters: TDictionary<string, TValue>): TArray<T>;
+var LJsonArr: TJSONArray;
+    I: Integer;
+begin
+  LJsonArr := GetJSONArrayFromMethod('getUpdates', Parameters);
+  try
+    SetLength(Result, LJsonArr.Count);
+    for I := 0 to High(Result) do
+    begin
+      Result[I] := CreateBaseJsonClass<T>(LJsonArr.Items[I].ToJSON);
+    end;
+  finally
+    LJsonArr.Free;
   end;
 end;
 
@@ -450,6 +498,7 @@ var
   Parameters: TDictionary<string, TValue>;
   LJson: TJSONArray;
   I: Integer;
+
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
@@ -457,6 +506,8 @@ begin
     Parameters.Add('limit', Limit);
     Parameters.Add('timeout', Timeout);
     Parameters.Add('allowed_updates', AllowedUpdates.ToString);
+
+
     LJson := TJSONObject.ParseJSONValue(RequestAPI('getUpdates', Parameters)) as TJSONArray;
     try
       SetLength(Result, LJson.Count);
@@ -481,18 +532,13 @@ end;
 function TTelegramBot.UnbanChatMember(ChatId: TValue; UserId: Int64): Boolean;
 var
   Parameters: TDictionary<string, TValue>;
-  LJson: TJSONValue;
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
     Parameters.Add('chat_id', ChatId);
     Parameters.Add('user_id', UserId);
-    LJson := TJSONObject.ParseJSONValue(RequestAPI('unbanChatMember', Parameters));
-    try
-      Result := LJson is TJSONTrue;
-    finally
-      LJson.Free;
-    end;
+
+    Result:=ExecuteMethod('unbanChatMember', Parameters);
   finally
     Parameters.Free;
   end;
@@ -665,6 +711,7 @@ begin
     Parameters.Add('disable_notification', DisableNotification);
     Parameters.Add('reply_to_message_id', ReplyToMessageId);
     Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
+
     Result := TTgMessage.Create(RequestAPI('sendAudio', Parameters));
   finally
     Parameters.Free;
@@ -699,6 +746,7 @@ begin
     Parameters.Add('disable_notification', DisableNotification);
     Parameters.Add('reply_to_message_id', ReplyToMessageId);
     Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
+
     Result := TTgMessage.Create(RequestAPI('sendContact', Parameters));
   finally
     Parameters.Free;
@@ -717,6 +765,7 @@ begin
     Parameters.Add('disable_notification', DisableNotification);
     Parameters.Add('reply_to_message_id', ReplyToMessageId);
     Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
+
     Result := TTgMessage.Create(RequestAPI('sendDocument', Parameters));
   finally
     Parameters.Free;
@@ -806,6 +855,7 @@ begin
     Parameters.Free;
   end;
 end;
+
 
 function TTelegramBot.GetChat(const ChatId: TValue): ItgChat;
 var
@@ -1320,7 +1370,7 @@ begin
   try
     Parameters.Add('chat_id', ChatId);
 
-    Result:=GetResponseFromMethod('exportChatInviteLink', Parameters);
+    Result:=GetValueFromMethod('exportChatInviteLink', Parameters);
   finally
     Parameters.Free;
   end;
