@@ -3,7 +3,7 @@ unit TelegaPi.Types.InlineQueryResults;
 interface
 
 uses
-  DJSON.Attributes,
+  REST.Json.Types,
   TelegaPi.Types.ReplyMarkups,
   TelegaPi.Types.InputMessageContents;
 
@@ -13,33 +13,32 @@ type
   ///   This object represents one result of an inline query. Telegram clients
   ///   currently support results of the following 19 types ///
   /// </summary>
-  [djName('InlineQueryResult')]
   TtgInlineQueryResult = class abstract
   public
     /// <summary>
     ///   Unique identifier for this result, 1-64 bytes
     /// </summary>
-    [djName('id')]
+    [JSONName('id')]
     ID: string;
     /// <summary>
     ///   Type of the result
     /// </summary>
-    [djName('type')]
+    [JSONName('type')]
     &Type: string;
     /// <summary>
     ///   Title of the result
     /// </summary>
-    [djName('title')]
+    [JSonName('title')]
     Title: String;
     /// <summary>
     ///   Optional. Inline keyboard attached to the message
     /// </summary>
-    [djName('input_message_content')]
+    [JSonName('input_message_content')]
     InputMessageContent: TtgInputMessageContent;
     /// <summary>
     ///   Optional. Inline keyboard attached to the message
     /// </summary>
-    [djName('reply_markup')]
+    [JSonName('reply_markup')]
     ReplyMarkup: TtgInlineKeyboardMarkup;
     constructor Create;
     destructor Destroy; override;
@@ -50,41 +49,41 @@ type
     /// <summary>
     ///   Optional. Url of the thumbnail for the result
     /// </summary>
-    [djName('thumb_url')]
+    [JSONName('thumb_url')]
     ThumbUrl: string;
     /// <summary>
     ///   Optional. Thumbnail width
     /// </summary>
-    [djName('thumb_width')]
+    [JSONName('thumb_width')]
     ThumbWidth: Integer;
     /// <summary>
     ///   Optional. Thumbnail height
     /// </summary>
-    [djName('thumb_height')]
+    [JSONName('thumb_height')]
     ThumbHeight: Integer;
   end;
 
   /// <summary>
   ///   Represents a link to an article or web page.
   /// </summary>
-  [djName('InlineQueryResultArticle')]
+  [JSONName('InlineQueryResultArticle')]
   TtgInlineQueryResultArticle = class(TtgInlineQueryResultNew)
   public
     /// <summary>
     ///   Optional. URL of the result
     /// </summary>
-    [djName('url')]
+    [JSONName('url')]
     Url: string;
     /// <summary>
     ///   Optional. Pass True, if you don't want the URL to be shown in the
     ///   message
     /// </summary>
-    [djName('hide_url')]
+    [JSONName('hide_url')]
     HideUrl: Boolean;
     /// <summary>
     ///   Optional. Short description of the result
     /// </summary>
-    [djName('description')]
+    [JSONName('description')]
     Description: string;
     constructor Create;
   end;
@@ -95,28 +94,28 @@ type
   ///   input_message_content to send a message with the specified content
   ///   instead of the audio.
   /// </summary>
-  [djName('InlineQueryResultAudio')]
+  [JSONName('InlineQueryResultAudio')]
   TtgInlineQueryResultAudio = class(TtgInlineQueryResultNew)
   public
     /// <summary>
     ///   A valid file identifier for the audio file
     /// </summary>
-    [djName('audio_file_id')]
+    [JSONName('audio_file_id')]
     FileId: string;
     /// <summary>
     ///   A valid URL for the audio file
     /// </summary>
-    [djName('audio_url')]
+    [JSONName('audio_url')]
     Url: string;
     /// <summary>
     ///   Optional. Performer
     /// </summary>
-    [djName('performer')]
+    [JSONName('performer')]
     Performer: string;
     /// <summary>
     ///   Optional. Audio duration in seconds
     /// </summary>
-    [djName('audio_duration')]
+    [JSONName('audio_duration')]
     Duration: Integer;
     constructor Create;
   end;
@@ -131,7 +130,7 @@ type
     /// <summary>
     ///   Optional. Caption of the result to be sent, 0-200 characters
     /// </summary>
-    [djName('caption')]
+    [JSONName('caption')]
     Caption: string;
   end;
 
@@ -141,13 +140,13 @@ type
   ///   you can use input_message_content to send a message with the specified
   ///   content instead of the audio.
   /// </summary>
-  [djName('InlineQueryResultCachedAudio')]
+  [JSONName('InlineQueryResultCachedAudio')]
   TtgInlineQueryResultCachedAudio = class(TtgInlineQueryResultCached)
   public
     /// <summary>
     ///   A valid file identifier for the audio file
     /// </summary>
-    [djName('audio_file_id')]
+    [JSONName('audio_file_id')]
     FileId: string;
     constructor Create;
   end;
@@ -159,18 +158,18 @@ type
   ///   the specified content instead of the file. Currently, only pdf-files
   ///   and zip archives can be sent using this method.
   /// </summary>
-  [djName('InlineQueryResultCachedDocument')]
+  [JSONName('InlineQueryResultCachedDocument')]
   TTgInlineQueryResultCachedDocument = class(TtgInlineQueryResultCached)
   public
     /// <summary>
     ///   A valid file identifier for the file
     /// </summary>
-    [djName('document_file_id')]
+    [JSONName('document_file_id')]
     FileId: string;
     /// <summary>
     ///   Optional. Short description of the result
     /// </summary>
-    [djName('description')]
+    [JSONName('description')]
     Description: string;
     constructor Create;
   end;
@@ -182,13 +181,13 @@ type
   ///   input_message_content to send a message with specified content instead
   ///   of the animation.
   /// </summary>
-  [djName('InlineQueryResultCachedGif')]
+  [JSONName('InlineQueryResultCachedGif')]
   TtgInlineQueryResultCachedGif = class(TtgInlineQueryResultCached)
   public
     /// <summary>
     ///   A valid file identifier for the GIF file
     /// </summary>
-    [djName('gif_file_id')]
+    [JSONName('gif_file_id')]
     FileId: string;
     constructor Create;
   end;
@@ -200,13 +199,13 @@ type
   ///   you can use input_message_content to send a message with the specified
   ///   content instead of the animation.
   /// </summary>
-  [djName('InlineQueryResultCachedMpeg4Gif')]
+  [JSONName('InlineQueryResultCachedMpeg4Gif')]
   TtgInlineQueryResultCachedMpeg4Gif = class(TtgInlineQueryResultCached)
   public
     /// <summary>
     ///   A valid file identifier for the MP4 file
     /// </summary>
-    [djName('mpeg4_file_id')]
+    [JSONName('mpeg4_file_id')]
     FileId: string;
     constructor Create;
   end;
@@ -217,18 +216,18 @@ type
   ///   Alternatively, you can use input_message_content to send a message with
   ///   the specified content instead of the photo.
   /// </summary>
-  [djName('InlineQueryResultCachedPhoto')]
+  [JSONName('InlineQueryResultCachedPhoto')]
   TtgInlineQueryResultCachedPhoto = class(TtgInlineQueryResultCached)
   public
     /// <summary>
     ///   A valid file identifier of the photo
     /// </summary>
-    [djName('photo_file_id')]
+    [JSONName('photo_file_id')]
     FileId: string;
     /// <summary>
     ///   Optional. Short description of the result
     /// </summary>
-    [djName('description')]
+    [JSONName('description')]
     Description: string;
     constructor Create;
   end;
@@ -239,13 +238,13 @@ type
   ///   use input_message_content to send a message with the specified content
   ///   instead of the sticker.
   /// </summary>
-  [djName('InlineQueryResultCachedSticker')]
+  [JSONName('InlineQueryResultCachedSticker')]
   TtgInlineQueryResultCachedSticker = class(TtgInlineQueryResultCached)
   public
     /// <summary>
     ///   A valid file identifier of the sticker
     /// </summary>
-    [djName('sticker_file_id')]
+    [JSONName('sticker_file_id')]
     FileId: string;
     constructor Create;
   end;
@@ -256,18 +255,18 @@ type
   ///   caption. Alternatively, you can use input_message_content to send a
   ///   message with the specified content instead of the video.
   /// </summary>
-  [djName('InlineQueryResultCachedVideo')]
+  [JSONName('InlineQueryResultCachedVideo')]
   TtgInlineQueryResultCachedVideo = class(TtgInlineQueryResultCached)
   public
     /// <summary>
     ///   A valid file identifier for the video
     /// </summary>
-    [djName('video_file_id')]
+    [JSONName('video_file_id')]
     FileId: string;
     /// <summary>
     ///   Optional. Short description of the result
     /// </summary>
-    [djName('description')]
+    [JSONName('description')]
     Description: string;
     constructor Create;
   end;
@@ -278,13 +277,13 @@ type
   ///   you can use input_message_content to send a message with the specified
   ///   content instead of the voice message.
   /// </summary>
-  [djName('InlineQueryResultCachedVoice')]
+  [JSONName('InlineQueryResultCachedVoice')]
   TtgInlineQueryResultCachedVoice = class(TtgInlineQueryResultCached)
   public
     /// <summary>
     ///   A valid file identifier for the voice message
     /// </summary>
-    [djName('voice_file_id')]
+    [JSONName('voice_file_id')]
     FileId: string;
     constructor Create;
   end;
@@ -294,23 +293,23 @@ type
   ///   be sent by the user. Alternatively, you can use input_message_content
   ///   to send a message with the specified content instead of the contact.
   /// </summary>
-  [djName('InlineQueryResultContact')]
+  [JSONName('InlineQueryResultContact')]
   TtgInlineQueryResultContact = class(TtgInlineQueryResultNew)
   public
     /// <summary>
     ///   Contact's phone number
     /// </summary>
-    [djName('phone_number')]
+    [JSONName('phone_number')]
     PhoneNumber: string;
     /// <summary>
     ///   Contact's first name
     /// </summary>
-    [djName('first_name')]
+    [JSONName('first_name')]
     FirstName: string;
     /// <summary>
     ///   Optional. Contact's last name
     /// </summary>
-    [djName('last_name')]
+    [JSONName('last_name')]
     LastName: string;
     constructor Create;
   end;
@@ -322,29 +321,29 @@ type
   ///   instead of the file. Currently, only .PDF and .ZIP files can be sent
   ///   using this method.
   /// </summary>
-  [djName('InlineQueryResultDocument')]
+  [JSONName('InlineQueryResultDocument')]
   TtgInlineQueryResultDocument = class(TtgInlineQueryResultNew)
   public
     /// <summary>
     ///   Optional. Caption of the document to be sent, 0-200 characters
     /// </summary>
-    [djName('caption')]
+    [JSONName('caption')]
     Caption: string;
     /// <summary>
     ///   A valid URL for the file
     /// </summary>
-    [djName('document_url')]
+    [JSONName('document_url')]
     Url: string;
     /// <summary>
     ///   Mime type of the content of the file, either “application/pdf” or
     ///   “application/zip”
     /// </summary>
-    [djName('mime_type')]
+    [JSONName('mime_type')]
     MimeType: string;
     /// <summary>
     ///   Optional. Short description of the result
     /// </summary>
-    [djName('description')]
+    [JSONName('description')]
     Description: string;
     constructor Create;
   end;
@@ -352,16 +351,16 @@ type
   { TODO -oM.E.Sysoev -cNew Type : add InlineQueryResultGame }
   TtgInlineQueryResultGame = class
   public
-    [djName('type')]
+    [JSONName('type')]
     &type: String;
-    [djName('id')]
+    [JSONName('id')]
     id: String;
     /// <summary>
     ///   Short name of the game.
     /// </summary>
-    [djName('game_short_name')]
+    [JSONName('game_short_name')]
     GameShortName: String;
-    [djName('reply_markup')]
+    [JSONName('reply_markup')]
     reply_markup: TtgInlineKeyboardMarkup;
     constructor Create;
   end;
@@ -372,38 +371,38 @@ type
   ///   you can use input_message_content to send a message with the specified
   ///   content instead of the animation.
   /// </summary>
-  [djName('InlineQueryResultGif')]
+  [JSONName('InlineQueryResultGif')]
   TtgInlineQueryResultGif = class(TtgInlineQueryResultNew)
   public
     /// <summary>
     ///   A valid URL for the GIF file. File size must not exceed 1MB
     /// </summary>
-    [djName('gif_url')]
+    [JSONName('gif_url')]
     Url: string;
     /// <summary>
     ///   Optional. Width of the GIF
     /// </summary>
-    [djName('gif_width')]
+    [JSONName('gif_width')]
     Width: Integer;
     /// <summary>
     ///   Optional. Height of the GIF
     /// </summary>
-    [djName('gif_height')]
+    [JSONName('gif_height')]
     Height: Integer;
     /// <summary>
     ///   Optional. Duration of the GIF
     /// </summary>
-    [djName('gif_duration')]
+    [JSONName('gif_duration')]
     Duration: Integer;
     /// <summary>
     ///   Optional. Caption of the GIF file to be sent, 0-200 characters
     /// </summary>
-    [djName('caption')]
+    [JSONName('caption')]
     Caption: string;
     /// <summary>
     ///   URL of the static thumbnail for the result (jpeg or gif)
     /// </summary>
-    [djName('thumb_url')]
+    [JSONName('thumb_url')]
     ThumbUrl: string;
     constructor Create;
   end;
@@ -413,18 +412,18 @@ type
   ///   by the user. Alternatively, you can use input_message_content to send a
   ///   message with the specified content instead of the location.
   /// </summary>
-  [djName('InlineQueryResultLocation')]
+  [JSONName('InlineQueryResultLocation')]
   TtgInlineQueryResultLocation = class(TtgInlineQueryResultNew)
   public
     /// <summary>
     ///   Location latitude in degrees
     /// </summary>
-    [djName('latitude')]
+    [JSONName('latitude')]
     Latitude: Single;
     /// <summary>
     ///   Location longitude in degrees
     /// </summary>
-    [djName('longitude')]
+    [JSONName('longitude')]
     Longitude: Single;
     constructor Create;
   end;
@@ -435,33 +434,33 @@ type
   ///   with optional caption. Alternatively, you can use input_message_content
   ///   to send a message with the specified content instead of the animation.
   /// </summary>
-  [djName('InlineQueryResultMpeg4Gif')]
+  [JSONName('InlineQueryResultMpeg4Gif')]
   TtgInlineQueryResultMpeg4Gif = class(TtgInlineQueryResult)
   public
     /// <summary>
     ///   A valid URL for the MP4 file. File size must not exceed 1MB
     /// </summary>
-    [djName('mpeg4_url')]
+    [JSONName('mpeg4_url')]
     Url: string;
     /// <summary>
     ///   Optional. Video width
     /// </summary>
-    [djName('mpeg4_width')]
+    [JSONName('mpeg4_width')]
     Width: Integer;
     /// <summary>
     ///   Optional. Video height
     /// </summary>
-    [djName('mpeg4_height')]
+    [JSONName('mpeg4_height')]
     Height: Integer;
     /// <summary>
     ///   Optional. Video height
     /// </summary>
-    [djName('mpeg4_duration')]
+    [JSONName('mpeg4_duration')]
     Duration: Integer;
     /// <summary>
     ///   Optional. Caption of the MPEG-4 file to be sent, 0-200 characters
     /// </summary>
-    [djName('caption')]
+    [JSONName('caption')]
     Caption: string;
     constructor Create;
   end;
@@ -472,34 +471,34 @@ type
   ///   input_message_content to send a message with the specified content
   ///   instead of the photo.
   /// </summary>
-  [djName('InlineQueryResultPhoto')]
+  [JSONName('InlineQueryResultPhoto')]
   TtgInlineQueryResultPhoto = class(TtgInlineQueryResultNew)
   public
     /// <summary>
     ///   A valid URL of the photo. Photo must be in jpeg format. Photo size
     ///   must not exceed 5MB
     /// </summary>
-    [djName('photo_url')]
+    [JSONName('photo_url')]
     Url: string;
     /// <summary>
     ///   Optional. Width of the photo
     /// </summary>
-    [djName('photo_width')]
+    [JSONName('photo_width')]
     Width: Integer;
     /// <summary>
     ///   Optional. Height of the photo
     /// </summary>
-    [djName('photo_height')]
+    [JSONName('photo_height')]
     Height: Integer;
     /// <summary>
     ///   Optional. Short description of the result
     /// </summary>
-    [djName('description')]
+    [JSONName('description')]
     Description: string;
     /// <summary>
     ///   Optional. Caption of the photo to be sent, 0-200 characters
     /// </summary>
-    [djName('caption')]
+    [JSONName('caption')]
     Caption: string;
     constructor Create;
   end;
@@ -509,28 +508,28 @@ type
   ///   Alternatively, you can use input_message_content to send a message with
   ///   the specified content instead of the venue.
   /// </summary>
-  [djName('InlineQueryResultVenue')]
+  [JSONName('InlineQueryResultVenue')]
   TtgInlineQueryResultVenue = class(TtgInlineQueryResultNew)
   public
     /// <summary>
     ///   Latitude of the venue location in degrees
     /// </summary>
-    [djName('latitude')]
+    [JSONName('latitude')]
     Latitude: Single;
     /// <summary>
     ///   Longitude of the venue location in degrees
     /// </summary>
-    [djName('longitude')]
+    [JSONName('longitude')]
     Longitude: Single;
     /// <summary>
     ///   Address of the venue
     /// </summary>
-    [djName('address')]
+    [JSONName('address')]
     Address: string;
     /// <summary>
     ///   Optional. Foursquare identifier of the venue if known
     /// </summary>
-    [djName('foursquare_id')]
+    [JSONName('foursquare_id')]
     FoursquareId: string;
     constructor Create;
   end;
@@ -541,43 +540,43 @@ type
   ///   an optional caption. Alternatively, you can use input_message_content
   ///   to send a message with the specified content instead of the video.
   /// </summary>
-  [djName('InlineQueryResultVideo')]
+  [JSONName('InlineQueryResultVideo')]
   TtgInlineQueryResultVideo = class(TtgInlineQueryResultNew)
   public
     /// <summary>
     ///   A valid URL for the embedded video player or video file
     /// </summary>
-    [djName('video_url')]
+    [JSONName('video_url')]
     Url: string;
     /// <summary>
     ///   Mime type of the content of video url, “text/html” or “video/mp4”
     /// </summary>
-    [djName('mime_type')]
+    [JSONName('mime_type')]
     MimeType: string;
     /// <summary>
     ///   Optional. Video width
     /// </summary>
-    [djName('video_width')]
+    [JSONName('video_width')]
     Width: Integer;
     /// <summary>
     ///   Optional. Video height
     /// </summary>
-    [djName('video_height')]
+    [JSONName('video_height')]
     Height: Integer;
     /// <summary>
     ///   Optional. Video duration in seconds
     /// </summary>
-    [djName('video_duration')]
+    [JSONName('video_duration')]
     Duration: Integer;
     /// <summary>
     ///   Optional. Short description of the result
     /// </summary>
-    [djName('description')]
+    [JSONName('description')]
     Description: string;
     /// <summary>
     ///   Optional. Caption of the video to be sent, 0-200 characters
     /// </summary>
-    [djName('caption')]
+    [JSONName('caption')]
     Caption: string;
     constructor Create;
   end;
@@ -588,18 +587,18 @@ type
   ///   Alternatively, you can use input_message_content to send a message with
   ///   the specified content instead of the the voice message.
   /// </summary>
-  [djName('InlineQueryResultVoice')]
+  [JSONName('InlineQueryResultVoice')]
   TtgInlineQueryResultVoice = class(TtgInlineQueryResultNew)
   public
     /// <summary>
     ///   A valid URL for the voice recording
     /// </summary>
-    [djName('voice_url')]
+    [JSONName('voice_url')]
     Url: string;
     /// <summary>
     ///   Optional. Recording duration in seconds
     /// </summary>
-    [djName('voice_duration')]
+    [JSONName('voice_duration')]
     Duration: Integer;
     constructor Create;
   end;

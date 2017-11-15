@@ -3,7 +3,7 @@ unit TelegAPi.Helpers;
 interface
 
 uses
-  TelegAPi.Bot,
+  TelegAPi.Bot.Impl,
   TelegAPi.Types,
   TelegAPi.Types.Enums,
   System.Classes,
@@ -48,7 +48,7 @@ uses
   System.IOUtils,
   System.SysUtils,
   System.Generics.Collections,
-  System.RegularExpressions, TelegAPi.Types.Intf;
+  System.RegularExpressions;
 
 { TtgParseModeHelper }
 

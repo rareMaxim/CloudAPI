@@ -6,7 +6,7 @@ uses
   System.SysUtils,
   System.Rtti,
   System.Generics.Collections,
-  TelegaPi.Types, TelegAPi.Types.Intf;
+  TelegaPi.Types;
 
 type
   ETelegramException = class(Exception);
@@ -18,7 +18,7 @@ type
   ETelegramUnknownData = class(ETelegramDataConvert);
 
   /// <summary>
-  ///   Represents an api error
+  /// Represents an api error
   /// </summary>
   EApiRequestException = class(Exception)
   private
@@ -28,35 +28,76 @@ type
     FSendedParams: TDictionary<string, TValue>;
   public
     /// <summary>
-    ///   Initializes a new instance of the <see cref="TelegaPi.Exceptions|EApiRequestException" />
-    ///    class.
+    /// Initializes a new instance of the <see cref="TelegaPi.Exceptions|EApiRequestException" />
+    /// class.
     /// </summary>
     /// <param name="AMessage">
-    ///   The message that describes the error.
+    /// The message that describes the error.
     /// </param>
     constructor Create(const AMessage: string); overload;
     constructor Create(const AMessage: string; AErrorCode: Integer); overload;
-    constructor Create(const AMessage: string; AErrorCode: Integer; ASentParam: TDictionary<string, TValue>); overload;
+    constructor Create(const AMessage: string; AErrorCode: Integer;
+      ASentParam: TDictionary<string, TValue>); overload;
     function ToString: string; override;
     /// <summary>
-    ///   Gets the error code.
+    /// Gets the error code.
     /// </summary>
     /// <seealso href="https://telegram.wiki/bots/errorcodes">
-    ///   Bot Error Codes
+    /// Bot Error Codes
     /// </seealso>
     property ErrorCode: Integer read FErrorCode write FErrorCode;
     /// <summary>
-    ///   Contains information about why a request was unsuccessfull.
+    /// Contains information about why a request was unsuccessfull.
     /// </summary>
-    property Parameters: ItgResponseParameters read FParameters write FParameters;
+    property Parameters: ItgResponseParameters read FParameters
+      write FParameters;
     property SentParams: TDictionary<string, TValue> read FSendedParams;
     property RawData: string read FRawData write FRawData;
   end;
 
+  ItgExceptionHandler = interface
+    ['{B5F170D3-2CFB-42FA-941A-F0781A41D053}']
+    procedure HaveApiExeption(const Method: string;
+      AException: EApiRequestException);
+    procedure HaveGlobalExeption(const Method: string; AException: Exception);
+  end;
+
+  TtgExceptionManagerConsole = class(TInterfacedObject, ItgExceptionHandler)
+  private
+    FOnApiException: TProc<string, EApiRequestException>;
+    FOnGlobalException: TProc<string, Exception>;
+  public
+    procedure HaveApiExeption(const Method: string;
+      AException: EApiRequestException);
+    procedure HaveGlobalExeption(const Method: string; AException: Exception);
+    property OnApiException: TProc<string, EApiRequestException>
+      read FOnApiException write FOnApiException;
+    property OnGlobalException: TProc<string, Exception> read FOnGlobalException
+      write FOnGlobalException;
+  end;
+
+  TtgOnReceiveApiError = procedure(ASender: TObject; const AMethod: string;
+    AApiRequestException: EApiRequestException) of object;
+
+  TtgOnReceiveGlobalError = procedure(ASender: TObject; const AMethod: string;
+    AException: Exception) of object;
+
+  TtgExceptionManagerUI = class(TInterfacedObject, ItgExceptionHandler)
+  private
+    FOnApiException: TtgOnReceiveApiError;
+    FOnGlobalException: TtgOnReceiveGlobalError;
+  public
+    procedure HaveApiExeption(const Method: string;
+      AException: EApiRequestException);
+    procedure HaveGlobalExeption(const Method: string; AException: Exception);
+    property OnApiException: TtgOnReceiveApiError read FOnApiException
+      write FOnApiException;
+    property OnGlobalException: TtgOnReceiveGlobalError read FOnGlobalException
+      write FOnGlobalException;
+  end;
+
 implementation
 
-uses
-  DJSON;
 { EApiRequestException }
 
 constructor EApiRequestException.Create(const AMessage: string);
@@ -64,13 +105,15 @@ begin
   inherited Create(AMessage);
 end;
 
-constructor EApiRequestException.Create(const AMessage: string; AErrorCode: Integer);
+constructor EApiRequestException.Create(const AMessage: string;
+  AErrorCode: Integer);
 begin
   inherited Create(AMessage);
   FErrorCode := AErrorCode;
 end;
 
-constructor EApiRequestException.Create(const AMessage: string; AErrorCode: Integer; ASentParam: TDictionary<string, TValue>);
+constructor EApiRequestException.Create(const AMessage: string;
+  AErrorCode: Integer; ASentParam: TDictionary<string, TValue>);
 begin
   inherited Create(AMessage);
   FErrorCode := AErrorCode;
@@ -85,9 +128,41 @@ var
   tmp: string;
 begin
   if Assigned(Parameters) then
-    tmp := Format(CResponseParameters, [Parameters.MigrateToChatId, Parameters.RetryAfter]);
+    tmp := Format(CResponseParameters, [Parameters.MigrateToChatId,
+      Parameters.RetryAfter]);
   Result := Format(CFORMAT, [#13#10, FErrorCode, Message, #13#10, tmp])
 end;
 
-end.
+{ TtgExceptionManagerConsole }
 
+procedure TtgExceptionManagerConsole.HaveApiExeption(const Method: string;
+  AException: EApiRequestException);
+begin
+  if Assigned(OnApiException) then
+    OnApiException(Method, AException);
+end;
+
+procedure TtgExceptionManagerConsole.HaveGlobalExeption(const Method: string;
+  AException: Exception);
+begin
+  if Assigned(OnGlobalException) then
+    OnGlobalException(Method, AException);
+end;
+
+{ TtgExceptionManagerUI }
+
+procedure TtgExceptionManagerUI.HaveApiExeption(const Method: string;
+  AException: EApiRequestException);
+begin
+  if Assigned(OnGlobalException) then
+    OnApiException(Self, Method, AException);
+end;
+
+procedure TtgExceptionManagerUI.HaveGlobalExeption(const Method: string;
+  AException: Exception);
+begin
+  if Assigned(OnGlobalException) then
+    OnGlobalException(Self, Method, AException);
+end;
+
+end.

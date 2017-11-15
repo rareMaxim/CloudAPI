@@ -6,9 +6,6 @@
         <Projects Include="Install\TelegaPiBot.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="Test\TelegaTest.dproj">
-            <Dependencies>Install\TelegaPiBot.dproj</Dependencies>
-        </Projects>
         <Projects Include="Demo\EchoBot\EchoBot.dproj">
             <Dependencies>Install\TelegaPiBot.dproj</Dependencies>
         </Projects>
@@ -32,15 +29,6 @@
     <Target Name="TelegaPiBot:Make">
         <MSBuild Projects="Install\TelegaPiBot.dproj" Targets="Make"/>
     </Target>
-    <Target Name="TelegaTest" DependsOnTargets="TelegaPiBot">
-        <MSBuild Projects="Test\TelegaTest.dproj"/>
-    </Target>
-    <Target Name="TelegaTest:Clean" DependsOnTargets="TelegaPiBot:Clean">
-        <MSBuild Projects="Test\TelegaTest.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="TelegaTest:Make" DependsOnTargets="TelegaPiBot:Make">
-        <MSBuild Projects="Test\TelegaTest.dproj" Targets="Make"/>
-    </Target>
     <Target Name="EchoBot" DependsOnTargets="TelegaPiBot">
         <MSBuild Projects="Demo\EchoBot\EchoBot.dproj"/>
     </Target>
@@ -60,13 +48,13 @@
         <MSBuild Projects="Demo\Console\ConsoleBot.dproj" Targets="Make"/>
     </Target>
     <Target Name="Build">
-        <CallTarget Targets="TelegaPiBot;TelegaTest;EchoBot;ConsoleBot"/>
+        <CallTarget Targets="TelegaPiBot;EchoBot;ConsoleBot"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="TelegaPiBot:Clean;TelegaTest:Clean;EchoBot:Clean;ConsoleBot:Clean"/>
+        <CallTarget Targets="TelegaPiBot:Clean;EchoBot:Clean;ConsoleBot:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="TelegaPiBot:Make;TelegaTest:Make;EchoBot:Make;ConsoleBot:Make"/>
+        <CallTarget Targets="TelegaPiBot:Make;EchoBot:Make;ConsoleBot:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

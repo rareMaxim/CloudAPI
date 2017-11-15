@@ -3,31 +3,11 @@
 interface
 
 uses
-  System.JSON,
-  System.SysUtils,
-  System.Classes,
-  TelegAPi.Types.Enums,
-  TelegAPi.Types.Intf;
+  TelegAPi.Types.Enums, System.Classes;
 
 type
-  TBaseJsonClass = class of TBaseJson;
-
-  TBaseJson = class(TInterfacedObject)
-  private
-    FJSON: TJSONObject;
-  protected
-    function ReadToClass<T: class, constructor>(const AKey: string): T;
-    function ReadToSimpleType<T>(const AKey: string): T;
-    function ReadToDateTime(const AKey: string): TDateTime;
-  public
-    class function FromJson(const AJson: string): TBaseJson;
-    class procedure UnSupported;
-    constructor Create(const AJson: string);
-    destructor Destroy; override;
-  end;
-
-  TtgUser = class(TBaseJson, ItgUser)
-  public
+  ItgUser = interface
+    ['{EEE1275B-F21B-476F-9F0C-768C702FF34B}']
     function ID: Int64;
     function IsBot: Boolean;
     function FirstName: string;
@@ -36,8 +16,8 @@ type
     function LanguageCode: string;
   end;
 
-  TtgChatMember = class(TBaseJson, ItgChatMember)
-  public
+  ItgChatMember = interface
+    ['{BE073F97-DA34-43E6-A15E-14A2B90CAB7E}']
     function User: ItgUser;
     function Status: string;
     function UntilDate: TDateTime;
@@ -56,13 +36,16 @@ type
     function CanAddWebPagePreviews: Boolean;
   end;
 
-  TtgChatPhoto = class(TBaseJson, ItgChatPhoto)
+  ItgChatPhoto = interface
+    ['{011E7CC4-8777-4E0F-95A6-6E5C87461DCD}']
     function SmallFileId: string;
     function BigFileId: string;
   end;
 
-  TtgChat = class(TBaseJson, ItgChat)
-  public
+  ITgMessage = interface;
+
+  ItgChat = interface
+    ['{5CE94B3E-312E-48FA-98A4-4C34E16A5DC7}']
     function ID: Int64;
     function TypeChat: TtgChatType;
     function Title: string;
@@ -78,8 +61,8 @@ type
     function CanSetStickerSet: Boolean;
   end;
 
-  TtgMessageEntity = class(TBaseJson, ItgMessageEntity)
-  public
+  ItgMessageEntity = interface
+    ['{0F510BB7-8436-426E-8ECC-46742E3183E1}']
     function TypeMessage: TtgMessageEntityType;
     function Offset: Int64;
     function Length: Int64;
@@ -87,8 +70,8 @@ type
     function User: ItgUser;
   end;
 
-  TtgFile = class(TBaseJson, ItgFile)
-  public
+  ItgFile = interface
+    ['{7A0DE9B9-939C-4079-B6A5-997AEA9497C9}']
     function FileId: string;
     function FileSize: Int64;
     function FilePath: string;
@@ -96,36 +79,37 @@ type
     function GetFileUrl(const AToken: string): string;
   end;
 
-  TtgAudio = class(TtgFile, ItgAudio)
-  public
+  ItgAudio = interface(ItgFile)
+    ['{8220DE57-2A5E-4B77-8B62-A3268E15D938}']
     function Duration: Int64;
     function Performer: string;
     function Title: string;
     function MimeType: string;
   end;
 
-  TtgPhotoSize = class(TtgFile, ItgPhotoSize)
-  public
+  ItgPhotoSize = interface(ItgFile)
+    ['{FF71291C-4E00-483E-8363-AF160CE78A4F}']
     function Width: Int64;
     function Height: Int64;
   end;
 
-  TtgDocument = class(TtgFile, ItgDocument)
-  public
+  ItgDocument = interface(ItgFile)
+    ['{2B4DF418-FE55-490B-B119-46B9CB846609}']
     function Thumb: ItgPhotoSize;
     function FileName: string;
     function MimeType: string;
   end;
 
-  TtgMaskPosition = class(TBaseJson, ItgMaskPosition)
+  ItgMaskPosition = interface
+    ['{D74500FF-8332-4BDF-BC26-9854A2D10529}']
     function Point: TtgMaskPositionPoint;
     function XShift: Single;
     function YShift: Single;
     function Scale: Single;
   end;
 
-  TtgSticker = class(TtgFile, ItgSticker)
-  public
+  ItgSticker = interface(ItgFile)
+    ['{C2598C8D-506F-4208-80AA-ED2731C92192}']
     function Width: Int64;
     function Height: Int64;
     function Thumb: ItgPhotoSize;
@@ -134,16 +118,16 @@ type
     function MaskPosition: ItgMaskPosition;
   end;
 
-  TtgStickerSet = class(TBaseJson, ItgStickerSet)
-  public
+  ItgStickerSet = interface
+    ['{FCE66210-3EFF-4D97-9077-473AAFE9FC97}']
     function Name: string;
     function Title: string;
     function ContainsMasks: Boolean;
     function Stickers: TArray<ItgSticker>;
   end;
 
-  TtgVideo = class(TtgFile, ItgVideo)
-  public
+  ItgVideo = interface(ItgFile)
+    ['{520EB672-788A-4B7B-9BD9-1A569FD7C417}']
     function Width: Int64;
     function Height: Int64;
     function Duration: Int64;
@@ -151,51 +135,49 @@ type
     function MimeType: string;
   end;
 
-  TtgVideoNote = class(TtgFile, ItgVideoNote)
-  public
-    function FileId: string;
+  ItgVideoNote = interface(ItgFile)
+    ['{D15B034D-9C4E-459A-9735-E63973813C6F}']
     function Length: Int64;
     function Duration: Int64;
     function Thumb: ItgPhotoSize;
-    function FileSize: Int64;
   end;
 
-  TtgVoice = class(TtgFile, ItgVoice)
-  public
+  ItgVoice = interface(ItgFile)
+    ['{99D91D3C-FC16-40CA-BA72-EFA8F5D0F5F9}']
     function Duration: Int64;
     function MimeType: string;
   end;
 
-  TtgContact = class(TBaseJson, ItgContact)
-  public
+  ItgContact = interface
+    ['{57113A43-41E0-4846-9CBA-A355400E3938}']
     function PhoneNumber: string;
     function FirstName: string;
     function LastName: string;
     function UserId: Int64;
   end;
 
-  TtgLocation = class(TBaseJson, ItgLocation)
-  private
+  ItgLocation = interface
+    ['{6FE14ED9-0C53-4C24-8033-390A5F31B414}']
+    //
     function GetLongitude: Single;
     function GetLatitude: Single;
     procedure SetLatitude(const Value: Single);
     procedure SetLongitude(const Value: Single);
-  public
-    constructor Create(ALongitude, ALatitude: Single); overload;
+    //
     property Longitude: Single read GetLongitude write SetLongitude;
     property Latitude: Single read GetLatitude write SetLatitude;
   end;
 
-  TtgVenue = class(TBaseJson, ItgVenue)
-  public
+  ItgVenue = interface
+    ['{26E74395-EAA1-4668-BB6A-A2B8F61DE6BF}']
     function Location: ItgLocation;
     function Title: string;
     function Address: string;
     function FoursquareId: string;
   end;
 
-  TtgAnimation = class(TBaseJson, ItgAnimation)
-  public
+  ItgAnimation = interface
+    ['{A0C6E374-590C-469B-AC76-F91135899FC5}']
     function FileId: string;
     function Thumb: ItgPhotoSize;
     function FileName: string;
@@ -203,15 +185,15 @@ type
     function FileSize: Int64;
   end;
 
-  TtgGameHighScore = class(TBaseJson, ItgGameHighScore)
-  public
+  ItgGameHighScore = interface
+    ['{19B46591-74A9-425F-BD3E-8342CE0B61C9}']
     function Position: Int64;
     function User: ItgUser;
     function Score: Int64;
   end;
 
-  TtgGame = class(TBaseJson, ItgGame)
-  public
+  ItgGame = interface
+    ['{29F4A7BE-07AB-4F9C-B7AE-1058B65F3AAD}']
     function Title: string;
     function Description: string;
     function Photo: TArray<ItgPhotoSize>;
@@ -220,8 +202,21 @@ type
     function Animation: ItgAnimation;
   end;
 
-  TTgMessage = class(TBaseJson, ITgMessage)
-  public
+  ItgInvoice = interface
+    function Title: string;
+    function Description: string;
+    function StartParameter: string;
+    function Currency: string;
+    function TotalAmount: Int64;
+  end;
+
+  ItgSuccessfulPayment = interface
+    function Currency: string;
+    function TotalAmount: Int64;
+  end;
+
+  ITgMessage = interface
+    ['{66BC2558-00C0-4BDD-BDDE-E83249787B30}']
     function MessageId: Int64;
     function From: ItgUser;
     function Date: TDateTime;
@@ -267,39 +262,28 @@ type
     function IsCommand(const AValue: string): Boolean;
   end;
 
-  TtgUserProfilePhotos = class(TBaseJson, ItgUserProfilePhotos)
-  public
+  ItgUserProfilePhotos = interface
+    ['{DD667B04-15A3-47B1-A729-C75ED5BFE719}']
     function TotalCount: Int64;
     function Photos: TArray<TArray<ItgPhotoSize>>;
   end;
 
-  TtgCallbackGame = class
-  end;
-
-  TtgResponseParameters = class(TBaseJson, ItgResponseParameters)
-  public
+  ItgResponseParameters = interface
+    ['{24701677-9BEB-42ED-8400-F465E4B2AECA}']
     function MigrateToChatId: Int64;
     function RetryAfter: Int64;
   end;
 
-  TtgFileToSend = class
-  public
-    FileName: string;
-    Content: TStream;
-    constructor Create(const AFileName: string); overload;
-    constructor Create(AContent: TStream; const AFileName: string = ''); overload;
-  end;
-
-  TtgInlineQuery = class(TBaseJson, ItgInlineQuery)
-  public
+  ItgInlineQuery = interface
+    ['{5DDE73CE-ABDF-47CE-8989-B62DF0543B02}']
     function ID: string;
     function From: ItgUser;
     function Query: string;
     function Offset: string;
   end;
 
-  TtgChosenInlineResult = class(TBaseJson, ItgChosenInlineResult)
-  public
+  ItgChosenInlineResult = interface
+    ['{0A293C7F-922D-4D9A-9CED-046942A20377}']
     function ResultId: string;
     function From: ItgUser;
     function Location: ItgLocation;
@@ -307,39 +291,18 @@ type
     function Query: string;
   end;
 
-  TtgCallbackQuery = class(TBaseJson, ItgCallbackQuery)
-  public
+  ItgCallbackQuery = interface
+    ['{83D9BF94-033A-44BA-8AD5-DCE25937A7B3}']
     function ID: string;
     function From: ItgUser;
-    function Message: ITgMessage;
+    function message: ITgMessage;
     function InlineMessageId: string;
     function Data: string;
     function GameShortName: string;
   end;
 
-{$REGION 'Payments'}
-
-  TtgInvoice = class(TBaseJson, ItgInvoice)
-  public
-    function Title: string;
-    function Description: string;
-    function StartParameter: string;
-    function Currency: string;
-    function TotalAmount: Int64;
-  end;
-
-  TtgLabeledPrice = class(TBaseJson, ItgLabeledPrice)
-  public
-    function Text: string;
-    function Amount: Int64;
-   // constructor Create(const AText: string; AAmount: Int64); overload;
-  end;
-
-  /// <summary>
-  /// This object represents a shipping address.
-  /// </summary>
-  TtgShippingAddress = class(TBaseJson, ItgShippingAddress)
-  public
+  ItgShippingAddress = interface
+    ['{7AE45A81-A19B-4A7C-AB2B-DEC68F1498BF}']
     function CountryCode: string;
     function State: string;
     function City: string;
@@ -348,16 +311,24 @@ type
     function PostCode: string;
   end;
 
-  TtgOrderInfo = class(TBaseJson, ItgOrderInfo)
-  public
+  ItgShippingQuery = interface
+    ['{09C65D9A-6323-455C-9B16-37FB7C542394}']
+    function ID: string;
+    function From: ItgUser;
+    function InvoicePayload: string;
+    function ShippingAddress: ItgShippingAddress;
+  end;
+
+  ItgOrderInfo = interface
+    ['{BE2FEF98-2DCD-489D-862C-A88EB1A60913}']
     function Name: string;
     function PhoneNumber: string;
     function Email: string;
     function ShippingAddress: ItgShippingAddress;
   end;
 
-  TtgPreCheckoutQuery = class(TBaseJson, ItgPreCheckoutQuery)
-  public
+  ItgPreCheckoutQuery = interface
+    ['{BB511CA3-3E28-4B30-A5FB-87FBFC07A599}']
     function ID: string;
     function From: ItgUser;
     function Currency: string;
@@ -367,37 +338,10 @@ type
     function OrderInfo: ItgOrderInfo;
   end;
 
-  TtgShippingOption = class(TBaseJson, ItgShippingOption)
-  public
-    function ID: string;
-    function Title: string;
-    function Prices: TArray<ItgLabeledPrice>;
-  end;
-
-  TtgShippingQuery = class(TBaseJson, ItgShippingQuery)
-  public
-    function ID: string;
-    function From: ItgUser;
-    function InvoicePayload: string;
-    function ShippingAddress: ItgShippingAddress;
-  end;
-
-  TtgSuccessfulPayment = class(TBaseJson, ItgSuccessfulPayment)
-  public
-    function Currency: string;
-    function TotalAmount: Int64;
-    function InvoicePayload: string;
-    function ShippingOptionId: string;
-    function OrderInfo: ItgOrderInfo;
-    function TelegramPaymentChargeId: string;
-    function ProviderPaymentChargeId: string;
-  end;
-{$ENDREGION}
-
-  TtgUpdate = class(TBaseJson, ItgUpdate)
-  public
+  ItgUpdate = interface
+    ['{5D001F9B-B0BC-4A44-85E3-E0586DAAABD2}']
     function ID: Int64;
-    function Message: ITgMessage;
+    function message: ITgMessage;
     function EditedMessage: ITgMessage;
     function InlineQuery: ItgInlineQuery;
     function ChosenInlineResult: ItgChosenInlineResult;
@@ -409,8 +353,21 @@ type
     function &type: TtgUpdateType;
   end;
 
-  TtgWebhookInfo = class(TBaseJson, ItgWebhookInfo)
-  public
+  ItgLabeledPrice = interface
+    ['{3EB70EDB-1D5D-42E4-AACD-A225316482E3}']
+    function Text: string;
+    function Amount: Int64;
+  end;
+
+  ItgShippingOption = interface
+    ['{1E1BCD22-8F26-4EA7-BDB6-770250DF5BF6}']
+    function ID: string;
+    function Title: string;
+    function Prices: TArray<ItgLabeledPrice>;
+  end;
+
+  ItgWebhookInfo = interface
+    ['{C77FA5C3-EF01-4571-AA1B-2BE80724BE3B}']
     function Url: string;
     function HasCustomCertificate: Boolean;
     function PendingUpdateCount: Int64;
@@ -420,113 +377,19 @@ type
     function AllowedUpdates: TArray<string>;
   end;
 
+  TtgFileToSend = class
+  public
+    FileName: string;
+    Content: TStream;
+    constructor Create(const AFileName: string); overload;
+    constructor Create(AContent: TStream;
+      const AFileName: string = ''); overload;
+  end;
+
 implementation
 
 uses
-  FMX.Types,
-  System.DateUtils,
-  System.TypInfo,
-  System.Rtti;
-{ TtgAnimation }
-
-function TtgAnimation.FileId: string;
-begin
-  FJSON.TryGetValue<string>('data', Result);
-end;
-
-function TtgAnimation.FileName: string;
-begin
-  FJSON.TryGetValue<string>('data', Result);
-end;
-
-function TtgAnimation.FileSize: Int64;
-begin
-  FJSON.TryGetValue<Int64>('file_size', Result);
-end;
-
-function TtgAnimation.MimeType: string;
-begin
-  FJSON.TryGetValue<string>('mime_type', Result);
-end;
-
-function TtgAnimation.Thumb: ItgPhotoSize;
-begin
-  Result := ReadToClass<TtgPhotoSize>('thumb');
-end;
-
-{ TtgCallbackQuery }
-function TtgCallbackQuery.Data: string;
-begin
-  FJSON.TryGetValue<string>('data', Result);
-end;
-
-function TtgCallbackQuery.From: ItgUser;
-begin
-  Result := ReadToClass<TtgUser>('from');
-end;
-
-function TtgCallbackQuery.GameShortName: string;
-begin
-  FJSON.TryGetValue<string>('game_short_name', Result);
-end;
-
-function TtgCallbackQuery.ID: string;
-begin
-  FJSON.TryGetValue<string>('id', Result);
-end;
-
-function TtgCallbackQuery.InlineMessageId: string;
-begin
-  FJSON.TryGetValue<string>('inline_message_id', Result);
-end;
-
-function TtgCallbackQuery.Message: ITgMessage;
-begin
-  Result := ReadToClass<TTgMessage>('message');
-end;
-
-{ TtgDocument }
-
-function TtgDocument.FileName: string;
-begin
-  FJSON.TryGetValue<string>('file_name', Result);
-end;
-
-function TtgDocument.MimeType: string;
-begin
-  FJSON.TryGetValue<string>('mime_type', Result);
-end;
-
-function TtgDocument.Thumb: ItgPhotoSize;
-begin
-  Result := ReadToClass<TtgPhotoSize>('thumb');
-end;
-
-{ TtgFile }
-function TtgFile.CanDownload: Boolean;
-begin
-  Result := not FilePath.IsEmpty;
-end;
-
-function TtgFile.FileId: string;
-begin
-  FJSON.TryGetValue<string>('file_id', Result);
-end;
-
-function TtgFile.FilePath: string;
-begin
-  FJSON.TryGetValue<string>('file_path', Result);
-end;
-
-function TtgFile.FileSize: Int64;
-begin
-  FJSON.TryGetValue<Int64>('file_size', Result);
-end;
-
-function TtgFile.GetFileUrl(const AToken: string): string;
-begin
-  Result := 'https://api.telegram.org/file/bot' + AToken + '/' + FilePath;
-end;
+  System.SysUtils;
 
 { TtgFileToSend }
 constructor TtgFileToSend.Create(const AFileName: string);
@@ -552,1286 +415,4 @@ begin
   Content := AContent;
 end;
 
-function TtgGameHighScore.Position: Int64;
-begin
-  FJSON.TryGetValue<Int64>('position', Result);
-end;
-
-function TtgGameHighScore.Score: Int64;
-begin
-  FJSON.TryGetValue<Int64>('score', Result);
-end;
-
-function TtgGameHighScore.User: ItgUser;
-begin
-  Result := ReadToClass<TtgUser>('user');
-end;
-
-{ TtgMessage }
-
-function TTgMessage.Document: ItgDocument;
-begin
-  Result := ReadToClass<TtgDocument>('document');
-end;
-
-function TTgMessage.EditDate: TDateTime;
-begin
-  Result := ReadToDateTime('edit_date');
-end;
-
-function TTgMessage.Entities: TArray<ItgMessageEntity>;
-var
-  LValue: string;
-  LJsonArray: TJSONArray;
-  I: Integer;
-begin
-  if FJSON.TryGetValue<string>('entities', LValue) then
-  begin
-    LJsonArray := TJSONObject.ParseJSONValue(LValue) as TJSONArray;
-    try
-      SetLength(Result, LJsonArray.Count);
-      for I := 0 to LJsonArray.Count - 1 do
-        Result[I] := ReadToClass<TtgMessageEntity>('entities');
-    finally
-      LJsonArray.Free;
-    end;
-  end;
-end;
-
-function TTgMessage.ForwardDate: TDateTime;
-begin
-  Result := ReadToDateTime('forward_date');
-end;
-
-function TTgMessage.ForwardFrom: ItgUser;
-begin
-  Result := ReadToClass<TtgUser>('forward_from');
-end;
-
-function TTgMessage.ForwardFromChat: ItgChat;
-begin
-  Result := ReadToClass<TtgChat>('forward_from_chat');
-end;
-
-function TTgMessage.ForwardFromMessageId: Int64;
-begin
-  FJSON.TryGetValue<Int64>('forward_from_message_id', Result);
-end;
-
-function TTgMessage.ForwardSignature: string;
-begin
-  FJSON.TryGetValue<string>('forward_signature', Result);
-end;
-
-function TTgMessage.From: ItgUser;
-begin
-  Result := ReadToClass<TtgUser>('from');
-end;
-
-function TTgMessage.Game: ItgGame;
-begin
-  Result := ReadToClass<TtgGame>('game');
-end;
-
-function TTgMessage.GroupChatCreated: Boolean;
-begin
-  FJSON.TryGetValue<Boolean>('group_chat_created', Result);
-end;
-
-function TTgMessage.Invoice: ItgInvoice;
-begin
-  Result := ReadToClass<TtgInvoice>('invoice');
-end;
-
-function TTgMessage.IsCommand(const AValue: string): Boolean;
-var
-  LEnt: ItgMessageEntity;
-begin
-  Result := False;
-  if Self.Entities = nil then
-    Exit;
-  for LEnt in Self.Entities do
-    if (LEnt.TypeMessage = TtgMessageEntityType.bot_command) then
-      if Text.Substring(LEnt.Offset, LEnt.Length).StartsWith(AValue, True) then
-        Exit(True);
-end;
-
-function TTgMessage.LeftChatMember: ItgUser;
-begin
-  Result := ReadToClass<TtgUser>('left_chat_member');
-end;
-
-function TTgMessage.Location: ItgLocation;
-begin
-  Result := ReadToClass<TtgLocation>('location');
-end;
-
-function TTgMessage.MessageId: Int64;
-begin
-  FJSON.TryGetValue<Int64>('message_id', Result);
-end;
-
-function TTgMessage.MigrateFromChatId: Int64;
-begin
-  FJSON.TryGetValue<Int64>('migrate_from_chat_id', Result);
-end;
-
-function TTgMessage.MigrateToChatId: Int64;
-begin
-  FJSON.TryGetValue<Int64>('migrate_to_chat_id', Result);
-end;
-
-function TTgMessage.NewChatMember: ItgUser;
-begin
-  Result := ReadToClass<TtgUser>('new_chat_member');
-end;
-
-function TTgMessage.NewChatMembers: TArray<ItgUser>;
-begin
-  UnSupported;
-end;
-
-function TTgMessage.NewChatPhoto: TArray<ItgPhotoSize>;
-begin
-  UnSupported;
-end;
-
-function TTgMessage.NewChatTitle: string;
-begin
-  FJSON.TryGetValue<string>('new_chat_title', Result);
-end;
-
-function TTgMessage.Photo: TArray<ItgPhotoSize>;
-begin
-  UnSupported;
-end;
-
-function TTgMessage.PinnedMessage: ITgMessage;
-begin
-  Result := ReadToClass<TTgMessage>('pinned_message');
-end;
-
-function TTgMessage.ReplyToMessage: ITgMessage;
-begin
-  Result := ReadToClass<TTgMessage>('reply_to_message');
-end;
-
-function TTgMessage.Sticker: ItgSticker;
-begin
-  Result := ReadToClass<TtgSticker>('sticker');
-end;
-
-function TTgMessage.SuccessfulPayment: ItgSuccessfulPayment;
-begin
-  Result := ReadToClass<TtgSuccessfulPayment>('successful_payment');
-end;
-
-function TTgMessage.SupergroupChatCreated: Boolean;
-begin
-  FJSON.TryGetValue<Boolean>('supergroup_chat_created', Result);
-end;
-
-function TTgMessage.Text: string;
-begin
-  Result := ReadToSimpleType<string>('text');
-end;
-
-function TTgMessage.&type: TtgMessageType;
-begin
-  if Audio <> nil then
-    Exit(TtgMessageType.AudioMessage);
-  if Contact <> nil then
-    Exit(TtgMessageType.ContactMessage);
-  if Document <> nil then
-    Exit(TtgMessageType.DocumentMessage);
-  if Game <> nil then
-    Exit(TtgMessageType.GameMessage);
-  if (Location <> nil) then
-    Exit(TtgMessageType.LocationMessage);
-  if (NewChatMember <> nil) or (LeftChatMember <> nil) or ((NewChatPhoto <> nil) and (Length(NewChatPhoto) > 0)) or ((NewChatMembers <> nil) and (Length(NewChatMembers) > 0)) or (not NewChatTitle.IsEmpty) or DeleteChatPhoto or GroupChatCreated or SupergroupChatCreated or ChannelChatCreated or (MigrateToChatId <> 0) or (MigrateFromChatId <> 0) or (PinnedMessage <> nil) then
-    Exit(TtgMessageType.ServiceMessage);
-  if (Photo <> nil) and (Length(Photo) > 0) then
-    Exit(TtgMessageType.PhotoMessage);
-  if (Sticker <> nil) then
-    Exit(TtgMessageType.StickerMessage);
-  if (Venue <> nil) then
-    Exit(TtgMessageType.VenueMessage);
-  if (Video <> nil) then
-    Exit(TtgMessageType.VideoMessage);
-  if (VideoNote <> nil) then
-    Exit(TtgMessageType.VideoNoteMessage);
-  if (Voice <> nil) then
-    Exit(TtgMessageType.VoiceMessage);
-  if not Text.IsEmpty then
-    Exit(TtgMessageType.TextMessage);
-  Result := TtgMessageType.UnknownMessage;
-end;
-
-function TTgMessage.Audio: ItgAudio;
-begin
-  Result := ReadToClass<TtgAudio>('audio');
-end;
-
-function TTgMessage.AuthorSignature: string;
-begin
-  FJSON.TryGetValue<string>('author_signature', Result);
-end;
-
-function TTgMessage.Caption: string;
-begin
-  FJSON.TryGetValue<string>('caption', Result);
-end;
-
-function TTgMessage.CaptionEntities: TArray<ItgMessageEntity>;
-begin
-  UnSupported;
-end;
-
-function TTgMessage.ChannelChatCreated: Boolean;
-begin
-  FJSON.TryGetValue<Boolean>('channel_chat_created', Result);
-end;
-
-function TTgMessage.Chat: ItgChat;
-begin
-  Result := ReadToClass<TtgChat>('chat');
-end;
-
-function TTgMessage.Contact: ItgContact;
-begin
-  Result := ReadToClass<TtgContact>('contact');
-end;
-
-function TTgMessage.Date: TDateTime;
-begin
-  Result := ReadToDateTime('date');
-end;
-
-function TTgMessage.DeleteChatPhoto: Boolean;
-begin
-  FJSON.TryGetValue<Boolean>('delete_chat_photo', Result);
-end;
-
-function TTgMessage.Venue: ItgVenue;
-begin
-  Result := ReadToClass<TtgVenue>('venue');
-end;
-
-function TTgMessage.Video: ItgVideo;
-begin
-  Result := ReadToClass<TtgVideo>('video');
-end;
-
-function TTgMessage.VideoNote: ItgVideoNote;
-begin
-  Result := ReadToClass<TtgVideoNote>('video_note');
-end;
-
-function TTgMessage.Voice: ItgVoice;
-begin
-  Result := ReadToClass<TtgVoice>('voice');
-end;
-
-{ TtgShippingOption }
-
-function TtgShippingOption.ID: string;
-begin
-  FJSON.TryGetValue<string>('id', Result);
-end;
-
-function TtgShippingOption.Prices: TArray<ItgLabeledPrice>;
-begin
-  UnSupported;
-end;
-
-function TtgShippingOption.Title: string;
-begin
-  FJSON.TryGetValue<string>('title', Result);
-end;
-
-{ TtgUpdate }
-function TtgUpdate.CallbackQuery: ItgCallbackQuery;
-begin
-  Result := ReadToClass<TtgCallbackQuery>('callback_query');
-end;
-
-function TtgUpdate.ChannelPost: ITgMessage;
-begin
-  Result := ReadToClass<TTgMessage>('channel_post');
-end;
-
-function TtgUpdate.ChosenInlineResult: ItgChosenInlineResult;
-begin
-  Result := ReadToClass<TtgChosenInlineResult>('chosen_inline_result');
-end;
-
-function TtgUpdate.EditedChannelPost: ITgMessage;
-begin
-  Result := ReadToClass<TTgMessage>('edited_channel_post');
-end;
-
-function TtgUpdate.EditedMessage: ITgMessage;
-begin
-  Result := ReadToClass<TTgMessage>('edited_message');
-end;
-
-function TtgUpdate.ID: Int64;
-begin
-  FJSON.TryGetValue<Int64>('id', Result);
-end;
-
-function TtgUpdate.InlineQuery: ItgInlineQuery;
-begin
-  Result := ReadToClass<TtgInlineQuery>('inline_query');
-end;
-
-function TtgUpdate.Message: ITgMessage;
-begin
-  Result := ReadToClass<TTgMessage>('message');
-end;
-
-function TtgUpdate.PreCheckoutQuery: ItgPreCheckoutQuery;
-begin
-  Result := ReadToClass<TtgPreCheckoutQuery>('pre_checkout_query');
-end;
-
-function TtgUpdate.ShippingQuery: ItgShippingQuery;
-begin
-  Result := ReadToClass<TtgShippingQuery>('shipping_query');
-end;
-
-function TtgUpdate.&type: TtgUpdateType;
-begin
-  if CallbackQuery <> nil then
-    Result := TtgUpdateType.CallbackQueryUpdate
-  else if ChannelPost <> nil then
-    Result := (TtgUpdateType.ChannelPost)
-  else if ChosenInlineResult <> nil then
-    Result := (TtgUpdateType.ChosenInlineResultUpdate)
-  else if EditedChannelPost <> nil then
-    Result := (TtgUpdateType.EditedChannelPost)
-  else if EditedMessage <> nil then
-    Result := (TtgUpdateType.EditedMessage)
-  else if InlineQuery <> nil then
-    Result := (TtgUpdateType.InlineQueryUpdate)
-  else if Message <> nil then
-    Result := (TtgUpdateType.MessageUpdate)
-  else if PreCheckoutQuery <> nil then
-    Result := (TtgUpdateType.PreCheckoutQueryUpdate)
-  else if ShippingQuery <> nil then
-    Result := (TtgUpdateType.ShippingQueryUpdate)
-  else
-    Result := TtgUpdateType.UnknownUpdate;
-end;
-
-
-{ TtgLocation }
-
-constructor TtgLocation.Create(ALongitude, ALatitude: Single);
-begin
-  SetLongitude(ALongitude);
-  SetLatitude(ALatitude);
-end;
-
-function TtgLocation.GetLatitude: Single;
-begin
-  FJSON.TryGetValue<Single>('latitude', Result);
-end;
-
-function TtgLocation.GetLongitude: Single;
-begin
-  FJSON.TryGetValue<Single>('longitude', Result);
-end;
-
-procedure TtgLocation.SetLatitude(const Value: Single);
-begin
-  FJSON.AddPair('latitude', TJSONNumber.Create(Value));
-end;
-
-procedure TtgLocation.SetLongitude(const Value: Single);
-begin
-  FJSON.AddPair('longitude', TJSONNumber.Create(Value));
-end;
-
-{ TtgStickerSet }
-
-function TtgStickerSet.ContainsMasks: Boolean;
-begin
-  FJSON.TryGetValue<Boolean>('contains_masks', Result);
-end;
-
-function TtgStickerSet.Name: string;
-begin
-  FJSON.TryGetValue<string>('name', Result);
-end;
-
-function TtgStickerSet.Stickers: TArray<ItgSticker>;
-begin
-  UnSupported;
-end;
-
-function TtgStickerSet.Title: string;
-begin
-  FJSON.TryGetValue<string>('title', Result);
-end;
-
-{ TtgLabeledPrice }
-
-function TtgLabeledPrice.Amount: Int64;
-begin
-  FJSON.TryGetValue<Int64>('amount', Result);
-end;
-
-function TtgLabeledPrice.Text: string;
-begin
-  FJSON.TryGetValue<string>('label', Result);
-end;
-
-{ TBaseJson }
-
-constructor TBaseJson.Create(const AJson: string);
-begin
-  FJSON := TJSONObject.ParseJSONValue(AJson) as TJSONObject;
-  Log.d(FJSON.ToJSON)
-end;
-
-function TBaseJson.ReadToClass<T>(const AKey: string): T;
-var
-  LValue: string;
-  LObj: TJSONValue;
-begin
-  Log.d('open "%S" to @%S', [AKey, GetTypeName(TypeInfo(T))]);
-  Result := nil;
-  LObj := FJSON.GetValue(AKey);
-  try
-    if Assigned(LObj) and (not LObj.Null) then
-    begin
-      LValue := LObj.ToJSON;
-      Result := TBaseJsonClass(T).Create(LValue) as T;
-    end
-  finally
-//    LObj.Free;
-  end;
-end;
-
-destructor TBaseJson.Destroy;
-begin
-  FJSON.Free;
-  inherited;
-end;
-
-class function TBaseJson.FromJson(const AJson: string): TBaseJson;
-begin
-  Result := TBaseJson.Create(AJson);
-end;
-
-function TBaseJson.ReadToDateTime(const AKey: string): TDateTime;
-var
-  LValue: Int64;
-begin
-  Result := 0;
-  if FJSON.TryGetValue<Int64>(AKey, LValue) then
-    Result := UnixToDateTime(LValue, False);
-end;
-
-function TBaseJson.ReadToSimpleType<T>(const AKey: string): T;
-begin
-  Log.d('open "%S" to @%S', [AKey, GetTypeName(TypeInfo(T))]);
-  FJSON.TryGetValue<T>(AKey, Result);
-end;
-
-class procedure TBaseJson.UnSupported;
-begin
-  raise Exception.Create('Telegram method not supported in TelegaPi Library. Sorry.');
-end;
-
-{ TtgResponseParameters }
-
-function TtgResponseParameters.MigrateToChatId: Int64;
-begin
-  FJSON.TryGetValue<Int64>('migrate_to_chat_id', Result);
-end;
-
-function TtgResponseParameters.RetryAfter: Int64;
-begin
-  FJSON.TryGetValue<Int64>('retry_after', Result);
-end;
-
-{ TtgUser }
-
-function TtgUser.FirstName: string;
-begin
-  Result := FJSON.GetValue<string>('first_name');
-end;
-
-function TtgUser.ID: Int64;
-begin
-  Result := FJSON.GetValue<Int64>('id');
-end;
-
-function TtgUser.IsBot: Boolean;
-begin
-  Result := FJSON.GetValue<Boolean>('is_bot');
-end;
-
-function TtgUser.LanguageCode: string;
-begin
-  Result := FJSON.GetValue<string>('language_code');
-end;
-
-function TtgUser.LastName: string;
-begin
-  Result := FJSON.GetValue<string>('last_name');
-end;
-
-function TtgUser.Username: string;
-begin
-  Result := FJSON.GetValue<string>('username');
-end;
-
-{ TtgInlineQuery }
-
-function TtgInlineQuery.From: ItgUser;
-begin
-  Result := ReadToClass<TtgUser>('from');
-end;
-
-function TtgInlineQuery.ID: string;
-begin
-  Result := FJSON.GetValue<string>('id');
-end;
-
-function TtgInlineQuery.Offset: string;
-begin
-  Result := FJSON.GetValue<string>('offset');
-end;
-
-function TtgInlineQuery.Query: string;
-begin
-  Result := FJSON.GetValue<string>('query');
-end;
-
-{ TtgChosenInlineResult }
-
-function TtgChosenInlineResult.From: ItgUser;
-begin
-  Result := ReadToClass<TtgUser>('from');
-end;
-
-function TtgChosenInlineResult.InlineMessageId: string;
-begin
-  Result := FJSON.GetValue<string>('inline_message_id');
-end;
-
-function TtgChosenInlineResult.Location: ItgLocation;
-begin
-  Result := ReadToClass<TtgLocation>('location');
-end;
-
-function TtgChosenInlineResult.Query: string;
-begin
-  Result := FJSON.GetValue<string>('query');
-end;
-
-function TtgChosenInlineResult.ResultId: string;
-begin
-  Result := FJSON.GetValue<string>('result_id');
-end;
-
-{ TtgPreCheckoutQuery }
-
-function TtgPreCheckoutQuery.Currency: string;
-begin
-  Result := FJSON.GetValue<string>('currency');
-end;
-
-function TtgPreCheckoutQuery.From: ItgUser;
-begin
-  Result := ReadToClass<TtgUser>('from');
-end;
-
-function TtgPreCheckoutQuery.ID: string;
-begin
-  Result := FJSON.GetValue<string>('id');
-end;
-
-function TtgPreCheckoutQuery.InvoicePayload: string;
-begin
-  Result := FJSON.GetValue<string>('invoice_payload');
-end;
-
-function TtgPreCheckoutQuery.OrderInfo: ItgOrderInfo;
-begin
-  Result := ReadToClass<TtgOrderInfo>('from');
-end;
-
-function TtgPreCheckoutQuery.ShippingOptionId: string;
-begin
-  Result := FJSON.GetValue<string>('shipping_option_id');
-end;
-
-function TtgPreCheckoutQuery.TotalAmount: Int64;
-begin
-  Result := FJSON.GetValue<Int64>('total_amount');
-end;
-
-{ TtgShippingQuery }
-
-function TtgShippingQuery.From: ItgUser;
-begin
-  Result := ReadToClass<TtgUser>('from');
-end;
-
-function TtgShippingQuery.ID: string;
-begin
-  Result := FJSON.GetValue<string>('id');
-end;
-
-function TtgShippingQuery.InvoicePayload: string;
-begin
-  Result := FJSON.GetValue<string>('invoice_payload');
-end;
-
-function TtgShippingQuery.ShippingAddress: ItgShippingAddress;
-begin
-  Result := ReadToClass<TtgShippingAddress>('shipping_address');
-end;
-
-{ TtgChatPhoto }
-
-function TtgChatPhoto.BigFileId: string;
-begin
-  FJSON.TryGetValue<string>('big_file_id', Result);
-end;
-
-function TtgChatPhoto.SmallFileId: string;
-begin
-  FJSON.TryGetValue<string>('small_file_id', Result);
-end;
-
-{ TtgChatMember }
-
-function TtgChatMember.CanAddWebPagePreviews: Boolean;
-begin
-  FJSON.TryGetValue<Boolean>('can_add_web_page_previews', Result);
-end;
-
-function TtgChatMember.CanBeEdited: Boolean;
-begin
-  FJSON.TryGetValue<Boolean>('can_change_info', Result);
-end;
-
-function TtgChatMember.CanChangeInfo: Boolean;
-begin
-  FJSON.TryGetValue<Boolean>('can_change_info', Result);
-end;
-
-function TtgChatMember.CanDeleteMessages: Boolean;
-begin
-  FJSON.TryGetValue<Boolean>('can_delete_messages', Result);
-end;
-
-function TtgChatMember.CanEditMessages: Boolean;
-begin
-  FJSON.TryGetValue<Boolean>('can_edit_messages', Result);
-end;
-
-function TtgChatMember.CanInviteUsers: Boolean;
-begin
-  FJSON.TryGetValue<Boolean>('can_invite_users', Result);
-end;
-
-function TtgChatMember.CanPinMessages: Boolean;
-begin
-  FJSON.TryGetValue<Boolean>('can_pin_messages', Result);
-end;
-
-function TtgChatMember.CanPostMessages: Boolean;
-begin
-  FJSON.TryGetValue<Boolean>('can_post_messages', Result);
-end;
-
-function TtgChatMember.CanPromoteMembers: Boolean;
-begin
-  FJSON.TryGetValue<Boolean>('can_promote_members', Result);
-end;
-
-function TtgChatMember.CanRestrictMembers: Boolean;
-begin
-  FJSON.TryGetValue<Boolean>('can_restrict_members', Result);
-end;
-
-function TtgChatMember.CanSendMediaMessages: Boolean;
-begin
-  FJSON.TryGetValue<Boolean>('can_send_media_messages', Result);
-end;
-
-function TtgChatMember.CanSendMessages: Boolean;
-begin
-  FJSON.TryGetValue<Boolean>('can_send_messages', Result);
-end;
-
-function TtgChatMember.CanSendOtherMessages: Boolean;
-begin
-  FJSON.TryGetValue<Boolean>('can_send_other_messages', Result);
-end;
-
-function TtgChatMember.Status: string;
-begin
-  FJSON.TryGetValue<string>('status', Result);
-end;
-
-function TtgChatMember.UntilDate: TDateTime;
-begin
-  Result := ReadToDateTime('until_date');
-end;
-
-function TtgChatMember.User: ItgUser;
-begin
-  Result := ReadToClass<TtgUser>('user');
-end;
-
-{ TtgChat }
-
-function TtgChat.AllMembersAreAdministrators: Boolean;
-begin
-  FJSON.TryGetValue<Boolean>('all_members_are_administrators', Result);
-end;
-
-function TtgChat.CanSetStickerSet: Boolean;
-begin
-  FJSON.TryGetValue<Boolean>('can_set_sticker_set', Result);
-end;
-
-function TtgChat.Description: string;
-begin
-  FJSON.TryGetValue<string>('description', Result);
-end;
-
-function TtgChat.FirstName: string;
-begin
-  FJSON.TryGetValue<string>('first_name', Result);
-end;
-
-function TtgChat.ID: Int64;
-begin
-  FJSON.TryGetValue<Int64>('id', Result);
-end;
-
-function TtgChat.InviteLink: string;
-begin
-  FJSON.TryGetValue<string>('invite_link', Result);
-end;
-
-function TtgChat.LastName: string;
-begin
-  FJSON.TryGetValue<string>('last_name', Result);
-end;
-
-function TtgChat.Photo: ItgChatPhoto;
-begin
-  Result := ReadToClass<TtgChatPhoto>('photo');
-end;
-
-function TtgChat.PinnedMessage: ITgMessage;
-begin
-  Result := ReadToClass<TTgMessage>('pinned_message');
-end;
-
-function TtgChat.StickerSetName: string;
-begin
-  FJSON.TryGetValue<string>('sticker_set_name', Result);
-end;
-
-function TtgChat.Title: string;
-begin
-  FJSON.TryGetValue<string>('title', Result);
-end;
-
-function TtgChat.TypeChat: TtgChatType;
-var
-  LValue: string;
-begin
-  LValue := ReadToSimpleType<string>('type_chat');
-  Result := TtgChatType.&private;
-  if LValue = 'private' then
-    Result := TtgChatType.&private
-  else if LValue = 'Group' then
-    Result := TtgChatType.Group
-  else if LValue = 'Channel' then
-    Result := TtgChatType.Channel
-  else if LValue = 'Supergroup' then
-    Result := TtgChatType.Supergroup
-  else
-    UnSupported;
-end;
-
-function TtgChat.Username: string;
-begin
-  FJSON.TryGetValue<string>('username', Result);
-end;
-
-{ TtgSuccessfulPayment }
-
-function TtgSuccessfulPayment.Currency: string;
-begin
-  FJSON.TryGetValue<string>('currency', Result);
-end;
-
-function TtgSuccessfulPayment.InvoicePayload: string;
-begin
-  FJSON.TryGetValue<string>('invoice_payload', Result);
-end;
-
-function TtgSuccessfulPayment.OrderInfo: ItgOrderInfo;
-begin
-  Result := ReadToClass<TtgOrderInfo>('order_info');
-end;
-
-function TtgSuccessfulPayment.ProviderPaymentChargeId: string;
-begin
-  FJSON.TryGetValue<string>('provider_payment_charge_id', Result);
-end;
-
-function TtgSuccessfulPayment.ShippingOptionId: string;
-begin
-  FJSON.TryGetValue<string>('shipping_option_id', Result);
-end;
-
-function TtgSuccessfulPayment.TelegramPaymentChargeId: string;
-begin
-  FJSON.TryGetValue<string>('telegram_payment_charge_id', Result);
-end;
-
-function TtgSuccessfulPayment.TotalAmount: Int64;
-begin
-  FJSON.TryGetValue<Int64>('total_amount', Result);
-end;
-
-{ TtgWebhookInfo }
-
-function TtgWebhookInfo.AllowedUpdates: TArray<string>;
-begin
-  UnSupported;
-end;
-
-function TtgWebhookInfo.HasCustomCertificate: Boolean;
-begin
-  FJSON.TryGetValue<Boolean>('has_custom_certificate', Result);
-end;
-
-function TtgWebhookInfo.LastErrorDate: TDateTime;
-begin
-  Result := ReadToDateTime('last_error_date');
-end;
-
-function TtgWebhookInfo.LastErrorMessage: string;
-begin
-  FJSON.TryGetValue<string>('last_error_message', Result);
-end;
-
-function TtgWebhookInfo.MaxConnections: Int64;
-begin
-  FJSON.TryGetValue<Int64>('max_connections', Result);
-end;
-
-function TtgWebhookInfo.PendingUpdateCount: Int64;
-begin
-  FJSON.TryGetValue<Int64>('pending_update_count', Result);
-end;
-
-function TtgWebhookInfo.Url: string;
-begin
-  FJSON.TryGetValue<string>('url', Result);
-end;
-
-{ TtgMessageEntity }
-
-function TtgMessageEntity.Length: Int64;
-begin
-  FJSON.TryGetValue<Int64>('length', Result);
-end;
-
-function TtgMessageEntity.Offset: Int64;
-begin
-  FJSON.TryGetValue<Int64>('offset', Result);
-end;
-
-function TtgMessageEntity.TypeMessage: TtgMessageEntityType;
-var
-  LValue: string;
-begin
-  LValue := ReadToSimpleType<string>('type_message');
-  Result := TtgMessageEntityType.mention;
-  if LValue = 'mention' then
-    Result := TtgMessageEntityType.mention
-  else if LValue = 'hashtag' then
-    Result := TtgMessageEntityType.hashtag
-  else if LValue = 'bot_command' then
-    Result := TtgMessageEntityType.bot_command
-  else if LValue = 'url' then
-    Result := TtgMessageEntityType.url
-  else if LValue = 'bold' then
-    Result := TtgMessageEntityType.bold
-  else if LValue = 'italic' then
-    Result := TtgMessageEntityType.italic
-  else if LValue = 'code' then
-    Result := TtgMessageEntityType.code
-  else if LValue = 'pre' then
-    Result := TtgMessageEntityType.pre
-  else if LValue = 'text_link' then
-    Result := TtgMessageEntityType.text_link
-  else if LValue = 'text_mention' then
-    Result := TtgMessageEntityType.text_mention
-  else
-    UnSupported;
-end;
-
-function TtgMessageEntity.Url: string;
-begin
-  FJSON.TryGetValue<string>('url', Result);
-end;
-
-function TtgMessageEntity.User: ItgUser;
-begin
-  Result := ReadToClass<TtgUser>('user');
-end;
-
-{ TtgAudio }
-
-function TtgAudio.Duration: Int64;
-begin
-  FJSON.TryGetValue<Int64>('duration', Result);
-end;
-
-function TtgAudio.MimeType: string;
-begin
-  FJSON.TryGetValue<string>('mime_type', Result);
-end;
-
-function TtgAudio.Performer: string;
-begin
-  FJSON.TryGetValue<string>('performer', Result);
-end;
-
-function TtgAudio.Title: string;
-begin
-  FJSON.TryGetValue<string>('title', Result);
-end;
-
-{ TtgPhotoSize }
-
-function TtgPhotoSize.Height: Int64;
-begin
-  FJSON.TryGetValue<Int64>('height', Result);
-end;
-
-function TtgPhotoSize.Width: Int64;
-begin
-  FJSON.TryGetValue<Int64>('width', Result);
-end;
-
-{ TtgMaskPosition }
-
-function TtgMaskPosition.Point: TtgMaskPositionPoint;
-var
-  LValue: string;
-begin
-  LValue := ReadToSimpleType<string>('point');
-  Result := TtgMaskPositionPoint.forehead;
-  if LValue = 'forehead' then
-    Result := TtgMaskPositionPoint.forehead
-  else if LValue = 'eyes' then
-    Result := TtgMaskPositionPoint.eyes
-  else if LValue = 'mouth' then
-    Result := TtgMaskPositionPoint.mouth
-  else if LValue = 'chin' then
-    Result := TtgMaskPositionPoint.chin
-  else
-    UnSupported;
-end;
-
-function TtgMaskPosition.Scale: Single;
-begin
-  FJSON.TryGetValue<Single>('scale', Result);
-end;
-
-function TtgMaskPosition.XShift: Single;
-begin
-  FJSON.TryGetValue<Single>('x_shift', Result);
-end;
-
-function TtgMaskPosition.YShift: Single;
-begin
-  FJSON.TryGetValue<Single>('y_shift', Result);
-end;
-
-{ TtgSticker }
-
-function TtgSticker.Emoji: string;
-begin
-  FJSON.TryGetValue<string>('emoji', Result);
-end;
-
-function TtgSticker.Height: Int64;
-begin
-  FJSON.TryGetValue<Int64>('height', Result);
-end;
-
-function TtgSticker.MaskPosition: ItgMaskPosition;
-begin
-  Result := ReadToClass<TtgMaskPosition>('mask_position');
-end;
-
-function TtgSticker.SetName: string;
-begin
-  FJSON.TryGetValue<string>('set_name', Result);
-end;
-
-function TtgSticker.Thumb: ItgPhotoSize;
-begin
-  Result := ReadToClass<TtgPhotoSize>('thumb');
-end;
-
-function TtgSticker.Width: Int64;
-begin
-  FJSON.TryGetValue<Int64>('width', Result);
-end;
-
-{ TtgGame }
-
-function TtgGame.Animation: ItgAnimation;
-begin
-  Result := ReadToClass<TtgAnimation>('animation');
-end;
-
-function TtgGame.Description: string;
-begin
-  FJSON.TryGetValue<string>('text', Result);
-end;
-
-function TtgGame.Photo: TArray<ItgPhotoSize>;
-begin
-  UnSupported;
-end;
-
-function TtgGame.Text: string;
-begin
-  FJSON.TryGetValue<string>('text', Result);
-end;
-
-function TtgGame.TextEntities: TArray<ItgMessageEntity>;
-begin
-
-end;
-
-function TtgGame.Title: string;
-begin
-  FJSON.TryGetValue<string>('title', Result);
-end;
-
-{ TtgInvoice }
-
-function TtgInvoice.Currency: string;
-begin
-  FJSON.TryGetValue<string>('currency', Result);
-end;
-
-function TtgInvoice.Description: string;
-begin
-  FJSON.TryGetValue<string>('description', Result);
-end;
-
-function TtgInvoice.StartParameter: string;
-begin
-  FJSON.TryGetValue<string>('start_parameter', Result);
-end;
-
-function TtgInvoice.Title: string;
-begin
-  FJSON.TryGetValue<string>('title', Result);
-end;
-
-function TtgInvoice.TotalAmount: Int64;
-begin
-  FJSON.TryGetValue<Int64>('total_amount', Result);
-end;
-
-{ TtgVideo }
-
-function TtgVideo.Duration: Int64;
-begin
-  FJSON.TryGetValue<Int64>('duration', Result);
-end;
-
-function TtgVideo.Height: Int64;
-begin
-  FJSON.TryGetValue<Int64>('height', Result);
-end;
-
-function TtgVideo.MimeType: string;
-begin
-  FJSON.TryGetValue<string>('mime_type', Result);
-end;
-
-function TtgVideo.Thumb: ItgPhotoSize;
-begin
-  Result := ReadToClass<TtgPhotoSize>('thumb');
-end;
-
-function TtgVideo.Width: Int64;
-begin
-  FJSON.TryGetValue<Int64>('width', Result);
-end;
-
-{ TtgContact }
-
-function TtgContact.FirstName: string;
-begin
-  FJSON.TryGetValue<string>('first_name', Result);
-end;
-
-function TtgContact.LastName: string;
-begin
-  FJSON.TryGetValue<string>('last_name', Result);
-end;
-
-function TtgContact.PhoneNumber: string;
-begin
-  FJSON.TryGetValue<string>('phone_number', Result);
-end;
-
-function TtgContact.UserId: Int64;
-begin
-  FJSON.TryGetValue<Int64>('user_id', Result);
-end;
-
-{ TtgVenue }
-
-function TtgVenue.Address: string;
-begin
-  FJSON.TryGetValue<string>('address', Result);
-end;
-
-function TtgVenue.FoursquareId: string;
-begin
-  FJSON.TryGetValue<string>('foursquare_id', Result);
-end;
-
-function TtgVenue.Location: ItgLocation;
-begin
-  Result := ReadToClass<TtgLocation>('location');
-end;
-
-function TtgVenue.Title: string;
-begin
-  FJSON.TryGetValue<string>('title', Result);
-end;
-
-{ TtgVideoNote }
-
-function TtgVideoNote.Duration: Int64;
-begin
-  FJSON.TryGetValue<Int64>('duration', Result);
-end;
-
-function TtgVideoNote.FileId: string;
-begin
-  FJSON.TryGetValue<string>('file_id', Result);
-end;
-
-function TtgVideoNote.FileSize: Int64;
-begin
-  FJSON.TryGetValue<Int64>('file_size', Result);
-end;
-
-function TtgVideoNote.Length: Int64;
-begin
-  FJSON.TryGetValue<Int64>('length', Result);
-end;
-
-function TtgVideoNote.Thumb: ItgPhotoSize;
-begin
-  Result := ReadToClass<TtgPhotoSize>('thumb');
-end;
-
-{ TtgVoice }
-
-function TtgVoice.Duration: Int64;
-begin
-  FJSON.TryGetValue<Int64>('duration', Result);
-end;
-
-function TtgVoice.MimeType: string;
-begin
-  FJSON.TryGetValue<string>('mime_type', Result);
-end;
-
-{ TtgOrderInfo }
-
-function TtgOrderInfo.Email: string;
-begin
-  FJSON.TryGetValue<string>('email', Result);
-end;
-
-function TtgOrderInfo.Name: string;
-begin
-  FJSON.TryGetValue<string>('name', Result);
-end;
-
-function TtgOrderInfo.PhoneNumber: string;
-begin
-  FJSON.TryGetValue<string>('phone_number', Result);
-end;
-
-function TtgOrderInfo.ShippingAddress: ItgShippingAddress;
-begin
-  Result := ReadToClass<TtgShippingAddress>('shipping_address');
-end;
-
-{ TtgShippingAddress }
-
-function TtgShippingAddress.City: string;
-begin
-  FJSON.TryGetValue<string>('city', Result);
-end;
-
-function TtgShippingAddress.CountryCode: string;
-begin
-  FJSON.TryGetValue<string>('country_code', Result);
-end;
-
-function TtgShippingAddress.PostCode: string;
-begin
-  FJSON.TryGetValue<string>('post_code', Result);
-end;
-
-function TtgShippingAddress.State: string;
-begin
-  FJSON.TryGetValue<string>('state', Result);
-end;
-
-function TtgShippingAddress.StreetLine1: string;
-begin
-  FJSON.TryGetValue<string>('street_line1', Result);
-end;
-
-function TtgShippingAddress.StreetLine2: string;
-begin
-  Result := ReadToSimpleType<string>('street_line2');
-end;
-
-{ TtgUserProfilePhotos }
-
-function TtgUserProfilePhotos.Photos: TArray<TArray<ItgPhotoSize>>;
-begin
-  UnSupported;
-end;
-
-function TtgUserProfilePhotos.TotalCount: Int64;
-begin
-  Result := ReadToSimpleType<Int64>('total_count');
-end;
-
 end.
-

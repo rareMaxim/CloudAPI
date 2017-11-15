@@ -8,10 +8,10 @@ uses
   TelegAPI.Base,
   TelegAPI.Bot.Intf,
   TelegAPI.Types,
-  TelegAPI.Types.Intf, TelegAPI.Types.Enums;
+  TelegAPI.Types.Intf,
+  TelegAPI.Types.Enums;
 
 type
-  TtgRecesiverConsoleCore = class;
 
   TTgBotRecesiverConsole = class(TtgAbstractComponent)
   private
@@ -29,7 +29,6 @@ type
     FOnUpdate: TProc<ItgUpdate>;
     FOnUpdates: TProc<TArray<ItgUpdate>>;
     FPollingInterval: Integer;
-    FRecesiver: TtgRecesiverConsoleCore;
     FAllowedUpdates: TAllowedUpdates;
   protected
     procedure DoConnect;
@@ -140,136 +139,37 @@ type
 {$ENDREGION}
   end;
 
-  TtgRecesiverConsoleCore = class(TThread)
-  private
-    FParent: TTgBotRecesiverConsole;
-    FMessageOffset: Integer;
-    FBot: ITelegramBot;
-    FPollingInterval: Integer;
-  protected
-    procedure DoOnUpdates(AUpdates: TArray<ItgUpdate>);
-    procedure DoOnUpdate(AUpdate: ItgUpdate); virtual;
-    procedure DoUpdateWorker(AUpdates: TArray<ItgUpdate>);
-    function DoGetUpdates: TArray<ItgUpdate>;
-    /// <summary>
-    /// Raises the <see cref="TelegAPI.Bot|TtgOnUpdate" />, <see cref="TelegAPI.Bot|TtgOnMessage" />
-    /// , <see cref="TelegAPI.Bot|TtgOnInlineQuery" /> , <see cref="TelegAPI.Bot|TtgOnInlineResultChosen" />
-    /// and <see cref="TelegAPI.Bot|TtgOnCallbackQuery" /> events.
-    /// </summary>
-    /// <param name="AValue">
-    /// The <see cref="TelegAPi.Types|TtgUpdate">Update</see> instance
-    /// containing the event data. <br />
-    /// </param>
-    /// <exception cref="TelegaPi.Exceptions|ETelegramException">
-    /// Возникает если получено неизвестное обновление
-    /// </exception>
-    procedure DoUpdateTypeParser(AValue: ItgUpdate);
-    procedure Execute; override;
-  public
-{$REGION 'Property|Свойства'}
-    property Parent: TTgBotRecesiverConsole read FParent write FParent;
-    property Bot: ITelegramBot read FBot write FBot;
-    /// <summary>
-    /// The current message offset
-    /// </summary>
-    property MessageOffset: Integer read FMessageOffset write FMessageOffset
-      default 0;
-    /// <summary>
-    /// Задержка между опросами
-    /// </summary>
-    property PollingInterval: Integer read FPollingInterval
-      write FPollingInterval default 1000;
-{$ENDREGION}
-  end;
-
 implementation
 
-uses
-  TelegAPI.Exceptions;
-{ TTgRecesiver.TtgAsync }
 
-function TtgRecesiverConsoleCore.DoGetUpdates: TArray<ItgUpdate>;
-begin
-  // try
-  Result := Parent.Bot.GetUpdates(Parent.MessageOffset, 100, 0,
-    Parent.AllowedUpdates);
-  // except
-  // on E: Exception do
-  // Parent.Bot.ErrorHandlerGeneral(E);
-  // end;
-end;
+//
+// procedure TtgRecesiverConsoleCore.DoUpdateTypeParser(AValue: ItgUpdate);
+// begin
+// case AValue.&Type of
+// TtgUpdateType.MessageUpdate:
+// if Assigned(Parent.OnMessage) then
+// Parent.OnMessage(AValue.Message);
+// TtgUpdateType.InlineQueryUpdate:
+// if Assigned(Parent.OnInlineQuery) then
+// Parent.OnInlineQuery(AValue.InlineQuery);
+// TtgUpdateType.ChosenInlineResultUpdate:
+// if Assigned(Parent.OnInlineResultChosen) then
+// Parent.OnInlineResultChosen(AValue.ChosenInlineResult);
+// TtgUpdateType.CallbackQueryUpdate:
+// if Assigned(Parent.OnCallbackQuery) then
+// Parent.OnCallbackQuery(AValue.CallbackQuery);
+// TtgUpdateType.EditedMessage:
+// if Assigned(Parent.OnMessageEdited) then
+// Parent.OnMessageEdited(AValue.EditedMessage);
+// TtgUpdateType.ChannelPost:
+// if Assigned(Parent.OnChannelPost) then
+// Parent.OnChannelPost(AValue.ChannelPost);
+// else
+// raise ETelegramException.Create('Unknown update type');
+// end
+// end;
 
-procedure TtgRecesiverConsoleCore.DoOnUpdate(AUpdate: ItgUpdate);
-begin
-  if not Assigned(Parent.OnUpdate) then
-    Exit;
-  Parent.OnUpdate(AUpdate);
-end;
-
-procedure TtgRecesiverConsoleCore.DoOnUpdates(AUpdates: TArray<ItgUpdate>);
-begin
-  if not Assigned(Parent.OnUpdates) then
-    Exit;
-  Parent.OnUpdates(AUpdates);
-end;
-
-procedure TtgRecesiverConsoleCore.DoUpdateWorker(AUpdates: TArray<ItgUpdate>);
-var
-  I: Integer;
-begin
-  DoOnUpdates(AUpdates); // OnUpdates Fire
-  for I := Low(AUpdates) to High(AUpdates) do
-  begin
-    DoOnUpdate(AUpdates[I]); // OnUpdate Fire
-    DoUpdateTypeParser(AUpdates[I]);
-  end;
-end;
-
-procedure TtgRecesiverConsoleCore.Execute;
-var
-  LUpdates: TArray<ItgUpdate>;
-begin
-  Parent.DoConnect;
-
-  repeat
-    LUpdates := DoGetUpdates;
-    if (Length(LUpdates) > 0) and (not Terminated) then
-    begin
-      Parent.MessageOffset := LUpdates[High(LUpdates)].ID + 1;
-      Self.DoUpdateWorker(LUpdates); // free update items
-    end;
-    Sleep(Parent.PollingInterval);
-  until (Terminated) or (not Parent.IsReceiving);
-
-end;
-
-procedure TtgRecesiverConsoleCore.DoUpdateTypeParser(AValue: ItgUpdate);
-begin
-  case AValue.&Type of
-    TtgUpdateType.MessageUpdate:
-      if Assigned(Parent.OnMessage) then
-        Parent.OnMessage(AValue.Message);
-    TtgUpdateType.InlineQueryUpdate:
-      if Assigned(Parent.OnInlineQuery) then
-        Parent.OnInlineQuery(AValue.InlineQuery);
-    TtgUpdateType.ChosenInlineResultUpdate:
-      if Assigned(Parent.OnInlineResultChosen) then
-        Parent.OnInlineResultChosen(AValue.ChosenInlineResult);
-    TtgUpdateType.CallbackQueryUpdate:
-      if Assigned(Parent.OnCallbackQuery) then
-        Parent.OnCallbackQuery(AValue.CallbackQuery);
-    TtgUpdateType.EditedMessage:
-      if Assigned(Parent.OnMessageEdited) then
-        Parent.OnMessageEdited(AValue.EditedMessage);
-    TtgUpdateType.ChannelPost:
-      if Assigned(Parent.OnChannelPost) then
-        Parent.OnChannelPost(AValue.ChannelPost);
-  else
-    raise ETelegramException.Create('Unknown update type');
-  end
-end;
-
-{ TTgBotAsync }
+{ TTgBotRecesiverConsole }
 
 constructor TTgBotRecesiverConsole.Create(AOwner: TComponent);
 begin
@@ -314,18 +214,7 @@ begin
   FIsReceiving := Value;
   // if (csDesigning in ComponentState) then
   // Exit;
-  if Value then
-  begin
-    FRecesiver := TtgRecesiverConsoleCore.Create(True);
-    FRecesiver.FreeOnTerminate := False;
-    FRecesiver.FParent := Self;
-    FRecesiver.OnTerminate := DoOnTerminate;
-    FRecesiver.Start;
-  end
-  else
-  begin
-    FreeAndNil(FRecesiver);
-  end;
+
 end;
 
 end.
