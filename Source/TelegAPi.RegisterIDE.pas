@@ -17,6 +17,7 @@ uses
   {Add new components here}
  // TelegAPi.Bot.Recesiver.UI,
  // TelegAPI.Bot.Recesiver.Console,
+  TelegaPi.Exceptions,
   TelegAPi.Bot.Impl;
 
 {$IFDEF REG_IN_LOAD}
@@ -27,7 +28,7 @@ begin
 {$IFDEF REG_IN_LOAD}
   RegisterWithSplashScreen;
 {$ENDIF}
-  RegisterComponents('Telegram', [TTelegramBot{, TTgBotRecesiverConsole, TTgBotRecesiverUI}]);
+  RegisterComponents('Telegram', [TTelegramBot, TtgExceptionManagerUI{, TTgBotRecesiverConsole, TTgBotRecesiverUI}]);
 end;
 
 end.
