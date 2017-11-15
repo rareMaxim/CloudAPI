@@ -5,11 +5,9 @@ program ConsoleBot;
 
 uses
   TelegAPI.Bot,
-  TelegAPI.Bot.Intf,
   TelegAPI.Bot.Recesiver.Console,
-  TelegAPI.Types,
   System.SysUtils,
-  TelegAPI.Types.Intf;
+  TelegAPI.Types;
 
 procedure Main;
 var
@@ -18,8 +16,7 @@ var
   LStop: string;
   I: Integer;
 begin
-  LBot := TTelegramBot.Create(nil);
-  LBot.Token := '283107814:AAF9VZC6TRv6qKmOMCsLFoI8SBlV_xFMI80';
+  LBot := CreateTelegramBot('283107814:AAF9VZC6TRv6qKmOMCsLFoI8SBlV_xFMI80');
   LRecesiver := TTgBotRecesiverConsole.Create(nil);
   LRecesiver.Bot := LBot;
   try

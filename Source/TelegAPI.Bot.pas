@@ -8,7 +8,7 @@ uses
   TelegAPI.Types.Enums,
   TelegAPI.Types.InlineQueryResults,
   TelegAPI.Types.ReplyMarkups,
-  TelegAPI.Types.Impl;
+  TelegAPI.Types.Impl, TelegaPi.Exceptions;
 
 type
   ITelegramBot = interface
@@ -16,6 +16,8 @@ type
       // private
     function GetToken: string;
     procedure SetToken(const Value: string);
+    function GetExceptionManager: ItgExceptionHandler;
+    procedure SetExceptionManager(const Value: ItgExceptionHandler);
       // public
 {$REGION 'Getting updates'}
      /// <summary>
@@ -783,7 +785,7 @@ type
      /// </returns>
      /// <seealso href="https://core.telegram.org/bots/api#answercallbackquery" />
     function AnswerCallbackQuery(const CallbackQueryId: string; const Text: string = ''; ShowAlert: Boolean = False; const Url: string = ''; CacheTime: Int64 = 0): Boolean;
-     {$ENDREGION}
+{$ENDREGION}
 {$REGION 'Updating messages'}
      /// <summary>
      /// Use this method to edit text messages sent by the bot or via the bot
@@ -1011,7 +1013,7 @@ type
      /// <seealso href="https://core.telegram.org/bots/api#deletemessage" />
     function DeleteMessage(ChatId: TValue; MessageId: Int64): Boolean;
      {$ENDREGION}
-     {$REGION 'Inline mode'}
+{$REGION 'Inline mode'}
      /// <summary>
      /// Use this method to send answers to an inline query.
      /// </summary>
@@ -1053,8 +1055,8 @@ type
      /// </remarks>
      /// <seealso href="https://core.telegram.org/bots/api#answerinlinequery" />
     function AnswerInlineQuery(const InlineQueryId: string; Results: TArray<TtgInlineQueryResult>; CacheTime: Int64 = 300; IsPersonal: Boolean = False; const NextOffset: string = ''; const SwitchPmText: string = ''; const SwitchPmParameter: string = ''): Boolean;
-     {$ENDREGION}
-     {$REGION 'Payments'}
+{$ENDREGION}
+{$REGION 'Payments'}
      /// <summary>
      /// Use this method to send invoices.
      /// </summary>
@@ -1191,8 +1193,8 @@ type
      /// </remarks>
      /// <seealso href="https://core.telegram.org/bots/api#answerprecheckoutquery" />
     function AnswerPreCheckoutQuery(const PreCheckoutQueryId: string; Ok: Boolean; const ErrorMessage: string = ''): Boolean;
-     {$ENDREGION}
-     {$REGION 'Games'}
+{$ENDREGION}
+{$REGION 'Games'}
      /// <summary>
      /// Use this method to send a game.
      /// </summary>
@@ -1291,8 +1293,8 @@ type
      /// Official API
      /// </seealso>
     function GetGameHighScores(UserId: Int64; ChatId: Int64 = 0; MessageId: Int64 = 0; const InlineMessageId: string = ''): TArray<ItgGameHighScore>;
-     {$ENDREGION}
-     {$REGION 'Manage groups and channels'}
+{$ENDREGION}
+{$REGION 'Manage groups and channels'}
      /// <summary>
      /// Use this method to delete a chat photo.
      /// </summary>
@@ -1413,8 +1415,8 @@ type
      /// Returns True on success.
      /// </returns>
     function UnpinChatMessage(ChatId: TValue): Boolean;
-     {$ENDREGION}
-     {$REGION 'Manage users and admins'}
+{$ENDREGION}
+{$REGION 'Manage users and admins'}
      /// <summary>
      /// Use this method to restrict a user in a supergroup. The bot must be
      /// an administrator in the supergroup for this to work and must have the
@@ -1501,8 +1503,8 @@ type
      /// Returns True on success.
      /// </returns>
     function PromoteChatMember(ChatId: TValue; UserId: Int64; CanChangeInfo: Boolean = False; CanPostMessages: Boolean = False; CanEditMessages: Boolean = False; CanDeleteMessages: Boolean = False; CanInviteUsers: Boolean = False; CanRestrictMembers: Boolean = False; CanPinMessages: Boolean = False; CanPromoteMembers: Boolean = False): Boolean;
-     {$ENDREGION}
-     {$REGION 'Strickers'}
+{$ENDREGION}
+{$REGION 'Strickers'}
      /// <summary>
      /// Use this method to send .webp stickers.
      /// </summary>
@@ -1658,8 +1660,9 @@ type
      /// getChat</see> requests to check if the bot can use this method.
      /// </remarks>
     function deleteChatStickerSet(ChatId: TValue): Boolean;
-     {$ENDREGION}
+{$ENDREGION}
     property Token: string read GetToken write SetToken;
+    property ExceptionManager: ItgExceptionHandler read GetExceptionManager write SetExceptionManager;
   end;
 
 function CreateTelegramBot(const AToken: string = ''): ITelegramBot;

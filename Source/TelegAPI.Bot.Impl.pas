@@ -50,6 +50,8 @@ type
     // Returns response JSON from server as result of request
 
     function GetValueFromMethod(const Method: string; Parameters: TDictionary<string, TValue>): string;
+    function GetExceptionManager: ItgExceptionHandler;
+    procedure SetExceptionManager(const Value: ItgExceptionHandler);
 
     // function GetArrayFromMethod<T:TBaseJson; TI:IInterface>(const Method: string; Parameters: TDictionary<string, TValue>):TArray<TI>;
 
@@ -177,7 +179,7 @@ type
     /// 283107813:AAG4hEElAvIogTSHNHXI6rZtE46A7XQvIH
     /// </example>
     property Token: string read GetToken write SetToken;
-    property ExceptionManager: ItgExceptionHandler read FExceptionManager write FExceptionManager;
+    property ExceptionManager: ItgExceptionHandler read GetExceptionManager write SetExceptionManager;
 {$ENDREGION}
 {$REGION 'События|Events'}
     property OnReceiveRawData: TtgOnReceiveRawData read FOnRawData write FOnRawData;
@@ -882,6 +884,11 @@ begin
   end;
 end;
 
+function TTelegramBot.GetExceptionManager: ItgExceptionHandler;
+begin
+  Result := FExceptionManager;
+end;
+
 function TTelegramBot.GetFile(const FileId: string): ItgFile;
 var
   Parameters: TDictionary<string, TValue>;
@@ -1401,6 +1408,11 @@ begin
   finally
     Parameters.Free;
   end;
+end;
+
+procedure TTelegramBot.SetExceptionManager(const Value: ItgExceptionHandler);
+begin
+  FExceptionManager := Value;
 end;
 
 function TTelegramBot.UnpinChatMessage(ChatId: TValue): Boolean;
