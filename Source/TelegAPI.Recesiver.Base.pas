@@ -23,11 +23,18 @@ type
     FMessageOffset: Int64;
     FPollingInterval: Integer;
     FTask: ITask;
+    FIsActive: Boolean;
+    procedure SetIsActive(const Value: Boolean);
   protected
-    procedure SetIsRecesiving(AValue: Boolean); virtual;
     function ReadUpdates: TArray<ItgUpdate>;
+    procedure Go;
+    procedure DoOnStart; virtual; abstract;
+    procedure DoOnStop; virtual; abstract;
+    procedure DoOnUpdates(AUpdates: TArray<ItgUpdate>); virtual; abstract;
+    procedure DoOnUpdate(AUpdate: ItgUpdate); virtual; abstract;
   public
-    constructor Create(AOwner: TComponent); override;
+    constructor Create(AOwner: TComponent); overload; override;
+    constructor Create(ABot: ITelegramBot); overload;
   published
     property Bot: ITelegramBot read FBot write FBot;
     [Default(0)]
@@ -35,6 +42,8 @@ type
     property AllowedUpdates: TAllowedUpdates read FAllowedUpdates write FAllowedUpdates default UPDATES_ALLOWED_ALL;
     [Default(1000)]
     property PollingInterval: Integer read FPollingInterval write FPollingInterval;
+    [Default(False)]
+    property IsActive: Boolean read FIsActive write SetIsActive;
   end;
 
 implementation
@@ -50,10 +59,36 @@ begin
 
 end;
 
+constructor TTgBotRecesiverBase.Create(ABot: ITelegramBot);
+begin
+  Create(TComponent(nil));
+  Bot := ABot;
+end;
+
+procedure TTgBotRecesiverBase.Go;
+var
+  LUpdates: TArray<ItgUpdate>;
+  LUpdate: ItgUpdate;
+begin
+  DoOnStart;
+  while FIsActive do
+  begin
+    LUpdates := ReadUpdates;
+    DoOnUpdates(LUpdates);
+    for LUpdate in LUpdates do
+    begin
+      DoOnUpdate(LUpdate);
+    end;
+    MessageOffset := LUpdate.ID + 1;
+    Sleep(FPollingInterval);
+  end;
+  DoOnStop;
+end;
+
 function TTgBotRecesiverBase.ReadUpdates: TArray<ItgUpdate>;
 begin
   try
-    Result := FBot.GetUpdates(FMessageOffset, 100, 0, AllowedUpdates);
+    Result := FBot.GetUpdates(MessageOffset, 100, 0, AllowedUpdates);
   except
     on E: Exception do
       if Bot.ExceptionManager <> nil then
@@ -63,13 +98,15 @@ begin
   end;
 end;
 
-procedure TTgBotRecesiverBase.SetIsRecesiving(AValue: Boolean);
+procedure TTgBotRecesiverBase.SetIsActive(const Value: Boolean);
 begin
-  FTask := TTask.Create(
-    procedure
-    begin
-
-    end);
+  if FIsActive = Value then
+    Exit;
+  FIsActive := Value;
+  if FIsActive then
+  begin
+    FTask := TTask.Run(Go);
+  end
 end;
 
 end.

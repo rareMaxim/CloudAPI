@@ -5,34 +5,56 @@ program ConsoleBot;
 
 uses
   TelegAPI.Bot,
-  TelegAPI.Bot.Recesiver.Console,
+  TelegAPI.Recesiver.Console,
   System.SysUtils,
   TelegAPI.Types;
 
 procedure Main;
 var
   LBot: ITelegramBot;
-  LRecesiver: TTgBotRecesiverConsole;
+  LRecesiver: TtgRecesiverConsole;
   LStop: string;
   I: Integer;
 begin
   LBot := CreateTelegramBot('283107814:AAF9VZC6TRv6qKmOMCsLFoI8SBlV_xFMI80');
-  LRecesiver := TTgBotRecesiverConsole.Create(nil);
-  LRecesiver.Bot := LBot;
+  LRecesiver := TtgRecesiverConsole.Create(LBot);
   try
-    LRecesiver.OnMessage :=
-      procedure(AMessage: ITgMessage)
+    LRecesiver.OnStart :=
+      procedure
       begin
-        Writeln(AMessage.From.Username, ': ', AMessage.Text);
-        LBot.SendMessage(AMessage.Chat.ID, '345t6yu');
+        Writeln('started');
       end;
+    LRecesiver.OnStop :=
+      procedure
+      begin
+        Writeln('stoped');
+      end;
+    LRecesiver.OnUpdate :=
+      procedure(AUpd: ItgUpdate)
+      begin
+        Writeln(AUpd.message.From.Username, ': ', AUpd.message.Text);
+        LBot.SendMessage(AUpd.message.Chat.ID, AUpd.message.Text);
+      end;
+//    LRecesiver.OnMessage :=
+//      procedure(AMessage: ITgMessage)
+//      begin
+//        Writeln(AMessage.From.Username, ': ', AMessage.Text);
+//        LBot.SendMessage(AMessage.Chat.ID, '345t6yu');
+//      end;
     with LBot.GetMe do
     begin
       Writeln('Bot nick: ', Username);
     end;
-    LRecesiver.IsReceiving := True;
+    LRecesiver.IsActive := True;
     while LStop.ToLower.Trim <> 'exit' do
+    begin
       Readln(LStop);
+      if LStop.ToLower.Trim = 'stop' then
+        LRecesiver.IsActive := False
+      else if LStop.ToLower.Trim = 'start' then
+        LRecesiver.IsActive := True;
+
+    end;
   finally
     // LRecesiver.Free;
   end;
