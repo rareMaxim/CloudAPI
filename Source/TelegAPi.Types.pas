@@ -341,7 +341,7 @@ type
   ItgUpdate = interface
     ['{5D001F9B-B0BC-4A44-85E3-E0586DAAABD2}']
     function ID: Int64;
-    function message: ITgMessage;
+    function Message: ITgMessage;
     function EditedMessage: ITgMessage;
     function InlineQuery: ItgInlineQuery;
     function ChosenInlineResult: ItgChosenInlineResult;
@@ -350,7 +350,7 @@ type
     function EditedChannelPost: ITgMessage;
     function ShippingQuery: ItgShippingQuery;
     function PreCheckoutQuery: ItgPreCheckoutQuery;
-    function &type: TtgUpdateType;
+    function &Type: TtgUpdateType;
   end;
 
   ItgLabeledPrice = interface

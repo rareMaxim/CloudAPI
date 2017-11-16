@@ -10,7 +10,6 @@ type
 
   TBaseJson = class(TInterfacedObject)
   private
-
   protected
     FJSON: TJSONObject;
     function ReadToClass<T: class, constructor>(const AKey: string): T;
@@ -101,13 +100,16 @@ end;
 function TBaseJson.ReadToSimpleType<T>(const AKey: string): T;
 begin
   Log.d('open "%S" to @%S', [AKey, GetTypeName(TypeInfo(T))]);
-  FJSON.TryGetValue<T>(AKey, Result);
+  Result := Default(T);
+//  if  not
+  FJSON.TryGetValue<T>(AKey, Result)
+ //   then      raise Exception.Create('Cant extract value' + #13#10 + FJSON.ToJSON);
 end;
 
 class procedure TBaseJson.UnSupported;
 begin
-  raise Exception.Create
-    ('Telegram method not supported in TelegaPi Library. Sorry.');
+  raise Exception.Create('Telegram method not supported in TelegaPi Library. Sorry.');
 end;
 
 end.
+

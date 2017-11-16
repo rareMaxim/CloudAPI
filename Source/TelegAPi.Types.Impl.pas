@@ -11,7 +11,6 @@ uses
   TelegAPi.Types;
 
 type
-
   TtgUser = class(TBaseJson, ItgUser)
   public
     function ID: Int64;
@@ -400,6 +399,8 @@ type
 
 implementation
 
+uses
+  FMX.Types;
 { TtgAnimation }
 
 function TtgAnimation.FileId: string;
@@ -534,17 +535,11 @@ var
   LJsonArray: TJSONArray;
   I: Integer;
 begin
-  if FJSON.TryGetValue<string>('entities', LValue) then
-  begin
-    LJsonArray := TJSONObject.ParseJSONValue(LValue) as TJSONArray;
-    try
-      SetLength(Result, LJsonArray.Count);
-      for I := 0 to LJsonArray.Count - 1 do
-        Result[I] := ReadToClass<TtgMessageEntity>('entities');
-    finally
-      LJsonArray.Free;
-    end;
-  end;
+  LJsonArray := FJSON.GetValue('entities') as TJSONArray;
+  log.d(LJsonArray.ToJSON);
+    SetLength(Result, LJsonArray.Count);
+    for I := 0 to LJsonArray.Count - 1 do
+      Result[I] := TtgMessageEntity.Create(LJsonArray.Items[i].ToJson);
 end;
 
 function TTgMessage.ForwardDate: TDateTime;
@@ -636,13 +631,41 @@ begin
 end;
 
 function TTgMessage.NewChatMembers: TArray<ItgUser>;
+var
+  LValue: string;
+  LJsonArray: TJSONArray;
+  I: Integer;
 begin
-  UnSupported;
+  if FJSON.TryGetValue<string>('new_chat_members', LValue) then
+  begin
+    LJsonArray := TJSONObject.ParseJSONValue(LValue) as TJSONArray;
+    try
+      SetLength(Result, LJsonArray.Count);
+      for I := 0 to LJsonArray.Count - 1 do
+        Result[I] := ReadToClass<TtgUser>('new_chat_members');
+    finally
+      LJsonArray.Free;
+    end;
+  end;
 end;
 
 function TTgMessage.NewChatPhoto: TArray<ItgPhotoSize>;
+var
+  LValue: string;
+  LJsonArray: TJSONArray;
+  I: Integer;
 begin
-  UnSupported;
+  if FJSON.TryGetValue<string>('new_chat_photo', LValue) then
+  begin
+    LJsonArray := TJSONObject.ParseJSONValue(LValue) as TJSONArray;
+    try
+      SetLength(Result, LJsonArray.Count);
+      for I := 0 to LJsonArray.Count - 1 do
+        Result[I] := ReadToClass<TtgPhotoSize>('new_chat_photo');
+    finally
+      LJsonArray.Free;
+    end;
+  end;
 end;
 
 function TTgMessage.NewChatTitle: string;
@@ -651,8 +674,22 @@ begin
 end;
 
 function TTgMessage.Photo: TArray<ItgPhotoSize>;
+var
+  LValue: string;
+  LJsonArray: TJSONArray;
+  I: Integer;
 begin
-  UnSupported;
+  if FJSON.TryGetValue<string>('photo', LValue) then
+  begin
+    LJsonArray := TJSONObject.ParseJSONValue(LValue) as TJSONArray;
+    try
+      SetLength(Result, LJsonArray.Count);
+      for I := 0 to LJsonArray.Count - 1 do
+        Result[I] := ReadToClass<TtgPhotoSize>('photo');
+    finally
+      LJsonArray.Free;
+    end;
+  end;
 end;
 
 function TTgMessage.PinnedMessage: ITgMessage;
@@ -697,12 +734,7 @@ begin
     Exit(TtgMessageType.GameMessage);
   if (Location <> nil) then
     Exit(TtgMessageType.LocationMessage);
-  if (NewChatMember <> nil) or (LeftChatMember <> nil) or
-    ((NewChatPhoto <> nil) and (Length(NewChatPhoto) > 0)) or
-    ((NewChatMembers <> nil) and (Length(NewChatMembers) > 0)) or
-    (not NewChatTitle.IsEmpty) or DeleteChatPhoto or GroupChatCreated or
-    SupergroupChatCreated or ChannelChatCreated or (MigrateToChatId <> 0) or
-    (MigrateFromChatId <> 0) or (PinnedMessage <> nil) then
+  if (NewChatMember <> nil) or (LeftChatMember <> nil) or ((NewChatPhoto <> nil) and (Length(NewChatPhoto) > 0)) or ((NewChatMembers <> nil) and (Length(NewChatMembers) > 0)) or (not NewChatTitle.IsEmpty) or DeleteChatPhoto or GroupChatCreated or SupergroupChatCreated or ChannelChatCreated or (MigrateToChatId <> 0) or (MigrateFromChatId <> 0) or (PinnedMessage <> nil) then
     Exit(TtgMessageType.ServiceMessage);
   if (Photo <> nil) and (Length(Photo) > 0) then
     Exit(TtgMessageType.PhotoMessage);
@@ -831,7 +863,7 @@ end;
 
 function TtgUpdate.ID: Int64;
 begin
-  Result := ReadToSimpleType<Int64>('id');
+  Result := ReadToSimpleType<Int64>('update_id');
 end;
 
 function TtgUpdate.InlineQuery: ItgInlineQuery;
@@ -1357,7 +1389,7 @@ var
   LValue: string;
 begin
   LValue := ReadToSimpleType<string>('type_message');
-  Result := TtgMessageEntityType.mention;
+  Result := TtgMessageEntityType.N_A;
   if LValue = 'mention' then
     Result := TtgMessageEntityType.mention
   else if LValue = 'hashtag' then
@@ -1378,8 +1410,6 @@ begin
     Result := TtgMessageEntityType.text_link
   else if LValue = 'text_mention' then
     Result := TtgMessageEntityType.text_mention
-  else
-    UnSupported;
 end;
 
 function TtgMessageEntity.Url: string;
@@ -1729,3 +1759,4 @@ begin
 end;
 
 end.
+

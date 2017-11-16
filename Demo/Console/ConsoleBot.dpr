@@ -14,7 +14,6 @@ var
   LBot: ITelegramBot;
   LRecesiver: TtgRecesiverConsole;
   LStop: string;
-  I: Integer;
 begin
   LBot := CreateTelegramBot('283107814:AAF9VZC6TRv6qKmOMCsLFoI8SBlV_xFMI80');
   LRecesiver := TtgRecesiverConsole.Create(LBot);
@@ -29,18 +28,12 @@ begin
       begin
         Writeln('stoped');
       end;
-    LRecesiver.OnUpdate :=
-      procedure(AUpd: ItgUpdate)
+    LRecesiver.OnMessage :=
+      procedure(AMessage: ITgMessage)
       begin
-        Writeln(AUpd.message.From.Username, ': ', AUpd.message.Text);
-        LBot.SendMessage(AUpd.message.Chat.ID, AUpd.message.Text);
+        Writeln(AMessage.From.Username, ': ', AMessage.Text);
+        LBot.SendMessage(AMessage.Chat.ID, AMessage.Text);
       end;
-//    LRecesiver.OnMessage :=
-//      procedure(AMessage: ITgMessage)
-//      begin
-//        Writeln(AMessage.From.Username, ': ', AMessage.Text);
-//        LBot.SendMessage(AMessage.Chat.ID, '345t6yu');
-//      end;
     with LBot.GetMe do
     begin
       Writeln('Bot nick: ', Username);
@@ -56,7 +49,7 @@ begin
 
     end;
   finally
-    // LRecesiver.Free;
+    LRecesiver.Free;
   end;
 end;
 

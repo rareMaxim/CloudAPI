@@ -292,7 +292,7 @@ type
     /// <summary>
     ///   Mentions for a <see cref="User" /> without <see cref="User.Username" />
     /// </summary>
-    text_mention);
+    text_mention, N_A);
   /// <summary>
   ///   The part of the face relative to which the mask should be placed. One
   ///   of “forehead”, “eyes”, “mouth”, or “chin”.

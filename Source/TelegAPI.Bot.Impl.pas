@@ -229,8 +229,8 @@ begin
   FJSON := TJSONObject.ParseJSONValue(ARequest) as TJSONObject;
   try
     if FJSON.GetValue('ok') is TJSONFalse then
-      // ErrorHandlerApi(EApiRequestException.FromApiResponse<T>(LApiResponse,
-      // Parameters));
+//      if ExceptionManager <> nil then
+//        ExceptionManager.HaveApiExeption(EApiRequestException.Create(LApiResponse, Parameters));
       raise Exception.Create(ARequest);
 
     FResult := FJSON.GetValue('result');

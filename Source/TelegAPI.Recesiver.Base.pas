@@ -28,13 +28,26 @@ type
   protected
     function ReadUpdates: TArray<ItgUpdate>;
     procedure Go;
+    procedure TypeUpdate(AUpdate: ItgUpdate);
+    //События
     procedure DoOnStart; virtual; abstract;
     procedure DoOnStop; virtual; abstract;
     procedure DoOnUpdates(AUpdates: TArray<ItgUpdate>); virtual; abstract;
     procedure DoOnUpdate(AUpdate: ItgUpdate); virtual; abstract;
+    procedure DoOnMessage(AMessage: ITgMessage); virtual; abstract;
+    procedure DoOnInlineQuery(AInlineQuery: ItgInlineQuery); virtual; abstract;
+    procedure DoOnChosenInlineResult(AChosenInlineResult: ItgChosenInlineResult); virtual; abstract;
+    procedure DoOnCallbackQuery(ACallbackQuery: ItgCallbackQuery); virtual; abstract;
+    procedure DoOnEditedMessage(AEditedMessage: ITgMessage); virtual; abstract;
+    procedure DoOnChannelPost(AChannelPost: ITgMessage); virtual; abstract;
+    procedure DoOnEditedChannelPost(AEditedChannelPost: ITgMessage); virtual; abstract;
+    procedure DoOnShippingQuery(AShippingQuery: ItgShippingQuery); virtual; abstract;
+    procedure DoOnPreCheckoutQuery(APreCheckoutQuery: ItgPreCheckoutQuery); virtual; abstract;
   public
     constructor Create(AOwner: TComponent); overload; override;
     constructor Create(ABot: ITelegramBot); overload;
+    procedure Start;
+    procedure Stop;
   published
     property Bot: ITelegramBot read FBot write FBot;
     [Default(0)]
@@ -78,8 +91,10 @@ begin
     for LUpdate in LUpdates do
     begin
       DoOnUpdate(LUpdate);
+      TypeUpdate(LUpdate);
     end;
-    MessageOffset := LUpdate.ID + 1;
+    if LUpdate <> nil then
+      MessageOffset := LUpdate.ID + 1;
     Sleep(FPollingInterval);
   end;
   DoOnStop;
@@ -104,9 +119,51 @@ begin
     Exit;
   FIsActive := Value;
   if FIsActive then
-  begin
-    FTask := TTask.Run(Go);
-  end
+    FTask := TTask.Run(Go)
+  else
+    FIsActive := False;
+end;
+
+procedure TTgBotRecesiverBase.Start;
+begin
+  IsActive := True;
+end;
+
+procedure TTgBotRecesiverBase.Stop;
+begin
+  IsActive := False;
+end;
+
+procedure TTgBotRecesiverBase.TypeUpdate(AUpdate: ItgUpdate);
+begin
+  case AUpdate.&Type of
+    TtgUpdateType.MessageUpdate:
+      DoOnMessage(AUpdate.Message);
+
+    TtgUpdateType.InlineQueryUpdate:
+      DoOnInlineQuery(AUpdate.InlineQuery);
+
+    TtgUpdateType.ChosenInlineResultUpdate:
+      DoOnChosenInlineResult(AUpdate.ChosenInlineResult);
+
+    TtgUpdateType.CallbackQueryUpdate:
+      DoOnCallbackQuery(AUpdate.CallbackQuery);
+
+    TtgUpdateType.EditedMessage:
+      DoOnEditedMessage(AUpdate.EditedMessage);
+
+    TtgUpdateType.ChannelPost:
+      DoOnChannelPost(AUpdate.ChannelPost);
+
+    TtgUpdateType.EditedChannelPost:
+      DoOnEditedChannelPost(AUpdate.EditedChannelPost);
+
+    TtgUpdateType.ShippingQueryUpdate:
+      DoOnShippingQuery(AUpdate.ShippingQuery);
+
+    TtgUpdateType.PreCheckoutQueryUpdate:
+      DoOnPreCheckoutQuery(AUpdate.PreCheckoutQuery);
+  end;
 end;
 
 end.

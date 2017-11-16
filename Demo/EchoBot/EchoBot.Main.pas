@@ -13,7 +13,6 @@ uses
   FMX.Memo,
   TelegAPI.Bot,
   TelegAPI.Types,
-  TelegAPI.Types.Intf,
   TelegAPI.Exceptions,
   FMX.Edit,
   FMX.StdCtrls,
@@ -21,8 +20,10 @@ uses
   FMX.Controls.Presentation,
   FMX.ScrollBox,
   FMX.Layouts,
-  TelegAPI.Bot.Recesiver.UI,
-  TelegAPI.Base;
+  TelegAPI.Base,
+  TelegAPI.Recesiver.Base,
+  TelegAPI.Recesiver.UI,
+  TelegAPI.Bot.Impl;
 
 type
   TMain = class(TForm)
@@ -32,17 +33,18 @@ type
     edtToken: TEdit;
     swtchToken: TSwitch;
     tgBot: TTelegramBot;
-    TgBotRecesiverUI1: TTgBotRecesiverUI;
+    tgExceptionManagerUI1: TtgExceptionManagerUI;
+    tgrcsvr1: TtgRecesiverUI;
     procedure tgBotReceiveError(ASender: TObject; AApiRequestException: EApiRequestException);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure tgBotReceiveGeneralError(ASender: TObject; AException: Exception);
     procedure swtchTokenSwitch(Sender: TObject);
-    procedure TgBotAsync1CallbackQuery(ASender: TObject; ACallbackQuery: TtgCallbackQuery);
+    procedure TgBotAsync1CallbackQuery(ASender: TObject; ACallbackQuery: ItgCallbackQuery);
     procedure TgBotAsync1Connect(Sender: TObject);
     procedure TgBotAsync1Disconnect(Sender: TObject);
-    procedure TgBotAsync1InlineQuery(ASender: TObject; AInlineQuery: TtgInlineQuery);
+    procedure TgBotAsync1InlineQuery(ASender: TObject; AInlineQuery: ItgInlineQuery);
     procedure TgBotAsync1Message(ASender: TObject; AMessage: ITgMessage);
-    procedure TgBotAsync1InlineResultChosen(ASender: TObject; AChosenInlineResult: TtgChosenInlineResult);
+    procedure TgBotAsync1InlineResultChosen(ASender: TObject; AChosenInlineResult: ItgChosenInlineResult);
   private
     { Private declarations }
     procedure WriteLine(const AValue: string);
@@ -75,7 +77,7 @@ uses
 
 procedure TMain.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
-  TgBotRecesiverUI1.IsReceiving := False;
+  tgrcsvr1.IsActive := False;
 end;
 
 procedure TMain.ParseLocationMessage(Msg: ITgMessage);
@@ -144,10 +146,10 @@ begin
   tgBot.Token := edtToken.Text;
   if not tgBot.IsValidToken then
     raise ELoginCredentialError.Create('invalid token format');
-  TgBotRecesiverUI1.IsReceiving := swtchToken.IsChecked;
+  tgrcsvr1.IsActive := swtchToken.IsChecked;
 end;
 
-procedure TMain.TgBotAsync1CallbackQuery(ASender: TObject; ACallbackQuery: TtgCallbackQuery);
+procedure TMain.TgBotAsync1CallbackQuery(ASender: TObject; ACallbackQuery: ItgCallbackQuery);
 begin
   tgBot.AnswerCallbackQuery(ACallbackQuery.Id, 'Received ' + ACallbackQuery.Data);
 end;
@@ -155,15 +157,15 @@ end;
 procedure TMain.TgBotAsync1Connect(Sender: TObject);
 begin
   WriteLine('Bot connected');
- Caption := tgBot.GetMe.Username;
+  Caption := tgBot.GetMe.Username;
 end;
 
 procedure TMain.TgBotAsync1Disconnect(Sender: TObject);
 begin
-  WriteLine('Bot Disconnected');
+
 end;
 
-procedure TMain.TgBotAsync1InlineQuery(ASender: TObject; AInlineQuery: TtgInlineQuery);
+procedure TMain.TgBotAsync1InlineQuery(ASender: TObject; AInlineQuery: ItgInlineQuery);
 var
   results: TArray<TtgInlineQueryResult>;
 begin
@@ -187,7 +189,7 @@ begin
   tgBot.AnswerInlineQuery(AInlineQuery.Id, results, 0, True);
 end;
 
-procedure TMain.TgBotAsync1InlineResultChosen(ASender: TObject; AChosenInlineResult: TtgChosenInlineResult);
+procedure TMain.TgBotAsync1InlineResultChosen(ASender: TObject; AChosenInlineResult: ItgChosenInlineResult);
 begin
   WriteLine('Received choosen inline result: ' + AChosenInlineResult.ResultId);
 end;
@@ -251,7 +253,7 @@ begin
   tgBot.SendMessage(Msg.Chat.Id, 'Choose', TtgParseMode.default, False, False, 0, keyboard);
 end;
 
-procedure TMain.SendQuest(Msg: TTgMessage);
+procedure TMain.SendQuest(Msg: ITgMessage);
 var
   keyboard: IReplyMarkup;
 begin
