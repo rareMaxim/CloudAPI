@@ -54,6 +54,9 @@ end;
 
 constructor TBaseJson.Create(const AJson: string);
 begin
+  inherited Create;
+  if AJson.IsEmpty then
+    Exit;
   FJSON := TJSONObject.ParseJSONValue(AJson) as TJSONObject;
   Log.d(FJSON.ToJSON)
 end;

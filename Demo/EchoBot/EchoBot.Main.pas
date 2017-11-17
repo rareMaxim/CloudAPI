@@ -35,16 +35,15 @@ type
     tgBot: TTelegramBot;
     tgExceptionManagerUI1: TtgExceptionManagerUI;
     tgrcsvr1: TtgRecesiverUI;
-    procedure tgBotReceiveError(ASender: TObject; AApiRequestException: EApiRequestException);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
-    procedure tgBotReceiveGeneralError(ASender: TObject; AException: Exception);
     procedure swtchTokenSwitch(Sender: TObject);
     procedure TgBotAsync1CallbackQuery(ASender: TObject; ACallbackQuery: ItgCallbackQuery);
     procedure TgBotAsync1Connect(Sender: TObject);
-    procedure TgBotAsync1Disconnect(Sender: TObject);
     procedure TgBotAsync1InlineQuery(ASender: TObject; AInlineQuery: ItgInlineQuery);
-    procedure TgBotAsync1Message(ASender: TObject; AMessage: ITgMessage);
     procedure TgBotAsync1InlineResultChosen(ASender: TObject; AChosenInlineResult: ItgChosenInlineResult);
+    procedure tgExceptionManagerUI1GlobalException(ASender: TObject; const AMethod: string; AException: Exception);
+    procedure tgExceptionManagerUI1ApiException(ASender: TObject; const AMethod: string; AApiRequestException: EApiRequestException);
+    procedure tgrcsvr1Message(ASender: TObject; AMessage: ITgMessage);
   private
     { Private declarations }
     procedure WriteLine(const AValue: string);
@@ -160,11 +159,6 @@ begin
   Caption := tgBot.GetMe.Username;
 end;
 
-procedure TMain.TgBotAsync1Disconnect(Sender: TObject);
-begin
-
-end;
-
 procedure TMain.TgBotAsync1InlineQuery(ASender: TObject; AInlineQuery: ItgInlineQuery);
 var
   results: TArray<TtgInlineQueryResult>;
@@ -192,18 +186,6 @@ end;
 procedure TMain.TgBotAsync1InlineResultChosen(ASender: TObject; AChosenInlineResult: ItgChosenInlineResult);
 begin
   WriteLine('Received choosen inline result: ' + AChosenInlineResult.ResultId);
-end;
-
-procedure TMain.TgBotAsync1Message(ASender: TObject; AMessage: ITgMessage);
-begin
-  case AMessage.&Type of
-    TtgMessageType.TextMessage:
-      ParseTextMessage(AMessage);
-    TtgMessageType.PhotoMessage:
-      ParsePhotoMessage(AMessage);
-    TtgMessageType.LocationMessage:
-      ParseLocationMessage(AMessage);
-  end;
 end;
 
 procedure TMain.SendPhoto(Msg: ITgMessage);
@@ -265,14 +247,26 @@ begin
   tgBot.SendMessage(Msg.Chat.Id, 'Выбери:', TtgParseMode.default, False, False, 0, keyboard);
 end;
 
-procedure TMain.tgBotReceiveError(ASender: TObject; AApiRequestException: EApiRequestException);
+procedure TMain.tgExceptionManagerUI1ApiException(ASender: TObject; const AMethod: string; AApiRequestException: EApiRequestException);
 begin
-  WriteLine(AApiRequestException.ToString);
+  WriteLine(AMethod + '@' + AApiRequestException.ToString);
 end;
 
-procedure TMain.tgBotReceiveGeneralError(ASender: TObject; AException: Exception);
+procedure TMain.tgExceptionManagerUI1GlobalException(ASender: TObject; const AMethod: string; AException: Exception);
 begin
-  WriteLine(AException.ToString);
+  WriteLine(AMethod + '@' + AException.ToString);
+end;
+
+procedure TMain.tgrcsvr1Message(ASender: TObject; AMessage: ITgMessage);
+begin
+  case AMessage.&Type of
+    TtgMessageType.TextMessage:
+      ParseTextMessage(AMessage);
+    TtgMessageType.PhotoMessage:
+      ParsePhotoMessage(AMessage);
+    TtgMessageType.LocationMessage:
+      ParseLocationMessage(AMessage);
+  end;
 end;
 
 procedure TMain.WriteLine(const AValue: string);

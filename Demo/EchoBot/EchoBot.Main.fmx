@@ -69,19 +69,18 @@ object Main: TMain
     Top = 168
   end
   object tgExceptionManagerUI1: TtgExceptionManagerUI
+    OnApiException = tgExceptionManagerUI1ApiException
+    OnGlobalException = tgExceptionManagerUI1GlobalException
     Left = 216
     Top = 192
   end
   object tgrcsvr1: TtgRecesiverUI
     Bot = tgBot
     OnStart = TgBotAsync1Connect
-    OnMessage = TgBotAsync1Message
+    OnMessage = tgrcsvr1Message
     OnInlineQuery = TgBotAsync1InlineQuery
     OnChosenInlineResult = TgBotAsync1InlineResultChosen
-    OnEditedMessage = TgBotAsync1Message
-    OnChannelPost = TgBotAsync1Message
-    OnEditedChannelPost = TgBotAsync1Message
-    Left = 224
-    Top = 200
+    Left = 56
+    Top = 272
   end
 end

@@ -14,6 +14,8 @@ uses
 type
   ITgBotRecesiverBase = interface
     ['{98A444BC-D8E3-4542-B75F-3A7AACFCAE74}']
+    procedure Start;
+    procedure Stop;
   end;
 
   TTgBotRecesiverBase = class(TtgAbstractComponent, ITgBotRecesiverBase)

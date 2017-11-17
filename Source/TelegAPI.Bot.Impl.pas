@@ -189,6 +189,7 @@ type
 implementation
 
 uses
+  REST.Json,
   TelegAPI.Helpers;
 
 { TTelegramBot }
@@ -229,9 +230,12 @@ begin
   FJSON := TJSONObject.ParseJSONValue(ARequest) as TJSONObject;
   try
     if FJSON.GetValue('ok') is TJSONFalse then
-//      if ExceptionManager <> nil then
-//        ExceptionManager.HaveApiExeption(EApiRequestException.Create(LApiResponse, Parameters));
-      raise Exception.Create(ARequest);
+      if ExceptionManager <> nil then
+      begin
+        ExceptionManager.HaveApiExeption('TTelegramBot.ApiTest', EApiRequestException.Create(ARequest, 0, Parameters));
+        Exit;
+      end;
+   //   raise Exception.Create(ARequest);
 
     FResult := FJSON.GetValue('result');
     Result := FResult.ToJSON;
@@ -244,6 +248,7 @@ function TTelegramBot.ParamsToFormData(Parameters: TDictionary<string, TValue>):
 var
   LParameter: TPair<string, TValue>;
   LAddProc: TtgParamLoader.TLoader;
+  LTest: string;
 begin
   Result := TMultipartFormData.Create;
   for LParameter in Parameters do
@@ -262,7 +267,13 @@ begin
       { TODO -oOwner -cGeneral : Проверить че за херня тут твориться }
       if not LParameter.Value.IsEmpty then
       begin
-        raise Exception.Create('Error Message');
+        if LParameter.Value.IsType<IReplyMarkup>then
+        begin
+          LTest :=TJson.ObjectToJsonString(LParameter.Value.AsObject);
+          Result.AddField(LParameter.Key, LTest);
+        end;
+
+        //raise Exception.Create('Error Message');
         // Result.AddField(LParameter.Key, dj.From(LParameter.Value.AsObject).ToJson);
         // LTest := dj.From(LParameter.Value, TJsonUtils.DJsonConfig).ToJSON;
         // Result.AddField(LParameter.Key, LTest);

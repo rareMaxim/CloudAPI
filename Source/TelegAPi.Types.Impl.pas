@@ -536,10 +536,12 @@ var
   I: Integer;
 begin
   LJsonArray := FJSON.GetValue('entities') as TJSONArray;
-  log.d(LJsonArray.ToJSON);
-    SetLength(Result, LJsonArray.Count);
-    for I := 0 to LJsonArray.Count - 1 do
-      Result[I] := TtgMessageEntity.Create(LJsonArray.Items[i].ToJson);
+  if (not Assigned(LJsonArray)) or LJsonArray.Null then
+    Exit(nil);
+  Log.d(LJsonArray.ToJSON);
+  SetLength(Result, LJsonArray.Count);
+  for I := 0 to LJsonArray.Count - 1 do
+    Result[I] := TtgMessageEntity.Create(LJsonArray.Items[I].ToJson);
 end;
 
 function TTgMessage.ForwardDate: TDateTime;
@@ -1388,7 +1390,7 @@ function TtgMessageEntity.TypeMessage: TtgMessageEntityType;
 var
   LValue: string;
 begin
-  LValue := ReadToSimpleType<string>('type_message');
+  LValue := ReadToSimpleType<string>('type');
   Result := TtgMessageEntityType.N_A;
   if LValue = 'mention' then
     Result := TtgMessageEntityType.mention
