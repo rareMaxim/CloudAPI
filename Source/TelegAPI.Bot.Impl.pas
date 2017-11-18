@@ -53,7 +53,8 @@ type
     function GetExceptionManager: ItgExceptionHandler;
     procedure SetExceptionManager(const Value: ItgExceptionHandler);
 
-    // function GetArrayFromMethod<T:TBaseJson; TI:IInterface>(const Method: string; Parameters: TDictionary<string, TValue>):TArray<TI>;
+    function GetArrayFromMethod<TI:IInterface>(TgClass:TBaseJsonClass; const Method: string; Parameters: TDictionary<string, TValue>):TArray<TI>;
+
 
   protected
     /// <summary>
@@ -455,27 +456,11 @@ begin
   c.Free;
 end;
 
-// function TTelegramBot.GetArrayFromMethod<T, TI>(BJClass:TBaseJsonClass; const Method: string; Parameters: TDictionary<string, TValue>): TArray<TI>;
-// var LJsonArr: TJSONArray;
-// I: Integer;
-// begin
-// LJsonArr := GetJSONArrayFromMethod('getUpdates', Parameters);
-// try
-// SetLength(Result, LJsonArr.Count);
-// for I := 0 to High(Result) do
-// begin
-// Result[I] := BJClass.Create(LJsonArr.Items[I].ToJSON);
-// end;
-// finally
-// LJsonArr.Free;
-// end;
-// end;
-
 function TTelegramBot.GetUpdates(const Offset, Limit, Timeout: Int64; AllowedUpdates: TAllowedUpdates): TArray<ItgUpdate>;
 var
   Parameters: TDictionary<string, TValue>;
-  LJson: TJSONArray;
-  I: Integer;
+  //LJson: TJSONArray;
+  //I: Integer;
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
@@ -483,6 +468,9 @@ begin
     Parameters.Add('limit', Limit);
     Parameters.Add('timeout', Timeout);
     Parameters.Add('allowed_updates', AllowedUpdates.ToString);
+
+    Result:=GetArrayFromMethod<ItgUpdate>(TtgUpdate, 'getUpdates', Parameters);
+    {
     LJson := TJSONObject.ParseJSONValue(RequestAPI('getUpdates', Parameters)) as TJSONArray;
     try
       SetLength(Result, LJson.Count);
@@ -491,7 +479,7 @@ begin
     finally
       LJson.Free;
     end;
-    // Result:=GetArrayFromMethod<ItgUpdate>('getUpdates', Parameters);
+    }
   finally
     Parameters.Free;
   end;
@@ -825,6 +813,31 @@ begin
   end;
 end;
 
+function TTelegramBot.GetArrayFromMethod<TI>(TgClass: TBaseJsonClass; const Method: string; Parameters: TDictionary<string, TValue>): TArray<TI>;
+var LJsonArr: TJSONArray;
+    I: Integer;
+    GUID: TGuid;
+begin
+  LJsonArr := GetJSONArrayFromMethod(Method, Parameters);
+
+  //cache value fot further use
+  GUID:=GetTypeData(TypeInfo(TI))^.Guid;
+
+  //check for TI interface support
+  if TgClass.GetInterfaceEntry(GUID)=nil then
+    raise Exception.Create('GetArrayFromMethod: unsupported interface for '+TgClass.ClassName);
+
+  try
+    SetLength(Result, LJsonArr.Count);
+    for I := 0 to High(Result) do
+    begin
+       TgClass.FromJson(LJsonArr.Items[I].ToJSON).GetInterface(GUID, Result[I]);
+    end;
+  finally
+    LJsonArr.Free;
+  end;
+end;
+
 function TTelegramBot.GetChat(const ChatId: TValue): ItgChat;
 var
   Parameters: TDictionary<string, TValue>;
@@ -841,13 +854,15 @@ end;
 function TTelegramBot.GetChatAdministrators(const ChatId: TValue): TArray<ItgChatMember>;
 var
   Parameters: TDictionary<string, TValue>;
-  LJson: TJSONArray;
-  I: Integer;
+  //LJson: TJSONArray;
+  //I: Integer;
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
     Parameters.Add('chat_id', ChatId);
 
+    Result:=GetArrayFromMethod<ItgChatMember>(TtgChatMember, 'getChatAdministrators', Parameters);
+    {
     LJson := TJSONObject.ParseJSONValue(RequestAPI('getChatAdministrators', Parameters)) as TJSONArray;
     try
       SetLength(Result, LJson.Count);
@@ -856,6 +871,7 @@ begin
     finally
       LJson.Free;
     end;
+    }
   finally
     Parameters.Free;
   end;
