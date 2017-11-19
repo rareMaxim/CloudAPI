@@ -39,7 +39,7 @@ as well as many others who ask / suggest features / points bugs.
 ## Dependencies
 
 * [RAD Studio XE8, 10.0(Seattle) 10.1(Berlin) 10.2(Tokyo)](https://www.embarcadero.com/products/delphi)
-* [DJSON](https://github.com/mauriziodm/DJSON)
+
 
 # Telega π #
 
@@ -83,7 +83,6 @@ Telega π - Библиотека для работы с Telegram Bot API в Delp
 ## Зависимости
 
 * [RAD Studio XE8, 10.0(Seattle) 10.1(Berlin) 10.2(Tokyo)](https://www.embarcadero.com/products/delphi)
-* [DJSON](https://github.com/mauriziodm/DJSON)
 
 
 [Delphinus-Support](https://github.com/Memnarch/Delphinus)

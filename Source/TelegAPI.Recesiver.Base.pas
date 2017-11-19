@@ -28,9 +28,10 @@ type
     FIsActive: Boolean;
     procedure SetIsActive(const Value: Boolean);
   protected
-    function ReadUpdates: TArray<ItgUpdate>;
-    procedure Go;
-    procedure TypeUpdate(AUpdate: ItgUpdate);
+    function ReadUpdates: TArray<ItgUpdate>; virtual;
+    procedure Go; virtual;
+    procedure EventParser(AUpdates: TArray<ItgUpdate>); virtual;
+    procedure TypeUpdate(AUpdate: ItgUpdate); virtual;
     //События
     procedure DoOnStart; virtual; abstract;
     procedure DoOnStop; virtual; abstract;
@@ -80,23 +81,29 @@ begin
   Bot := ABot;
 end;
 
+procedure TTgBotRecesiverBase.EventParser(AUpdates: TArray<ItgUpdate>);
+var
+  LUpdate: ItgUpdate;
+begin
+  DoOnUpdates(AUpdates);
+  for LUpdate in AUpdates do
+  begin
+    DoOnUpdate(LUpdate);
+    TypeUpdate(LUpdate);
+  end;
+end;
+
 procedure TTgBotRecesiverBase.Go;
 var
   LUpdates: TArray<ItgUpdate>;
-  LUpdate: ItgUpdate;
 begin
   DoOnStart;
   while FIsActive do
   begin
     LUpdates := ReadUpdates;
-    DoOnUpdates(LUpdates);
-    for LUpdate in LUpdates do
-    begin
-      DoOnUpdate(LUpdate);
-      TypeUpdate(LUpdate);
-    end;
-    if LUpdate <> nil then
-      MessageOffset := LUpdate.ID + 1;
+    EventParser(LUpdates);
+    if LUpdates <> nil then
+      MessageOffset := LUpdates[High(LUpdates)].ID + 1;
     Sleep(FPollingInterval);
   end;
   DoOnStop;

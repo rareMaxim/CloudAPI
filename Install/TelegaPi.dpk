@@ -1,6 +1,7 @@
 package TelegaPi;
 
 {$R *.res}
+{$R 'TTelegramBot.dcr'}
 {$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
 {$ALIGN 8}
 {$ASSERTIONS ON}
@@ -40,7 +41,7 @@ contains
   TelegAPi.Helpers in '..\Source\TelegAPi.Helpers.pas',
   TelegAPI.Recesiver.Base in '..\Source\TelegAPI.Recesiver.Base.pas',
   TelegAPI.Recesiver.Console in '..\Source\TelegAPI.Recesiver.Console.pas',
-  TelegAPI.Recesiver.UI in '..\Source\TelegAPI.Recesiver.UI.pas',
+  TelegAPI.Recesiver.Service in '..\Source\TelegAPI.Recesiver.Service.pas',
   TelegAPi.RegisterIDE in '..\Source\TelegAPi.RegisterIDE.pas',
   TelegaPi.Types.Enums in '..\Source\TelegaPi.Types.Enums.pas',
   TelegAPI.Types.Impl in '..\Source\TelegAPI.Types.Impl.pas',
@@ -49,6 +50,7 @@ contains
   TelegAPi.Types in '..\Source\TelegAPi.Types.pas',
   TelegaPi.Types.ReplyMarkups in '..\Source\TelegaPi.Types.ReplyMarkups.pas',
   TelegAPI.Utils.Json in '..\Source\TelegAPI.Utils.Json.pas',
-  TelegAPI.Utils.Params in '..\Source\TelegAPI.Utils.Params.pas';
+  TelegAPI.Utils.Params in '..\Source\TelegAPI.Utils.Params.pas',
+  TelegAPI.Recesiver.UI in '..\Source\TelegAPI.Recesiver.UI.pas';
 
 end.

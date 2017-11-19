@@ -22,7 +22,8 @@ uses
   TelegAPI.Recesiver.Base,
   TelegAPI.Recesiver.UI,
   TelegAPI.Bot.Impl,
-  TelegAPI.Base;
+  TelegAPI.Base,
+  TelegAPI.Recesiver.Service;
 
 type
   TMain = class(TForm)
@@ -33,16 +34,16 @@ type
     swtchToken: TSwitch;
     tgBot: TTelegramBot;
     tgExceptionManagerUI1: TtgExceptionManagerUI;
-    tgrcsvr1: TtgRecesiverUI;
+    tgRecesiverUI1: TtgRecesiverUI;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure swtchTokenSwitch(Sender: TObject);
-    procedure TgBotAsync1Connect(Sender: TObject);
-    procedure TgBotAsync1InlineQuery(ASender: TObject; AInlineQuery: ItgInlineQuery);
-    procedure TgBotAsync1InlineResultChosen(ASender: TObject; AChosenInlineResult: ItgChosenInlineResult);
     procedure tgExceptionManagerUI1GlobalException(ASender: TObject; const AMethod: string; AException: Exception);
     procedure tgExceptionManagerUI1ApiException(ASender: TObject; const AMethod: string; AApiRequestException: EApiRequestException);
-    procedure tgrcsvr1Message(ASender: TObject; AMessage: ITgMessage);
-    procedure tgrcsvr1CallbackQuery(ASender: TObject; ACallbackQuery: ItgCallbackQuery);
+    procedure tgRecesiverUI1CallbackQuery(ASender: TObject; ACallbackQuery: ItgCallbackQuery);
+    procedure tgRecesiverUI1Message(ASender: TObject; AMessage: ITgMessage);
+    procedure tgRecesiverUI1ChosenInlineResult(ASender: TObject; AChosenInlineResult: ItgChosenInlineResult);
+    procedure tgRecesiverUI1InlineQuery(ASender: TObject; AInlineQuery: ItgInlineQuery);
+    procedure tgRecesiverUI1Start(Sender: TObject);
   private
     { Private declarations }
     procedure WriteLine(const AValue: string);
@@ -147,42 +148,6 @@ begin
   tgrcsvr1.IsActive := swtchToken.IsChecked;
 end;
 
-procedure TMain.TgBotAsync1Connect(Sender: TObject);
-begin
-  WriteLine('Bot connected');
-  Caption := tgBot.GetMe.Username;
-end;
-
-procedure TMain.TgBotAsync1InlineQuery(ASender: TObject; AInlineQuery: ItgInlineQuery);
-var
-  results: TArray<TtgInlineQueryResult>;
-begin
-  WriteLine(AInlineQuery.Query);
-  results := [TtgInlineQueryResultLocation.Create, TtgInlineQueryResultLocation.Create];
-  with TtgInlineQueryResultLocation(results[0]) do
-  begin
-    ID := '1';
-    Latitude := 40.7058316; // displayed result
-    Longitude := -74.2581888;
-    Title := 'New York';
-    InputMessageContent := TtgInputLocationMessageContent.Create(Latitude, Longitude);  // message if result is selected
-  end;
-  with TtgInlineQueryResultLocation(results[1]) do
-  begin
-    ID := '2';
-    Latitude := 50.4021367; // displayed result
-    Longitude := 30.2525032;
-    Title := 'Киев';
-    InputMessageContent := TtgInputLocationMessageContent.Create(Latitude, Longitude); // message if result is selected
-  end;
-  tgBot.AnswerInlineQuery(AInlineQuery.Id, results, 0, True);
-end;
-
-procedure TMain.TgBotAsync1InlineResultChosen(ASender: TObject; AChosenInlineResult: ItgChosenInlineResult);
-begin
-  WriteLine('Received choosen inline result: ' + AChosenInlineResult.ResultId);
-end;
-
 procedure TMain.SendPhoto(Msg: ITgMessage);
 const
   PATH_PHOTO = 'C:\Users\Public\Pictures\Sample Pictures\Tulips.jpg';
@@ -255,12 +220,42 @@ begin
   WriteLine(AMethod + '@' + AException.ToString);
 end;
 
-procedure TMain.tgrcsvr1CallbackQuery(ASender: TObject; ACallbackQuery: ItgCallbackQuery);
+procedure TMain.tgRecesiverUI1CallbackQuery(ASender: TObject; ACallbackQuery: ItgCallbackQuery);
 begin
   tgBot.AnswerCallbackQuery(ACallbackQuery.Id, 'Received ' + ACallbackQuery.Data);
 end;
 
-procedure TMain.tgrcsvr1Message(ASender: TObject; AMessage: ITgMessage);
+procedure TMain.tgRecesiverUI1ChosenInlineResult(ASender: TObject; AChosenInlineResult: ItgChosenInlineResult);
+begin
+  WriteLine('Received choosen inline result: ' + AChosenInlineResult.ResultId);
+end;
+
+procedure TMain.tgRecesiverUI1InlineQuery(ASender: TObject; AInlineQuery: ItgInlineQuery);
+var
+  results: TArray<TtgInlineQueryResult>;
+begin
+  WriteLine(AInlineQuery.Query);
+  results := [TtgInlineQueryResultLocation.Create, TtgInlineQueryResultLocation.Create];
+  with TtgInlineQueryResultLocation(results[0]) do
+  begin
+    ID := '1';
+    Latitude := 40.7058316; // displayed result
+    Longitude := -74.2581888;
+    Title := 'New York';
+    InputMessageContent := TtgInputLocationMessageContent.Create(Latitude, Longitude);  // message if result is selected
+  end;
+  with TtgInlineQueryResultLocation(results[1]) do
+  begin
+    ID := '2';
+    Latitude := 50.4021367; // displayed result
+    Longitude := 30.2525032;
+    Title := 'Киев';
+    InputMessageContent := TtgInputLocationMessageContent.Create(Latitude, Longitude); // message if result is selected
+  end;
+  tgBot.AnswerInlineQuery(AInlineQuery.Id, results, 0, True);
+end;
+
+procedure TMain.tgRecesiverUI1Message(ASender: TObject; AMessage: ITgMessage);
 begin
   case AMessage.&Type of
     TtgMessageType.TextMessage:
@@ -270,6 +265,12 @@ begin
     TtgMessageType.LocationMessage:
       ParseLocationMessage(AMessage);
   end;
+end;
+
+procedure TMain.tgRecesiverUI1Start(Sender: TObject);
+begin
+  WriteLine('Bot connected');
+  Caption := tgBot.GetMe.Username;
 end;
 
 procedure TMain.WriteLine(const AValue: string);
