@@ -5,9 +5,15 @@ program ConsoleBot;
 
 uses
   TelegAPI.Bot,
+  Rest.Json,
   TelegAPI.Recesiver.Console,
   System.SysUtils,
   TelegAPI.Types;
+
+type
+  TTest = class
+    a: TArray<string>;
+  end;
 
 procedure Main;
 var
@@ -15,6 +21,8 @@ var
   LRecesiver: TtgRecesiverConsole;
   LStop: string;
 begin
+
+
   LBot := CreateTelegramBot('283107814:AAF9VZC6TRv6qKmOMCsLFoI8SBlV_xFMI80');
   LRecesiver := TtgRecesiverConsole.Create(LBot);
   try
@@ -56,6 +64,7 @@ end;
 begin
   try
     { TODO -oUser -cConsole Main : Insert code here }
+
     Main;
   except
     on E: Exception do

@@ -236,11 +236,11 @@ begin
         begin
           LTest := TJson.ObjectToJsonString(LParameter.Value.AsObject);
           Result.AddField(LParameter.Key, LTest);
-        end;
-        //raise Exception.Create('Error Message');
-        // Result.AddField(LParameter.Key, dj.From(LParameter.Value.AsObject).ToJson);
-        // LTest := dj.From(LParameter.Value, TJsonUtils.DJsonConfig).ToJSON;
-        // Result.AddField(LParameter.Key, LTest);
+        end
+        else if Assigned(ExceptionManager) then
+          ExceptionManager.HaveGlobalExeption('TTelegramBot.ParamsToFormData', Exception.Create('Unknown object'))
+        else
+          raise Exception.Create('Error Message');
       end
     end
     else if Assigned(ExceptionManager) then
@@ -348,7 +348,7 @@ function TTelegramBot.GetArrayFromMethod<TI>(TgClass: TBaseJsonClass; const Meth
 var
   LJsonArr: TJSONArray;
   I: Integer;
-  GUID: TGuid;
+  GUID: TGUID;
 begin
   // stage 1: type checking
   //cache value fot further use

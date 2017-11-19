@@ -7,60 +7,49 @@ uses
   REST.Json.Types;
 
 type
-
-  TtgInlineKeyboardButton = class
+  TtgButtonBase = class
   private
-    FText: string;
-    FCallbackData: string;
-    FPay: Boolean;
-    FURL: string;
-  public
-
-    constructor Create(const AText: string); overload;
-
-    constructor Create(const AText, ACallbackData: string); overload;
-
-    [JSONName('url')]
-    property Url: string read FURL write FURL;
-
-    [JSONName('callback_data')]
-    property CallbackData: string read FCallbackData write FCallbackData;
-
-    [JSONName('switch_inline_query')]
-    property SwitchInlineQuery: string read FCallbackData write FCallbackData;
-
-    [JSONName('switch_inline_query_current_chat')]
-    property SwitchInlineQueryCurrentChat: string read FCallbackData
-      write FCallbackData;
-
-    [JSONName('callback_game')]
-    property CallbackGame: string read FCallbackData write FCallbackData;
-
-    [JSONName('pay')]
-    property Pay: Boolean read FPay write FPay;
-
     [JSONName('text')]
+    FText: string;
+  published
     property Text: string read FText write FText;
   end;
 
-  TtgKeyboardButton = class(TObject)
+  TtgInlineKeyboardButton = class(TtgButtonBase)
   private
+    [JSONName('callback_data')]
+    FCallbackData: string;
+    [JSONName('pay')]
+    FPay: Boolean;
+    [JSONName('url')]
+    FURL: string;
+    [JSONName('switch_inline_query')]
+    FSwitchInlineQuery: string;
+    [JSONName('switch_inline_query_current_chat')]
+    FSwitchInlineQueryCurrentChat: string;
+    [JSONName('callback_game')]
+    FCallbackGame: string;
+  public
+    constructor Create(const AText: string); overload;
+    constructor Create(const AText, ACallbackData: string); overload;
+    property Url: string read FURL write FURL;
+    property CallbackData: string read FCallbackData write FCallbackData;
+    property SwitchInlineQuery: string read FSwitchInlineQuery write FSwitchInlineQuery;
+    property SwitchInlineQueryCurrentChat: string read FSwitchInlineQueryCurrentChat write FSwitchInlineQueryCurrentChat;
+    property CallbackGame: string read FCallbackGame write FCallbackGame;
+    property Pay: Boolean read FPay write FPay;
+  end;
+
+  TtgKeyboardButton = class(TtgButtonBase)
+  private
+    [JSONName('request_location')]
     FRequestLocation: Boolean;
-    FText: string;
+    [JSONName('request_contact')]
     FRequestContact: Boolean;
   public
-    constructor Create(const AText: string; ARequestContact: Boolean = False;
-      ARequestLocation: Boolean = False); overload;
-
-    [JSONName('text')]
-    property Text: string read FText write FText;
-
-    [JSONName('request_contact')]
+    constructor Create(const AText: string; ARequestContact: Boolean = False; ARequestLocation: Boolean = False); overload;
     property RequestContact: Boolean read FRequestContact write FRequestContact;
-
-    [JSONName('request_location')]
-    property RequestLocation: Boolean read FRequestLocation
-      write FRequestLocation;
+    property RequestLocation: Boolean read FRequestLocation write FRequestLocation;
   end;
 
   IReplyMarkup = interface
@@ -69,63 +58,49 @@ type
 
   TtgReplyMarkup = class abstract(TInterfacedObject, IReplyMarkup)
   private
+    [JSONName('selective')]
     FSelective: Boolean;
   public
-
-    [JSONName('selective')]
     property Selective: Boolean read FSelective write FSelective;
   end;
 
   TtgForceReply = class(TtgReplyMarkup)
   private
+    [JSONName('force_reply')]
     FForce: Boolean;
   public
-
-    [JSONName('force_reply')]
     property Force: Boolean read FForce write FForce;
   end;
-  TObjectList<T: class> = class(System.Generics.Collections.TObjectList<T>)
 
-  end;
   TtgButtonedMarkup<T: class> = class(TInterfacedObject, IReplyMarkup)
   private
-    FKeyboard: TObjectList<TObjectList<T>>;
+  //  [JSONMarshalled(False)]
+    FKeyboard: TArray<TArray<T>>;
     function GetKeyboard: TArray<TArray<T>>;
-    procedure SetKeyboard(Value: TArray < TArray < T >> );
+    procedure SetKeyboard(const Value: TArray<TArray<T>>);
   public
-    constructor Create; overload;
     procedure AddRow(AKeyboardRow: TArray<T>);
     destructor Destroy; override;
-
-    [JsonMarshalled(False)]
-    property Keyboard: TArray < TArray < T >> read GetKeyboard
-      write SetKeyboard;
-    [JsonMarshalled(False)]
-    property KeyboardList: TObjectList < TObjectList < T >> read FKeyboard
-      write FKeyboard;
+    property Keyboard: TArray<TArray<T>> read GetKeyboard write SetKeyboard;
   end;
 
   TtgButtonedReplyMarkup<T: class> = class(TtgButtonedMarkup<T>)
   private
+    [JSONName('selective')]
     FSelective: Boolean;
   public
-
-    [JSONName('selective')]
     property Selective: Boolean read FSelective write FSelective;
   end;
 
   TtgInlineKeyboardMarkup = class(TtgButtonedMarkup<TtgInlineKeyboardButton>)
+  private
   public
     constructor Create; overload;
-
-    constructor Create(AInlineKeyboardRow
-      : TArray<TtgInlineKeyboardButton>); overload;
-
-    constructor Create(AInlineKeyboard: TArray < TArray <
-      TtgInlineKeyboardButton >> ); overload;
-
+    constructor Create(AInlineKeyboardRow: TArray<TtgInlineKeyboardButton>); overload;
+    constructor Create(AInlineKeyboard: TArray<TArray<TtgInlineKeyboardButton>>); overload;
     [JSONName('inline_keyboard')]
-    property Keyboard;
+    [JSONMarshalled(True)]
+    property Keyboard;//: TArray<TArray<TtgInlineKeyboardButton>> read GetKeyboard write SetKeyboard;
   end;
 
   TtgReplyKeyboardMarkup = class(TtgButtonedReplyMarkup<TtgKeyboardButton>)
@@ -134,22 +109,13 @@ type
     FOneTimeKeyboard: Boolean;
   public
     constructor Create(AResizeKeyboard, AOneTimeKeyboard: Boolean); overload;
-
-    constructor Create(AKeyboardRow: TArray<TtgKeyboardButton>;
-      AResizeKeyboard: Boolean = False;
-      AOneTimeKeyboard: Boolean = False); overload;
-
-    constructor Create(AKeyboard: TArray<TArray<TtgKeyboardButton>>;
-      AResizeKeyboard: Boolean = False;
-      AOneTimeKeyboard: Boolean = False); overload;
-
+    constructor Create(AKeyboardRow: TArray<TtgKeyboardButton>; AResizeKeyboard: Boolean = False; AOneTimeKeyboard: Boolean = False); overload;
+    constructor Create(AKeyboard: TArray<TArray<TtgKeyboardButton>>; AResizeKeyboard: Boolean = False; AOneTimeKeyboard: Boolean = False); overload;
     [JSONName('keyboard')]
+    [JSONMarshalled(True)]
     property Keyboard;
-
     [JSONName('one_time_keyboard')]
-    property OneTimeKeyboard: Boolean read FOneTimeKeyboard
-      write FOneTimeKeyboard;
-
+    property OneTimeKeyboard: Boolean read FOneTimeKeyboard write FOneTimeKeyboard;
     [JSONName('resize_keyboard')]
     property ResizeKeyboard: Boolean read FResizeKeyboard write FResizeKeyboard;
   end;
@@ -159,7 +125,6 @@ type
     FRemoveKeyboard: Boolean;
   public
     constructor Create(ARemoveKeyboard: Boolean = True);
-
     [JSONName('remove_keyboard')]
     property RemoveKeyboard: Boolean read FRemoveKeyboard write FRemoveKeyboard;
   end;
@@ -180,8 +145,7 @@ begin
   Self.CallbackData := ACallbackData;
 end;
 
-constructor TtgKeyboardButton.Create(const AText: string;
-  ARequestContact, ARequestLocation: Boolean);
+constructor TtgKeyboardButton.Create(const AText: string; ARequestContact, ARequestLocation: Boolean);
 begin
   Self.Text := AText;
   Self.RequestContact := ARequestContact;
@@ -189,55 +153,18 @@ begin
 end;
 
 procedure TtgButtonedMarkup<T>.AddRow(AKeyboardRow: TArray<T>);
-var
-  LListBtn: TObjectList<T>;
 begin
-  LListBtn := TObjectList<T>.Create;
-  LListBtn.AddRange(AKeyboardRow);
-  FKeyboard.Add(LListBtn);
+  SetLength(FKeyboard, Length(FKeyboard) + 1);
+  FKeyboard[High(FKeyboard)] := AKeyboardRow;
 end;
 
-constructor TtgButtonedMarkup<T>.Create;
-begin
-  inherited;
-  FKeyboard := TObjectList < TObjectList < T >>.Create;
-end;
-
-destructor TtgButtonedMarkup<T>.Destroy;
-begin
-  FreeAndNil(FKeyboard);
-  inherited;
-end;
-
-function TtgButtonedMarkup<T>.GetKeyboard: TArray<TArray<T>>;
-var
-  i: Integer;
-begin
-  SetLength(Result, FKeyboard.Count);
-  for i := 0 to FKeyboard.Count - 1 do
-  begin
-    Result[i] := FKeyboard[i].ToArray;
-  end;
-end;
-
-procedure TtgButtonedMarkup<T>.SetKeyboard(Value: TArray < TArray < T >> );
-var
-  i: Integer;
-begin
-  FKeyboard.Clear;
-  for i := Low(Value) to High(Value) do
-    Self.AddRow(Value[i]);
-end;
-
-constructor TtgInlineKeyboardMarkup.Create(AInlineKeyboardRow
-  : TArray<TtgInlineKeyboardButton>);
+constructor TtgInlineKeyboardMarkup.Create(AInlineKeyboardRow: TArray<TtgInlineKeyboardButton>);
 begin
   inherited Create;
   Self.AddRow(AInlineKeyboardRow);
 end;
 
-constructor TtgInlineKeyboardMarkup.Create(AInlineKeyboard: TArray < TArray <
-  TtgInlineKeyboardButton >> );
+constructor TtgInlineKeyboardMarkup.Create(AInlineKeyboard: TArray<TArray<TtgInlineKeyboardButton>>);
 var
   i: Integer;
 begin
@@ -253,8 +180,7 @@ begin
   inherited Create;
 end;
 
-constructor TtgReplyKeyboardMarkup.Create(AKeyboardRow
-  : TArray<TtgKeyboardButton>; AResizeKeyboard, AOneTimeKeyboard: Boolean);
+constructor TtgReplyKeyboardMarkup.Create(AKeyboardRow: TArray<TtgKeyboardButton>; AResizeKeyboard, AOneTimeKeyboard: Boolean);
 begin
   inherited Create;
   AddRow(AKeyboardRow);
@@ -262,9 +188,7 @@ begin
   OneTimeKeyboard := AOneTimeKeyboard;
 end;
 
-constructor TtgReplyKeyboardMarkup.Create
-  (AKeyboard: TArray<TArray<TtgKeyboardButton>>;
-  AResizeKeyboard, AOneTimeKeyboard: Boolean);
+constructor TtgReplyKeyboardMarkup.Create(AKeyboard: TArray<TArray<TtgKeyboardButton>>; AResizeKeyboard, AOneTimeKeyboard: Boolean);
 begin
   inherited Create;
   Self.Keyboard := AKeyboard;
@@ -272,8 +196,7 @@ begin
   OneTimeKeyboard := AOneTimeKeyboard;
 end;
 
-constructor TtgReplyKeyboardMarkup.Create(AResizeKeyboard, AOneTimeKeyboard
-  : Boolean);
+constructor TtgReplyKeyboardMarkup.Create(AResizeKeyboard, AOneTimeKeyboard: Boolean);
 begin
   inherited Create;
   ResizeKeyboard := AResizeKeyboard;
@@ -284,6 +207,27 @@ constructor TtgReplyKeyboardRemove.Create(ARemoveKeyboard: Boolean);
 begin
   inherited Create;
   RemoveKeyboard := ARemoveKeyboard;
+end;
+
+destructor TtgButtonedMarkup<T>.Destroy;
+var
+  I: Integer;
+  j: Integer;
+begin
+  for I := Low(FKeyboard) to High(FKeyboard) do
+    for j := Low(FKeyboard[I]) to High(FKeyboard[I]) do
+      FKeyboard[I, j].Free;
+  inherited;
+end;
+
+function TtgButtonedMarkup<T>.GetKeyboard: TArray<TArray<T>>;
+begin
+  Result := FKeyboard;
+end;
+
+procedure TtgButtonedMarkup<T>.SetKeyboard(const Value: TArray<TArray<T>>);
+begin
+  FKeyboard := Value;
 end;
 
 end.
