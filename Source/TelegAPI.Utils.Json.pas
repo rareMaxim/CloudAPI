@@ -17,8 +17,10 @@ type
     function ReadToDateTime(const AKey: string): TDateTime;
   public
     class function FromJson(const AJson: string): TBaseJson;
+    class function GetTgClass : TBaseJsonClass; virtual; abstract;
+
     class procedure UnSupported;
-    constructor Create(const AJson: string);
+    constructor Create(const AJson: string); virtual;
     destructor Destroy; override;
   end;
 
