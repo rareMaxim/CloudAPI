@@ -628,7 +628,7 @@ type
      /// UserProfilePhotos</see> object.
      /// </returns>
      /// <seealso href="https://core.telegram.org/bots/api#getuserprofilephotos" />
-    function GetUserProfilePhotos(ChatId: TValue; Offset: Int64; Limit: Int64 = 100): TtgUserProfilePhotos;
+    function GetUserProfilePhotos(ChatId: TValue; Offset: Int64; Limit: Int64 = 100): ItgUserProfilePhotos;
      /// <summary>
      /// Use this method to get basic info about a file and prepare it for
      /// downloading. For the moment, bots can download files of up to 20MB in

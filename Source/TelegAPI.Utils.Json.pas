@@ -17,7 +17,7 @@ type
     function ReadToDateTime(const AKey: string): TDateTime;
   public
     class function FromJson(const AJson: string): TBaseJson;
-    class function GetTgClass : TBaseJsonClass; virtual; abstract;
+    class function GetTgClass: TBaseJsonClass; virtual;// abstract;
 
     class procedure UnSupported;
     constructor Create(const AJson: string); virtual;
@@ -91,6 +91,11 @@ end;
 class function TBaseJson.FromJson(const AJson: string): TBaseJson;
 begin
   Result := TBaseJson.Create(AJson);
+end;
+
+class function TBaseJson.GetTgClass: TBaseJsonClass;
+begin
+  Result := Self;
 end;
 
 function TBaseJson.ReadToDateTime(const AKey: string): TDateTime;

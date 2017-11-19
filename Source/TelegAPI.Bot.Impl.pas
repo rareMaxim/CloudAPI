@@ -35,21 +35,14 @@ type
     FExceptionManager: ItgExceptionHandler;
     function GetToken: string;
     procedure SetToken(const Value: string);
-    // Create TBaseJ
-    //function CreateBaseJSONClass<T: TBaseJson>(const Params: string): T;
-
     // Returns TJSONValue as method request result
     function GetJSONFromMethod(const Method: string; Parameters: TDictionary<string, TValue>): TJSONValue;
-
     // Returns TJSONArray as method request result
     function GetJSONArrayFromMethod(const Method: string; Parameters: TDictionary<string, TValue>): TJSONArray;
-
     // Returns true when given Method executed successfully
     function ExecuteMethod(const Method: string; Parameters: TDictionary<string, TValue>): Boolean;
-
     // Returns response JSON from server as result of request
-    function GetArrayFromMethod<TI:IInterface>(TgClass:TBaseJsonClass; const Method: string; Parameters: TDictionary<string, TValue>):TArray<TI>;
-
+    function GetArrayFromMethod<TI: IInterface>(TgClass: TBaseJsonClass; const Method: string; Parameters: TDictionary<string, TValue>): TArray<TI>;
     function GetValueFromMethod(const Method: string; Parameters: TDictionary<string, TValue>): string;
     function GetExceptionManager: ItgExceptionHandler;
     procedure SetExceptionManager(const Value: ItgExceptionHandler);
@@ -91,7 +84,7 @@ type
     function SendVenue(ChatId: TValue; Venue: TtgVenue; DisableNotification: Boolean = False; ReplyToMessageId: Int64 = 0; ReplyMarkup: IReplyMarkup = nil): ITgMessage;
     function SendContact(ChatId: TValue; Contact: TtgContact; DisableNotification: Boolean = False; ReplyToMessageId: Int64 = 0; ReplyMarkup: IReplyMarkup = nil): ITgMessage;
     function SendChatAction(ChatId: TValue; const Action: TtgSendChatAction): Boolean;
-    function GetUserProfilePhotos(ChatId: TValue; Offset: Int64; Limit: Int64 = 100): TtgUserProfilePhotos;
+    function GetUserProfilePhotos(ChatId: TValue; Offset: Int64; Limit: Int64 = 100): ItgUserProfilePhotos;
     function GetFile(const FileId: string): ItgFile;
     function KickChatMember(ChatId: TValue; UserId: Int64; UntilDate: Int64 = 0): Boolean;
     function UnbanChatMember(ChatId: TValue; UserId: Int64): Boolean;
@@ -154,28 +147,7 @@ type
 {$ENDREGION}
   published
 {$REGION 'Property|Свойства'}
-    /// <summary>
-    /// Proxy Settings to be used by the client.
-    /// </summary>
     property ProxySettings: TProxySettings read FProxySettings write FProxySettings;
-    /// <summary>
-    /// <para>
-    /// List the types of updates you want your bot to receive.
-    /// </para>
-    /// <para>
-    /// Типы принимаемых сообщений
-    /// </para>
-    /// </summary>
-
-    /// <summary>
-    /// Токен вашего бота.
-    /// </summary>
-    /// <remarks>
-    /// Создать бота и получить токен можно у @BotFather
-    /// </remarks>
-    /// <example>
-    /// 283107813:AAG4hEElAvIogTSHNHXI6rZtE46A7XQvIH
-    /// </example>
     property Token: string read GetToken write SetToken;
     property ExceptionManager: ItgExceptionHandler read GetExceptionManager write SetExceptionManager;
 {$ENDREGION}
@@ -189,7 +161,6 @@ implementation
 uses
   REST.Json,
   TelegAPI.Helpers;
-
 { TTelegramBot }
 {$REGION 'Core'}
 
@@ -223,7 +194,6 @@ end;
 function TTelegramBot.ApiTest(const ARequest: string; Parameters: TDictionary<string, TValue>): string;
 var
   FJSON: TJSONObject;
-  FResult: TJSONValue;
 begin
   FJSON := TJSONObject.ParseJSONValue(ARequest) as TJSONObject;
   try
@@ -233,10 +203,7 @@ begin
         ExceptionManager.HaveApiExeption('TTelegramBot.ApiTest', EApiRequestException.Create(ARequest, 0, Parameters));
         Exit;
       end;
-   //   raise Exception.Create(ARequest);
-
-    FResult := FJSON.GetValue('result');
-    Result := FResult.ToJSON;
+    Result := FJSON.GetValue('result').ToJSON;
   finally
     FJSON.Free;
   end;
@@ -267,10 +234,9 @@ begin
       begin
         if LParameter.Value.IsType<IReplyMarkup>then
         begin
-          LTest :=TJson.ObjectToJsonString(LParameter.Value.AsObject);
+          LTest := TJson.ObjectToJsonString(LParameter.Value.AsObject);
           Result.AddField(LParameter.Key, LTest);
         end;
-
         //raise Exception.Create('Error Message');
         // Result.AddField(LParameter.Key, dj.From(LParameter.Value.AsObject).ToJson);
         // LTest := dj.From(LParameter.Value, TJsonUtils.DJsonConfig).ToJSON;
@@ -325,23 +291,6 @@ procedure TTelegramBot.SetToken(const Value: string);
 begin
   FToken := Value;
 end;
-
-
-
-// procedure TTelegramBot.ErrorHandlerGeneral(AException: Exception);
-// begin
-// if Assigned(OnReceiveGeneralError) then
-// TThread.Synchronize(nil,
-// procedure
-// begin
-// OnReceiveGeneralError(Self, AException)
-// end)
-// else
-// raise Exception.Create(AException.Message);
-// if Assigned(AException) then
-// FreeAndNil(AException);
-// end;
-
 {$ENDREGION}
 {$REGION 'Getting updates'}
 
@@ -395,29 +344,25 @@ begin
   end;
 end;
 
-
-function TTelegramBot.GetArrayFromMethod<TI>(TgClass:TBaseJsonClass; const Method: string; Parameters: TDictionary<string, TValue>): TArray<TI>;
-var LJsonArr: TJSONArray;
-    I: Integer;
-    GUID: TGuid;
+function TTelegramBot.GetArrayFromMethod<TI>(TgClass: TBaseJsonClass; const Method: string; Parameters: TDictionary<string, TValue>): TArray<TI>;
+var
+  LJsonArr: TJSONArray;
+  I: Integer;
+  GUID: TGuid;
 begin
   // stage 1: type checking
-
   //cache value fot further use
-  GUID:=GetTypeData(TypeInfo(TI))^.Guid;
-
+  GUID := GetTypeData(TypeInfo(TI))^.GUID;
   //check for TI interface support
-  if TgClass.GetInterfaceEntry(GUID)=nil then
-     raise Exception.Create('GetArrayFromMethod: unsupported interface for '+TgClass.ClassName);
-
+  if TgClass.GetInterfaceEntry(GUID) = nil then
+    raise Exception.Create('GetArrayFromMethod: unsupported interface for ' + TgClass.ClassName);
   // stage 2: proceed data
   LJsonArr := GetJSONArrayFromMethod(Method, Parameters);
-
   try
     SetLength(Result, LJsonArr.Count);
     for I := 0 to High(Result) do
     begin
-      TgClass.GetTgClass.Create(LJsonArr.Items[I].ToJSON).GetInterface(GUID,Result[i]);
+      TgClass.GetTgClass.Create(LJsonArr.Items[I].ToJSON).GetInterface(GUID, Result[I]);
     end;
   finally
     LJsonArr.Free;
@@ -433,7 +378,6 @@ begin
     Parameters.Add('chat_id', ChatId);
     Parameters.Add('message_id', MessageId);
     Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-
     Result := ExecuteMethod('stopMessageLiveLocation', Parameters);
   finally
     Parameters.Free;
@@ -448,7 +392,6 @@ begin
   try
     Parameters.Add('inline_message_id', InlineMessageId);
     Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-
     Result := ExecuteMethod('stopMessageLiveLocation', Parameters);
   finally
     Parameters.Free;
@@ -456,39 +399,13 @@ begin
 end;
 
 function TTelegramBot.GetWebhookInfo: ItgWebhookInfo;
-var
-  LJson: TJSONValue;
 begin
-  LJson := GetJSONFromMethod('getWebhookInfo', nil);
-  try
-    Result := TBaseJsonClass(TtgWebhookInfo).Create(LJson.ToJSON) as TtgWebhookInfo;
-  finally
-    LJson.Free;
-  end;
+  Result := TtgWebhookInfo.Create(GetJSONFromMethod('getWebhookInfo', nil).ToJSON);
 end;
-
-{
-function TTelegramBot.CreateBaseJSONClass<T>(const Params: string): T;
-var
-  c: TRttiContext;
-  rt: TRttiType;
-  v: TValue;
-begin
-  // Invoke RTTI
-  c := TRttiContext.Create;
-  rt := c.GetType(T);
-  v := rt.GetMethod('Create').Invoke(rt.AsInstance.MetaclassType, [Params]);
-  Result := T(v.AsObject);
-  // free RttiContext record
-  c.Free;
-end;
-}
 
 function TTelegramBot.GetUpdates(const Offset, Limit, Timeout: Int64; AllowedUpdates: TAllowedUpdates): TArray<ItgUpdate>;
 var
   Parameters: TDictionary<string, TValue>;
-  //LJson: TJSONArray;
-  //I: Integer;
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
@@ -496,18 +413,7 @@ begin
     Parameters.Add('limit', Limit);
     Parameters.Add('timeout', Timeout);
     Parameters.Add('allowed_updates', AllowedUpdates.ToString);
-
-    Result:=GetArrayFromMethod<ItgUpdate>(TtgUpdate, 'getUpdates', Parameters);
-    {
-    LJson := TJSONObject.ParseJSONValue(RequestAPI('getUpdates', Parameters)) as TJSONArray;
-    try
-      SetLength(Result, LJson.Count);
-      for I := 0 to High(Result) do
-        Result[I] := TtgUpdate.Create(LJson.Items[I].ToJSON);
-    finally
-      LJson.Free;
-    end;
-    }
+    Result := GetArrayFromMethod<ItgUpdate>(TtgUpdate, 'getUpdates', Parameters);
   finally
     Parameters.Free;
   end;
@@ -517,7 +423,6 @@ function TTelegramBot.DeleteWebhook: Boolean;
 begin
   Result := ExecuteMethod('deleteWebhook', nil);
 end;
-
 {$ENDREGION}
 {$REGION 'Basic methods'}
 
@@ -787,7 +692,7 @@ begin
   end;
 end;
 
-function TTelegramBot.GetUserProfilePhotos(ChatId: TValue; Offset, Limit: Int64): TtgUserProfilePhotos;
+function TTelegramBot.GetUserProfilePhotos(ChatId: TValue; Offset, Limit: Int64): ItgUserProfilePhotos;
 var
   Parameters: TDictionary<string, TValue>;
 begin
@@ -857,24 +762,11 @@ end;
 function TTelegramBot.GetChatAdministrators(const ChatId: TValue): TArray<ItgChatMember>;
 var
   Parameters: TDictionary<string, TValue>;
-  //LJson: TJSONArray;
-  //I: Integer;
 begin
   Parameters := TDictionary<string, TValue>.Create;
   try
     Parameters.Add('chat_id', ChatId);
-
-    Result:=GetArrayFromMethod<ItgChatMember>(TtgChatMember, 'getChatAdministrators', Parameters);
-    {
-    LJson := TJSONObject.ParseJSONValue(RequestAPI('getChatAdministrators', Parameters)) as TJSONArray;
-    try
-      SetLength(Result, LJson.Count);
-      for I := 0 to High(Result) do
-        Result[I] := TtgChatMember.Create(LJson.Items[I].ToJSON);
-    finally
-      LJson.Free;
-    end;
-    }
+    Result := GetArrayFromMethod<ItgChatMember>(TtgChatMember, 'getChatAdministrators', Parameters);
   finally
     Parameters.Free;
   end;
@@ -943,7 +835,6 @@ begin
     Parameters.Add('png_sticker', PngSticker);
     Parameters.Add('emojis', Emojis);
     Parameters.Add('mask_position', MaskPosition);
-
     Result := ExecuteMethod('addStickerToSet', Parameters);
   finally
     Parameters.Free;
@@ -961,7 +852,6 @@ begin
     Parameters.Add('show_alert', ShowAlert);
     Parameters.Add('url', Url);
     Parameters.Add('cache_time', CacheTime);
-
     Result := ExecuteMethod('answerCallbackQuery', Parameters);
   finally
     Parameters.Free;
@@ -1013,7 +903,6 @@ begin
   try
     Parameters.Add('chat_id', ChatId);
     Parameters.Add('message_id', MessageId);
-
     Result := ExecuteMethod('deleteMessage', Parameters);
   finally
     Parameters.Free;
@@ -1043,7 +932,6 @@ begin
     Parameters.Add('message_id', MessageId);
     Parameters.Add('caption', Caption);
     Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-
     Result := ExecuteMethod('editMessageCaption', Parameters);
   finally
     Parameters.Free;
@@ -1059,7 +947,6 @@ begin
     Parameters.Add('caption', Caption);
     Parameters.Add('inline_message_id', InlineMessageId);
     Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-
     Result := ExecuteMethod('editMessageCaption', Parameters);
   finally
     Parameters.Free;
@@ -1077,7 +964,6 @@ begin
     Parameters.Add('latitude', Location.Latitude);
     Parameters.Add('longitude', Location.Longitude);
     Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-
     Result := ExecuteMethod('editMessageLiveLocation', Parameters);
   finally
     Parameters.Free;
@@ -1128,7 +1014,6 @@ begin
     Parameters.Free;
   end;
 end;
-
 {$ENDREGION}
 {$REGION 'Inline mode'}
 
@@ -1145,7 +1030,6 @@ begin
     Parameters.Add('next_offset', NextOffset);
     Parameters.Add('switch_pm_text', SwitchPmText);
     Parameters.Add('switch_pm_parameter', SwitchPmParameter);
-
     Result := ExecuteMethod('answerInlineQuery', Parameters);
   finally
     Parameters.Free;
@@ -1195,7 +1079,6 @@ begin
     Parameters.Add('Pre_checkout_query_id', PreCheckoutQueryId);
     Parameters.Add('Ok', Ok);
     Parameters.Add('Error_message', ErrorMessage);
-
     Result := ExecuteMethod('AnswerPreCheckoutQuery', Parameters);
   finally
     Parameters.Free;
@@ -1212,7 +1095,6 @@ begin
     Parameters.Add('Ok', Ok);
     Parameters.Add('Shipping_options', TJsonUtils.ArrayToJString<TtgShippingOption>(ShippingOptions));
     Parameters.Add('Error_message', ErrorMessage);
-
     Result := ExecuteMethod('answerShippingQuery', Parameters);
   finally
     Parameters.Free;
@@ -1232,14 +1114,11 @@ begin
     Parameters.Add('emojis', Emojis);
     Parameters.Add('contains_masks', ContainsMasks);
     Parameters.Add('mask_position', MaskPosition);
-
     Result := ExecuteMethod('createNewStickerSet', Parameters);
   finally
     Parameters.Free;
   end;
-
 end;
-
 {$ENDREGION}
 {$REGION 'Games'}
 
@@ -1270,7 +1149,6 @@ begin
   try
     Parameters.Add('sticker', Sticker);
     Parameters.Add('position', Position);
-
     Result := ExecuteMethod('setStickerPositionInSet', Parameters);
   finally
     Parameters.Free;
@@ -1318,7 +1196,6 @@ begin
     Parameters.Free;
   end;
 end;
-
 {$ENDREGION}
 {$REGION 'Manage groups and channels'}
 
@@ -1329,7 +1206,6 @@ begin
   Parameters := TDictionary<string, TValue>.Create;
   try
     Parameters.Add('chat_id', ChatId);
-
     Result := ExecuteMethod('deleteChatPhoto', Parameters);
   finally
     Parameters.Free;
@@ -1343,7 +1219,6 @@ begin
   Parameters := TDictionary<string, TValue>.Create;
   try
     Parameters.Add('chat_id', ChatId);
-
     Result := ExecuteMethod('deleteChatStickerSet', Parameters);
   finally
     Parameters.Free;
@@ -1357,7 +1232,6 @@ begin
   Parameters := TDictionary<string, TValue>.Create;
   try
     Parameters.Add('chat_id', ChatId);
-
     Result := GetValueFromMethod('exportChatInviteLink', Parameters);
   finally
     Parameters.Free;
@@ -1373,7 +1247,6 @@ begin
     Parameters.Add('chat_id', ChatId);
     Parameters.Add('message_id', MessageId);
     Parameters.Add('disable_notification', DisableNotification);
-
     Result := ExecuteMethod('pinChatMessage', Parameters);
   finally
     Parameters.Free;
@@ -1388,7 +1261,6 @@ begin
   try
     Parameters.Add('chat_id', ChatId);
     Parameters.Add('description', Description);
-
     Result := ExecuteMethod('setChatDescription', Parameters);
   finally
     Parameters.Free;
@@ -1403,7 +1275,6 @@ begin
   try
     Parameters.Add('chat_id', ChatId);
     Parameters.Add('photo', Photo);
-
     Result := ExecuteMethod('setChatPhoto', Parameters);
   finally
     Parameters.Free;
@@ -1418,7 +1289,6 @@ begin
   try
     Parameters.Add('chat_id', ChatId);
     Parameters.Add('sticker_set_name', StickerSetName);
-
     Result := ExecuteMethod('setChatStickerSet', Parameters);
   finally
     Parameters.Free;
@@ -1433,7 +1303,6 @@ begin
   try
     Parameters.Add('chat_id', ChatId);
     Parameters.Add('title', title);
-
     Result := ExecuteMethod('setChatTitle', Parameters);
   finally
     Parameters.Free;
@@ -1452,7 +1321,6 @@ begin
   Parameters := TDictionary<string, TValue>.Create;
   try
     Parameters.Add('chat_id', ChatId);
-
     Result := ExecuteMethod('unpinChatMessage', Parameters);
   finally
     Parameters.Free;
@@ -1472,7 +1340,6 @@ begin
     Parameters.Free;
   end;
 end;
-
 {$ENDREGION}
 {$REGION 'Manage users and admins'}
 
@@ -1492,7 +1359,6 @@ begin
     Parameters.Add('can_restrict_members', CanRestrictMembers);
     Parameters.Add('can_pin_messages', CanPinMessages);
     Parameters.Add('can_promote_members', CanPromoteMembers);
-
     Result := ExecuteMethod('promoteChatMember', Parameters);
   finally
     Parameters.Free;
@@ -1512,7 +1378,6 @@ begin
     Parameters.Add('can_send_media_messages', CanSendMediaMessages);
     Parameters.Add('can_send_other_messages', CanSendOtherMessages);
     Parameters.Add('can_add_web_page_previews', CanAddWebPagePreviews);
-
     Result := ExecuteMethod('restrictChatMember', Parameters);
   finally
     Parameters.Free;

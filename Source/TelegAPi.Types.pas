@@ -3,7 +3,8 @@
 interface
 
 uses
-  TelegAPi.Types.Enums, System.Classes;
+  TelegAPi.Types.Enums,
+  System.Classes;
 
 type
   ItgUser = interface
@@ -382,8 +383,7 @@ type
     FileName: string;
     Content: TStream;
     constructor Create(const AFileName: string); overload;
-    constructor Create(AContent: TStream;
-      const AFileName: string = ''); overload;
+    constructor Create(AContent: TStream; const AFileName: string); overload;
   end;
 
 implementation
@@ -416,3 +416,4 @@ begin
 end;
 
 end.
+

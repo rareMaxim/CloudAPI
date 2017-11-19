@@ -250,8 +250,6 @@ type
     function SuccessfulPayment: ItgSuccessfulPayment;
     function &type: TtgMessageType;
     function IsCommand(const AValue: string): Boolean;
-
-    class function GetTgClass : TBaseJsonClass; override;
   end;
 
   TtgUserProfilePhotos = class(TBaseJson, ItgUserProfilePhotos)
@@ -386,8 +384,6 @@ type
     function ShippingQuery: ItgShippingQuery;
     function PreCheckoutQuery: ItgPreCheckoutQuery;
     function &type: TtgUpdateType;
-
-    class function GetTgClass : TBaseJsonClass; override;
   end;
 
   TtgWebhookInfo = class(TBaseJson, ItgWebhookInfo)
@@ -581,11 +577,6 @@ end;
 function TTgMessage.Game: ItgGame;
 begin
   Result := ReadToClass<TtgGame>('game');
-end;
-
-class function TTgMessage.GetTgClass: TBaseJsonClass;
-begin
-  result:=TTgMessage;
 end;
 
 function TTgMessage.GroupChatCreated: Boolean;
@@ -870,11 +861,6 @@ end;
 function TtgUpdate.EditedMessage: ITgMessage;
 begin
   Result := ReadToClass<TTgMessage>('edited_message');
-end;
-
-class function TtgUpdate.GetTgClass: TBaseJsonClass;
-begin
-  result:=TtgUpdate;
 end;
 
 function TtgUpdate.ID: Int64;
