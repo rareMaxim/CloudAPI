@@ -3,14 +3,14 @@
         <ProjectGuid>{02060116-BFE1-420A-8A27-FB5431EC033B}</ProjectGuid>
     </PropertyGroup>
     <ItemGroup>
-        <Projects Include="Install\TelegaPiBot.dproj">
+        <Projects Include="Install\TelegaPi.dproj">
             <Dependencies/>
         </Projects>
         <Projects Include="Demo\EchoBot\EchoBot.dproj">
-            <Dependencies>Install\TelegaPiBot.dproj</Dependencies>
+            <Dependencies>Install\TelegaPi.dproj</Dependencies>
         </Projects>
         <Projects Include="Demo\Console\ConsoleBot.dproj">
-            <Dependencies>Install\TelegaPiBot.dproj</Dependencies>
+            <Dependencies>Install\TelegaPi.dproj</Dependencies>
         </Projects>
     </ItemGroup>
     <ProjectExtensions>
@@ -20,41 +20,41 @@
             <Default.Personality/>
         </BorlandProject>
     </ProjectExtensions>
-    <Target Name="TelegaPiBot">
-        <MSBuild Projects="Install\TelegaPiBot.dproj"/>
+    <Target Name="TelegaPi">
+        <MSBuild Projects="Install\TelegaPi.dproj"/>
     </Target>
-    <Target Name="TelegaPiBot:Clean">
-        <MSBuild Projects="Install\TelegaPiBot.dproj" Targets="Clean"/>
+    <Target Name="TelegaPi:Clean">
+        <MSBuild Projects="Install\TelegaPi.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="TelegaPiBot:Make">
-        <MSBuild Projects="Install\TelegaPiBot.dproj" Targets="Make"/>
+    <Target Name="TelegaPi:Make">
+        <MSBuild Projects="Install\TelegaPi.dproj" Targets="Make"/>
     </Target>
-    <Target Name="EchoBot" DependsOnTargets="TelegaPiBot">
+    <Target Name="EchoBot" DependsOnTargets="TelegaPi">
         <MSBuild Projects="Demo\EchoBot\EchoBot.dproj"/>
     </Target>
-    <Target Name="EchoBot:Clean" DependsOnTargets="TelegaPiBot:Clean">
+    <Target Name="EchoBot:Clean" DependsOnTargets="TelegaPi:Clean">
         <MSBuild Projects="Demo\EchoBot\EchoBot.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="EchoBot:Make" DependsOnTargets="TelegaPiBot:Make">
+    <Target Name="EchoBot:Make" DependsOnTargets="TelegaPi:Make">
         <MSBuild Projects="Demo\EchoBot\EchoBot.dproj" Targets="Make"/>
     </Target>
-    <Target Name="ConsoleBot" DependsOnTargets="TelegaPiBot">
+    <Target Name="ConsoleBot" DependsOnTargets="TelegaPi">
         <MSBuild Projects="Demo\Console\ConsoleBot.dproj"/>
     </Target>
-    <Target Name="ConsoleBot:Clean" DependsOnTargets="TelegaPiBot:Clean">
+    <Target Name="ConsoleBot:Clean" DependsOnTargets="TelegaPi:Clean">
         <MSBuild Projects="Demo\Console\ConsoleBot.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="ConsoleBot:Make" DependsOnTargets="TelegaPiBot:Make">
+    <Target Name="ConsoleBot:Make" DependsOnTargets="TelegaPi:Make">
         <MSBuild Projects="Demo\Console\ConsoleBot.dproj" Targets="Make"/>
     </Target>
     <Target Name="Build">
-        <CallTarget Targets="TelegaPiBot;EchoBot;ConsoleBot"/>
+        <CallTarget Targets="TelegaPi;EchoBot;ConsoleBot"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="TelegaPiBot:Clean;EchoBot:Clean;ConsoleBot:Clean"/>
+        <CallTarget Targets="TelegaPi:Clean;EchoBot:Clean;ConsoleBot:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="TelegaPiBot:Make;EchoBot:Make;ConsoleBot:Make"/>
+        <CallTarget Targets="TelegaPi:Make;EchoBot:Make;ConsoleBot:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

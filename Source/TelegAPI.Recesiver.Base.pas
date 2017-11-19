@@ -72,7 +72,6 @@ begin
   MessageOffset := 0;
   AllowedUpdates := UPDATES_ALLOWED_ALL;
   PollingInterval := 1000;
-
 end;
 
 constructor TTgBotRecesiverBase.Create(ABot: ITelegramBot);

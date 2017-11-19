@@ -399,8 +399,6 @@ type
 
 implementation
 
-uses
-  FMX.Types;
 { TtgAnimation }
 
 function TtgAnimation.FileId: string;
@@ -527,19 +525,6 @@ end;
 function TTgMessage.EditDate: TDateTime;
 begin
   Result := ReadToDateTime('edit_date');
-end;
-
-function TTgMessage.Entities: TArray<ItgMessageEntity>;
-var
-  LJsonArray: TJSONArray;
-  I: Integer;
-begin
-  LJsonArray := FJSON.GetValue('entities') as TJSONArray;
-  if (not Assigned(LJsonArray)) or LJsonArray.Null then
-    Exit(nil);
-  SetLength(Result, LJsonArray.Count);
-  for I := 0 to LJsonArray.Count - 1 do
-    Result[I] := TtgMessageEntity.Create(LJsonArray.Items[I].ToJson);
 end;
 
 function TTgMessage.ForwardDate: TDateTime;
@@ -673,23 +658,22 @@ begin
   Result := ReadToSimpleType<string>('new_chat_title');
 end;
 
-function TTgMessage.Photo: TArray<ItgPhotoSize>;
+function TTgMessage.Entities: TArray<ItgMessageEntity>;
 var
-  LValue: string;
   LJsonArray: TJSONArray;
   I: Integer;
 begin
-  if FJSON.TryGetValue<string>('photo', LValue) then
-  begin
-    LJsonArray := TJSONObject.ParseJSONValue(LValue) as TJSONArray;
-    try
-      SetLength(Result, LJsonArray.Count);
-      for I := 0 to LJsonArray.Count - 1 do
-        Result[I] := ReadToClass<TtgPhotoSize>('photo');
-    finally
-      LJsonArray.Free;
-    end;
-  end;
+  LJsonArray := FJSON.GetValue('entities') as TJSONArray;
+  if (not Assigned(LJsonArray)) or LJsonArray.Null then
+    Exit(nil);
+  SetLength(Result, LJsonArray.Count);
+  for I := 0 to LJsonArray.Count - 1 do
+    Result[I] := TtgMessageEntity.Create(LJsonArray.Items[I].ToJson);
+end;
+
+function TTgMessage.Photo: TArray<ItgPhotoSize>;
+begin
+  Result := ReadToArray<ItgPhotoSize>(TtgPhotoSize, 'photo');
 end;
 
 function TTgMessage.PinnedMessage: ITgMessage;
@@ -770,7 +754,7 @@ end;
 
 function TTgMessage.CaptionEntities: TArray<ItgMessageEntity>;
 begin
-  UnSupported;
+  Result := ReadToArray<ItgMessageEntity>(TtgMessageEntity, 'caption_entities');
 end;
 
 function TTgMessage.ChannelChatCreated: Boolean;
@@ -827,7 +811,7 @@ end;
 
 function TtgShippingOption.Prices: TArray<ItgLabeledPrice>;
 begin
-  UnSupported;
+  Result := ReadToArray<ItgLabeledPrice>(TtgLabeledPrice, 'prices');
 end;
 
 function TtgShippingOption.Title: string;
@@ -952,7 +936,7 @@ end;
 
 function TtgStickerSet.Stickers: TArray<ItgSticker>;
 begin
-  UnSupported;
+  Result := ReadToArray<ItgSticker>(TtgSticker, 'stickers');
 end;
 
 function TtgStickerSet.Title: string;
@@ -1338,8 +1322,16 @@ end;
 { TtgWebhookInfo }
 
 function TtgWebhookInfo.AllowedUpdates: TArray<string>;
+var
+  LJsonArray: TJSONArray;
+  I: Integer;
 begin
-  UnSupported;
+  LJsonArray := FJSON.GetValue('allowed_updates') as TJSONArray;
+  if (not Assigned(LJsonArray)) or LJsonArray.Null then
+    Exit(nil);
+  SetLength(Result, LJsonArray.Count);
+  for I := 0 to LJsonArray.Count - 1 do
+    Result[I] := ReadToSimpleType<string>(LJsonArray.Items[I].ToJson);
 end;
 
 function TtgWebhookInfo.HasCustomCertificate: Boolean;
@@ -1537,7 +1529,7 @@ end;
 
 function TtgGame.Photo: TArray<ItgPhotoSize>;
 begin
-  UnSupported;
+  Result := ReadToArray<ItgPhotoSize>(TtgPhotoSize, 'photo');
 end;
 
 function TtgGame.Text: string;
@@ -1547,7 +1539,7 @@ end;
 
 function TtgGame.TextEntities: TArray<ItgMessageEntity>;
 begin
-
+  Result := ReadToArray<ItgMessageEntity>(TtgMessageEntity, 'text_entities');
 end;
 
 function TtgGame.Title: string;

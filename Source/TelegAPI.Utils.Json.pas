@@ -15,6 +15,7 @@ type
     function ReadToClass<T: class, constructor>(const AKey: string): T;
     function ReadToSimpleType<T>(const AKey: string): T;
     function ReadToDateTime(const AKey: string): TDateTime;
+    function ReadToArray<TI: IInterface>(TgClass: TBaseJsonClass; const AKey: string): TArray<TI>;
   public
     class function FromJson(const AJson: string): TBaseJson;
     class function GetTgClass: TBaseJsonClass; virtual;// abstract;
@@ -31,7 +32,6 @@ type
 implementation
 
 uses
-  FMX.Types,
   System.TypInfo,
   System.SysUtils,
   System.DateUtils,
@@ -60,7 +60,29 @@ begin
   if AJson.IsEmpty then
     Exit;
   FJSON := TJSONObject.ParseJSONValue(AJson) as TJSONObject;
-  Log.d(FJSON.ToJSON)
+end;
+
+function TBaseJson.ReadToArray<TI>(TgClass: TBaseJsonClass; const AKey: string): TArray<TI>;
+var
+  LJsonArray: TJSONArray;
+  I: Integer;
+  GUID: TGUID;
+begin
+    // stage 1: type checking
+    //cache value fot further use
+  GUID := GetTypeData(TypeInfo(TI))^.GUID;
+    //check for TI interface support
+  if TgClass.GetInterfaceEntry(GUID) = nil then
+    raise Exception.Create('GetArrayFromMethod: unsupported interface for ' + TgClass.ClassName);
+    // stage 2: proceed data
+  LJsonArray := FJSON.GetValue(AKey) as TJSONArray;
+  if (not Assigned(LJsonArray)) or LJsonArray.Null then
+    Exit(nil);
+  SetLength(Result, LJsonArray.Count);
+  for I := 0 to High(Result) do
+  begin
+    TgClass.GetTgClass.Create(LJsonArray.Items[I].ToJSON).GetInterface(GUID, Result[I]);
+  end;
 end;
 
 function TBaseJson.ReadToClass<T>(const AKey: string): T;
@@ -68,7 +90,6 @@ var
   LValue: string;
   LObj: TJSONValue;
 begin
-  Log.d('open "%S" to @%S', [AKey, GetTypeName(TypeInfo(T))]);
   Result := nil;
   LObj := FJSON.GetValue(AKey);
   try
@@ -109,7 +130,6 @@ end;
 
 function TBaseJson.ReadToSimpleType<T>(const AKey: string): T;
 begin
-  Log.d('open "%S" to @%S', [AKey, GetTypeName(TypeInfo(T))]);
   Result := Default(T);
 //  if  not
   FJSON.TryGetValue<T>(AKey, Result)
