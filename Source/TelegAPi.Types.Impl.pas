@@ -531,14 +531,12 @@ end;
 
 function TTgMessage.Entities: TArray<ItgMessageEntity>;
 var
-  LValue: string;
   LJsonArray: TJSONArray;
   I: Integer;
 begin
   LJsonArray := FJSON.GetValue('entities') as TJSONArray;
   if (not Assigned(LJsonArray)) or LJsonArray.Null then
     Exit(nil);
-  Log.d(LJsonArray.ToJSON);
   SetLength(Result, LJsonArray.Count);
   for I := 0 to LJsonArray.Count - 1 do
     Result[I] := TtgMessageEntity.Create(LJsonArray.Items[I].ToJson);

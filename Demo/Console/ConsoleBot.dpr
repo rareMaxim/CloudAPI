@@ -8,12 +8,8 @@ uses
   Rest.Json,
   TelegAPI.Recesiver.Console,
   System.SysUtils,
-  TelegAPI.Types;
-
-type
-  TTest = class
-    a: TArray<string>;
-  end;
+  TelegAPI.Types,
+  TelegAPI.Types.Impl;
 
 procedure Main;
 var
@@ -21,8 +17,6 @@ var
   LRecesiver: TtgRecesiverConsole;
   LStop: string;
 begin
-
-
   LBot := CreateTelegramBot('283107814:AAF9VZC6TRv6qKmOMCsLFoI8SBlV_xFMI80');
   LRecesiver := TtgRecesiverConsole.Create(LBot);
   try
@@ -54,7 +48,6 @@ begin
         LRecesiver.IsActive := False
       else if LStop.ToLower.Trim = 'start' then
         LRecesiver.IsActive := True;
-
     end;
   finally
     LRecesiver.Free;
@@ -64,7 +57,6 @@ end;
 begin
   try
     { TODO -oUser -cConsole Main : Insert code here }
-
     Main;
   except
     on E: Exception do

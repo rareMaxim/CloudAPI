@@ -81,8 +81,8 @@ $(PreBuildEvent)]]></PreBuildEvent>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
-        <VerInfo_Build>17</VerInfo_Build>
-        <VerInfo_Keys>CompanyName=Максим Сысоев;FileVersion=3.3.0.17;InternalName=TelegAπ;LegalCopyright=2016-2017, Maxim Sysoev;LegalTrademarks=2016-2017, Maxim Sysoev;OriginalFilename=TelegaPiBot.bpl;ProductVersion=3.3.1;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=Компонент для работы с Telegram API;ProductName=Telega Pi</VerInfo_Keys>
+        <VerInfo_Build>19</VerInfo_Build>
+        <VerInfo_Keys>CompanyName=Максим Сысоев;FileVersion=3.3.0.19;InternalName=TelegAπ;LegalCopyright=2016-2017, Maxim Sysoev;LegalTrademarks=2016-2017, Maxim Sysoev;OriginalFilename=TelegaPiBot.bpl;ProductVersion=3.3.1;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=Компонент для работы с Telegram API;ProductName=Telega Pi</VerInfo_Keys>
         <VerInfo_Locale>1033</VerInfo_Locale>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
@@ -109,13 +109,13 @@ $(PreBuildEvent)]]></PreBuildEvent>
         <DCCReference Include="..\Source\TelegaPi.Exceptions.pas"/>
         <DCCReference Include="..\Source\TelegAPi.Helpers.pas"/>
         <DCCReference Include="..\Source\TelegAPi.RegisterIDE.pas"/>
-        <DCCReference Include="..\Source\TelegAPi.Types.Impl.pas"/>
+        <DCCReference Include="..\Source\TelegAPI.Types.Impl.pas"/>
         <DCCReference Include="..\Source\TelegaPi.Types.Enums.pas"/>
         <DCCReference Include="..\Source\TelegaPi.Types.InlineQueryResults.pas"/>
         <DCCReference Include="..\Source\TelegaPi.Types.InputMessageContents.pas"/>
         <DCCReference Include="..\Source\TelegaPi.Types.ReplyMarkups.pas"/>
         <DCCReference Include="..\Source\TelegAPI.Utils.pas"/>
-        <DCCReference Include="..\Source\TelegAPI.Utils.Json.pas"/>
+        <DCCReference Include="..\Source\TelegAPi.Utils.JSON.pas"/>
         <DCCReference Include="..\Source\TelegAPI.Utils.Params.pas"/>
         <DCCReference Include="..\Source\TelegAPi.Types.pas"/>
         <DCCReference Include="..\Source\TelegAPI.Recesiver.Base.pas"/>

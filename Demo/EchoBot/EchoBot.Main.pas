@@ -11,7 +11,6 @@ uses
   FMX.Forms,
   FMX.Dialogs,
   FMX.Memo,
-  TelegAPI.Bot,
   TelegAPI.Types,
   TelegAPI.Exceptions,
   FMX.Edit,
@@ -20,10 +19,10 @@ uses
   FMX.Controls.Presentation,
   FMX.ScrollBox,
   FMX.Layouts,
-  TelegAPI.Base,
   TelegAPI.Recesiver.Base,
   TelegAPI.Recesiver.UI,
-  TelegAPI.Bot.Impl;
+  TelegAPI.Bot.Impl,
+  TelegAPI.Base;
 
 type
   TMain = class(TForm)
@@ -158,6 +157,7 @@ procedure TMain.TgBotAsync1InlineQuery(ASender: TObject; AInlineQuery: ItgInline
 var
   results: TArray<TtgInlineQueryResult>;
 begin
+  WriteLine(AInlineQuery.Query);
   results := [TtgInlineQueryResultLocation.Create, TtgInlineQueryResultLocation.Create];
   with TtgInlineQueryResultLocation(results[0]) do
   begin
@@ -165,15 +165,15 @@ begin
     Latitude := 40.7058316; // displayed result
     Longitude := -74.2581888;
     Title := 'New York';
-    InputMessageContent := TtgInputLocationMessageContent.Create(40.7058316, -74.2581888);  // message if result is selected
+    InputMessageContent := TtgInputLocationMessageContent.Create(Latitude, Longitude);  // message if result is selected
   end;
   with TtgInlineQueryResultLocation(results[1]) do
   begin
     ID := '2';
-    Latitude := 52.507629; // displayed result
-    Longitude := 13.1449577;
-    Title := 'Berlin';
-    InputMessageContent := TtgInputLocationMessageContent.Create(52.507629, 13.1449577); // message if result is selected
+    Latitude := 50.4021367; // displayed result
+    Longitude := 30.2525032;
+    Title := 'Киев';
+    InputMessageContent := TtgInputLocationMessageContent.Create(Latitude, Longitude); // message if result is selected
   end;
   tgBot.AnswerInlineQuery(AInlineQuery.Id, results, 0, True);
 end;
@@ -191,7 +191,10 @@ var
 begin
   tgBot.SendChatAction(Msg.Chat.Id, TtgSendChatAction.UploadPhoto);
   if not TFile.Exists(PATH_PHOTO) then
+  begin
     WriteLine('Change path to photo in metod: TMain.SendPhoto');
+    Exit;
+  end;
   LFile := TtgFileToSend.Create(PATH_PHOTO);
   try
     tgBot.SendPhoto(Msg.Chat.Id, LFile, 'Nice Picture');

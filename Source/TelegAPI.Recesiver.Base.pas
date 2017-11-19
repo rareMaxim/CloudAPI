@@ -57,6 +57,7 @@ type
     property AllowedUpdates: TAllowedUpdates read FAllowedUpdates write FAllowedUpdates default UPDATES_ALLOWED_ALL;
     [Default(1000)]
     property PollingInterval: Integer read FPollingInterval write FPollingInterval;
+  public
     [Default(False)]
     property IsActive: Boolean read FIsActive write SetIsActive;
   end;

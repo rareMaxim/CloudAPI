@@ -3,7 +3,6 @@
 interface
 
 uses
-  System.Generics.Collections,
   REST.Json.Types;
 
 type
@@ -100,6 +99,7 @@ type
     constructor Create(AResizeKeyboard, AOneTimeKeyboard: Boolean); overload;
     constructor Create(AKeyboardRow: TArray<TtgKeyboardButton>; AResizeKeyboard: Boolean = False; AOneTimeKeyboard: Boolean = False); overload;
     constructor Create(AKeyboard: TArray<TArray<TtgKeyboardButton>>; AResizeKeyboard: Boolean = False; AOneTimeKeyboard: Boolean = False); overload;
+    destructor Destroy; override;
     property Keyboard: TArray<TArray<TtgKeyboardButton>> read FKeyboard write FKeyboard;
     property OneTimeKeyboard: Boolean read FOneTimeKeyboard write FOneTimeKeyboard;
     property ResizeKeyboard: Boolean read FResizeKeyboard write FResizeKeyboard;
@@ -161,8 +161,7 @@ end;
 
 destructor TtgInlineKeyboardMarkup.Destroy;
 var
-  i: Integer;
-  j: Integer;
+  i, j: Integer;
 begin
   for i := Low(FKeyboard) to High(FKeyboard) do
     for j := Low(FKeyboard[i]) to High(FKeyboard[i]) do
@@ -197,6 +196,16 @@ begin
   OneTimeKeyboard := AOneTimeKeyboard;
 end;
 
+destructor TtgReplyKeyboardMarkup.Destroy;
+var
+  i, j: Integer;
+begin
+  for i := Low(FKeyboard) to High(FKeyboard) do
+    for j := Low(FKeyboard[i]) to High(FKeyboard[i]) do
+      FKeyboard[i, j].Free;
+  inherited;
+end;
+
 constructor TtgReplyKeyboardMarkup.Create(AResizeKeyboard, AOneTimeKeyboard: Boolean);
 begin
   inherited Create;
@@ -209,27 +218,6 @@ begin
   inherited Create;
   RemoveKeyboard := ARemoveKeyboard;
 end;
-
-// destructor TtgButtonedMarkup<T>.Destroy;
-// var
-// I: Integer;
-// j: Integer;
-// begin
-// for I := Low(FKeyboard) to High(FKeyboard) do
-// for j := Low(FKeyboard[I]) to High(FKeyboard[I]) do
-// FKeyboard[I, j].Free;
-// inherited;
-// end;
-//
-// function TtgButtonedMarkup<T>.GetKeyboard: TArray<TArray<T>>;
-// begin
-// Result := FKeyboard;
-// end;
-//
-// procedure TtgButtonedMarkup<T>.SetKeyboard(const Value: TArray<TArray<T>>);
-// begin
-// FKeyboard := Value;
-// end;
 
 end.
 
