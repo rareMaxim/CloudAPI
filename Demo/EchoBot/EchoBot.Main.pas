@@ -11,7 +11,6 @@ uses
   FMX.Forms,
   FMX.Dialogs,
   FMX.Memo,
-  TelegAPI.Bot,
   TelegAPI.Types,
   TelegAPI.Exceptions,
   FMX.Edit,
@@ -20,7 +19,9 @@ uses
   FMX.Controls.Presentation,
   FMX.ScrollBox,
   FMX.Layouts,
-  TelegAPI.Bot.Recesiver.UI,
+  TelegAPI.Recesiver.Base,
+  TelegAPI.Recesiver.UI,
+  TelegAPI.Bot.Impl,
   TelegAPI.Base;
 
 type
@@ -31,29 +32,29 @@ type
     edtToken: TEdit;
     swtchToken: TSwitch;
     tgBot: TTelegramBot;
-    TgBotRecesiverUI1: TTgBotRecesiverUI;
-    procedure tgBotReceiveError(ASender: TObject; AApiRequestException: EApiRequestException);
+    tgExceptionManagerUI1: TtgExceptionManagerUI;
+    tgrcsvr1: TtgRecesiverUI;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
-    procedure tgBotReceiveGeneralError(ASender: TObject; AException: Exception);
     procedure swtchTokenSwitch(Sender: TObject);
-    procedure TgBotAsync1CallbackQuery(ASender: TObject; ACallbackQuery: TtgCallbackQuery);
     procedure TgBotAsync1Connect(Sender: TObject);
-    procedure TgBotAsync1Disconnect(Sender: TObject);
-    procedure TgBotAsync1InlineQuery(ASender: TObject; AInlineQuery: TtgInlineQuery);
-    procedure TgBotAsync1Message(ASender: TObject; AMessage: TTgMessage);
-    procedure TgBotAsync1InlineResultChosen(ASender: TObject; AChosenInlineResult: TtgChosenInlineResult);
+    procedure TgBotAsync1InlineQuery(ASender: TObject; AInlineQuery: ItgInlineQuery);
+    procedure TgBotAsync1InlineResultChosen(ASender: TObject; AChosenInlineResult: ItgChosenInlineResult);
+    procedure tgExceptionManagerUI1GlobalException(ASender: TObject; const AMethod: string; AException: Exception);
+    procedure tgExceptionManagerUI1ApiException(ASender: TObject; const AMethod: string; AApiRequestException: EApiRequestException);
+    procedure tgrcsvr1Message(ASender: TObject; AMessage: ITgMessage);
+    procedure tgrcsvr1CallbackQuery(ASender: TObject; ACallbackQuery: ItgCallbackQuery);
   private
     { Private declarations }
     procedure WriteLine(const AValue: string);
-    procedure SendInline(Msg: TTgMessage);
-    procedure SendKeyboard(Msg: TTgMessage);
-    procedure SendPhoto(Msg: TTgMessage);
-    procedure SendRequest(Msg: TTgMessage);
-    procedure SendQuest(Msg: TTgMessage);
+    procedure SendInline(Msg: ITgMessage);
+    procedure SendKeyboard(Msg: ITgMessage);
+    procedure SendPhoto(Msg: ITgMessage);
+    procedure SendRequest(Msg: ITgMessage);
+    procedure SendQuest(Msg: ITgMessage);
     // parsing
-    procedure ParseTextMessage(Msg: TTgMessage);
-    procedure ParsePhotoMessage(Msg: TTgMessage);
-    procedure ParseLocationMessage(Msg: TTgMessage);
+    procedure ParseTextMessage(Msg: ITgMessage);
+    procedure ParsePhotoMessage(Msg: ITgMessage);
+    procedure ParseLocationMessage(Msg: ITgMessage);
   public
     { Public declarations }
   end;
@@ -74,29 +75,25 @@ uses
 
 procedure TMain.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
-  TgBotRecesiverUI1.IsReceiving := False;
+  tgrcsvr1.IsActive := False;
 end;
 
-procedure TMain.ParseLocationMessage(Msg: TTgMessage);
+procedure TMain.ParseLocationMessage(Msg: ITgMessage);
 begin
   WriteLine('Location: ' + Msg.Location.Longitude.ToString + ' ' + Msg.Location.Latitude.ToString);
 end;
 
-procedure TMain.ParsePhotoMessage(Msg: TTgMessage);
-var
-  LFile: TtgFile;
+procedure TMain.ParsePhotoMessage(Msg: ITgMessage);
 begin
-  if Msg.Photo.Last.CanDownload then
-    WriteLine(Msg.Photo.Last.GetFileUrl(tgBot.Token))
+  if Msg.Photo[High(Msg.Photo)].CanDownload then
+    WriteLine(Msg.Photo[High(Msg.Photo)].GetFileUrl(tgBot.Token))
   else
   begin
-    LFile := tgBot.GetFile(Msg.Photo.Last.FileId);
-    WriteLine(LFile.GetFileUrl(tgBot.Token));
-    LFile.Free;
+    WriteLine(tgBot.GetFile(Msg.Photo[High(Msg.Photo)].FileId).GetFileUrl(tgBot.Token));
   end;
 end;
 
-procedure TMain.ParseTextMessage(Msg: TTgMessage);
+procedure TMain.ParseTextMessage(Msg: ITgMessage);
 var
   usage: string;
 begin
@@ -128,18 +125,18 @@ begin
       '/keyboard - send custom keyboard' + #13#10 + //
       '/photo    - send a photo' + #13#10 + //
       '/request  - request location or contact';
-    tgBot.SendMessage(Msg.Chat.Id, usage, TtgParseMode.default, False, False, 0, TtgReplyKeyboardRemove.Create).Free;
+    tgBot.SendMessage(Msg.Chat.Id, usage, TtgParseMode.default, False, False, 0, TtgReplyKeyboardRemove.Create);
   end;
 end;
 
-procedure TMain.SendRequest(Msg: TTgMessage);
+procedure TMain.SendRequest(Msg: ITgMessage);
 var
   kb: IReplyMarkup;
 begin
   kb := TtgReplyKeyboardMarkup.Create([[
     { } TtgKeyboardButton.Create('Location', False, True),
     { } TtgKeyboardButton.Create('Contact', True, False)]]);
-  tgBot.SendMessage(Msg.Chat.Id, 'Who or Where are you?', TtgParseMode.default, False, False, 0, kb).Free;
+  tgBot.SendMessage(Msg.Chat.Id, 'Who or Where are you?', TtgParseMode.default, False, False, 0, kb);
 end;
 
 procedure TMain.swtchTokenSwitch(Sender: TObject);
@@ -147,39 +144,20 @@ begin
   tgBot.Token := edtToken.Text;
   if not tgBot.IsValidToken then
     raise ELoginCredentialError.Create('invalid token format');
-  TgBotRecesiverUI1.IsReceiving := swtchToken.IsChecked;
-end;
-
-procedure TMain.TgBotAsync1CallbackQuery(ASender: TObject; ACallbackQuery: TtgCallbackQuery);
-begin
-  tgBot.AnswerCallbackQuery(ACallbackQuery.Id, 'Received ' + ACallbackQuery.Data);
+  tgrcsvr1.IsActive := swtchToken.IsChecked;
 end;
 
 procedure TMain.TgBotAsync1Connect(Sender: TObject);
-var
-  LMe: TtgUser;
 begin
   WriteLine('Bot connected');
-  try
-    LMe := tgBot.GetMe;
-    if Assigned(LMe) then
-    begin
-      Caption := LMe.Username;
-    end;
-  finally
-    FreeAndNil(LMe);
-  end;
+  Caption := tgBot.GetMe.Username;
 end;
 
-procedure TMain.TgBotAsync1Disconnect(Sender: TObject);
-begin
-  WriteLine('Bot Disconnected');
-end;
-
-procedure TMain.TgBotAsync1InlineQuery(ASender: TObject; AInlineQuery: TtgInlineQuery);
+procedure TMain.TgBotAsync1InlineQuery(ASender: TObject; AInlineQuery: ItgInlineQuery);
 var
   results: TArray<TtgInlineQueryResult>;
 begin
+  WriteLine(AInlineQuery.Query);
   results := [TtgInlineQueryResultLocation.Create, TtgInlineQueryResultLocation.Create];
   with TtgInlineQueryResultLocation(results[0]) do
   begin
@@ -187,37 +165,25 @@ begin
     Latitude := 40.7058316; // displayed result
     Longitude := -74.2581888;
     Title := 'New York';
-    InputMessageContent := TtgInputLocationMessageContent.Create(40.7058316, -74.2581888);  // message if result is selected
+    InputMessageContent := TtgInputLocationMessageContent.Create(Latitude, Longitude);  // message if result is selected
   end;
   with TtgInlineQueryResultLocation(results[1]) do
   begin
     ID := '2';
-    Latitude := 52.507629; // displayed result
-    Longitude := 13.1449577;
-    Title := 'Berlin';
-    InputMessageContent := TtgInputLocationMessageContent.Create(52.507629, 13.1449577); // message if result is selected
+    Latitude := 50.4021367; // displayed result
+    Longitude := 30.2525032;
+    Title := 'Киев';
+    InputMessageContent := TtgInputLocationMessageContent.Create(Latitude, Longitude); // message if result is selected
   end;
   tgBot.AnswerInlineQuery(AInlineQuery.Id, results, 0, True);
 end;
 
-procedure TMain.TgBotAsync1InlineResultChosen(ASender: TObject; AChosenInlineResult: TtgChosenInlineResult);
+procedure TMain.TgBotAsync1InlineResultChosen(ASender: TObject; AChosenInlineResult: ItgChosenInlineResult);
 begin
   WriteLine('Received choosen inline result: ' + AChosenInlineResult.ResultId);
 end;
 
-procedure TMain.TgBotAsync1Message(ASender: TObject; AMessage: TTgMessage);
-begin
-  case AMessage.&Type of
-    TtgMessageType.TextMessage:
-      ParseTextMessage(AMessage);
-    TtgMessageType.PhotoMessage:
-      ParsePhotoMessage(AMessage);
-    TtgMessageType.LocationMessage:
-      ParseLocationMessage(AMessage);
-  end;
-end;
-
-procedure TMain.SendPhoto(Msg: TTgMessage);
+procedure TMain.SendPhoto(Msg: ITgMessage);
 const
   PATH_PHOTO = 'C:\Users\Public\Pictures\Sample Pictures\Tulips.jpg';
 var
@@ -225,10 +191,13 @@ var
 begin
   tgBot.SendChatAction(Msg.Chat.Id, TtgSendChatAction.UploadPhoto);
   if not TFile.Exists(PATH_PHOTO) then
+  begin
     WriteLine('Change path to photo in metod: TMain.SendPhoto');
+    Exit;
+  end;
   LFile := TtgFileToSend.Create(PATH_PHOTO);
   try
-    tgBot.SendPhoto(Msg.Chat.Id, LFile, 'Nice Picture').Free;
+    tgBot.SendPhoto(Msg.Chat.Id, LFile, 'Nice Picture');
   finally
     LFile.Free;
   end;
@@ -245,10 +214,10 @@ begin
     { second row }
     [TtgInlineKeyboardButton.Create('2.1', '3'), TtgInlineKeyboardButton.Create('2.2', '4')]]);
   Sleep(500); // simulate longer running task
-  tgBot.SendMessage(Msg.Chat.Id, 'Choose', TtgParseMode.default, False, False, 0, keyboard).Free;
+  tgBot.SendMessage(Msg.Chat.Id, 'Choose', TtgParseMode.default, False, False, 0, keyboard);
 end;
 
-procedure TMain.SendKeyboard(Msg: TTgMessage);
+procedure TMain.SendKeyboard(Msg: ITgMessage);
 var
   keyboard: IReplyMarkup;
 begin
@@ -261,10 +230,10 @@ begin
     AddRow([TtgKeyboardButton.Create('2.1'), TtgKeyboardButton.Create('2.2')]);
     AddRow([TtgKeyboardButton.Create('Contact', True, False), TtgKeyboardButton.Create('Location', False, True)]);
   end;
-  tgBot.SendMessage(Msg.Chat.Id, 'Choose', TtgParseMode.default, False, False, 0, keyboard).Free;
+  tgBot.SendMessage(Msg.Chat.Id, 'Choose', TtgParseMode.default, False, False, 0, keyboard);
 end;
 
-procedure TMain.SendQuest(Msg: TTgMessage);
+procedure TMain.SendQuest(Msg: ITgMessage);
 var
   keyboard: IReplyMarkup;
 begin
@@ -273,17 +242,34 @@ begin
     [TtgKeyboardButton.Create('1.1'), TtgKeyboardButton.Create('1.2')],
     { second row }
     [TtgKeyboardButton.Create('2.1'), TtgKeyboardButton.Create('2.2')]], False);
-  tgBot.SendMessage(Msg.Chat.Id, 'Выбери:', TtgParseMode.default, False, False, 0, keyboard).Free;
+  tgBot.SendMessage(Msg.Chat.Id, 'Выбери:', TtgParseMode.default, False, False, 0, keyboard);
 end;
 
-procedure TMain.tgBotReceiveError(ASender: TObject; AApiRequestException: EApiRequestException);
+procedure TMain.tgExceptionManagerUI1ApiException(ASender: TObject; const AMethod: string; AApiRequestException: EApiRequestException);
 begin
-  WriteLine(AApiRequestException.ToString);
+  WriteLine(AMethod + '@' + AApiRequestException.ToString);
 end;
 
-procedure TMain.tgBotReceiveGeneralError(ASender: TObject; AException: Exception);
+procedure TMain.tgExceptionManagerUI1GlobalException(ASender: TObject; const AMethod: string; AException: Exception);
 begin
-  WriteLine(AException.ToString);
+  WriteLine(AMethod + '@' + AException.ToString);
+end;
+
+procedure TMain.tgrcsvr1CallbackQuery(ASender: TObject; ACallbackQuery: ItgCallbackQuery);
+begin
+  tgBot.AnswerCallbackQuery(ACallbackQuery.Id, 'Received ' + ACallbackQuery.Data);
+end;
+
+procedure TMain.tgrcsvr1Message(ASender: TObject; AMessage: ITgMessage);
+begin
+  case AMessage.&Type of
+    TtgMessageType.TextMessage:
+      ParseTextMessage(AMessage);
+    TtgMessageType.PhotoMessage:
+      ParsePhotoMessage(AMessage);
+    TtgMessageType.LocationMessage:
+      ParseLocationMessage(AMessage);
+  end;
 end;
 
 procedure TMain.WriteLine(const AValue: string);

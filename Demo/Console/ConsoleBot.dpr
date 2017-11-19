@@ -1,42 +1,56 @@
 program ConsoleBot;
 
 {$APPTYPE CONSOLE}
-
 {$R *.res}
 
 uses
   TelegAPI.Bot,
-  TelegAPI.Bot.Recesiver.Console,
+  Rest.Json,
+  TelegAPI.Recesiver.Console,
+  System.SysUtils,
   TelegAPI.Types,
-  System.SysUtils;
+  TelegAPI.Types.Impl;
 
 procedure Main;
 var
-  LBot: TTelegramBot;
-  LRecesiver: TTgBotRecesiverConsole;
+  LBot: ITelegramBot;
+  LRecesiver: TtgRecesiverConsole;
   LStop: string;
 begin
-  LBot := TTelegramBot.Create(nil);
-  LBot.Token := {$I ..\token.inc};
-  LRecesiver := TTgBotRecesiverConsole.Create(nil);
-  LRecesiver.Bot := LBot;
+  LBot := CreateTelegramBot('283107814:AAF9VZC6TRv6qKmOMCsLFoI8SBlV_xFMI80');
+  LRecesiver := TtgRecesiverConsole.Create(LBot);
   try
+    LRecesiver.OnStart :=
+      procedure
+      begin
+        Writeln('started');
+      end;
+    LRecesiver.OnStop :=
+      procedure
+      begin
+        Writeln('stoped');
+      end;
     LRecesiver.OnMessage :=
-      procedure(AMessage: TTgMessage)
+      procedure(AMessage: ITgMessage)
       begin
         Writeln(AMessage.From.Username, ': ', AMessage.Text);
+        LBot.SendMessage(AMessage.Chat.ID, AMessage.Text);
       end;
     with LBot.GetMe do
     begin
       Writeln('Bot nick: ', Username);
-      Free;
     end;
-    LRecesiver.IsReceiving := True;
+    LRecesiver.IsActive := True;
     while LStop.ToLower.Trim <> 'exit' do
+    begin
       Readln(LStop);
+      if LStop.ToLower.Trim = 'stop' then
+        LRecesiver.IsActive := False
+      else if LStop.ToLower.Trim = 'start' then
+        LRecesiver.IsActive := True;
+    end;
   finally
     LRecesiver.Free;
-    LBot.Free;
   end;
 end;
 
@@ -46,7 +60,8 @@ begin
     Main;
   except
     on E: Exception do
-      Writeln(E.ClassName, ': ', E.Message);
+      Writeln(E.ClassName, ': ', E.message);
   end;
+
 end.
 

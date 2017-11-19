@@ -10,6 +10,10 @@ type
     function FromString(const strValue: string): T;
   end;
 
+  TIntfC = class
+    class function Test<T, I>: I;
+  end;
+
 implementation
 
 uses
@@ -38,6 +42,13 @@ end;
 function TEnumConverter<T>.ToString(EnumValue: T): string;
 begin
   Result := GetEnumName(TypeInfo(T), ToInt(EnumValue));
+end;
+
+{ TIntfC }
+
+class function TIntfC.Test<T, I>: I;
+begin
+
 end;
 
 end.

@@ -3,7 +3,7 @@ unit TelegaPi.Types.InputMessageContents;
 interface
 
 uses
-  DJSON.Attributes;
+   REST.Json.Types;
 
 type
   /// <summary>
@@ -21,17 +21,17 @@ type
     /// <summary>
     ///   Contact's phone number
     /// </summary>
-    [djName('phone_number')]
+    [JSONName('phone_number')]
     PhoneNumber: string;
     /// <summary>
     ///   Contact's first name
     /// </summary>
-    [djName('first_name')]
+    [JSONName('first_name')]
     FirstName: string;
     /// <summary>
     ///   Optional. Contact's last name
     /// </summary>
-    [djName('last_name')]
+    [JSONName('last_name')]
     LastName: string;
     constructor Create(const APhoneNumber, AFirstName, ALastName: string);
   end;
@@ -45,12 +45,12 @@ type
     /// <summary>
     ///   Latitude of the location in degrees
     /// </summary>
-    [djName('latitude')]
+    [JSONName('latitude')]
     Latitude: Single;
     /// <summary>
     ///   Longitude of the location in degrees
     /// </summary>
-    [djName('longitude')]
+    [JSONName('longitude')]
     Longitude: Single;
     constructor Create(ALatitude, ALongitude: Single);
   end;
@@ -64,18 +64,18 @@ type
     /// <summary>
     ///   Text of the message to be sent, 1-4096 characters
     /// </summary>
-    [djName('message_text')]
+    [JSONName('message_text')]
     MessageText: string;
     /// <summary>
     ///   Optional. Send Markdown or HTML, if you want Telegram apps to show
     ///   bold, italic, fixed-width text or inline URLs in your bot's message.
     /// </summary>
-    [djName('parse_mode')]
+    [JSONName('parse_mode')]
     ParseMode: string;
     /// <summary>
     ///   Optional. Disables link previews for links in the sent message
     /// </summary>
-    [djName('disable_web_page_preview')]
+    [JSONName('disable_web_page_preview')]
     DisableWebPagePreview: Boolean;
     constructor Create(const AMessageText, AParseMode: string; ADisableWebPagePreview: Boolean);
   end;
@@ -89,27 +89,27 @@ type
     /// <summary>
     ///   Latitude of the venue in degrees
     /// </summary>
-    [djName('latitude')]
+    [JSONName('latitude')]
     Latitude: Single;
     /// <summary>
     ///   Longitude of the venue in degrees
     /// </summary>
-    [djName('longitude')]
+    [JSONName('longitude')]
     Longitude: Single;
     /// <summary>
     ///   Name of the venue
     /// </summary>
-    [djName('title')]
+    [JSONName('title')]
     Title: string;
     /// <summary>
     ///   Address of the venue
     /// </summary>
-    [djName('address')]
+    [JSONName('address')]
     Address: string;
     /// <summary>
     ///   Optional. Foursquare identifier of the venue, if known
     /// </summary>
-    [djName('foursquare_id')]
+    [JSONName('foursquare_id')]
     FoursquareId: string;
     constructor Create(ALatitude, ALongitude: Single; const ATitle, AAddress, AFoursquareId: string);
   end;
