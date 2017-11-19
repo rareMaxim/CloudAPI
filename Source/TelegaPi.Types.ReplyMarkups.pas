@@ -11,7 +11,7 @@ type
   private
     [JSONName('text')]
     FText: string;
-  published
+  public
     property Text: string read FText write FText;
   end;
 
@@ -72,60 +72,46 @@ type
     property Force: Boolean read FForce write FForce;
   end;
 
-  TtgButtonedMarkup<T: class> = class(TInterfacedObject, IReplyMarkup)
+  TtgInlineKeyboardMarkup = class(TInterfacedObject, IReplyMarkup)
   private
-  //  [JSONMarshalled(False)]
-    FKeyboard: TArray<TArray<T>>;
-    function GetKeyboard: TArray<TArray<T>>;
-    procedure SetKeyboard(const Value: TArray<TArray<T>>);
+    [JSONName('inline_keyboard')]
+    FKeyboard: TArray<TArray<TtgInlineKeyboardButton>>;
   public
-    procedure AddRow(AKeyboardRow: TArray<T>);
-    destructor Destroy; override;
-    property Keyboard: TArray<TArray<T>> read GetKeyboard write SetKeyboard;
-  end;
-
-  TtgButtonedReplyMarkup<T: class> = class(TtgButtonedMarkup<T>)
-  private
-    [JSONName('selective')]
-    FSelective: Boolean;
-  public
-    property Selective: Boolean read FSelective write FSelective;
-  end;
-
-  TtgInlineKeyboardMarkup = class(TtgButtonedMarkup<TtgInlineKeyboardButton>)
-  private
-  public
+    procedure AddRow(AKeyboardRow: TArray<TtgInlineKeyboardButton>);
     constructor Create; overload;
     constructor Create(AInlineKeyboardRow: TArray<TtgInlineKeyboardButton>); overload;
     constructor Create(AInlineKeyboard: TArray<TArray<TtgInlineKeyboardButton>>); overload;
-    [JSONName('inline_keyboard')]
-    [JSONMarshalled(True)]
-    property Keyboard;//: TArray<TArray<TtgInlineKeyboardButton>> read GetKeyboard write SetKeyboard;
+    destructor Destroy; override;
+    property Keyboard: TArray<TArray<TtgInlineKeyboardButton>> read FKeyboard write FKeyboard;
   end;
 
-  TtgReplyKeyboardMarkup = class(TtgButtonedReplyMarkup<TtgKeyboardButton>)
+  TtgReplyKeyboardMarkup = class(TtgReplyMarkup)
   private
+    [JSONName('resize_keyboard')]
     FResizeKeyboard: Boolean;
+    [JSONName('one_time_keyboard')]
     FOneTimeKeyboard: Boolean;
+    [JSONName('selective')]
+    FSelective: Boolean;
+    [JSONName('keyboard')]
+    FKeyboard: TArray<TArray<TtgKeyboardButton>>;
   public
+    procedure AddRow(AKeyboardRow: TArray<TtgKeyboardButton>);
     constructor Create(AResizeKeyboard, AOneTimeKeyboard: Boolean); overload;
     constructor Create(AKeyboardRow: TArray<TtgKeyboardButton>; AResizeKeyboard: Boolean = False; AOneTimeKeyboard: Boolean = False); overload;
     constructor Create(AKeyboard: TArray<TArray<TtgKeyboardButton>>; AResizeKeyboard: Boolean = False; AOneTimeKeyboard: Boolean = False); overload;
-    [JSONName('keyboard')]
-    [JSONMarshalled(True)]
-    property Keyboard;
-    [JSONName('one_time_keyboard')]
+    property Keyboard: TArray<TArray<TtgKeyboardButton>> read FKeyboard write FKeyboard;
     property OneTimeKeyboard: Boolean read FOneTimeKeyboard write FOneTimeKeyboard;
-    [JSONName('resize_keyboard')]
     property ResizeKeyboard: Boolean read FResizeKeyboard write FResizeKeyboard;
+    property Selective: Boolean read FSelective write FSelective;
   end;
 
   TtgReplyKeyboardRemove = class(TtgReplyMarkup)
   private
+    [JSONName('remove_keyboard')]
     FRemoveKeyboard: Boolean;
   public
     constructor Create(ARemoveKeyboard: Boolean = True);
-    [JSONName('remove_keyboard')]
     property RemoveKeyboard: Boolean read FRemoveKeyboard write FRemoveKeyboard;
   end;
 
@@ -152,16 +138,16 @@ begin
   Self.RequestLocation := ARequestLocation;
 end;
 
-procedure TtgButtonedMarkup<T>.AddRow(AKeyboardRow: TArray<T>);
-begin
-  SetLength(FKeyboard, Length(FKeyboard) + 1);
-  FKeyboard[High(FKeyboard)] := AKeyboardRow;
-end;
-
 constructor TtgInlineKeyboardMarkup.Create(AInlineKeyboardRow: TArray<TtgInlineKeyboardButton>);
 begin
   inherited Create;
-  Self.AddRow(AInlineKeyboardRow);
+  AddRow(AInlineKeyboardRow);
+end;
+
+procedure TtgInlineKeyboardMarkup.AddRow(AKeyboardRow: TArray<TtgInlineKeyboardButton>);
+begin
+  SetLength(FKeyboard, Length(FKeyboard) + 1);
+  FKeyboard[High(FKeyboard)] := AKeyboardRow;
 end;
 
 constructor TtgInlineKeyboardMarkup.Create(AInlineKeyboard: TArray<TArray<TtgInlineKeyboardButton>>);
@@ -170,9 +156,18 @@ var
 begin
   Self.Create;
   for i := Low(AInlineKeyboard) to High(AInlineKeyboard) do
-  begin
     AddRow(AInlineKeyboard[i]);
-  end;
+end;
+
+destructor TtgInlineKeyboardMarkup.Destroy;
+var
+  i: Integer;
+  j: Integer;
+begin
+  for i := Low(FKeyboard) to High(FKeyboard) do
+    for j := Low(FKeyboard[i]) to High(FKeyboard[i]) do
+      FKeyboard[i, j].Free;
+  inherited;
 end;
 
 constructor TtgInlineKeyboardMarkup.Create;
@@ -188,10 +183,16 @@ begin
   OneTimeKeyboard := AOneTimeKeyboard;
 end;
 
+procedure TtgReplyKeyboardMarkup.AddRow(AKeyboardRow: TArray<TtgKeyboardButton>);
+begin
+  SetLength(FKeyboard, Length(FKeyboard) + 1);
+  FKeyboard[High(FKeyboard)] := AKeyboardRow;
+end;
+
 constructor TtgReplyKeyboardMarkup.Create(AKeyboard: TArray<TArray<TtgKeyboardButton>>; AResizeKeyboard, AOneTimeKeyboard: Boolean);
 begin
   inherited Create;
-  Self.Keyboard := AKeyboard;
+  Keyboard := AKeyboard;
   ResizeKeyboard := AResizeKeyboard;
   OneTimeKeyboard := AOneTimeKeyboard;
 end;
@@ -209,26 +210,26 @@ begin
   RemoveKeyboard := ARemoveKeyboard;
 end;
 
-destructor TtgButtonedMarkup<T>.Destroy;
-var
-  I: Integer;
-  j: Integer;
-begin
-  for I := Low(FKeyboard) to High(FKeyboard) do
-    for j := Low(FKeyboard[I]) to High(FKeyboard[I]) do
-      FKeyboard[I, j].Free;
-  inherited;
-end;
-
-function TtgButtonedMarkup<T>.GetKeyboard: TArray<TArray<T>>;
-begin
-  Result := FKeyboard;
-end;
-
-procedure TtgButtonedMarkup<T>.SetKeyboard(const Value: TArray<TArray<T>>);
-begin
-  FKeyboard := Value;
-end;
+// destructor TtgButtonedMarkup<T>.Destroy;
+// var
+// I: Integer;
+// j: Integer;
+// begin
+// for I := Low(FKeyboard) to High(FKeyboard) do
+// for j := Low(FKeyboard[I]) to High(FKeyboard[I]) do
+// FKeyboard[I, j].Free;
+// inherited;
+// end;
+//
+// function TtgButtonedMarkup<T>.GetKeyboard: TArray<TArray<T>>;
+// begin
+// Result := FKeyboard;
+// end;
+//
+// procedure TtgButtonedMarkup<T>.SetKeyboard(const Value: TArray<TArray<T>>);
+// begin
+// FKeyboard := Value;
+// end;
 
 end.
 

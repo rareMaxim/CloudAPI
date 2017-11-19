@@ -26,6 +26,7 @@ type
 
   TtgOnPreCheckoutQuery = procedure(ASender: TObject; APreCheckoutQuery: ItgPreCheckoutQuery) of object;
 
+
   TtgRecesiverUI = class(TTgBotRecesiverBase)
   private
     FOnUpdate: TtgOnUpdate;
@@ -40,6 +41,7 @@ type
     FOnShippingQuery: TtgOnShippingQuery;
     FOnChosenInlineResult: TtgOnInlineResultChosen;
     FOnEditedChannelPost: TtgOnMessage;
+    FOnCallbackQuery: TtgOnCallbackQuery;
   protected
     procedure DoOnStart; override;
     procedure DoOnStop; override;
@@ -53,6 +55,7 @@ type
     procedure DoOnEditedChannelPost(AEditedChannelPost: ITgMessage); override;
     procedure DoOnShippingQuery(AShippingQuery: ItgShippingQuery); override;
     procedure DoOnPreCheckoutQuery(APreCheckoutQuery: ItgPreCheckoutQuery); override;
+    procedure DoOnCallbackQuery(ACallbackQuery: ItgCallbackQuery); override;
   published
     property OnStart: TNotifyEvent read FOnStart write FOnStart;
     property OnStop: TNotifyEvent read FOnStop write FOnStop;
@@ -66,11 +69,19 @@ type
     property OnEditedChannelPost: TtgOnMessage read FOnEditedChannelPost write FOnEditedChannelPost;
     property OnShippingQuery: TtgOnShippingQuery read FOnShippingQuery write FOnShippingQuery;
     property OnPreCheckoutQuery: TtgOnPreCheckoutQuery read FOnPreCheckoutQuery write FOnPreCheckoutQuery;
+    property OnCallbackQuery: TtgOnCallbackQuery read FOnCallbackQuery write FOnCallbackQuery;
   end;
 
 implementation
 
 { TtgRecesiverConsole }
+
+procedure TtgRecesiverUI.DoOnCallbackQuery(ACallbackQuery: ItgCallbackQuery);
+begin
+  inherited;
+  if Assigned(OnCallbackQuery) then
+    OnCallbackQuery(Self, ACallbackQuery);
+end;
 
 procedure TtgRecesiverUI.DoOnChannelPost(AChannelPost: ITgMessage);
 begin

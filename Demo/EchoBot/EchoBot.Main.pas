@@ -37,13 +37,13 @@ type
     tgrcsvr1: TtgRecesiverUI;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure swtchTokenSwitch(Sender: TObject);
-    procedure TgBotAsync1CallbackQuery(ASender: TObject; ACallbackQuery: ItgCallbackQuery);
     procedure TgBotAsync1Connect(Sender: TObject);
     procedure TgBotAsync1InlineQuery(ASender: TObject; AInlineQuery: ItgInlineQuery);
     procedure TgBotAsync1InlineResultChosen(ASender: TObject; AChosenInlineResult: ItgChosenInlineResult);
     procedure tgExceptionManagerUI1GlobalException(ASender: TObject; const AMethod: string; AException: Exception);
     procedure tgExceptionManagerUI1ApiException(ASender: TObject; const AMethod: string; AApiRequestException: EApiRequestException);
     procedure tgrcsvr1Message(ASender: TObject; AMessage: ITgMessage);
+    procedure tgrcsvr1CallbackQuery(ASender: TObject; ACallbackQuery: ItgCallbackQuery);
   private
     { Private declarations }
     procedure WriteLine(const AValue: string);
@@ -148,11 +148,6 @@ begin
   tgrcsvr1.IsActive := swtchToken.IsChecked;
 end;
 
-procedure TMain.TgBotAsync1CallbackQuery(ASender: TObject; ACallbackQuery: ItgCallbackQuery);
-begin
-  tgBot.AnswerCallbackQuery(ACallbackQuery.Id, 'Received ' + ACallbackQuery.Data);
-end;
-
 procedure TMain.TgBotAsync1Connect(Sender: TObject);
 begin
   WriteLine('Bot connected');
@@ -255,6 +250,11 @@ end;
 procedure TMain.tgExceptionManagerUI1GlobalException(ASender: TObject; const AMethod: string; AException: Exception);
 begin
   WriteLine(AMethod + '@' + AException.ToString);
+end;
+
+procedure TMain.tgrcsvr1CallbackQuery(ASender: TObject; ACallbackQuery: ItgCallbackQuery);
+begin
+  tgBot.AnswerCallbackQuery(ACallbackQuery.Id, 'Received ' + ACallbackQuery.Data);
 end;
 
 procedure TMain.tgrcsvr1Message(ASender: TObject; AMessage: ITgMessage);

@@ -80,6 +80,7 @@ object Main: TMain
     OnMessage = tgrcsvr1Message
     OnInlineQuery = TgBotAsync1InlineQuery
     OnChosenInlineResult = TgBotAsync1InlineResultChosen
+    OnCallbackQuery = tgrcsvr1CallbackQuery
     Left = 56
     Top = 272
   end

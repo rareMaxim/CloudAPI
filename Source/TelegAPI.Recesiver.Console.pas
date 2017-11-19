@@ -22,6 +22,7 @@ type
     FOnEditedChannelPost: TProc<ITgMessage>;
     FOnShippingQuery: TProc<ItgShippingQuery>;
     FOnPreCheckoutQuery: TProc<ItgPreCheckoutQuery>;
+    FOnOnCallbackQuery: TProc<ItgCallbackQuery>;
   protected
     procedure DoOnStart; override;
     procedure DoOnStop; override;
@@ -35,6 +36,7 @@ type
     procedure DoOnEditedChannelPost(AEditedChannelPost: ITgMessage); override;
     procedure DoOnShippingQuery(AShippingQuery: ItgShippingQuery); override;
     procedure DoOnPreCheckoutQuery(APreCheckoutQuery: ItgPreCheckoutQuery); override;
+    procedure DoOnCallbackQuery(ACallbackQuery: ItgCallbackQuery); override;
   public
     property OnStart: TProc read FOnStart write FOnStart;
     property OnStop: TProc read FOnStop write FOnStop;
@@ -48,11 +50,19 @@ type
     property OnEditedChannelPost: TProc<ITgMessage> read FOnEditedChannelPost write FOnEditedChannelPost;
     property OnShippingQuery: TProc<ItgShippingQuery> read FOnShippingQuery write FOnShippingQuery;
     property OnPreCheckoutQuery: TProc<ItgPreCheckoutQuery> read FOnPreCheckoutQuery write FOnPreCheckoutQuery;
+    property OnCallbackQuery: TProc<ItgCallbackQuery> read FOnOnCallbackQuery write FOnOnCallbackQuery;
   end;
 
 implementation
 
 { TtgRecesiverConsole }
+
+procedure TtgRecesiverConsole.DoOnCallbackQuery(ACallbackQuery: ItgCallbackQuery);
+begin
+  inherited;
+  if Assigned(OnCallbackQuery) then
+    OnCallbackQuery(ACallbackQuery);
+end;
 
 procedure TtgRecesiverConsole.DoOnChannelPost(AChannelPost: ITgMessage);
 begin
