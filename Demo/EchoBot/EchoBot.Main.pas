@@ -76,7 +76,7 @@ uses
 
 procedure TMain.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
-  tgrcsvr1.IsActive := False;
+  tgRecesiverUI1.IsActive := False;
 end;
 
 procedure TMain.ParseLocationMessage(Msg: ITgMessage);
@@ -145,7 +145,7 @@ begin
   tgBot.Token := edtToken.Text;
   if not tgBot.IsValidToken then
     raise ELoginCredentialError.Create('invalid token format');
-  tgrcsvr1.IsActive := swtchToken.IsChecked;
+  tgRecesiverUI1.IsActive := swtchToken.IsChecked;
 end;
 
 procedure TMain.SendPhoto(Msg: ITgMessage);

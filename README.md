@@ -1,6 +1,7 @@
-# Telega π #
+# Telega π - Beta #
 
 Telega π - Library for working with Telegram Bot API in Delphi
+
 
 Version Bot API: *3.4.1*
 
@@ -41,7 +42,7 @@ as well as many others who ask / suggest features / points bugs.
 * [RAD Studio XE8, 10.0(Seattle) 10.1(Berlin) 10.2(Tokyo)](https://www.embarcadero.com/products/delphi)
 
 
-# Telega π #
+# Telega π - Beta #
 
 Telega π - Библиотека для работы с Telegram Bot API в Delphi
 

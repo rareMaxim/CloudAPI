@@ -270,7 +270,10 @@ begin
       end
       else
         LHttpResponse := LHttp.Get(LFullUrl);
-      Result := LHttpResponse.ContentAsString(TEncoding.UTF8);
+      if LHttpResponse.StatusCode = 200 then
+        Result := LHttpResponse.ContentAsString(TEncoding.UTF8)
+      else if Assigned(ExceptionManager) then
+        ExceptionManager.HaveGlobalExeption('SendDataToServer', EApiRequestException.Create(LHttpResponse.StatusText, LHttpResponse.StatusCode, Parameters));
     except
       on E: Exception do
       begin
@@ -358,6 +361,8 @@ begin
     raise Exception.Create('GetArrayFromMethod: unsupported interface for ' + TgClass.ClassName);
   // stage 2: proceed data
   LJsonArr := GetJSONArrayFromMethod(Method, Parameters);
+  if (not Assigned(LJsonArr)) or LJsonArr.Null then
+    Exit(nil);
   try
     SetLength(Result, LJsonArr.Count);
     for I := 0 to High(Result) do
