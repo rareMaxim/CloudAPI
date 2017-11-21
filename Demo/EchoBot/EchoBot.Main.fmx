@@ -44,7 +44,7 @@ object Main: TMain
       Touch.InteractiveGestures = [LongTap, DoubleTap]
       Align = Client
       TabOrder = 1
-      Text = '283107814:AAGokguMcF9SaI_f-M7vDmS9E2ugZrjumfk'
+      Text = '283107814:AAF9VZC6TRv6qKmOMCsLFoI8SBlV_xFMI80'
       Margins.Right = 5.000000000000000000
       Size.Width = 346.000000000000000000
       Size.Height = 23.000000000000000000
@@ -64,21 +64,24 @@ object Main: TMain
     end
   end
   object tgBot: TTelegramBot
-    OnReceiveError = tgBotReceiveError
-    OnReceiveGeneralError = tgBotReceiveGeneralError
+    ExceptionManager = tgExceptionManagerUI1
     Left = 104
     Top = 168
   end
-  object TgBotRecesiverUI1: TTgBotRecesiverUI
+  object tgExceptionManagerUI1: TtgExceptionManagerUI
+    OnApiException = tgExceptionManagerUI1ApiException
+    OnGlobalException = tgExceptionManagerUI1GlobalException
+    Left = 216
+    Top = 192
+  end
+  object tgRecesiverUI1: TtgRecesiverUI
     Bot = tgBot
-    OnMessage = TgBotAsync1Message
-    OnMessageEdited = TgBotAsync1Message
-    OnInlineQuery = TgBotAsync1InlineQuery
-    OnInlineResultChosen = TgBotAsync1InlineResultChosen
-    OnCallbackQuery = TgBotAsync1CallbackQuery
-    OnConnect = TgBotAsync1Connect
-    OnDisconnect = TgBotAsync1Disconnect
-    Left = 296
-    Top = 96
+    OnStart = tgRecesiverUI1Start
+    OnMessage = tgRecesiverUI1Message
+    OnInlineQuery = tgRecesiverUI1InlineQuery
+    OnChosenInlineResult = tgRecesiverUI1ChosenInlineResult
+    OnChannelPost = tgRecesiverUI1Message
+    Left = 192
+    Top = 264
   end
 end

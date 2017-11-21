@@ -3,7 +3,7 @@ unit TelegAPi.Helpers;
 interface
 
 uses
-  TelegAPi.Bot,
+  TelegAPi.Bot.Impl,
   TelegAPi.Types,
   TelegAPi.Types.Enums,
   System.Classes,
@@ -40,10 +40,6 @@ type
     ///   file name: "File.ext"
     /// </param>
     procedure AddStream(const AFieldName: string; Data: TStream; const AFileName: string = '');
-  end;
-
-  TtgMessageHelper = class helper for TTgMessage
-    function IsCommand(const AValue: string): Boolean;
   end;
 
 implementation
@@ -98,16 +94,15 @@ end;
 
 { TtgTMultipartFormDataHelper }
 
-
 procedure TtgTMultipartFormDataHelper.AddStream(const AFieldName: string; Data: TStream; const AFileName: string);
 var
-  LFileStream  : TFileStream;
-  LTmpDir      : string;
-  LTmpFilename : string;
+  LFileStream: TFileStream;
+  LTmpDir: string;
+  LTmpFilename: string;
 begin
   //get filename for tmp folder e.g. ..\AppData\local\temp\4F353A8AC6AB446D9F592A30B157291B
-  LTmpDir      := IncludeTrailingPathDelimiter(TPath.GetTempPath)+TPath.GetGUIDFileName(false);
-  LTmpFilename := IncludeTrailingPathDelimiter(LTmpDir)+ExtractFileName(AFileName);
+  LTmpDir := IncludeTrailingPathDelimiter(TPath.GetTempPath) + TPath.GetGUIDFileName(false);
+  LTmpFilename := IncludeTrailingPathDelimiter(LTmpDir) + ExtractFileName(AFileName);
   try
     TDirectory.CreateDirectory(LTmpDir);
     try
@@ -163,22 +158,6 @@ begin
   end;
 end;
 
-{ TtgMessageHelper }
-
-function TtgMessageHelper.IsCommand(const AValue: string): Boolean;
-var
-  LEnt: TtgMessageEntity;
-begin
-  Result := False;
-  if Assigned(Self.Entities) then
-    for LEnt in Self.Entities do
-      if (LEnt.TypeMessage = TtgMessageEntityType.bot_command) then
-        if Text.Substring(LEnt.Offset, LEnt.Length).StartsWith(AValue, True) then
-        begin
-          LEnt.Free;
-          Exit(True);
-        end;
-end;
 
 end.
 

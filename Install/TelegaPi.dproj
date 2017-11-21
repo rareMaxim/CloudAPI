@@ -3,20 +3,30 @@
         <Base>True</Base>
         <AppType>Package</AppType>
         <Config Condition="'$(Config)'==''">Debug</Config>
-        <FrameworkType>None</FrameworkType>
-        <MainSource>TelegaPiBot.dpk</MainSource>
+        <FrameworkType>FMX</FrameworkType>
+        <MainSource>TelegaPi.dpk</MainSource>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
-        <ProjectGuid>{AF7E5151-C6A5-4AE5-BD43-E004BEDCC1FD}</ProjectGuid>
+        <ProjectGuid>{CD7AEFF9-94F2-48FA-924B-E6BAC7221567}</ProjectGuid>
         <ProjectVersion>18.2</ProjectVersion>
-        <TargetedPlatforms>1</TargetedPlatforms>
+        <TargetedPlatforms>19</TargetedPlatforms>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
         <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Android' and '$(Base)'=='true') or '$(Base_Android)'!=''">
+        <Base>true</Base>
+        <CfgParent>Base</CfgParent>
+        <Base_Android>true</Base_Android>
     </PropertyGroup>
     <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Base)'=='true') or '$(Base_Win32)'!=''">
         <Base>true</Base>
         <CfgParent>Base</CfgParent>
         <Base_Win32>true</Base_Win32>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win64' and '$(Base)'=='true') or '$(Base_Win64)'!=''">
+        <Base>true</Base>
+        <CfgParent>Base</CfgParent>
+        <Base_Win64>true</Base_Win64>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Config)'=='Debug' or '$(Cfg_1)'!=''">
         <Base>true</Base>
@@ -34,12 +44,6 @@
         <CfgParent>Base</CfgParent>
         <Cfg_2>true</Cfg_2>
     </PropertyGroup>
-    <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Cfg_2)'=='true') or '$(Cfg_2_Win32)'!=''">
-        <Base>true</Base>
-        <CfgParent>Cfg_2</CfgParent>
-        <Cfg_2>true</Cfg_2>
-        <Cfg_2_Win32>true</Cfg_2_Win32>
-    </PropertyGroup>
     <PropertyGroup Condition="'$(Base)'!=''">
         <DCC_CBuilderOutput>All</DCC_CBuilderOutput>
         <DCC_DcuOutput>..\DCU\$(Platform)-$(Config)</DCC_DcuOutput>
@@ -51,26 +55,36 @@
         <DCC_N>false</DCC_N>
         <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;$(DCC_Namespace)</DCC_Namespace>
         <DCC_S>false</DCC_S>
-        <DCC_UnitSearchPath>..\Source;..\modules\DJSON\Sources;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <GenDll>true</GenDll>
         <GenPackage>true</GenPackage>
         <PreBuildEvent>
             <![CDATA["$(BDS)\Bin\brcc32.exe" -fo "$(PROJECTDIR)\TTelegramBot.dcr" "$(PROJECTDIR)\TTelegramBot.rc"
 $(PreBuildEvent)]]>
         </PreBuildEvent>
-        <SanitizedProjectName>TelegaPiBot</SanitizedProjectName>
-        <VerInfo_AutoIncVersion>true</VerInfo_AutoIncVersion>
-        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <VerInfo_Keys>CompanyName=Максим Сысоев;FileDescription=Компонент для работы с Telegram API;FileVersion=3.3.0.0;InternalName=TelegAπ;LegalCopyright=2016-2017, Maxim Sysoev;LegalTrademarks=2016-2017, Maxim Sysoev;OriginalFilename=TelegaPiBot.bpl;ProductName=Telega Pi;ProductVersion=3.3.1</VerInfo_Keys>
-        <VerInfo_Locale>1049</VerInfo_Locale>
-        <VerInfo_MajorVer>3</VerInfo_MajorVer>
-        <VerInfo_MinorVer>3</VerInfo_MinorVer>
+        <PreBuildEventCancelOnError>false</PreBuildEventCancelOnError>
+        <SanitizedProjectName>TelegaPi</SanitizedProjectName>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Base_Android)'!=''">
+        <BT_BuildType>Debug</BT_BuildType>
+        <DCC_CBuilderOutput>None</DCC_CBuilderOutput>
+        <DCC_UsePackage>rtl;fmx;RESTComponents;$(DCC_UsePackage)</DCC_UsePackage>
+        <EnabledSysJars>android-support-v4.dex.jar;cloud-messaging.dex.jar;fmx.dex.jar;google-analytics-v2.dex.jar;google-play-billing.dex.jar;google-play-licensing.dex.jar;google-play-services.dex.jar</EnabledSysJars>
+        <VerInfo_Keys>package=com.embarcadero.$(MSBuildProjectName);label=$(MSBuildProjectName);versionCode=1;versionName=1.0.0;persistent=False;restoreAnyVersion=False;installLocation=auto;largeHeap=False;theme=TitleBar;hardwareAccelerated=true;apiKey=</VerInfo_Keys>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
+        <BT_BuildType>Debug</BT_BuildType>
         <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
-        <DCC_UsePackage>rtl;dbrtl;IndySystem;IndyProtocols;IndyCore;DJSON_Project;fmx;$(DCC_UsePackage)</DCC_UsePackage>
+        <DCC_UsePackage>rtl;fmx;RESTComponents;$(DCC_UsePackage)</DCC_UsePackage>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <VerInfo_Keys>CompanyName=Максим Сысоев;FileVersion=3.3.0.0;InternalName=TelegAπ;LegalCopyright=2016-2017, Maxim Sysoev;LegalTrademarks=2016-2017, Maxim Sysoev;OriginalFilename=TelegaPiBot.bpl;ProductVersion=3.3.1;ProgramID=com.embarcadero.$(ModuleName);FileDescription=Компонент для работы с Telegram API;ProductName=Telega Pi</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Base_Win64)'!=''">
+        <BT_BuildType>Debug</BT_BuildType>
+        <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;$(DCC_Namespace)</DCC_Namespace>
+        <DCC_UsePackage>rtl;fmx;RESTComponents;$(DCC_UsePackage)</DCC_UsePackage>
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <VerInfo_Locale>1033</VerInfo_Locale>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1)'!=''">
@@ -83,8 +97,7 @@ $(PreBuildEvent)]]>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
-        <VerInfo_Build>6</VerInfo_Build>
-        <VerInfo_Keys>CompanyName=Максим Сысоев;FileVersion=3.3.0.6;InternalName=TelegAπ;LegalCopyright=2016-2017, Maxim Sysoev;LegalTrademarks=2016-2017, Maxim Sysoev;OriginalFilename=TelegaPiBot.bpl;ProductVersion=3.3.1;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=Компонент для работы с Telegram API;ProductName=Telega Pi</VerInfo_Keys>
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
@@ -92,10 +105,6 @@ $(PreBuildEvent)]]>
         <DCC_Define>RELEASE;$(DCC_Define)</DCC_Define>
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
         <DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
-        <VerInfo_Keys>CompanyName=Максим Сысоев;FileDescription=Компонент для работы с Telegram API;FileVersion=3.3.0.0;InternalName=TelegAπ;LegalCopyright=2016-2017, Maxim Sysoev;LegalTrademarks=2016-2017, Maxim Sysoev;OriginalFilename=TelegaPiBot.bpl;ProductName=Telega Pi;ProductVersion=3.3.1</VerInfo_Keys>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
-        <VerInfo_Keys>CompanyName=Максим Сысоев;FileVersion=3.3.0.0;InternalName=TelegAπ;LegalCopyright=2016-2017, Maxim Sysoev;LegalTrademarks=2016-2017, Maxim Sysoev;OriginalFilename=TelegaPiBot.bpl;ProductVersion=3.3.1;ProgramID=com.embarcadero.$(ModuleName);FileDescription=Компонент для работы с Telegram API;ProductName=Telega Pi</VerInfo_Keys>
     </PropertyGroup>
     <ItemGroup>
         <DelphiCompile Include="$(MainSource)">
@@ -103,24 +112,25 @@ $(PreBuildEvent)]]>
         </DelphiCompile>
         <DCCReference Include="TTelegramBot.dcr"/>
         <DCCReference Include="rtl.dcp"/>
-        <DCCReference Include="DJSON_Project.dcp"/>
+        <DCCReference Include="RESTComponents.dcp"/>
         <DCCReference Include="..\Source\TelegAPI.Base.pas"/>
+        <DCCReference Include="..\Source\TelegAPI.Bot.Impl.pas"/>
         <DCCReference Include="..\Source\TelegAPI.Bot.pas"/>
-        <DCCReference Include="..\Source\TelegAPI.Bot.Intf.pas"/>
-        <DCCReference Include="..\Source\TelegAPI.Bot.Recesiver.Console.pas"/>
-        <DCCReference Include="..\Source\TelegAPI.Bot.Recesiver.UI.pas"/>
         <DCCReference Include="..\Source\TelegaPi.Exceptions.pas"/>
         <DCCReference Include="..\Source\TelegAPi.Helpers.pas"/>
+        <DCCReference Include="..\Source\TelegAPI.Recesiver.Base.pas"/>
+        <DCCReference Include="..\Source\TelegAPI.Recesiver.Console.pas"/>
+        <DCCReference Include="..\Source\TelegAPI.Recesiver.Service.pas"/>
         <DCCReference Include="..\Source\TelegAPi.RegisterIDE.pas"/>
-        <DCCReference Include="..\Source\TelegAPi.Types.pas"/>
         <DCCReference Include="..\Source\TelegaPi.Types.Enums.pas"/>
+        <DCCReference Include="..\Source\TelegAPI.Types.Impl.pas"/>
         <DCCReference Include="..\Source\TelegaPi.Types.InlineQueryResults.pas"/>
         <DCCReference Include="..\Source\TelegaPi.Types.InputMessageContents.pas"/>
+        <DCCReference Include="..\Source\TelegAPi.Types.pas"/>
         <DCCReference Include="..\Source\TelegaPi.Types.ReplyMarkups.pas"/>
-        <DCCReference Include="..\Source\TelegAPI.Utils.pas"/>
-        <DCCReference Include="..\Source\TelegAPI.Utils.Converters.pas"/>
         <DCCReference Include="..\Source\TelegAPI.Utils.Json.pas"/>
         <DCCReference Include="..\Source\TelegAPI.Utils.Params.pas"/>
+        <DCCReference Include="..\Source\TelegAPI.Recesiver.UI.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -139,11 +149,12 @@ $(PreBuildEvent)]]>
         <BorlandProject>
             <Delphi.Personality>
                 <Source>
-                    <Source Name="MainSource">TelegaPiBot.dpk</Source>
+                    <Source Name="MainSource">TelegaPi.dpk</Source>
                 </Source>
                 <Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k250.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp250.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k240.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp240.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\18.0\Bpl\DJSON_Project.bpl">(untitled)</Excluded_Packages>
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">
@@ -167,19 +178,19 @@ $(PreBuildEvent)]]>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="C:\Users\Public\Documents\Embarcadero\Studio\19.0\Bpl\TelegaPiBot.bpl" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="C:\Users\Public\Documents\Embarcadero\Studio\18.0\Bpl\TelegaPi.bpl" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
-                        <RemoteName>TelegaPiBot.bpl</RemoteName>
+                        <RemoteName>TelegaPi.bpl</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
                 <DeployClass Name="AdditionalDebugSymbols">
-                    <Platform Name="OSX32">
-                        <Operation>1</Operation>
-                    </Platform>
                     <Platform Name="Win32">
                         <RemoteDir>Contents\MacOS</RemoteDir>
                         <Operation>0</Operation>
+                    </Platform>
+                    <Platform Name="OSX32">
+                        <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
                 <DeployClass Name="AndroidClassesDexFile">
@@ -285,74 +296,74 @@ $(PreBuildEvent)]]>
                     </Platform>
                 </DeployClass>
                 <DeployClass Name="DebugSymbols">
+                    <Platform Name="Win32">
+                        <Operation>0</Operation>
+                    </Platform>
                     <Platform Name="iOSSimulator">
                         <Operation>1</Operation>
                     </Platform>
                     <Platform Name="OSX32">
                         <Operation>1</Operation>
                     </Platform>
+                </DeployClass>
+                <DeployClass Name="DependencyFramework">
                     <Platform Name="Win32">
                         <Operation>0</Operation>
                     </Platform>
-                </DeployClass>
-                <DeployClass Name="DependencyFramework">
                     <Platform Name="OSX32">
                         <Operation>1</Operation>
                         <Extensions>.framework</Extensions>
                     </Platform>
-                    <Platform Name="Win32">
-                        <Operation>0</Operation>
-                    </Platform>
                 </DeployClass>
                 <DeployClass Name="DependencyModule">
-                    <Platform Name="OSX32">
-                        <Operation>1</Operation>
-                        <Extensions>.dylib</Extensions>
-                    </Platform>
                     <Platform Name="Win32">
                         <Operation>0</Operation>
                         <Extensions>.dll;.bpl</Extensions>
                     </Platform>
-                </DeployClass>
-                <DeployClass Required="true" Name="DependencyPackage">
-                    <Platform Name="iOSDevice32">
-                        <Operation>1</Operation>
-                        <Extensions>.dylib</Extensions>
-                    </Platform>
-                    <Platform Name="iOSDevice64">
-                        <Operation>1</Operation>
-                        <Extensions>.dylib</Extensions>
-                    </Platform>
-                    <Platform Name="iOSSimulator">
-                        <Operation>1</Operation>
-                        <Extensions>.dylib</Extensions>
-                    </Platform>
                     <Platform Name="OSX32">
                         <Operation>1</Operation>
                         <Extensions>.dylib</Extensions>
                     </Platform>
+                </DeployClass>
+                <DeployClass Required="true" Name="DependencyPackage">
                     <Platform Name="Win32">
                         <Operation>0</Operation>
                         <Extensions>.bpl</Extensions>
                     </Platform>
-                </DeployClass>
-                <DeployClass Name="File">
-                    <Platform Name="Android">
-                        <Operation>0</Operation>
+                    <Platform Name="iOSDevice64">
+                        <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
+                    </Platform>
+                    <Platform Name="OSX32">
+                        <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
                     </Platform>
                     <Platform Name="iOSDevice32">
+                        <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="File">
+                    <Platform Name="Win32">
                         <Operation>0</Operation>
                     </Platform>
                     <Platform Name="iOSDevice64">
                         <Operation>0</Operation>
                     </Platform>
-                    <Platform Name="iOSSimulator">
-                        <Operation>0</Operation>
-                    </Platform>
                     <Platform Name="OSX32">
                         <Operation>0</Operation>
                     </Platform>
-                    <Platform Name="Win32">
+                    <Platform Name="iOSDevice32">
+                        <Operation>0</Operation>
+                    </Platform>
+                    <Platform Name="Android">
+                        <Operation>0</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
                         <Operation>0</Operation>
                     </Platform>
                 </DeployClass>
@@ -370,18 +381,14 @@ $(PreBuildEvent)]]>
                     </Platform>
                 </DeployClass>
                 <DeployClass Required="true" Name="ProjectOutput">
-                    <Platform Name="Android">
-                        <RemoteDir>library\lib\armeabi-v7a</RemoteDir>
+                    <Platform Name="iOSDevice64">
                         <Operation>1</Operation>
                     </Platform>
                     <Platform Name="iOSDevice32">
                         <Operation>1</Operation>
                     </Platform>
-                    <Platform Name="iOSDevice64">
-                        <Operation>1</Operation>
-                    </Platform>
-                    <Platform Name="iOSSimulator">
-                        <Operation>1</Operation>
+                    <Platform Name="Win32">
+                        <Operation>0</Operation>
                     </Platform>
                     <Platform Name="Linux64">
                         <Operation>1</Operation>
@@ -389,8 +396,12 @@ $(PreBuildEvent)]]>
                     <Platform Name="OSX32">
                         <Operation>1</Operation>
                     </Platform>
-                    <Platform Name="Win32">
-                        <Operation>0</Operation>
+                    <Platform Name="Android">
+                        <RemoteDir>library\lib\armeabi-v7a</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
                 <DeployClass Name="ProjectUWPManifest">
@@ -402,11 +413,11 @@ $(PreBuildEvent)]]>
                     </Platform>
                 </DeployClass>
                 <DeployClass Name="ProjectiOSDeviceDebug">
-                    <Platform Name="iOSDevice32">
+                    <Platform Name="iOSDevice64">
                         <RemoteDir>..\$(PROJECTNAME).app.dSYM\Contents\Resources\DWARF</RemoteDir>
                         <Operation>1</Operation>
                     </Platform>
-                    <Platform Name="iOSDevice64">
+                    <Platform Name="iOSDevice32">
                         <RemoteDir>..\$(PROJECTNAME).app.dSYM\Contents\Resources\DWARF</RemoteDir>
                         <Operation>1</Operation>
                     </Platform>
@@ -415,13 +426,13 @@ $(PreBuildEvent)]]>
                 <DeployClass Name="ProjectiOSEntitlements"/>
                 <DeployClass Name="ProjectiOSInfoPList"/>
                 <DeployClass Name="ProjectiOSResource">
-                    <Platform Name="iOSDevice32">
+                    <Platform Name="iOSSimulator">
                         <Operation>1</Operation>
                     </Platform>
                     <Platform Name="iOSDevice64">
                         <Operation>1</Operation>
                     </Platform>
-                    <Platform Name="iOSSimulator">
+                    <Platform Name="iOSDevice32">
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
@@ -446,79 +457,79 @@ $(PreBuildEvent)]]>
                     </Platform>
                 </DeployClass>
                 <DeployClass Name="iPad_Launch1024">
-                    <Platform Name="iOSDevice32">
+                    <Platform Name="iOSSimulator">
                         <Operation>1</Operation>
                     </Platform>
                     <Platform Name="iOSDevice64">
                         <Operation>1</Operation>
                     </Platform>
-                    <Platform Name="iOSSimulator">
+                    <Platform Name="iOSDevice32">
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
                 <DeployClass Name="iPad_Launch1536">
-                    <Platform Name="iOSDevice32">
+                    <Platform Name="iOSSimulator">
                         <Operation>1</Operation>
                     </Platform>
                     <Platform Name="iOSDevice64">
                         <Operation>1</Operation>
                     </Platform>
-                    <Platform Name="iOSSimulator">
+                    <Platform Name="iOSDevice32">
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
                 <DeployClass Name="iPad_Launch2048">
-                    <Platform Name="iOSDevice32">
+                    <Platform Name="iOSSimulator">
                         <Operation>1</Operation>
                     </Platform>
                     <Platform Name="iOSDevice64">
                         <Operation>1</Operation>
                     </Platform>
-                    <Platform Name="iOSSimulator">
+                    <Platform Name="iOSDevice32">
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
                 <DeployClass Name="iPad_Launch768">
-                    <Platform Name="iOSDevice32">
+                    <Platform Name="iOSSimulator">
                         <Operation>1</Operation>
                     </Platform>
                     <Platform Name="iOSDevice64">
                         <Operation>1</Operation>
                     </Platform>
-                    <Platform Name="iOSSimulator">
+                    <Platform Name="iOSDevice32">
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
                 <DeployClass Name="iPhone_Launch320">
-                    <Platform Name="iOSDevice32">
+                    <Platform Name="iOSSimulator">
                         <Operation>1</Operation>
                     </Platform>
                     <Platform Name="iOSDevice64">
                         <Operation>1</Operation>
                     </Platform>
-                    <Platform Name="iOSSimulator">
+                    <Platform Name="iOSDevice32">
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
                 <DeployClass Name="iPhone_Launch640">
-                    <Platform Name="iOSDevice32">
+                    <Platform Name="iOSSimulator">
                         <Operation>1</Operation>
                     </Platform>
                     <Platform Name="iOSDevice64">
                         <Operation>1</Operation>
                     </Platform>
-                    <Platform Name="iOSSimulator">
+                    <Platform Name="iOSDevice32">
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
                 <DeployClass Name="iPhone_Launch640x1136">
-                    <Platform Name="iOSDevice32">
+                    <Platform Name="iOSSimulator">
                         <Operation>1</Operation>
                     </Platform>
                     <Platform Name="iOSDevice64">
                         <Operation>1</Operation>
                     </Platform>
-                    <Platform Name="iOSSimulator">
+                    <Platform Name="iOSDevice32">
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
@@ -532,8 +543,9 @@ $(PreBuildEvent)]]>
                 <ProjectRoot Platform="iOSSimulator" Name="$(PROJECTNAME).app"/>
             </Deployment>
             <Platforms>
-                <Platform value="Linux64">False</Platform>
+                <Platform value="Android">True</Platform>
                 <Platform value="Win32">True</Platform>
+                <Platform value="Win64">True</Platform>
             </Platforms>
         </BorlandProject>
         <ProjectFileVersion>12</ProjectFileVersion>
@@ -541,35 +553,51 @@ $(PreBuildEvent)]]>
     <Import Project="$(BDS)\Bin\CodeGear.Delphi.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Delphi.Targets')"/>
     <Import Project="$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj" Condition="Exists('$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj')"/>
     <Import Project="$(MSBuildProjectName).deployproj" Condition="Exists('$(MSBuildProjectName).deployproj')"/>
-    <PropertyGroup Condition="'$(Config)'=='Debug' And '$(Platform)'=='Linux64'">
+    <PropertyGroup Condition="'$(Config)'=='Debug' And '$(Platform)'=='Android'">
         <PostBuildEvent/>
         <PostBuildEventIgnoreExitCode>False</PostBuildEventIgnoreExitCode>
-        <PreBuildEvent>&quot;$(BDS)\Bin\brcc32.exe&quot; -fo &quot;$(PROJECTDIR)\TTelegramBot.dcr&quot; &quot;$(PROJECTDIR)\TTelegramBot.rc&quot;</PreBuildEvent>
-        <PreBuildEventIgnoreExitCode>False</PreBuildEventIgnoreExitCode>
+        <PreBuildEvent>&quot;$(BDS)\Bin\brcc32.exe&quot; -fo &quot;$(PROJECTDIR)\TTelegramBot.dcr&quot; &quot;$(PROJECTDIR)\TTelegramBot.rc&quot;</PreBuildEvent>
+        <PreBuildEventIgnoreExitCode>True</PreBuildEventIgnoreExitCode>
         <PreLinkEvent/>
         <PreLinkEventIgnoreExitCode>False</PreLinkEventIgnoreExitCode>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Config)'=='Debug' And '$(Platform)'=='Win32'">
         <PostBuildEvent/>
         <PostBuildEventIgnoreExitCode>False</PostBuildEventIgnoreExitCode>
-        <PreBuildEvent>&quot;$(BDS)\Bin\brcc32.exe&quot; -fo &quot;$(PROJECTDIR)\TTelegramBot.dcr&quot; &quot;$(PROJECTDIR)\TTelegramBot.rc&quot;</PreBuildEvent>
-        <PreBuildEventIgnoreExitCode>False</PreBuildEventIgnoreExitCode>
+        <PreBuildEvent>&quot;$(BDS)\Bin\brcc32.exe&quot; -fo &quot;$(PROJECTDIR)\TTelegramBot.dcr&quot; &quot;$(PROJECTDIR)\TTelegramBot.rc&quot;</PreBuildEvent>
+        <PreBuildEventIgnoreExitCode>True</PreBuildEventIgnoreExitCode>
         <PreLinkEvent/>
         <PreLinkEventIgnoreExitCode>False</PreLinkEventIgnoreExitCode>
     </PropertyGroup>
-    <PropertyGroup Condition="'$(Config)'=='Release' And '$(Platform)'=='Linux64'">
+    <PropertyGroup Condition="'$(Config)'=='Debug' And '$(Platform)'=='Win64'">
         <PostBuildEvent/>
         <PostBuildEventIgnoreExitCode>False</PostBuildEventIgnoreExitCode>
-        <PreBuildEvent>&quot;$(BDS)\Bin\brcc32.exe&quot; -fo &quot;$(PROJECTDIR)\TTelegramBot.dcr&quot; &quot;$(PROJECTDIR)\TTelegramBot.rc&quot;</PreBuildEvent>
-        <PreBuildEventIgnoreExitCode>False</PreBuildEventIgnoreExitCode>
+        <PreBuildEvent>&quot;$(BDS)\Bin\brcc32.exe&quot; -fo &quot;$(PROJECTDIR)\TTelegramBot.dcr&quot; &quot;$(PROJECTDIR)\TTelegramBot.rc&quot;</PreBuildEvent>
+        <PreBuildEventIgnoreExitCode>True</PreBuildEventIgnoreExitCode>
+        <PreLinkEvent/>
+        <PreLinkEventIgnoreExitCode>False</PreLinkEventIgnoreExitCode>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Release' And '$(Platform)'=='Android'">
+        <PostBuildEvent/>
+        <PostBuildEventIgnoreExitCode>False</PostBuildEventIgnoreExitCode>
+        <PreBuildEvent>&quot;$(BDS)\Bin\brcc32.exe&quot; -fo &quot;$(PROJECTDIR)\TTelegramBot.dcr&quot; &quot;$(PROJECTDIR)\TTelegramBot.rc&quot;</PreBuildEvent>
+        <PreBuildEventIgnoreExitCode>True</PreBuildEventIgnoreExitCode>
         <PreLinkEvent/>
         <PreLinkEventIgnoreExitCode>False</PreLinkEventIgnoreExitCode>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Config)'=='Release' And '$(Platform)'=='Win32'">
         <PostBuildEvent/>
         <PostBuildEventIgnoreExitCode>False</PostBuildEventIgnoreExitCode>
-        <PreBuildEvent>&quot;$(BDS)\Bin\brcc32.exe&quot; -fo &quot;$(PROJECTDIR)\TTelegramBot.dcr&quot; &quot;$(PROJECTDIR)\TTelegramBot.rc&quot;</PreBuildEvent>
-        <PreBuildEventIgnoreExitCode>False</PreBuildEventIgnoreExitCode>
+        <PreBuildEvent>&quot;$(BDS)\Bin\brcc32.exe&quot; -fo &quot;$(PROJECTDIR)\TTelegramBot.dcr&quot; &quot;$(PROJECTDIR)\TTelegramBot.rc&quot;</PreBuildEvent>
+        <PreBuildEventIgnoreExitCode>True</PreBuildEventIgnoreExitCode>
+        <PreLinkEvent/>
+        <PreLinkEventIgnoreExitCode>False</PreLinkEventIgnoreExitCode>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Release' And '$(Platform)'=='Win64'">
+        <PostBuildEvent/>
+        <PostBuildEventIgnoreExitCode>False</PostBuildEventIgnoreExitCode>
+        <PreBuildEvent>&quot;$(BDS)\Bin\brcc32.exe&quot; -fo &quot;$(PROJECTDIR)\TTelegramBot.dcr&quot; &quot;$(PROJECTDIR)\TTelegramBot.rc&quot;</PreBuildEvent>
+        <PreBuildEventIgnoreExitCode>True</PreBuildEventIgnoreExitCode>
         <PreLinkEvent/>
         <PreLinkEventIgnoreExitCode>False</PreLinkEventIgnoreExitCode>
     </PropertyGroup>

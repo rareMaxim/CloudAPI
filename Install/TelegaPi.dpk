@@ -1,4 +1,4 @@
-package TelegaPiBot;
+package TelegaPi;
 
 {$R *.res}
 {$R 'TTelegramBot.dcr'}
@@ -31,25 +31,26 @@ package TelegaPiBot;
 
 requires
   rtl,
-  DJSON_Project;
+  RESTComponents;
 
 contains
   TelegAPI.Base in '..\Source\TelegAPI.Base.pas',
+  TelegAPI.Bot.Impl in '..\Source\TelegAPI.Bot.Impl.pas',
   TelegAPI.Bot in '..\Source\TelegAPI.Bot.pas',
-  TelegAPI.Bot.Intf in '..\Source\TelegAPI.Bot.Intf.pas',
-  TelegAPI.Bot.Recesiver.Console in '..\Source\TelegAPI.Bot.Recesiver.Console.pas',
-  TelegAPI.Bot.Recesiver.UI in '..\Source\TelegAPI.Bot.Recesiver.UI.pas',
   TelegaPi.Exceptions in '..\Source\TelegaPi.Exceptions.pas',
   TelegAPi.Helpers in '..\Source\TelegAPi.Helpers.pas',
+  TelegAPI.Recesiver.Base in '..\Source\TelegAPI.Recesiver.Base.pas',
+  TelegAPI.Recesiver.Console in '..\Source\TelegAPI.Recesiver.Console.pas',
+  TelegAPI.Recesiver.Service in '..\Source\TelegAPI.Recesiver.Service.pas',
   TelegAPi.RegisterIDE in '..\Source\TelegAPi.RegisterIDE.pas',
-  TelegAPi.Types in '..\Source\TelegAPi.Types.pas',
   TelegaPi.Types.Enums in '..\Source\TelegaPi.Types.Enums.pas',
+  TelegAPI.Types.Impl in '..\Source\TelegAPI.Types.Impl.pas',
   TelegaPi.Types.InlineQueryResults in '..\Source\TelegaPi.Types.InlineQueryResults.pas',
   TelegaPi.Types.InputMessageContents in '..\Source\TelegaPi.Types.InputMessageContents.pas',
+  TelegAPi.Types in '..\Source\TelegAPi.Types.pas',
   TelegaPi.Types.ReplyMarkups in '..\Source\TelegaPi.Types.ReplyMarkups.pas',
-  TelegAPI.Utils in '..\Source\TelegAPI.Utils.pas',
-  TelegAPI.Utils.Converters in '..\Source\TelegAPI.Utils.Converters.pas',
   TelegAPI.Utils.Json in '..\Source\TelegAPI.Utils.Json.pas',
-  TelegAPI.Utils.Params in '..\Source\TelegAPI.Utils.Params.pas';
-end.
+  TelegAPI.Utils.Params in '..\Source\TelegAPI.Utils.Params.pas',
+  TelegAPI.Recesiver.UI in '..\Source\TelegAPI.Recesiver.UI.pas';
 
+end.
