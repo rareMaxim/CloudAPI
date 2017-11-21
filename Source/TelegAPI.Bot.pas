@@ -8,7 +8,8 @@ uses
   TelegAPI.Types.Enums,
   TelegAPI.Types.InlineQueryResults,
   TelegAPI.Types.ReplyMarkups,
-  TelegAPI.Types.Impl, TelegaPi.Exceptions;
+  TelegAPI.Types.Impl,
+  TelegaPi.Exceptions;
 
 type
   ITelegramBot = interface
@@ -1135,7 +1136,7 @@ type
      /// returned.
      /// </returns>
      /// <seealso href="https://core.telegram.org/bots/api#sendinvoice" />
-    function SendInvoice(ChatId: Int64; const title: string; const Description: string; const Payload: string; const ProviderToken: string; const StartParameter: string; const Currency: string; Prices: TArray<TtgLabeledPrice>; const PhotoUrl: string = ''; PhotoSize: Int64 = 0; PhotoWidth: Int64 = 0; PhotoHeight: Int64 = 0; NeedName: Boolean = False; NeedPhoneNumber: Boolean = False; NeedEmail: Boolean = False; NeedShippingAddress: Boolean = False; IsFlexible: Boolean = False; DisableNotification: Boolean = False; ReplyToMessageId: Int64 = 0; ReplyMarkup: IReplyMarkup = nil): ITgMessage;
+    function SendInvoice(ChatId: Int64; const title: string; const Description: string; const Payload: string; const ProviderToken: string; const StartParameter: string; const Currency: string; Prices: TArray<TtgLabeledPrice>; const ProviderData: string = ''; const PhotoUrl: string = ''; PhotoSize: Int64 = 0; PhotoWidth: Int64 = 0; PhotoHeight: Int64 = 0; NeedName: Boolean = False; NeedPhoneNumber: Boolean = False; NeedEmail: Boolean = False; NeedShippingAddress: Boolean = False; IsFlexible: Boolean = False; DisableNotification: Boolean = False; ReplyToMessageId: Int64 = 0; ReplyMarkup: IReplyMarkup = nil): ITgMessage;
      /// <summary>
      /// If you sent an invoice requesting a shipping address and the
      /// parameter is_flexible was specified, the Bot API will send an Update

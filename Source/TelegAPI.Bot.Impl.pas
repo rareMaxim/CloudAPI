@@ -112,7 +112,7 @@ type
     function AnswerInlineQuery(const InlineQueryId: string; Results: TArray<TtgInlineQueryResult>; CacheTime: Int64 = 300; IsPersonal: Boolean = False; const NextOffset: string = ''; const SwitchPmText: string = ''; const SwitchPmParameter: string = ''): Boolean;
 {$ENDREGION}
 {$REGION 'Payments'}
-    function SendInvoice(ChatId: Int64; const title: string; const Description: string; const Payload: string; const ProviderToken: string; const StartParameter: string; const Currency: string; Prices: TArray<TtgLabeledPrice>; const PhotoUrl: string = ''; PhotoSize: Int64 = 0; PhotoWidth: Int64 = 0; PhotoHeight: Int64 = 0; NeedName: Boolean = False; NeedPhoneNumber: Boolean = False; NeedEmail: Boolean = False; NeedShippingAddress: Boolean = False; IsFlexible: Boolean = False; DisableNotification: Boolean = False; ReplyToMessageId: Int64 = 0; ReplyMarkup: IReplyMarkup = nil): ITgMessage;
+    function SendInvoice(ChatId: Int64; const title: string; const Description: string; const Payload: string; const ProviderToken: string; const StartParameter: string; const Currency: string; Prices: TArray<TtgLabeledPrice>; const ProviderData: string = ''; const PhotoUrl: string = ''; PhotoSize: Int64 = 0; PhotoWidth: Int64 = 0; PhotoHeight: Int64 = 0; NeedName: Boolean = False; NeedPhoneNumber: Boolean = False; NeedEmail: Boolean = False; NeedShippingAddress: Boolean = False; IsFlexible: Boolean = False; DisableNotification: Boolean = False; ReplyToMessageId: Int64 = 0; ReplyMarkup: IReplyMarkup = nil): ITgMessage;
     function AnswerShippingQuery(const ShippingQueryId: string; Ok: Boolean; ShippingOptions: TArray<TtgShippingOption>; const ErrorMessage: string): Boolean;
     function AnswerPreCheckoutQuery(const PreCheckoutQueryId: string; Ok: Boolean; const ErrorMessage: string = ''): Boolean;
 {$ENDREGION}
@@ -354,9 +354,9 @@ var
   GUID: TGUID;
 begin
   // stage 1: type checking
-  //cache value fot further use
+  // cache value fot further use
   GUID := GetTypeData(TypeInfo(TI))^.GUID;
-  //check for TI interface support
+  // check for TI interface support
   if TgClass.GetInterfaceEntry(GUID) = nil then
     raise Exception.Create('GetArrayFromMethod: unsupported interface for ' + TgClass.ClassName);
   // stage 2: proceed data
@@ -1043,7 +1043,7 @@ end;
 {$ENDREGION}
 {$REGION 'Payments'}
 
-function TTelegramBot.SendInvoice(ChatId: Int64; const title: string; const Description: string; const Payload: string; const ProviderToken: string; const StartParameter: string; const Currency: string; Prices: TArray<TtgLabeledPrice>; const PhotoUrl: string; PhotoSize: Int64; PhotoWidth: Int64; PhotoHeight: Int64; NeedName: Boolean; NeedPhoneNumber: Boolean; NeedEmail: Boolean; NeedShippingAddress: Boolean; IsFlexible: Boolean; DisableNotification: Boolean; ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
+function TTelegramBot.SendInvoice(ChatId: Int64; const title: string; const Description: string; const Payload: string; const ProviderToken: string; const StartParameter: string; const Currency: string; Prices: TArray<TtgLabeledPrice>; const ProviderData: string; const PhotoUrl: string; PhotoSize: Int64; PhotoWidth: Int64; PhotoHeight: Int64; NeedName: Boolean; NeedPhoneNumber: Boolean; NeedEmail: Boolean; NeedShippingAddress: Boolean; IsFlexible: Boolean; DisableNotification: Boolean; ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
 var
   LParameters: TDictionary<string, TValue>;
 begin
@@ -1057,6 +1057,7 @@ begin
     LParameters.Add('start_parameter', StartParameter);
     LParameters.Add('currency', Currency);
     LParameters.Add('prices', TJsonUtils.ArrayToJString<TtgLabeledPrice>(Prices));
+    LParameters.Add('provider_data', ProviderData);
     LParameters.Add('photo_url', PhotoUrl);
     LParameters.Add('photo_size', PhotoSize);
     LParameters.Add('photo_width', PhotoWidth);
