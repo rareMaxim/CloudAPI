@@ -4,7 +4,8 @@ interface
 
 uses
   TelegAPi.Types.Enums,
-  System.Classes;
+  System.Classes,
+  System.Rtti;
 
 type
   ItgUser = interface
@@ -259,7 +260,7 @@ type
     function PinnedMessage: ITgMessage;
     function Invoice: ItgInvoice;
     function SuccessfulPayment: ItgSuccessfulPayment;
-    function &type: TtgMessageType;
+    function &Type: TtgMessageType;
     function IsCommand(const AValue: string): Boolean;
   end;
 
@@ -342,7 +343,7 @@ type
   ItgUpdate = interface
     ['{5D001F9B-B0BC-4A44-85E3-E0586DAAABD2}']
     function ID: Int64;
-    function Message: ITgMessage;
+    function message: ITgMessage;
     function EditedMessage: ITgMessage;
     function InlineQuery: ItgInlineQuery;
     function ChosenInlineResult: ItgChosenInlineResult;
@@ -378,12 +379,39 @@ type
     function AllowedUpdates: TArray<string>;
   end;
 
+  ItgFileToSend = interface
+    ['{91FF9D95-7BF3-49B3-B7CB-6C836305FEC2}']
+    function getContent: TStream;
+  end;
+
   TtgFileToSend = class
   public
     FileName: string;
     Content: TStream;
     constructor Create(const AFileName: string); overload;
     constructor Create(AContent: TStream; const AFileName: string); overload;
+  end;
+
+  TtgInputMedia = class
+  private
+    FType: string;
+  public
+    Media: TValue;
+    Caption: string;
+    constructor Create(AMedia: TValue; const ACaption: string = ''); virtual;
+  end;
+
+  TtgInputMediaPhoto = class(TtgInputMedia)
+  public
+    constructor Create(AMedia: TValue; const ACaption: string = ''); override;
+  end;
+
+  TtgInputMediaVideo = class(TtgInputMedia)
+  public
+    Width: Integer;
+    Height: Integer;
+    Duration: Integer;
+    constructor Create(AMedia: TValue; const ACaption: string = ''; AWidth: Integer = 0; AHeight: Integer = 0; ADuration: Integer = 0);
   end;
 
 implementation
@@ -413,6 +441,34 @@ begin
     raise EStreamError.Create('Stream not assigned!');
   FileName := AFileName;
   Content := AContent;
+end;
+
+{ TtgInputMedia }
+
+constructor TtgInputMedia.Create(AMedia: TValue; const ACaption: string);
+begin
+  Media := AMedia;
+  Caption := ACaption;
+end;
+
+{ TtgInputMediaPhoto }
+
+constructor TtgInputMediaPhoto.Create(AMedia: TValue; const ACaption: string);
+begin
+  inherited Create(AMedia, ACaption);
+  FType := 'photo';
+end;
+
+{ TtgInputMediaVideo }
+
+constructor TtgInputMediaVideo.Create(AMedia: TValue; const ACaption: string;
+  AWidth, AHeight, ADuration: Integer);
+begin
+  inherited Create(AMedia, ACaption);
+  FType := 'video';
+  Width := AWidth;
+  Height := AHeight;
+  Duration := ADuration;
 end;
 
 end.

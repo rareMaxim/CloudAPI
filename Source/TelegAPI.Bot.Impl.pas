@@ -93,6 +93,7 @@ type
     function GetChatAdministrators(const ChatId: TValue): TArray<ItgChatMember>;
     function GetChatMembersCount(const ChatId: TValue): Int64;
     function GetChatMember(ChatId: TValue; UserId: Int64): ItgChatMember;
+    function sendMediaGroup(ChatId: TValue; AMedia: TArray<TtgInputMedia>; ADisableNotification: Boolean = False; ReplyToMessageId: Int64 = 0): TArray<ITgMessage>;
     function AnswerCallbackQuery(const CallbackQueryId: string; const Text: string = ''; ShowAlert: Boolean = False; const Url: string = ''; CacheTime: Int64 = 0): Boolean;
 {$ENDREGION}
 {$REGION 'Updating messages'}
@@ -459,6 +460,22 @@ begin
     Parameters.Add('reply_to_message_id', ReplyToMessageId);
     Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
     Result := TTgMessage.Create(RequestAPI('sendLocation', Parameters));
+  finally
+    Parameters.Free;
+  end;
+end;
+
+function TTelegramBot.sendMediaGroup(ChatId: TValue; AMedia: TArray<TtgInputMedia>; ADisableNotification: Boolean; ReplyToMessageId: Int64): TArray<ITgMessage>;
+var
+  Parameters: TDictionary<string, TValue>;
+begin
+  Parameters := TDictionary<string, TValue>.Create;
+  try
+    Parameters.Add('chat_id', ChatId);
+    Parameters.Add('media', TJsonUtils.ArrayToJString<TtgInputMedia>(AMedia));
+    Parameters.Add('disable_notification', ADisableNotification);
+    Parameters.Add('reply_to_message_id', ReplyToMessageId);
+    Result := GetArrayFromMethod<ITgMessage>(TTgMessage, 'sendMediaGroup', Parameters);
   finally
     Parameters.Free;
   end;

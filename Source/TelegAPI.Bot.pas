@@ -1661,6 +1661,7 @@ type
      /// getChat</see> requests to check if the bot can use this method.
      /// </remarks>
     function deleteChatStickerSet(ChatId: TValue): Boolean;
+    function sendMediaGroup(ChatId: TValue; AMedia: TArray<TtgInputMedia>; ADisableNotification: Boolean = False; ReplyToMessageId: Int64 = 0): TArray<ITgMessage>;
 {$ENDREGION}
     property Token: string read GetToken write SetToken;
     property ExceptionManager: ItgExceptionHandler read GetExceptionManager write SetExceptionManager;
