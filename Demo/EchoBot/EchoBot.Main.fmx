@@ -81,7 +81,6 @@ object Main: TMain
     OnInlineQuery = tgRecesiverUI1InlineQuery
     OnChosenInlineResult = tgRecesiverUI1ChosenInlineResult
     OnChannelPost = tgRecesiverUI1Message
-    OnCallbackQuery = tgRecesiverUI1CallbackQuery
     Left = 192
     Top = 264
   end

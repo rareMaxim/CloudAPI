@@ -3,7 +3,6 @@
 interface
 
 uses
-  System.JSON,
   System.SysUtils,
   System.Classes,
   TelegAPi.Utils.JSON,
@@ -399,6 +398,7 @@ type
 
 implementation
 
+uses System.JSON, System.TypInfo;
 { TtgAnimation }
 
 function TtgAnimation.FileId: string;
@@ -718,7 +718,12 @@ begin
     Exit(TtgMessageType.GameMessage);
   if (Location <> nil) then
     Exit(TtgMessageType.LocationMessage);
-  if (NewChatMember <> nil) or (LeftChatMember <> nil) or ((NewChatPhoto <> nil) and (Length(NewChatPhoto) > 0)) or ((NewChatMembers <> nil) and (Length(NewChatMembers) > 0)) or (not NewChatTitle.IsEmpty) or DeleteChatPhoto or GroupChatCreated or SupergroupChatCreated or ChannelChatCreated or (MigrateToChatId <> 0) or (MigrateFromChatId <> 0) or (PinnedMessage <> nil) then
+  if (NewChatMember <> nil) or (LeftChatMember <> nil) or
+    ((NewChatPhoto <> nil) and (Length(NewChatPhoto) > 0)) or
+    ((NewChatMembers <> nil) and (Length(NewChatMembers) > 0)) or
+    (not NewChatTitle.IsEmpty) or DeleteChatPhoto or GroupChatCreated or
+    SupergroupChatCreated or ChannelChatCreated or (MigrateToChatId <> 0) or
+    (MigrateFromChatId <> 0) or (PinnedMessage <> nil) then
     Exit(TtgMessageType.ServiceMessage);
   if (Photo <> nil) and (Length(Photo) > 0) then
     Exit(TtgMessageType.PhotoMessage);
@@ -1741,8 +1746,26 @@ end;
 { TtgUserProfilePhotos }
 
 function TtgUserProfilePhotos.Photos: TArray<TArray<ItgPhotoSize>>;
+var
+  LArr1, LArr2: TJSONArray;
+  I: Integer;
+  j: Integer;
+  GUID: TGUID;
 begin
-  UnSupported;
+  LArr1 := FJSON.GetValue('photos') as TJSONArray;
+  if (not Assigned(LArr1)) or LArr1.Null then
+    Exit(nil);
+  GUID := GetTypeData(TypeInfo(ItgPhotoSize))^.GUID;
+  SetLength(Result, LArr1.Count);
+  for I := 0 to High(Result) do
+  begin
+    LArr2 := LArr1.Items[i] as TJSONArray;
+    if (not Assigned(LArr2)) or LArr2.Null then
+      Exit(nil);
+    SetLength(Result[I], LArr2.Count);
+    for j := 0 to High(Result[I]) do
+      GetTgClass.Create(LArr2.Items[j].ToJson).GetInterface(GUID, Result[I, j]);
+  end;
 end;
 
 function TtgUserProfilePhotos.TotalCount: Int64;
@@ -1751,4 +1774,3 @@ begin
 end;
 
 end.
-
