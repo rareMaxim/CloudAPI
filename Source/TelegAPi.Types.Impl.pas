@@ -977,32 +977,32 @@ end;
 
 function TtgUser.FirstName: string;
 begin
-  Result := FJSON.GetValue<string>('first_name');
+  Result := ReadToSimpleType<string>('first_name');
 end;
 
 function TtgUser.ID: Int64;
 begin
-  Result := FJSON.GetValue<Int64>('id');
+  Result := ReadToSimpleType<Int64>('id');
 end;
 
 function TtgUser.IsBot: Boolean;
 begin
-  Result := FJSON.GetValue<Boolean>('is_bot');
+  Result := ReadToSimpleType<Boolean>('is_bot');
 end;
 
 function TtgUser.LanguageCode: string;
 begin
-  Result := FJSON.GetValue<string>('language_code');
+  Result := ReadToSimpleType<string>('language_code');
 end;
 
 function TtgUser.LastName: string;
 begin
-  Result := FJSON.GetValue<string>('last_name');
+  Result := ReadToSimpleType<string>('last_name');
 end;
 
 function TtgUser.Username: string;
 begin
-  Result := FJSON.GetValue<string>('username');
+  Result := ReadToSimpleType<string>('username');
 end;
 
 { TtgInlineQuery }
@@ -1014,17 +1014,17 @@ end;
 
 function TtgInlineQuery.ID: string;
 begin
-  Result := FJSON.GetValue<string>('id');
+  Result := ReadToSimpleType<string>('id');
 end;
 
 function TtgInlineQuery.Offset: string;
 begin
-  Result := FJSON.GetValue<string>('offset');
+  Result := ReadToSimpleType<string>('offset');
 end;
 
 function TtgInlineQuery.Query: string;
 begin
-  Result := FJSON.GetValue<string>('query');
+  Result := ReadToSimpleType<string>('query');
 end;
 
 { TtgChosenInlineResult }
@@ -1036,7 +1036,7 @@ end;
 
 function TtgChosenInlineResult.InlineMessageId: string;
 begin
-  Result := FJSON.GetValue<string>('inline_message_id');
+  Result := ReadToSimpleType<string>('inline_message_id');
 end;
 
 function TtgChosenInlineResult.Location: ItgLocation;
@@ -1046,19 +1046,19 @@ end;
 
 function TtgChosenInlineResult.Query: string;
 begin
-  Result := FJSON.GetValue<string>('query');
+  Result := ReadToSimpleType<string>('query');
 end;
 
 function TtgChosenInlineResult.ResultId: string;
 begin
-  Result := FJSON.GetValue<string>('result_id');
+  Result := ReadToSimpleType<string>('result_id');
 end;
 
 { TtgPreCheckoutQuery }
 
 function TtgPreCheckoutQuery.Currency: string;
 begin
-  Result := FJSON.GetValue<string>('currency');
+  Result := ReadToSimpleType<string>('currency');
 end;
 
 function TtgPreCheckoutQuery.From: ItgUser;
@@ -1068,12 +1068,12 @@ end;
 
 function TtgPreCheckoutQuery.ID: string;
 begin
-  Result := FJSON.GetValue<string>('id');
+  Result := ReadToSimpleType<string>('id');
 end;
 
 function TtgPreCheckoutQuery.InvoicePayload: string;
 begin
-  Result := FJSON.GetValue<string>('invoice_payload');
+  Result := ReadToSimpleType<string>('invoice_payload');
 end;
 
 function TtgPreCheckoutQuery.OrderInfo: ItgOrderInfo;
@@ -1083,12 +1083,12 @@ end;
 
 function TtgPreCheckoutQuery.ShippingOptionId: string;
 begin
-  Result := FJSON.GetValue<string>('shipping_option_id');
+  Result := ReadToSimpleType<string>('shipping_option_id');
 end;
 
 function TtgPreCheckoutQuery.TotalAmount: Int64;
 begin
-  Result := FJSON.GetValue<Int64>('total_amount');
+  Result := ReadToSimpleType<Int64>('total_amount');
 end;
 
 { TtgShippingQuery }
@@ -1100,12 +1100,12 @@ end;
 
 function TtgShippingQuery.ID: string;
 begin
-  Result := FJSON.GetValue<string>('id');
+  Result :=ReadToSimpleType<string>('id');
 end;
 
 function TtgShippingQuery.InvoicePayload: string;
 begin
-  Result := FJSON.GetValue<string>('invoice_payload');
+  Result := ReadToSimpleType<string>('invoice_payload');
 end;
 
 function TtgShippingQuery.ShippingAddress: ItgShippingAddress;
