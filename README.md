@@ -36,6 +36,7 @@ as well as many others who ask / suggest features / points bugs.
 ## Powered by TelegaPi
 * [🤖ChallengeOfTheDay](https://goo.gl/4TbFH9)
 * [racecontrol](https://t.me/racecontrol)
+* [Troloload](https://t.me/trololoadBot) - bot for sharing files in internet
 
 ## Dependencies
 
@@ -79,7 +80,7 @@ Telega π - Библиотека для работы с Telegram Bot API в Delp
 
 * [🤖ChallengeOfTheDay](https://goo.gl/4TbFH9)
 * [racecontrol](https://t.me/racecontrol)
-
+* [Troloload](https://t.me/trololoadBot) - бот поможет Вам поделиться файлами в сети Интернет
 
 ## Зависимости
 
