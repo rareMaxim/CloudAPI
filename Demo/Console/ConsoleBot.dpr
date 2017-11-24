@@ -9,7 +9,7 @@ uses
   TelegAPI.Recesiver.Console,
   System.SysUtils,
   TelegAPI.Types,
-  TelegAPI.Types.Impl;
+  TelegaPi.Factory;
 
 procedure Main;
 var
@@ -17,7 +17,7 @@ var
   LRecesiver: TtgRecesiverConsole;
   LStop: string;
 begin
-  LBot := CreateTelegramBot('283107814:AAF9VZC6TRv6qKmOMCsLFoI8SBlV_xFMI80');
+  LBot := TtgFactory.CreateTelegram('283107814:AAF9VZC6TRv6qKmOMCsLFoI8SBlV_xFMI80');
   LRecesiver := TtgRecesiverConsole.Create(LBot);
   try
     LRecesiver.OnStart :=
