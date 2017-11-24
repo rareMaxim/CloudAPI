@@ -184,10 +184,8 @@ begin
   LTextResponse := SendDataToServer(Method, Parameters);
   if Assigned(OnReceiveRawData) then
     OnReceiveRawData(Self, LTextResponse);
-  if LTextResponse.IsEmpty and Assigned(ExceptionManager) then
-  begin
-    ExceptionManager.HaveGlobalExeption('RequestAPI', ETelegramUnknownData.Create('Can''t parse response'));
-  end
+  if LTextResponse.IsEmpty then
+    ExceptionManager.HaveGlobalExeption('RequestAPI', ETelegramUnknownData.Create('Can''t parse response'))
   else
     Result := ApiTest(LTextResponse, Parameters);
 end;
@@ -196,6 +194,9 @@ function TTelegramBot.ApiTest(const ARequest: string; Parameters: TDictionary<st
 var
   FJSON: TJSONObject;
 begin
+  Result := '';
+  if ARequest.IsEmpty then
+    Exit;
   FJSON := TJSONObject.ParseJSONValue(ARequest) as TJSONObject;
   try
     if FJSON.GetValue('ok') is TJSONFalse then
@@ -260,6 +261,7 @@ var
 begin
   LHttp := THTTPClient.Create;
   LParamToDate := nil;
+  Result := string.Empty;
   try
     LHttp.ProxySettings := FProxySettings;
     LFullUrl := 'https://api.telegram.org/bot' + FToken + '/' + Method;
@@ -273,16 +275,12 @@ begin
         LHttpResponse := LHttp.Get(LFullUrl);
       if LHttpResponse.StatusCode = 200 then
         Result := LHttpResponse.ContentAsString(TEncoding.UTF8)
-      else if Assigned(ExceptionManager) then
-        ExceptionManager.HaveGlobalExeption('SendDataToServer', EApiRequestException.Create(LHttpResponse.StatusText, LHttpResponse.StatusCode, Parameters));
+      else
+        ExceptionManager.HaveGlobalExeption('SendDataToServer', EApiRequestException.Create(LHttpResponse.StatusText, LHttpResponse.StatusCode, Parameters))
     except
       on E: Exception do
       begin
-        if Assigned(ExceptionManager) then
-          ExceptionManager.HaveGlobalExeption('SendDataToServer', E)
-        else
-          raise E;
-        Result := string.Empty;
+        ExceptionManager.HaveGlobalExeption('SendDataToServer', E);
       end;
     end;
   finally
@@ -830,6 +828,8 @@ end;
 
 function TTelegramBot.GetExceptionManager: ItgExceptionHandler;
 begin
+  if FExceptionManager = nil then
+    FExceptionManager := TtgExceptionManagerConsole.Create;
   Result := FExceptionManager;
 end;
 

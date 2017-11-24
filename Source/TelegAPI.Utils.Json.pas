@@ -111,7 +111,8 @@ end;
 
 class function TBaseJson.FromJson(const AJson: string): TBaseJson;
 begin
-  Result := TBaseJson.Create(AJson);
+  if not AJson.IsEmpty then
+    Result := TBaseJson.Create(AJson);
 end;
 
 class function TBaseJson.GetTgClass: TBaseJsonClass;
