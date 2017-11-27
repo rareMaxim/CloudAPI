@@ -19,11 +19,11 @@ uses
   FMX.Controls.Presentation,
   FMX.ScrollBox,
   FMX.Layouts,
-  TelegAPI.Recesiver.Base,
-  TelegAPI.Recesiver.UI,
+  TelegAPI.Receiver.Base,
+  TelegAPI.Receiver.UI,
   TelegAPI.Bot.Impl,
   TelegAPI.Base,
-  TelegAPI.Recesiver.Service;
+  TelegAPI.Receiver.Service;
 
 type
   TMain = class(TForm)
@@ -34,7 +34,7 @@ type
     swtchToken: TSwitch;
     tgBot: TTelegramBot;
     tgExceptionManagerUI1: TtgExceptionManagerUI;
-    tgRecesiverUI1: TtgRecesiverUI;
+    tgRecesiverUI1: TtgReceiverUI;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure swtchTokenSwitch(Sender: TObject);
     procedure tgExceptionManagerUI1GlobalException(ASender: TObject; const AMethod: string; AException: Exception);
