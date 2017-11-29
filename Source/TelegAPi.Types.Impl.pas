@@ -1268,15 +1268,15 @@ function TtgChat.TypeChat: TtgChatType;
 var
   LValue: string;
 begin
-  LValue := ReadToSimpleType<string>('type_chat');
+  LValue := ReadToSimpleType<string>('type');
   Result := TtgChatType.&private;
   if LValue = 'private' then
     Result := TtgChatType.&private
-  else if LValue = 'Group' then
+  else if LValue = 'group' then
     Result := TtgChatType.Group
-  else if LValue = 'Channel' then
+  else if LValue = 'channel' then
     Result := TtgChatType.Channel
-  else if LValue = 'Supergroup' then
+  else if LValue = 'supergroup' then
     Result := TtgChatType.Supergroup
   else
     UnSupported;
