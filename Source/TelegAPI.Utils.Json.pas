@@ -12,6 +12,7 @@ type
   private
   protected
     FJSON: TJSONObject;
+    FJSONAsString: string;
     function ReadToClass<T: class, constructor>(const AKey: string): T;
     function ReadToSimpleType<T>(const AKey: string): T;
     function ReadToDateTime(const AKey: string): TDateTime;
@@ -60,6 +61,7 @@ begin
   if AJson.IsEmpty then
     Exit;
   FJSON := TJSONObject.ParseJSONValue(AJson) as TJSONObject;
+  FJSONAsString := FJSON.ToJSON;
 end;
 
 function TBaseJson.ReadToArray<TI>(TgClass: TBaseJsonClass; const AKey: string): TArray<TI>;
@@ -111,7 +113,9 @@ end;
 
 class function TBaseJson.FromJson(const AJson: string): TBaseJson;
 begin
-  if not AJson.IsEmpty then
+  if AJson.IsEmpty then
+    Result := nil
+  else
     Result := TBaseJson.Create(AJson);
 end;
 
@@ -131,10 +135,10 @@ end;
 
 function TBaseJson.ReadToSimpleType<T>(const AKey: string): T;
 begin
-  Result := Default(T);
-//  if  not
-  FJSON.TryGetValue<T>(AKey, Result)
- //   then      raise Exception.Create('Cant extract value' + #13#10 + FJSON.ToJSON);
+  if Assigned(FJSON) then
+    FJSON.TryGetValue<T>(AKey, Result)
+  else
+    Result := Default(T);
 end;
 
 class procedure TBaseJson.UnSupported;

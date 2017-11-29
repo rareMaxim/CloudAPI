@@ -74,14 +74,17 @@ object Main: TMain
     Left = 216
     Top = 192
   end
-  object tgRecesiverUI1: TtgRecesiverUI
+  object tgReceiverUI1: TtgReceiverUI
     Bot = tgBot
     OnStart = tgRecesiverUI1Start
     OnMessage = tgRecesiverUI1Message
     OnInlineQuery = tgRecesiverUI1InlineQuery
     OnChosenInlineResult = tgRecesiverUI1ChosenInlineResult
+    OnEditedMessage = tgRecesiverUI1Message
     OnChannelPost = tgRecesiverUI1Message
-    Left = 192
-    Top = 264
+    OnEditedChannelPost = tgRecesiverUI1Message
+    OnCallbackQuery = tgRecesiverUI1CallbackQuery
+    Left = 312
+    Top = 112
   end
 end

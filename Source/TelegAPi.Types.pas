@@ -411,7 +411,7 @@ type
     Width: Integer;
     Height: Integer;
     Duration: Integer;
-    constructor Create(AMedia: TValue; const ACaption: string = ''; AWidth: Integer = 0; AHeight: Integer = 0; ADuration: Integer = 0);
+    constructor Create(AMedia: TValue; const ACaption: string = ''; AWidth: Integer = 0; AHeight: Integer = 0; ADuration: Integer = 0); reintroduce;
   end;
 
 implementation
@@ -461,8 +461,7 @@ end;
 
 { TtgInputMediaVideo }
 
-constructor TtgInputMediaVideo.Create(AMedia: TValue; const ACaption: string;
-  AWidth, AHeight, ADuration: Integer);
+constructor TtgInputMediaVideo.Create(AMedia: TValue; const ACaption: string; AWidth, AHeight, ADuration: Integer);
 begin
   inherited Create(AMedia, ACaption);
   FType := 'video';

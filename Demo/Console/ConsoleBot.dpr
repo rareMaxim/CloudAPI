@@ -6,7 +6,7 @@ program ConsoleBot;
 uses
   TelegAPI.Bot,
   Rest.Json,
-  TelegAPI.Recesiver.Console,
+  TelegAPI.Receiver.Console,
   System.SysUtils,
   TelegAPI.Types,
   TelegaPi.Exceptions,
@@ -15,12 +15,12 @@ uses
 procedure Main;
 var
   LBot: ITelegramBot;
-  LRecesiver: TtgRecesiverConsole;
+  LRecesiver: TtgReceiverConsole;
   LExcp: TtgExceptionManagerConsole;
   LStop: string;
 begin
-  LBot := TtgFactory.CreateTelegram('283107814:AAF9VZC6TRv6qKmOMCsLFoI8SBlV_xFMI80');
-  LRecesiver := TtgRecesiverConsole.Create(LBot);
+  LBot := TtgFactory.CreateTelegram('283107814:AAGOGxUCwTC2bOs2krUSuEtqZd2UnA8NZ2g');
+  LRecesiver := TtgReceiverConsole.Create(LBot);
   try
     LExcp := LBot.ExceptionManager as TtgExceptionManagerConsole;
     LExcp.OnApiException :=

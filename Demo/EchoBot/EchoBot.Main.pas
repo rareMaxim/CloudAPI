@@ -34,7 +34,7 @@ type
     swtchToken: TSwitch;
     tgBot: TTelegramBot;
     tgExceptionManagerUI1: TtgExceptionManagerUI;
-    tgRecesiverUI1: TtgReceiverUI;
+    tgReceiverUI1: TtgReceiverUI;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure swtchTokenSwitch(Sender: TObject);
     procedure tgExceptionManagerUI1GlobalException(ASender: TObject; const AMethod: string; AException: Exception);
@@ -76,7 +76,7 @@ uses
 
 procedure TMain.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
-  tgRecesiverUI1.IsActive := False;
+  tgReceiverUI1.IsActive := False;
 end;
 
 procedure TMain.ParseLocationMessage(Msg: ITgMessage);
@@ -145,7 +145,7 @@ begin
   tgBot.Token := edtToken.Text;
   if not tgBot.IsValidToken then
     raise ELoginCredentialError.Create('invalid token format');
-  tgRecesiverUI1.IsActive := swtchToken.IsChecked;
+  tgReceiverUI1.IsActive := swtchToken.IsChecked;
 end;
 
 procedure TMain.SendPhoto(Msg: ITgMessage);
