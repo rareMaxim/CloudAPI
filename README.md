@@ -62,7 +62,8 @@ Telega π - Библиотека для работы с Telegram Bot API в Delp
 
 ### **Donate**
 
-- [Mail])(t.me/rapa_pa)
+- [Ad Past] (t.me/ratt77)
+- [Mail](t.me/rapa_pa)
 - 1️⃣ eugene afx
 
 **Webmoney:**
