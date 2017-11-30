@@ -94,15 +94,11 @@ var
 begin
   Result := nil;
   LObj := FJSON.GetValue(AKey);
-  try
-    if Assigned(LObj) and (not LObj.Null) then
-    begin
-      LValue := LObj.ToJSON;
-      Result := TBaseJsonClass(T).Create(LValue) as T;
-    end
-  finally
-    // LObj.Free;
-  end;
+  if Assigned(LObj) and (not LObj.Null) then
+  begin
+    LValue := LObj.ToJSON;
+    Result := TBaseJsonClass(T).Create(LValue) as T;
+  end
 end;
 
 destructor TBaseJson.Destroy;

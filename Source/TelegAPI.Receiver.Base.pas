@@ -102,7 +102,10 @@ begin
   begin
     LUpdates := ReadUpdates;
     if Length(LUpdates) = 0 then
+    begin
+      Sleep(FPollingInterval);
       Continue;
+    end;
     EventParser(LUpdates);
     if LUpdates <> nil then
       MessageOffset := LUpdates[High(LUpdates)].ID + 1;
