@@ -106,9 +106,8 @@ begin
       Sleep(FPollingInterval);
       Continue;
     end;
+    MessageOffset := LUpdates[High(LUpdates)].ID + 1;
     EventParser(LUpdates);
-    if LUpdates <> nil then
-      MessageOffset := LUpdates[High(LUpdates)].ID + 1;
     Sleep(FPollingInterval);
   end;
   DoOnStop;
@@ -120,10 +119,7 @@ begin
     Result := FBot.GetUpdates(MessageOffset, 100, 0, AllowedUpdates);
   except
     on E: Exception do
-      if Bot.ExceptionManager <> nil then
-        Bot.ExceptionManager.HaveGlobalExeption('TTgBotReceiverBase.ReadUpdates', E)
-      else
-        raise E;
+      Bot.ExceptionManager.HaveGlobalExeption('TTgBotReceiverBase.ReadUpdates', E)
   end;
 end;
 
