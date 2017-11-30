@@ -19,7 +19,7 @@ as well as many others who ask / suggest features / points bugs.
 
 ### **Donate**
 
-- [Ad Past](https://t.me/ratt77)
+- [Ad Past](https://t.me/att77)
 - [Mail](https://t.me/rapa_pa)
 - 1️⃣ eugene afx
 
@@ -64,7 +64,7 @@ Telega π - Библиотека для работы с Telegram Bot API в Delp
 
 ### **Donate**
 
-- [Ad Past](https://t.me/ratt77)
+- [Ad Past](https://t.me/att77)
 - [Mail](https://t.me/rapa_pa)
 - 1️⃣ eugene afx
 
