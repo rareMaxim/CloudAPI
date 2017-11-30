@@ -39,11 +39,11 @@ type
     procedure swtchTokenSwitch(Sender: TObject);
     procedure tgExceptionManagerUI1GlobalException(ASender: TObject; const AMethod: string; AException: Exception);
     procedure tgExceptionManagerUI1ApiException(ASender: TObject; const AMethod: string; AApiRequestException: EApiRequestException);
-    procedure tgRecesiverUI1CallbackQuery(ASender: TObject; ACallbackQuery: ItgCallbackQuery);
-    procedure tgRecesiverUI1Message(ASender: TObject; AMessage: ITgMessage);
-    procedure tgRecesiverUI1ChosenInlineResult(ASender: TObject; AChosenInlineResult: ItgChosenInlineResult);
-    procedure tgRecesiverUI1InlineQuery(ASender: TObject; AInlineQuery: ItgInlineQuery);
-    procedure tgRecesiverUI1Start(Sender: TObject);
+    procedure tgReceiverUI1CallbackQuery(ASender: TObject; ACallbackQuery: ItgCallbackQuery);
+    procedure tgReceiverUI1Message(ASender: TObject; AMessage: ITgMessage);
+    procedure tgReceiverUI1ChosenInlineResult(ASender: TObject; AChosenInlineResult: ItgChosenInlineResult);
+    procedure tgReceiverUI1InlineQuery(ASender: TObject; AInlineQuery: ItgInlineQuery);
+    procedure tgReceiverUI1Start(Sender: TObject);
   private
     { Private declarations }
     procedure WriteLine(const AValue: string);
@@ -220,17 +220,17 @@ begin
   WriteLine(AMethod + '@' + AException.ToString);
 end;
 
-procedure TMain.tgRecesiverUI1CallbackQuery(ASender: TObject; ACallbackQuery: ItgCallbackQuery);
+procedure TMain.tgReceiverUI1CallbackQuery(ASender: TObject; ACallbackQuery: ItgCallbackQuery);
 begin
   tgBot.AnswerCallbackQuery(ACallbackQuery.Id, 'Received ' + ACallbackQuery.Data);
 end;
 
-procedure TMain.tgRecesiverUI1ChosenInlineResult(ASender: TObject; AChosenInlineResult: ItgChosenInlineResult);
+procedure TMain.tgReceiverUI1ChosenInlineResult(ASender: TObject; AChosenInlineResult: ItgChosenInlineResult);
 begin
   WriteLine('Received choosen inline result: ' + AChosenInlineResult.ResultId);
 end;
 
-procedure TMain.tgRecesiverUI1InlineQuery(ASender: TObject; AInlineQuery: ItgInlineQuery);
+procedure TMain.tgReceiverUI1InlineQuery(ASender: TObject; AInlineQuery: ItgInlineQuery);
 var
   results: TArray<TtgInlineQueryResult>;
 begin
@@ -255,7 +255,7 @@ begin
   tgBot.AnswerInlineQuery(AInlineQuery.Id, results, 0, True);
 end;
 
-procedure TMain.tgRecesiverUI1Message(ASender: TObject; AMessage: ITgMessage);
+procedure TMain.tgReceiverUI1Message(ASender: TObject; AMessage: ITgMessage);
 begin
   case AMessage.&Type of
     TtgMessageType.TextMessage:
@@ -267,7 +267,7 @@ begin
   end;
 end;
 
-procedure TMain.tgRecesiverUI1Start(Sender: TObject);
+procedure TMain.tgReceiverUI1Start(Sender: TObject);
 begin
   WriteLine('Bot connected');
   Caption := tgBot.GetMe.Username;

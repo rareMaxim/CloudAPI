@@ -48,7 +48,7 @@ type
     procedure DoOnPreCheckoutQuery(APreCheckoutQuery: ItgPreCheckoutQuery); virtual; abstract;
   public
     constructor Create(AOwner: TComponent); overload; override;
-    constructor Create(ABot: ITelegramBot); overload;
+    constructor Create(ABot: ITelegramBot); reintroduce; overload;
     procedure Start;
     procedure Stop;
   published
@@ -101,6 +101,8 @@ begin
   while FIsActive do
   begin
     LUpdates := ReadUpdates;
+    if Length(LUpdates) = 0 then
+      Continue;
     EventParser(LUpdates);
     if LUpdates <> nil then
       MessageOffset := LUpdates[High(LUpdates)].ID + 1;

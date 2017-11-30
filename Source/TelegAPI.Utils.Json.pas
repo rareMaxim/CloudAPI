@@ -135,9 +135,7 @@ end;
 
 function TBaseJson.ReadToSimpleType<T>(const AKey: string): T;
 begin
-  if Assigned(FJSON) then
-    FJSON.TryGetValue<T>(AKey, Result)
-  else
+  if (not Assigned(FJSON)) or (not FJSON.TryGetValue<T>(AKey, Result)) then
     Result := Default(T);
 end;
 

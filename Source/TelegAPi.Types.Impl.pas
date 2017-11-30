@@ -165,7 +165,8 @@ type
     procedure SetLatitude(const Value: Single);
     procedure SetLongitude(const Value: Single);
   public
-    constructor Create(ALongitude, ALatitude: Single); overload;
+    constructor Create(ALongitude, ALatitude: Single); reintroduce; overload;
+    constructor Create(const AJson: string); overload; override;
     property Longitude: Single read GetLongitude write SetLongitude;
     property Latitude: Single read GetLatitude write SetLatitude;
   end;
@@ -398,7 +399,9 @@ type
 
 implementation
 
-uses System.JSON, System.TypInfo;
+uses
+  System.JSON,
+  System.TypInfo;
 { TtgAnimation }
 
 function TtgAnimation.FileId: string;
@@ -718,12 +721,7 @@ begin
     Exit(TtgMessageType.GameMessage);
   if (Location <> nil) then
     Exit(TtgMessageType.LocationMessage);
-  if (NewChatMember <> nil) or (LeftChatMember <> nil) or
-    ((NewChatPhoto <> nil) and (Length(NewChatPhoto) > 0)) or
-    ((NewChatMembers <> nil) and (Length(NewChatMembers) > 0)) or
-    (not NewChatTitle.IsEmpty) or DeleteChatPhoto or GroupChatCreated or
-    SupergroupChatCreated or ChannelChatCreated or (MigrateToChatId <> 0) or
-    (MigrateFromChatId <> 0) or (PinnedMessage <> nil) then
+  if (NewChatMember <> nil) or (LeftChatMember <> nil) or ((NewChatPhoto <> nil) and (Length(NewChatPhoto) > 0)) or ((NewChatMembers <> nil) and (Length(NewChatMembers) > 0)) or (not NewChatTitle.IsEmpty) or DeleteChatPhoto or GroupChatCreated or SupergroupChatCreated or ChannelChatCreated or (MigrateToChatId <> 0) or (MigrateFromChatId <> 0) or (PinnedMessage <> nil) then
     Exit(TtgMessageType.ServiceMessage);
   if (Photo <> nil) and (Length(Photo) > 0) then
     Exit(TtgMessageType.PhotoMessage);
@@ -905,6 +903,11 @@ constructor TtgLocation.Create(ALongitude, ALatitude: Single);
 begin
   SetLongitude(ALongitude);
   SetLatitude(ALatitude);
+end;
+
+constructor TtgLocation.Create(const AJson: string);
+begin
+  inherited Create(AJson);
 end;
 
 function TtgLocation.GetLatitude: Single;
@@ -1100,7 +1103,7 @@ end;
 
 function TtgShippingQuery.ID: string;
 begin
-  Result :=ReadToSimpleType<string>('id');
+  Result := ReadToSimpleType<string>('id');
 end;
 
 function TtgShippingQuery.InvoicePayload: string;
@@ -1759,7 +1762,7 @@ begin
   SetLength(Result, LArr1.Count);
   for I := 0 to High(Result) do
   begin
-    LArr2 := LArr1.Items[i] as TJSONArray;
+    LArr2 := LArr1.Items[I] as TJSONArray;
     if (not Assigned(LArr2)) or LArr2.Null then
       Exit(nil);
     SetLength(Result[I], LArr2.Count);
@@ -1774,3 +1777,4 @@ begin
 end;
 
 end.
+
