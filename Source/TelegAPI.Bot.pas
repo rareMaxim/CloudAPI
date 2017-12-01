@@ -1667,18 +1667,7 @@ type
     property ExceptionManager: ItgExceptionHandler read GetExceptionManager write SetExceptionManager;
   end;
 
-function CreateTelegramBot(const AToken: string = ''): ITelegramBot;
-
 implementation
-
-uses
-  TelegAPI.Bot.Impl;
-
-function CreateTelegramBot(const AToken: string = ''): ITelegramBot;
-begin
-  Result := TTelegramBot.Create(nil);
-  Result.Token := AToken;
-end;
 
 end.
 

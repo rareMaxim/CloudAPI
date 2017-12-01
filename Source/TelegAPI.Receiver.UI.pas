@@ -1,13 +1,13 @@
-unit TelegAPI.Recesiver.UI;
+unit TelegAPI.Receiver.UI;
 
 interface
 
 uses
   TelegAPI.Types,
-  TelegAPI.Recesiver.Service;
+  TelegAPI.Receiver.Service;
 
 type
-  TtgRecesiverUI = class(TtgRecesiverService)
+  TtgReceiverUI = class(TtgReceiverService)
   protected
     procedure EventParser(AUpdates: System.TArray<TelegAPI.Types.ItgUpdate>); override;
   end;
@@ -18,7 +18,7 @@ uses
   System.Classes;
 { TtgRecesiverUI }
 
-procedure TtgRecesiverUI.EventParser(AUpdates: System.TArray<TelegAPI.Types.ItgUpdate>);
+procedure TtgReceiverUI.EventParser(AUpdates: System.TArray<TelegAPI.Types.ItgUpdate>);
 begin
   TThread.Synchronize(nil,
     procedure

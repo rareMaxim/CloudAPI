@@ -165,7 +165,8 @@ type
     procedure SetLatitude(const Value: Single);
     procedure SetLongitude(const Value: Single);
   public
-    constructor Create(ALongitude, ALatitude: Single); overload;
+    constructor Create(ALongitude, ALatitude: Single); reintroduce; overload;
+    constructor Create(const AJson: string); overload; override;
     property Longitude: Single read GetLongitude write SetLongitude;
     property Latitude: Single read GetLatitude write SetLatitude;
   end;
@@ -398,7 +399,9 @@ type
 
 implementation
 
-uses System.JSON, System.TypInfo;
+uses
+  System.JSON,
+  System.TypInfo;
 { TtgAnimation }
 
 function TtgAnimation.FileId: string;
@@ -718,12 +721,7 @@ begin
     Exit(TtgMessageType.GameMessage);
   if (Location <> nil) then
     Exit(TtgMessageType.LocationMessage);
-  if (NewChatMember <> nil) or (LeftChatMember <> nil) or
-    ((NewChatPhoto <> nil) and (Length(NewChatPhoto) > 0)) or
-    ((NewChatMembers <> nil) and (Length(NewChatMembers) > 0)) or
-    (not NewChatTitle.IsEmpty) or DeleteChatPhoto or GroupChatCreated or
-    SupergroupChatCreated or ChannelChatCreated or (MigrateToChatId <> 0) or
-    (MigrateFromChatId <> 0) or (PinnedMessage <> nil) then
+  if (NewChatMember <> nil) or (LeftChatMember <> nil) or ((NewChatPhoto <> nil) and (Length(NewChatPhoto) > 0)) or ((NewChatMembers <> nil) and (Length(NewChatMembers) > 0)) or (not NewChatTitle.IsEmpty) or DeleteChatPhoto or GroupChatCreated or SupergroupChatCreated or ChannelChatCreated or (MigrateToChatId <> 0) or (MigrateFromChatId <> 0) or (PinnedMessage <> nil) then
     Exit(TtgMessageType.ServiceMessage);
   if (Photo <> nil) and (Length(Photo) > 0) then
     Exit(TtgMessageType.PhotoMessage);
@@ -907,6 +905,11 @@ begin
   SetLatitude(ALatitude);
 end;
 
+constructor TtgLocation.Create(const AJson: string);
+begin
+  inherited Create(AJson);
+end;
+
 function TtgLocation.GetLatitude: Single;
 begin
   Result := ReadToSimpleType<Single>('latitude');
@@ -977,32 +980,32 @@ end;
 
 function TtgUser.FirstName: string;
 begin
-  Result := FJSON.GetValue<string>('first_name');
+  Result := ReadToSimpleType<string>('first_name');
 end;
 
 function TtgUser.ID: Int64;
 begin
-  Result := FJSON.GetValue<Int64>('id');
+  Result := ReadToSimpleType<Int64>('id');
 end;
 
 function TtgUser.IsBot: Boolean;
 begin
-  Result := FJSON.GetValue<Boolean>('is_bot');
+  Result := ReadToSimpleType<Boolean>('is_bot');
 end;
 
 function TtgUser.LanguageCode: string;
 begin
-  Result := FJSON.GetValue<string>('language_code');
+  Result := ReadToSimpleType<string>('language_code');
 end;
 
 function TtgUser.LastName: string;
 begin
-  Result := FJSON.GetValue<string>('last_name');
+  Result := ReadToSimpleType<string>('last_name');
 end;
 
 function TtgUser.Username: string;
 begin
-  Result := FJSON.GetValue<string>('username');
+  Result := ReadToSimpleType<string>('username');
 end;
 
 { TtgInlineQuery }
@@ -1014,17 +1017,17 @@ end;
 
 function TtgInlineQuery.ID: string;
 begin
-  Result := FJSON.GetValue<string>('id');
+  Result := ReadToSimpleType<string>('id');
 end;
 
 function TtgInlineQuery.Offset: string;
 begin
-  Result := FJSON.GetValue<string>('offset');
+  Result := ReadToSimpleType<string>('offset');
 end;
 
 function TtgInlineQuery.Query: string;
 begin
-  Result := FJSON.GetValue<string>('query');
+  Result := ReadToSimpleType<string>('query');
 end;
 
 { TtgChosenInlineResult }
@@ -1036,7 +1039,7 @@ end;
 
 function TtgChosenInlineResult.InlineMessageId: string;
 begin
-  Result := FJSON.GetValue<string>('inline_message_id');
+  Result := ReadToSimpleType<string>('inline_message_id');
 end;
 
 function TtgChosenInlineResult.Location: ItgLocation;
@@ -1046,19 +1049,19 @@ end;
 
 function TtgChosenInlineResult.Query: string;
 begin
-  Result := FJSON.GetValue<string>('query');
+  Result := ReadToSimpleType<string>('query');
 end;
 
 function TtgChosenInlineResult.ResultId: string;
 begin
-  Result := FJSON.GetValue<string>('result_id');
+  Result := ReadToSimpleType<string>('result_id');
 end;
 
 { TtgPreCheckoutQuery }
 
 function TtgPreCheckoutQuery.Currency: string;
 begin
-  Result := FJSON.GetValue<string>('currency');
+  Result := ReadToSimpleType<string>('currency');
 end;
 
 function TtgPreCheckoutQuery.From: ItgUser;
@@ -1068,12 +1071,12 @@ end;
 
 function TtgPreCheckoutQuery.ID: string;
 begin
-  Result := FJSON.GetValue<string>('id');
+  Result := ReadToSimpleType<string>('id');
 end;
 
 function TtgPreCheckoutQuery.InvoicePayload: string;
 begin
-  Result := FJSON.GetValue<string>('invoice_payload');
+  Result := ReadToSimpleType<string>('invoice_payload');
 end;
 
 function TtgPreCheckoutQuery.OrderInfo: ItgOrderInfo;
@@ -1083,12 +1086,12 @@ end;
 
 function TtgPreCheckoutQuery.ShippingOptionId: string;
 begin
-  Result := FJSON.GetValue<string>('shipping_option_id');
+  Result := ReadToSimpleType<string>('shipping_option_id');
 end;
 
 function TtgPreCheckoutQuery.TotalAmount: Int64;
 begin
-  Result := FJSON.GetValue<Int64>('total_amount');
+  Result := ReadToSimpleType<Int64>('total_amount');
 end;
 
 { TtgShippingQuery }
@@ -1100,12 +1103,12 @@ end;
 
 function TtgShippingQuery.ID: string;
 begin
-  Result := FJSON.GetValue<string>('id');
+  Result := ReadToSimpleType<string>('id');
 end;
 
 function TtgShippingQuery.InvoicePayload: string;
 begin
-  Result := FJSON.GetValue<string>('invoice_payload');
+  Result := ReadToSimpleType<string>('invoice_payload');
 end;
 
 function TtgShippingQuery.ShippingAddress: ItgShippingAddress;
@@ -1268,15 +1271,15 @@ function TtgChat.TypeChat: TtgChatType;
 var
   LValue: string;
 begin
-  LValue := ReadToSimpleType<string>('type_chat');
+  LValue := ReadToSimpleType<string>('type');
   Result := TtgChatType.&private;
   if LValue = 'private' then
     Result := TtgChatType.&private
-  else if LValue = 'Group' then
+  else if LValue = 'group' then
     Result := TtgChatType.Group
-  else if LValue = 'Channel' then
+  else if LValue = 'channel' then
     Result := TtgChatType.Channel
-  else if LValue = 'Supergroup' then
+  else if LValue = 'supergroup' then
     Result := TtgChatType.Supergroup
   else
     UnSupported;
@@ -1759,7 +1762,7 @@ begin
   SetLength(Result, LArr1.Count);
   for I := 0 to High(Result) do
   begin
-    LArr2 := LArr1.Items[i] as TJSONArray;
+    LArr2 := LArr1.Items[I] as TJSONArray;
     if (not Assigned(LArr2)) or LArr2.Null then
       Exit(nil);
     SetLength(Result[I], LArr2.Count);
@@ -1774,3 +1777,4 @@ begin
 end;
 
 end.
+

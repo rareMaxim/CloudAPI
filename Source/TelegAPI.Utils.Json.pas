@@ -12,6 +12,7 @@ type
   private
   protected
     FJSON: TJSONObject;
+    FJSONAsString: string;
     function ReadToClass<T: class, constructor>(const AKey: string): T;
     function ReadToSimpleType<T>(const AKey: string): T;
     function ReadToDateTime(const AKey: string): TDateTime;
@@ -60,6 +61,7 @@ begin
   if AJson.IsEmpty then
     Exit;
   FJSON := TJSONObject.ParseJSONValue(AJson) as TJSONObject;
+  FJSONAsString := FJSON.ToJSON;
 end;
 
 function TBaseJson.ReadToArray<TI>(TgClass: TBaseJsonClass; const AKey: string): TArray<TI>;
@@ -92,15 +94,11 @@ var
 begin
   Result := nil;
   LObj := FJSON.GetValue(AKey);
-  try
-    if Assigned(LObj) and (not LObj.Null) then
-    begin
-      LValue := LObj.ToJSON;
-      Result := TBaseJsonClass(T).Create(LValue) as T;
-    end
-  finally
-    // LObj.Free;
-  end;
+  if Assigned(LObj) and (not LObj.Null) then
+  begin
+    LValue := LObj.ToJSON;
+    Result := TBaseJsonClass(T).Create(LValue) as T;
+  end
 end;
 
 destructor TBaseJson.Destroy;
@@ -111,7 +109,10 @@ end;
 
 class function TBaseJson.FromJson(const AJson: string): TBaseJson;
 begin
-  Result := TBaseJson.Create(AJson);
+  if AJson.IsEmpty then
+    Result := nil
+  else
+    Result := TBaseJson.Create(AJson);
 end;
 
 class function TBaseJson.GetTgClass: TBaseJsonClass;
@@ -130,10 +131,8 @@ end;
 
 function TBaseJson.ReadToSimpleType<T>(const AKey: string): T;
 begin
-  Result := Default(T);
-//  if  not
-  FJSON.TryGetValue<T>(AKey, Result)
- //   then      raise Exception.Create('Cant extract value' + #13#10 + FJSON.ToJSON);
+  if (not Assigned(FJSON)) or (not FJSON.TryGetValue<T>(AKey, Result)) then
+    Result := Default(T);
 end;
 
 class procedure TBaseJson.UnSupported;
