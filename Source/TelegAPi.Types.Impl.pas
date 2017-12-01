@@ -1748,23 +1748,24 @@ end;
 function TtgUserProfilePhotos.Photos: TArray<TArray<ItgPhotoSize>>;
 var
   LArr1, LArr2: TJSONArray;
-  I: Integer;
-  j: Integer;
+  photoIndex: Integer;
+  sizeIndex: Integer;
   GUID: TGUID;
 begin
   LArr1 := FJSON.GetValue('photos') as TJSONArray;
-  if (not Assigned(LArr1)) or LArr1.Null then
-    Exit(nil);
+  if (not Assigned(LArr1)) or LArr1.Null then exit(nil);
+
   GUID := GetTypeData(TypeInfo(ItgPhotoSize))^.GUID;
   SetLength(Result, LArr1.Count);
-  for I := 0 to High(Result) do
+
+  for photoIndex := 0 to High(Result) do
   begin
-    LArr2 := LArr1.Items[i] as TJSONArray;
+    LArr2 := LArr1.Items[photoIndex] as TJSONArray;
     if (not Assigned(LArr2)) or LArr2.Null then
       Exit(nil);
-    SetLength(Result[I], LArr2.Count);
-    for j := 0 to High(Result[I]) do
-      GetTgClass.Create(LArr2.Items[j].ToJson).GetInterface(GUID, Result[I, j]);
+    SetLength(Result[photoIndex], LArr2.Count);
+    for sizeIndex := 0 to High(Result[photoIndex]) do
+      GetTgClass.Create(LArr2.Items[sizeIndex].ToJson).GetInterface(GUID, Result[photoIndex, sizeIndex]);
   end;
 end;
 
