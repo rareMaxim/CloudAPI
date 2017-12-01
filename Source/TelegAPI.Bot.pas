@@ -14,12 +14,12 @@ uses
 type
   ITelegramBot = interface
     ['{12FA5CF8-3723-4ED1-BC1F-F1643B4FA361}']
-      // private
+    // private
     function GetToken: string;
     procedure SetToken(const Value: string);
     function GetExceptionManager: ItgExceptionHandler;
     procedure SetExceptionManager(const Value: ItgExceptionHandler);
-      // public
+    // public
 {$REGION 'Getting updates'}
      /// <summary>
      /// <para>
@@ -534,7 +534,8 @@ type
      /// <remarks>
      /// Use this method to send video messages.
      /// </remarks>
-    function SendVideoNote(ChatId: TValue; //
+    function SendVideoNote(//
+      const ChatId: TValue; //
       const VideoNote: TValue; //
       const Duration: Int64 = 0; //
       const Length: Int64 = 0; //
@@ -673,7 +674,9 @@ type
      /// take a noticeable amount of time to arrive.
      /// </remarks>
      /// <seealso href="https://core.telegram.org/bots/api#sendchataction" />
-    function SendChatAction(const ChatId: TValue; const Action: TtgSendChatAction): Boolean;
+    function SendChatAction(//
+      const ChatId: TValue; //
+      const Action: TtgSendChatAction): Boolean;
      /// <summary>
      /// Use this method to get a list of profile pictures for a user.
      /// </summary>
@@ -693,7 +696,10 @@ type
      /// UserProfilePhotos</see> object.
      /// </returns>
      /// <seealso href="https://core.telegram.org/bots/api#getuserprofilephotos" />
-    function GetUserProfilePhotos(const ChatId: TValue; const Offset: Int64; const Limit: Int64 = 100): ItgUserProfilePhotos;
+    function GetUserProfilePhotos(//
+      const ChatId: TValue; //
+      const Offset: Int64; //
+      const Limit: Int64 = 100): ItgUserProfilePhotos;
      /// <summary>
      /// Use this method to get basic info about a file and prepare it for
      /// downloading. For the moment, bots can download files of up to 20MB in
@@ -737,7 +743,10 @@ type
      /// the member that added them.
      /// </remarks>
      /// <seealso href="https://core.telegram.org/bots/api#kickchatmember" />
-    function KickChatMember(const ChatId: TValue; const UserId: Int64; const UntilDate: Int64 = 0): Boolean;
+    function KickChatMember(//
+      const ChatId: TValue; //
+      const UserId: Int64; //
+      const UntilDate: Int64 = 0): Boolean;
      /// <summary>
      /// Use this method to unban a previously kicked user in a supergroup.
      /// The user will not return to the group automatically, but will be able
@@ -757,7 +766,9 @@ type
      /// The bot must be an administrator in the group for this to work.
      /// </remarks>
      /// <seealso href="https://core.telegram.org/bots/api#unbanchatmember" />
-    function UnbanChatMember(const ChatId: TValue; const UserId: Int64): Boolean;
+    function UnbanChatMember(//
+      const ChatId: TValue; //
+      const UserId: Int64): Boolean;
      /// <summary>
      /// Use this method for your bot to leave a group, supergroup or channel.
      /// </summary>
@@ -828,7 +839,9 @@ type
      /// object on success.
      /// </returns>
      /// <seealso href="https://core.telegram.org/bots/api#getchatmember" />
-    function GetChatMember(const ChatId: TValue; const UserId: Int64): ItgChatMember;
+    function GetChatMember(//
+      const ChatId: TValue; //
+      const UserId: Int64): ItgChatMember;
      /// <summary>
      /// Use this method to send answers to callback queries sent from inline
      /// keyboards. The answer will be displayed to the user as a notification
@@ -898,8 +911,7 @@ type
       const Text: string; //
       const ParseMode: TtgParseMode = TtgParseMode.Default; //
       const DisableWebPagePreview: Boolean = False; //
-      const ReplyMarkup: IReplyMarkup = nil//
-    ): ITgMessage; overload;
+      const ReplyMarkup: IReplyMarkup = nil): ITgMessage; overload;
     function EditMessageText(//
       const InlineMessageId: string; //
       const Text: string; //
@@ -1048,7 +1060,9 @@ type
      /// On success, if the message was sent by the bot, the sent Message is
      /// returned, otherwise True is returned.
      /// </returns>
-    function stopMessageLiveLocation(const InlineMessageId: string; const ReplyMarkup: IReplyMarkup = nil): Boolean; overload;
+    function stopMessageLiveLocation(//
+      const InlineMessageId: string; //
+      const ReplyMarkup: IReplyMarkup = nil): Boolean; overload;
      /// <summary>
      /// Use this method to edit only the reply markup of messages sent by the
      /// bot or via the bot (for inline bots).
@@ -1069,7 +1083,10 @@ type
      /// On success, if edited message is sent by the bot, the edited Message
      /// is returned, otherwise True is returned.
      /// </returns>
-    function EditMessageReplyMarkup(const ChatId: TValue; const MessageId: Int64; const ReplyMarkup: IReplyMarkup = nil): ITgMessage; overload;
+    function EditMessageReplyMarkup(//
+      const ChatId: TValue; //
+      const MessageId: Int64; //
+      const ReplyMarkup: IReplyMarkup = nil): ITgMessage; overload;
      /// <summary>
      /// Use this method to edit only the reply markup of messages sent by the
      /// bot or via the bot (for inline bots).
@@ -1085,7 +1102,9 @@ type
      /// On success, if edited message is sent by the bot, the edited Message
      /// is returned, otherwise True is returned.
      /// </returns>
-    function EditMessageReplyMarkup(const InlineMessageId: string; const ReplyMarkup: IReplyMarkup = nil): ITgMessage; overload;
+    function EditMessageReplyMarkup(//
+      const InlineMessageId: string; //
+      const ReplyMarkup: IReplyMarkup = nil): ITgMessage; overload;
      /// <summary>
      /// Use this method to delete a message.
      /// </summary>
@@ -1110,7 +1129,9 @@ type
      /// remove their own messages.
      /// </remarks>
      /// <seealso href="https://core.telegram.org/bots/api#deletemessage" />
-    function DeleteMessage(const ChatId: TValue; const MessageId: Int64): Boolean;
+    function DeleteMessage(//
+      const ChatId: TValue; //
+      const MessageId: Int64): Boolean;
      {$ENDREGION}
 {$REGION 'Inline mode'}
      /// <summary>
@@ -1324,7 +1345,9 @@ type
      /// </remarks>
      /// <seealso href="https://core.telegram.org/bots/api#answerprecheckoutquery" />
     function AnswerPreCheckoutQuery(//
-    const PreCheckoutQueryId: string; const Ok: Boolean; const ErrorMessage: string = ''): Boolean;
+      const PreCheckoutQueryId: string; //
+      const Ok: Boolean; //
+      const ErrorMessage: string = ''): Boolean;
 {$ENDREGION}
 {$REGION 'Games'}
      /// <summary>
@@ -1355,11 +1378,11 @@ type
      /// </returns>
      /// <seealso href="https://core.telegram.org/bots/api#sendgame" />
     function SendGame(//
-      ChatId: Int64; //
+      const ChatId: Int64; //
       const GameShortName: string; //
-      DisableNotification: Boolean = False; //
-      ReplyToMessageId: Int64 = 0; //
-      ReplyMarkup: IReplyMarkup = nil): ITgMessage;
+      const DisableNotification: Boolean = False; //
+      const ReplyToMessageId: Int64 = 0; //
+      const ReplyMarkup: IReplyMarkup = nil): ITgMessage;
      /// <summary>
      /// Use this method to set the score of the specified user in a game.
      /// </summary>
@@ -1397,12 +1420,12 @@ type
      /// </returns>
      /// <seealso href="https://core.telegram.org/bots/api#setgamescore" />
     function SetGameScore(//
-      UserId: Int64; //
-      Score: Int64; //
-      Force: Boolean = False; //
-      DisableEditMessage: Boolean = False; //
-      ChatId: Int64 = 0; //
-      MessageId: Int64 = 0; //
+      const UserId: Int64; //
+      const Score: Int64; //
+      const Force: Boolean = False; //
+      const DisableEditMessage: Boolean = False; //
+      const ChatId: Int64 = 0; //
+      const MessageId: Int64 = 0; //
       const InlineMessageId: string = ''): ITgMessage;
      /// <summary>
      /// Use this method to get data for high score tables. Will return the
@@ -1437,9 +1460,9 @@ type
      /// Official API
      /// </seealso>
     function GetGameHighScores(//
-      UserId: Int64; //
-      ChatId: Int64 = 0; //
-      MessageId: Int64 = 0; //
+      const UserId: Int64; //
+      const ChatId: Int64 = 0; //
+      const MessageId: Int64 = 0; //
       const InlineMessageId: string = ''): TArray<ItgGameHighScore>;
 {$ENDREGION}
 {$REGION 'Manage groups and channels'}
@@ -1458,7 +1481,7 @@ type
      /// administrator in the chat for this to work and must have the
      /// appropriate admin rights.
      /// </remarks>
-    function DeleteChatPhoto(ChatId: TValue): Boolean;
+    function DeleteChatPhoto(const ChatId: TValue): Boolean;
      /// <summary>
      /// Use this method to export an invite link to a supergroup or a
      /// channel.
@@ -1474,7 +1497,7 @@ type
      /// The bot must be an administrator in the chat for this to work and
      /// must have the appropriate admin rights.
      /// </remarks>
-    function ExportChatInviteLink(ChatId: TValue): string;
+    function ExportChatInviteLink(const ChatId: TValue): string;
      /// <summary>
      /// Use this method to pin a message in a supergroup. The bot must be an
      /// administrator in the chat for this to work and must have the
@@ -1494,7 +1517,10 @@ type
      /// <returns>
      /// Returns True on success.
      /// </returns>
-    function PinChatMessage(ChatId: TValue; MessageId: Int64; DisableNotification: Boolean = False): Boolean;
+    function PinChatMessage(//
+      const ChatId: TValue; //
+      const MessageId: Int64; //
+      const DisableNotification: Boolean = False): Boolean;
      /// <summary>
      /// Use this method to change the description of a supergroup or a
      /// channel. The bot must be an administrator in the chat for this to
@@ -1510,7 +1536,7 @@ type
      /// <returns>
      /// Returns True on success.
      /// </returns>
-    function SetChatDescription(ChatId: TValue; const Description: string): Boolean;
+    function SetChatDescription(const ChatId: TValue; const Description: string): Boolean;
      /// <summary>
      /// Use this method to set a new profile photo for the chat. Photos can't
      /// be changed for private chats.
@@ -1529,7 +1555,7 @@ type
      /// The bot must be an administrator in the chat for this to work and
      /// must have the appropriate admin rights.
      /// </remarks>
-    function SetChatPhoto(ChatId: TValue; Photo: TtgFileToSend): Boolean;
+    function SetChatPhoto(const ChatId: TValue; const Photo: TtgFileToSend): Boolean;
      /// <summary>
      /// Use this method to change the title of a chat. Titles can't be
      /// changed for private chats. The bot must be an administrator in the
@@ -1549,7 +1575,7 @@ type
      /// Note: In regular groups (non-supergroups), this method will only work
      /// if the ‘All Members Are Admins’ setting is off in the target group.
      /// </remarks>
-    function SetChatTitle(ChatId: TValue; const title: string): Boolean;
+    function SetChatTitle(const ChatId: TValue; const Title: string): Boolean;
      /// <summary>
      /// Use this method to unpin a message in a supergroup chat. The bot must
      /// be an administrator in the chat for this to work and must have the
@@ -1562,7 +1588,7 @@ type
      /// <returns>
      /// Returns True on success.
      /// </returns>
-    function UnpinChatMessage(ChatId: TValue): Boolean;
+    function UnpinChatMessage(const ChatId: TValue): Boolean;
 {$ENDREGION}
 {$REGION 'Manage users and admins'}
      /// <summary>
@@ -1603,13 +1629,13 @@ type
      /// Returns True on success.
      /// </returns>
     function RestrictChatMember(//
-      ChatId: TValue; //
-      UserId: Int64; //
-      UntilDate: Int64 = 0; //
-      CanSendMessages: Boolean = False; //
-      CanSendMediaMessages: Boolean = False; //
-      CanSendOtherMessages: Boolean = False; //
-      CanAddWebPagePreviews: Boolean = False): Boolean;
+      const ChatId: TValue; //
+      const UserId: Int64; //
+      const UntilDate: Int64 = 0; //
+      const CanSendMessages: Boolean = False; //
+      const CanSendMediaMessages: Boolean = False; //
+      const CanSendOtherMessages: Boolean = False; //
+      const CanAddWebPagePreviews: Boolean = False): Boolean;
      /// <summary>
      /// Use this method to restrict a user in a supergroup. The bot must be
      /// an administrator in the supergroup for this to work and must have the
@@ -1658,16 +1684,16 @@ type
      /// Returns True on success.
      /// </returns>
     function PromoteChatMember(//
-      ChatId: TValue; //
-      UserId: Int64; //
-      CanChangeInfo: Boolean = False; //
-      CanPostMessages: Boolean = False; //
-      CanEditMessages: Boolean = False; //
-      CanDeleteMessages: Boolean = False; //
-      CanInviteUsers: Boolean = False; //
-      CanRestrictMembers: Boolean = False; //
-      CanPinMessages: Boolean = False; //
-      CanPromoteMembers: Boolean = False): Boolean;
+      const ChatId: TValue; //
+      const UserId: Int64; //
+      const CanChangeInfo: Boolean = False; //
+      const CanPostMessages: Boolean = False; //
+      const CanEditMessages: Boolean = False; //
+      const CanDeleteMessages: Boolean = False; //
+      const CanInviteUsers: Boolean = False; //
+      const CanRestrictMembers: Boolean = False; //
+      const CanPinMessages: Boolean = False; //
+      const CanPromoteMembers: Boolean = False): Boolean;
 {$ENDREGION}
 {$REGION 'Strickers'}
      /// <summary>
@@ -1699,11 +1725,11 @@ type
      /// On success, the sent Message is returned.
      /// </returns>
     function SendSticker(//
-      ChatId: TValue; //
-      Sticker: TValue; //
-      DisableNotification: Boolean = False; //
-      ReplyToMessageId: Int64 = 0; //
-      ReplyMarkup: IReplyMarkup = nil): ITgMessage;
+      const ChatId: TValue; //
+      const Sticker: TValue; //
+      const DisableNotification: Boolean = False; //
+      const ReplyToMessageId: Int64 = 0; //
+      const ReplyMarkup: IReplyMarkup = nil): ITgMessage;
      /// <summary>
      /// Use this method to get a sticker set.
      /// </summary>
@@ -1733,7 +1759,7 @@ type
      /// Returns the uploaded <see cref="TelegAPi.Types|TtgFile">File</see> on
      /// success.
      /// </returns>
-    function uploadStickerFile(UserId: Int64; PngSticker: TtgFileToSend): ItgFile;
+    function uploadStickerFile(const UserId: Int64; const PngSticker: TtgFileToSend): ItgFile;
      /// <summary>
      /// Use this method to create new sticker set owned by a user. The bot
      /// will be able to edit the created sticker set.
@@ -1773,12 +1799,12 @@ type
      /// Returns True on success.
      /// </returns>
     function createNewStickerSet(//
-      UserId: Int64; //
+      const UserId: Int64; //
       const Name, title: string; //
-      PngSticker: TValue; //
+      const PngSticker: TValue; //
       const Emojis: string; //
-      ContainsMasks: Boolean = False; //
-      MaskPosition: TtgMaskPosition = nil): Boolean;
+      const ContainsMasks: Boolean = False; //
+      const MaskPosition: TtgMaskPosition = nil): Boolean;
      /// <summary>
      /// Use this method to add a new sticker to a set created by the bot.
      /// </summary>
@@ -1786,11 +1812,11 @@ type
      /// Returns True on success.
      /// </returns>
     function addStickerToSet(//
-      UserId: Int64; //
+      const UserId: Int64; //
       const Name: string; //
-      PngSticker: TValue; //
+      const PngSticker: TValue; //
       const Emojis: string; //
-      MaskPosition: TtgMaskPosition = nil): Boolean;
+      const MaskPosition: TtgMaskPosition = nil): Boolean;
      /// <summary>
      /// Use this method to move a sticker in a set created by the bot to a
      /// specific position.
@@ -1804,7 +1830,7 @@ type
      /// <returns>
      /// Returns True on success.
      /// </returns>
-    function setStickerPositionInSet(const Sticker: string; Position: Int64): Boolean;
+    function setStickerPositionInSet(const Sticker: string; const Position: Int64): Boolean;
      /// <summary>
      /// Use this method to delete a sticker from a set created by the bot.
      /// </summary>
@@ -1827,7 +1853,7 @@ type
      /// CanSetStickerSet</see> optionally returned in <see cref="TelegAPI.Bot|TTelegramBot.GetChat(TValue)">
      /// getChat</see> requests to check if the bot can use this method.
      /// </remarks>
-    function setChatStickerSet(ChatId: TValue; const StickerSetName: string): Boolean;
+    function setChatStickerSet(const ChatId: TValue; const StickerSetName: string): Boolean;
      /// <summary>
      /// Use this method to delete a group sticker set from a supergroup.
      /// </summary>
@@ -1840,12 +1866,12 @@ type
      /// CanSetStickerSet</see> optionally returned in <see cref="TelegAPI.Bot|TTelegramBot.GetChat(TValue)">
      /// getChat</see> requests to check if the bot can use this method.
      /// </remarks>
-    function deleteChatStickerSet(ChatId: TValue): Boolean;
+    function deleteChatStickerSet(const ChatId: TValue): Boolean;
     function sendMediaGroup(//
-      ChatId: TValue; //
-      AMedia: TArray<TtgInputMedia>; //
-      ADisableNotification: Boolean = False; //
-      ReplyToMessageId: Int64 = 0): TArray<ITgMessage>;
+      const ChatId: TValue; //
+      const AMedia: TArray<TtgInputMedia>; //
+      const ADisableNotification: Boolean = False; //
+      const ReplyToMessageId: Int64 = 0): TArray<ITgMessage>;
 {$ENDREGION}
     property Token: string read GetToken write SetToken;
     property ExceptionManager: ItgExceptionHandler read GetExceptionManager write SetExceptionManager;
