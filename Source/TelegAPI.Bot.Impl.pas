@@ -36,25 +36,25 @@ type
     function GetToken: string;
     procedure SetToken(const Value: string);
     // Returns TJSONValue as method request result
-    function GetJSONFromMethod(const Method: string; Parameters: TDictionary<string, TValue>): TJSONValue;
+    function GetJSONFromMethod(const Method: string; const Parameters: TDictionary<string, TValue>): TJSONValue;
     // Returns TJSONArray as method request result
-    function GetJSONArrayFromMethod(const Method: string; Parameters: TDictionary<string, TValue>): TJSONArray;
+    function GetJSONArrayFromMethod(const Method: string; const Parameters: TDictionary<string, TValue>): TJSONArray;
     // Returns true when given Method executed successfully
-    function ExecuteMethod(const Method: string; Parameters: TDictionary<string, TValue>): Boolean;
+    function ExecuteMethod(const Method: string; const Parameters: TDictionary<string, TValue>): Boolean;
     // Returns response JSON from server as result of request
-    function GetArrayFromMethod<TI: IInterface>(TgClass: TBaseJsonClass; const Method: string; Parameters: TDictionary<string, TValue>): TArray<TI>;
-    function GetValueFromMethod(const Method: string; Parameters: TDictionary<string, TValue>): string;
+    function GetArrayFromMethod<TI: IInterface>(const TgClass: TBaseJsonClass; const Method: string; const Parameters: TDictionary<string, TValue>): TArray<TI>;
+    function GetValueFromMethod(const Method: string; const Parameters: TDictionary<string, TValue>): string;
     function GetExceptionManager: ItgExceptionHandler;
     procedure SetExceptionManager(const Value: ItgExceptionHandler);
   protected
     /// <summary>
     /// Мастер-функция для запросов на сервак
     /// </summary>
-    function RequestAPI(const Method: string; Parameters: TDictionary<string, TValue>): string;
-    function SendDataToServer(const Method: string; Parameters: TDictionary<string, TValue>): string;
-    function ParamsToFormData(Parameters: TDictionary<string, TValue>): TMultipartFormData;
+    function RequestAPI(const Method: string; const Parameters: TDictionary<string, TValue>): string;
+    function SendDataToServer(const Method: string; const Parameters: TDictionary<string, TValue>): string;
+    function ParamsToFormData(const Parameters: TDictionary<string, TValue>): TMultipartFormData;
   public
-    function ApiTest(const ARequest: string; Parameters: TDictionary<string, TValue> = nil): string;
+    function ApiTest(const ARequest: string; const Parameters: TDictionary<string, TValue> = nil): string;
     constructor Create(AOwner: TComponent); overload; override;
     destructor Destroy; override;
   {$REGION 'Getting updates'}
@@ -1941,7 +1941,7 @@ begin
   inherited;
 end;
 
-function TTelegramBot.RequestAPI(const Method: string; Parameters: TDictionary<string, TValue>): string;
+function TTelegramBot.RequestAPI(const Method: string; const Parameters: TDictionary<string, TValue>): string;
 var
   LTextResponse: string;
 begin
@@ -1954,7 +1954,7 @@ begin
     Result := ApiTest(LTextResponse, Parameters);
 end;
 
-function TTelegramBot.ApiTest(const ARequest: string; Parameters: TDictionary<string, TValue>): string;
+function TTelegramBot.ApiTest(const ARequest: string; const Parameters: TDictionary<string, TValue>): string;
 var
   FJSON: TJSONObject;
 begin
@@ -1975,7 +1975,7 @@ begin
   end;
 end;
 
-function TTelegramBot.ParamsToFormData(Parameters: TDictionary<string, TValue>): TMultipartFormData;
+function TTelegramBot.ParamsToFormData(const Parameters: TDictionary<string, TValue>): TMultipartFormData;
 var
   LParameter: TPair<string, TValue>;
   LAddProc: TtgParamLoader.TLoader;
@@ -2016,7 +2016,7 @@ begin
   end;
 end;
 
-function TTelegramBot.SendDataToServer(const Method: string; Parameters: TDictionary<string, TValue>): string;
+function TTelegramBot.SendDataToServer(const Method: string; const Parameters: TDictionary<string, TValue>): string;
 var
   LHttp: THTTPClient;
   LHttpResponse: IHTTPResponse;
@@ -2076,17 +2076,17 @@ begin
   end;
 end;
 
-function TTelegramBot.GetJSONFromMethod(const Method: string; Parameters: TDictionary<string, TValue>): TJSONValue;
+function TTelegramBot.GetJSONFromMethod(const Method: string; const Parameters: TDictionary<string, TValue>): TJSONValue;
 begin
   Result := TJSONObject.ParseJSONValue(RequestAPI(Method, Parameters));
 end;
 
-function TTelegramBot.GetJSONArrayFromMethod(const Method: string; Parameters: TDictionary<string, TValue>): TJSONArray;
+function TTelegramBot.GetJSONArrayFromMethod(const Method: string; const Parameters: TDictionary<string, TValue>): TJSONArray;
 begin
   Result := TJSONObject.ParseJSONValue(RequestAPI(Method, Parameters)) as TJSONArray;
 end;
 
-function TTelegramBot.ExecuteMethod(const Method: string; Parameters: TDictionary<string, TValue>): Boolean;
+function TTelegramBot.ExecuteMethod(const Method: string; const Parameters: TDictionary<string, TValue>): Boolean;
 var
   LJson: TJSONValue;
 begin
@@ -2098,7 +2098,7 @@ begin
   end;
 end;
 
-function TTelegramBot.GetValueFromMethod(const Method: string; Parameters: TDictionary<string, TValue>): string;
+function TTelegramBot.GetValueFromMethod(const Method: string; const Parameters: TDictionary<string, TValue>): string;
 var
   LJson: TJSONValue;
 begin
@@ -2110,7 +2110,7 @@ begin
   end;
 end;
 
-function TTelegramBot.GetArrayFromMethod<TI>(TgClass: TBaseJsonClass; const Method: string; Parameters: TDictionary<string, TValue>): TArray<TI>;
+function TTelegramBot.GetArrayFromMethod<TI>(const TgClass: TBaseJsonClass; const Method: string; const Parameters: TDictionary<string, TValue>): TArray<TI>;
 var
   LJsonArr: TJSONArray;
   I: Integer;
