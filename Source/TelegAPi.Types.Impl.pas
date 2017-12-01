@@ -165,7 +165,7 @@ type
     procedure SetLatitude(const Value: Single);
     procedure SetLongitude(const Value: Single);
   public
-    constructor Create(ALongitude, ALatitude: Single); overload;
+    constructor Create(const ALongitude, ALatitude: Single); overload;
     property Longitude: Single read GetLongitude write SetLongitude;
     property Latitude: Single read GetLatitude write SetLatitude;
   end;
@@ -901,7 +901,7 @@ end;
 
 { TtgLocation }
 
-constructor TtgLocation.Create(ALongitude, ALatitude: Single);
+constructor TtgLocation.Create(const ALongitude, ALatitude: Single);
 begin
   SetLongitude(ALongitude);
   SetLatitude(ALatitude);
