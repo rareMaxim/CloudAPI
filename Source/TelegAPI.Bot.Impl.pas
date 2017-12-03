@@ -12,6 +12,7 @@ uses
   System.Net.HttpClient,
   System.Generics.Collections,
   TelegAPI.Base,
+  TelegAPi.CoreAPI.Parameter,
   TelegAPI.Bot,
   TelegAPI.Types,
   TelegAPI.Types.Impl,
@@ -19,7 +20,6 @@ uses
   TelegAPI.Types.ReplyMarkups,
   TelegAPI.Types.InlineQueryResults,
   TelegAPI.Exceptions,
-  TelegAPI.Utils.Params,
   TelegAPI.Utils.Json,
   System.Json;
 
@@ -31,7 +31,6 @@ type
     FToken: string;
     FProxySettings: TProxySettings;
     FOnRawData: TtgOnReceiveRawData;
-    FParamLoader: TtgParamLoader;
     FExceptionManager: ItgExceptionHandler;
     function GetToken: string;
     procedure SetToken(const Value: string);
@@ -50,9 +49,7 @@ type
     /// <summary>
     /// Мастер-функция для запросов на сервак
     /// </summary>
-    function RequestAPI(const Method: string; const Parameters: TDictionary<string, TValue>): string;
-    function SendDataToServer(const Method: string; const Parameters: TDictionary<string, TValue>): string;
-    function ParamsToFormData(const Parameters: TDictionary<string, TValue>): TMultipartFormData;
+    function RequestAPI(const Method: string; const Parameters: TDictionary<string, TtgpValue>): string;
   public
     function ApiTest(const ARequest: string; const Parameters: TDictionary<string, TValue> = nil): string;
     constructor Create(AOwner: TComponent); overload; override;
@@ -1925,6 +1922,7 @@ implementation
 
 uses
   REST.Json,
+  TelegAPi.CoreAPI,
   TelegAPI.Helpers;
 { TTelegramBot }
 {$REGION 'Core'}
@@ -1932,26 +1930,32 @@ uses
 constructor TTelegramBot.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
-  FParamLoader := TtgParamLoader.Create;
+
 end;
 
 destructor TTelegramBot.Destroy;
 begin
-  FParamLoader.Free;
+
   inherited;
 end;
 
 function TTelegramBot.RequestAPI(const Method: string; const Parameters: TDictionary<string, TValue>): string;
 var
-  LTextResponse: string;
+  LTgRequest: TtgApiRequest;
 begin
-  LTextResponse := SendDataToServer(Method, Parameters);
-  if Assigned(OnReceiveRawData) then
-    OnReceiveRawData(Self, LTextResponse);
-  if LTextResponse.IsEmpty then
-    ExceptionManager.HaveGlobalExeption('RequestAPI', ETelegramUnknownData.Create('Can''t parse response'))
-  else
-    Result := ApiTest(LTextResponse, Parameters);
+  LTgRequest := TtgApiRequest.Create(Self, Method);
+  try
+    LTgRequest.Parameters := Parameters;
+    Result := LTgRequest.Execute.ContentAsString(TEncoding.UTF8);
+    if Assigned(OnReceiveRawData) then
+      OnReceiveRawData(Self, Result);
+    if Result.IsEmpty then
+      ExceptionManager.HaveGlobalExeption('RequestAPI', ETelegramUnknownData.Create('Can''t parse response'))
+    else
+      Result := ApiTest(Result, Parameters);
+  finally
+    LTgRequest.Free;
+  end;
 end;
 
 function TTelegramBot.ApiTest(const ARequest: string; const Parameters: TDictionary<string, TValue>): string;
@@ -1972,84 +1976,6 @@ begin
     Result := FJSON.GetValue('result').ToJSON;
   finally
     FJSON.Free;
-  end;
-end;
-
-function TTelegramBot.ParamsToFormData(const Parameters: TDictionary<string, TValue>): TMultipartFormData;
-var
-  LParameter: TPair<string, TValue>;
-  LAddProc: TtgParamLoader.TLoader;
-  LTest: string;
-begin
-  Result := TMultipartFormData.Create;
-  for LParameter in Parameters do
-  begin
-    // skip all empty params
-    if LParameter.Value.IsEmpty then
-      Continue;
-    // look for the given parameter type
-    if FParamLoader.ParamLoaders.TryGetValue(LParameter.Value.TypeInfo, LAddProc) then
-    begin
-      LAddProc(Result, LParameter.Value.TypeInfo, LParameter.Key, LParameter.Value);
-    end
-    else if LParameter.Value.Kind = tkClass then
-    // last variant to search
-    begin
-      { TODO -oOwner -cGeneral : Проверить че за херня тут твориться }
-      if not LParameter.Value.IsEmpty then
-      begin
-        if LParameter.Value.IsType<IReplyMarkup>then
-        begin
-          LTest := TJson.ObjectToJsonString(LParameter.Value.AsObject);
-          Result.AddField(LParameter.Key, LTest);
-        end
-        else if Assigned(ExceptionManager) then
-          ExceptionManager.HaveGlobalExeption('TTelegramBot.ParamsToFormData', Exception.Create('Unknown object'))
-        else
-          raise Exception.Create('Error Message');
-      end
-    end
-    else if Assigned(ExceptionManager) then
-      ExceptionManager.HaveGlobalExeption('ParamsToFormData', ETelegramDataConvert.Create('Check parameter type ' + LParameter.Value.ToString))
-    else
-      raise ETelegramDataConvert.Create('Check parameter type ' + LParameter.Value.ToString);
-  end;
-end;
-
-function TTelegramBot.SendDataToServer(const Method: string; const Parameters: TDictionary<string, TValue>): string;
-var
-  LHttp: THTTPClient;
-  LHttpResponse: IHTTPResponse;
-  LFullUrl: string;
-  LParamToDate: TMultipartFormData;
-begin
-  LHttp := THTTPClient.Create;
-  LParamToDate := nil;
-  Result := string.Empty;
-  try
-    LHttp.ProxySettings := FProxySettings;
-    LFullUrl := 'https://api.telegram.org/bot' + FToken + '/' + Method;
-    try
-      if Assigned(Parameters) then
-      begin
-        LParamToDate := ParamsToFormData(Parameters);
-        LHttpResponse := LHttp.Post(LFullUrl, LParamToDate);
-      end
-      else
-        LHttpResponse := LHttp.Get(LFullUrl);
-      if LHttpResponse.StatusCode = 200 then
-        Result := LHttpResponse.ContentAsString(TEncoding.UTF8)
-      else
-        ExceptionManager.HaveGlobalExeption('SendDataToServer', EApiRequestException.Create(LHttpResponse.StatusText, LHttpResponse.StatusCode, Parameters))
-    except
-      on E: Exception do
-      begin
-        ExceptionManager.HaveGlobalExeption('SendDataToServer', E);
-      end;
-    end;
-  finally
-    FreeAndNil(LParamToDate);
-    FreeAndNil(LHttp);
   end;
 end;
 
