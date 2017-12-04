@@ -2208,130 +2208,87 @@ begin
 end;
 
 function TTelegramBot.SendVoice(const ChatId, Voice: TValue; const Caption: string; const Duration: Int64; const DisableNotification: Boolean; const ReplyToMessageId: Int64; const ReplyMarkup: IReplyMarkup): ITgMessage;
-var
-  Parameters: TDictionary<string, TValue>;
 begin
-  Parameters := TDictionary<string, TValue>.Create;
-  try
-    Parameters.Add('chat_id', ChatId);
-    Parameters.Add('voice', Voice);
-    Parameters.Add('caption', Caption);
-    Parameters.Add('duration', Duration);
-    Parameters.Add('disable_notification', DisableNotification);
-    Parameters.Add('reply_to_message_id', ReplyToMessageId);
-    Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-    Result := TTgMessage.Create(RequestAPI('sendVoice', Parameters));
-  finally
-    Parameters.Free;
-  end;
+  Result := TTgMessage.Create(RequestAPI('sendVoice', [//
+    TtgApiParameter.Create('chat_id', ChatId, 0, True), //
+    TtgApiParameter.Create('voice', Voice, '', True), //
+    TtgApiParameter.Create('caption', Caption, 0, False), //
+    TtgApiParameter.Create('duration', Duration, 0, False), //
+    TtgApiParameter.Create('disable_notification', DisableNotification, False, False), //
+    TtgApiParameter.Create('reply_to_message_id', ReplyToMessageId, 0, False), //
+    TtgApiParameter.Create('reply_markup', TInterfacedObject(ReplyMarkup), nil, False) //
+    ]));
 end;
 
 function TTelegramBot.SendAudio(const ChatId, Audio: TValue; const Caption: string; const Duration: Int64; const Performer: string; const DisableNotification: Boolean; const ReplyToMessageId: Int64; const ReplyMarkup: IReplyMarkup): ITgMessage;
-var
-  Parameters: TDictionary<string, TValue>;
 begin
-  Parameters := TDictionary<string, TValue>.Create;
-  try
-    Parameters.Add('chat_id', ChatId);
-    Parameters.Add('audio', Audio);
-    Parameters.Add('duration', Duration);
-    Parameters.Add('performer', Performer);
-    Parameters.Add('caption', Caption);
-    Parameters.Add('disable_notification', DisableNotification);
-    Parameters.Add('reply_to_message_id', ReplyToMessageId);
-    Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-    Result := TTgMessage.Create(RequestAPI('sendAudio', Parameters));
-  finally
-    Parameters.Free;
-  end;
+  Result := TTgMessage.Create(RequestAPI('sendAudio', [//
+    TtgApiParameter.Create('chat_id', ChatId, 0, True), //
+    TtgApiParameter.Create('audio', Audio, '', True), //
+    TtgApiParameter.Create('duration', Duration, 0, False), //
+    TtgApiParameter.Create('performer', Performer, '', False), //
+    TtgApiParameter.Create('caption', Caption, 0, False), //
+    TtgApiParameter.Create('disable_notification', DisableNotification, False, False), //
+    TtgApiParameter.Create('reply_to_message_id', ReplyToMessageId, 0, False), //
+    TtgApiParameter.Create('reply_markup', TInterfacedObject(ReplyMarkup), nil, False) //
+    ]));
 end;
 
 function TTelegramBot.SendChatAction(const ChatId: TValue; const Action: TtgSendChatAction): Boolean;
 begin
-  Result := ExtractBool(RequestAPI('', []));
-  Parameters.Add('chat_id', ChatId);
-  Parameters.Add('action', Action.ToString);
-  Result := ExecuteMethod('sendChatAction', Parameters);
+  Result := ExtractBool(RequestAPI('sendChatAction', [//
+    TtgApiParameter.Create('chat_id', ChatId, 0, True), //
+    TtgApiParameter.Create('action', Action.ToString, '', True)//
+    ]));
 end;
 
 function TTelegramBot.SendContact(const ChatId: TValue; const Contact: TtgContact; const DisableNotification: Boolean; const ReplyToMessageId: Int64; const ReplyMarkup: IReplyMarkup): ITgMessage;
-var
-  Parameters: TDictionary<string, TValue>;
 begin
-  Parameters := TDictionary<string, TValue>.Create;
-  try
-    Parameters.Add('chat_id', ChatId);
-    Parameters.Add('phone_number', Contact.PhoneNumber);
-    Parameters.Add('first_name', Contact.FirstName);
-    Parameters.Add('last_name', Contact.LastName);
-    Parameters.Add('disable_notification', DisableNotification);
-    Parameters.Add('reply_to_message_id', ReplyToMessageId);
-    Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-    Result := TTgMessage.Create(RequestAPI('sendContact', Parameters));
-  finally
-    Parameters.Free;
-  end;
+  Result := TTgMessage.Create(RequestAPI('sendContact', [//
+    TtgApiParameter.Create('chat_id', ChatId, 0, True), //
+    TtgApiParameter.Create('phone_number', Contact.PhoneNumber, '', True), //
+    TtgApiParameter.Create('first_name', Contact.FirstName, '', True), //
+    TtgApiParameter.Create('last_name', Contact.LastName, '', False), //
+    TtgApiParameter.Create('disable_notification', DisableNotification, False, False), //
+    TtgApiParameter.Create('reply_to_message_id', ReplyToMessageId, 0, False), //
+    TtgApiParameter.Create('reply_markup', TInterfacedObject(ReplyMarkup), nil, False) //
+    ]));
 end;
 
 function TTelegramBot.SendDocument(const ChatId, Document: TValue; const Caption: string; const DisableNotification: Boolean; const ReplyToMessageId: Int64; const ReplyMarkup: IReplyMarkup): ITgMessage;
-var
-  Parameters: TDictionary<string, TValue>;
 begin
-  Parameters := TDictionary<string, TValue>.Create;
-  try
-    Parameters.Add('chat_id', ChatId);
-    Parameters.Add('document', Document);
-    Parameters.Add('caption', Caption);
-    Parameters.Add('disable_notification', DisableNotification);
-    Parameters.Add('reply_to_message_id', ReplyToMessageId);
-    Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-    Result := TTgMessage.Create(RequestAPI('sendDocument', Parameters));
-  finally
-    Parameters.Free;
-  end;
+  Result := TTgMessage.Create(RequestAPI('sendDocument', [//
+    TtgApiParameter.Create('chat_id', ChatId, 0, True), //
+    TtgApiParameter.Create('document', Document, nil, True), //
+    TtgApiParameter.Create('caption', Caption, '', False), //
+    TtgApiParameter.Create('disable_notification', DisableNotification, False, False), //
+    TtgApiParameter.Create('reply_to_message_id', ReplyToMessageId, 0, False), //
+    TtgApiParameter.Create('reply_markup', TInterfacedObject(ReplyMarkup), nil, False) //
+    ]));
 end;
 
 function TTelegramBot.KickChatMember(const ChatId: TValue; const UserId, UntilDate: Int64): Boolean;
-var
-  Parameters: TDictionary<string, TValue>;
 begin
-  Parameters := TDictionary<string, TValue>.Create;
-  try
-    Parameters.Add('chat_id', ChatId);
-    Parameters.Add('user_id', UserId);
-    Parameters.Add('until_date', UntilDate);
-    Result := ExecuteMethod('kickChatMember', Parameters);
-  finally
-    Parameters.Free;
-  end;
+  Result := ExtractBool(RequestAPI('kickChatMember', [//
+    TtgApiParameter.Create('chat_id', ChatId, 0, True), //
+    TtgApiParameter.Create('user_id', UserId, 0, True), //
+    TtgApiParameter.Create('until_date', UntilDate, '', False)//
+    ]));
 end;
 
 function TTelegramBot.LeaveChat(const ChatId: TValue): Boolean;
-var
-  Parameters: TDictionary<string, TValue>;
 begin
-  Parameters := TDictionary<string, TValue>.Create;
-  try
-    Parameters.Add('chat_id', ChatId);
-    Result := ExecuteMethod('leaveChat', Parameters);
-  finally
-    Parameters.Free;
-  end;
+  Result := ExtractBool(RequestAPI('leaveChat', [//
+    TtgApiParameter.Create('chat_id', ChatId, 0, True)]));
 end;
 
 function TTelegramBot.GetUserProfilePhotos(const ChatId: TValue; const Offset, Limit: Int64): ItgUserProfilePhotos;
-var
-  Parameters: TDictionary<string, TValue>;
 begin
-  Parameters := TDictionary<string, TValue>.Create;
-  try
-    Parameters.Add('chat_id', ChatId);
-    Parameters.Add('offset', Offset);
-    Parameters.Add('limit', Limit);
-    Result := TtgUserProfilePhotos.Create(RequestAPI('getUserProfilePhotos', Parameters));
-  finally
-    Parameters.Free;
-  end;
+  Result := TtgUserProfilePhotos.Create(RequestAPI('getUserProfilePhotos', [//
+    TtgApiParameter.Create('chat_id', ChatId, 0, True), //
+    TtgApiParameter.Create('offset', Offset, 0, True), //
+    TtgApiParameter.Create('limit', Limit, 100, False) //
+    ]));
 end;
 
 function TTelegramBot.GetMe: ItgUser;
@@ -2340,45 +2297,25 @@ begin
 end;
 
 function TTelegramBot.getStickerSet(const Name: string): TtgStickerSet;
-var
-  Parameters: TDictionary<string, TValue>;
 begin
-  Parameters := TDictionary<string, TValue>.Create;
-  try
-    Parameters.Add('name', Name);
-    Result := TtgStickerSet.Create(RequestAPI('getStickerSet', Parameters));
-  finally
-    Parameters.Free;
-  end;
+  Result := TtgStickerSet.Create(RequestAPI('getStickerSet', [//
+    TtgApiParameter.Create('name', Name, 0, True) //
+    ]));
 end;
 
 function TTelegramBot.ForwardMessage(const ChatId, FromChatId: TValue; const MessageId: Int64; const DisableNotification: Boolean): ITgMessage;
-var
-  Parameters: TDictionary<string, TValue>;
 begin
-  Parameters := TDictionary<string, TValue>.Create;
-  try
-    Parameters.Add('chat_id', ChatId);
-    Parameters.Add('from_chat_id', FromChatId);
-    Parameters.Add('disable_notification', DisableNotification);
-    Parameters.Add('message_id', MessageId);
-    Result := TTgMessage.Create(RequestAPI('forwardMessage', Parameters));
-  finally
-    Parameters.Free;
-  end;
+  Result := TTgMessage.Create(RequestAPI('forwardMessage', [//
+    TtgApiParameter.Create('chat_id', ChatId, 0, True), //
+    TtgApiParameter.Create('from_chat_id', FromChatId, 0, True), //
+    TtgApiParameter.Create('disable_notification', DisableNotification, False, False), //
+    TtgApiParameter.Create('message_id', MessageId, 0, False)]));
 end;
 
 function TTelegramBot.GetChat(const ChatId: TValue): ItgChat;
-var
-  Parameters: TDictionary<string, TValue>;
 begin
-  Parameters := TDictionary<string, TValue>.Create;
-  try
-    Parameters.Add('chat_id', ChatId);
-    Result := TtgChat.Create(RequestAPI('getChat', Parameters));
-  finally
-    Parameters.Free;
-  end;
+  Result := TtgChat.Create(RequestAPI('getChat', [//
+    TtgApiParameter.Create('chat_id', ChatId, 0, True)]));
 end;
 
 function TTelegramBot.GetChatAdministrators(const ChatId: TValue): TArray<ItgChatMember>;
