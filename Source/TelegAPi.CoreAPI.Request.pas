@@ -30,6 +30,7 @@ type
   public
     constructor Create(Sender: TTelegramBot; const AMethod: string);
     function Execute: IHttpResponse;
+    function ExecuteAsString: string;
     function GetUrl: string;
     destructor Destroy; override;
     property Parameters: TObjectList<TtgApiParameter> read FParams write FParams;
@@ -88,6 +89,11 @@ begin
     Result := DoGet;
 end;
 
+function TtgApiRequest.ExecuteAsString: string;
+begin
+  Result := Execute.ContentAsString(TEncoding.UTF8);
+end;
+
 procedure TtgApiRequest.FillFormData(var AForm: TMultipartFormData);
 var
   LParam: TtgApiParameter;
@@ -97,7 +103,7 @@ begin
     // skip all empty params
     if LParam.Skip then
       Continue;
-    if LParam.Required and LParam.IsDefaultValue then
+    if LParam.Required and (LParam.IsDefaultValue or LParam.Value.IsEmpty) then
       FTelega.ExceptionManager.HaveGlobalExeption('TtgApiRequest.FillFormData', ETelegramException.Create('Not assigned required data'));
     if LParam.Value.IsType<string>then
     begin

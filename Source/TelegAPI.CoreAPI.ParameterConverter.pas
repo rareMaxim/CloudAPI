@@ -1,4 +1,4 @@
-unit TelegAPI.Utils.Params;
+unit TelegAPI.CoreAPI.ParameterConverter;
 
 interface
 
@@ -9,7 +9,7 @@ uses
   System.SysUtils,
   System.TypInfo,
   TelegAPI.Types,
-  TelegAPi.CoreAPI;
+  TelegAPi.CoreAPI.Parameter;
 
 type
   /// <summary>
@@ -21,8 +21,6 @@ type
     type
       //parameter loader method
       TLoader = procedure(var AFormData: TMultipartFormData; AParam: TtgApiParameter) of object;
-  private
-    FFormData: TMultipartFormData;
   protected
     procedure AddInteger(var AFormData: TMultipartFormData; AParam: TtgApiParameter);
     procedure AddString(var AFormData: TMultipartFormData; AParam: TtgApiParameter);
@@ -80,25 +78,23 @@ end;
 
 procedure TtgParamConverter.AddInt64(var AFormData: TMultipartFormData; AParam: TtgApiParameter);
 begin
-  if AValue.AsInt64 <> 0 then
-    AFormData.AddField(AKey, AValue.AsInt64.ToString);
+  AFormData.AddField(AParam.Key, AParam.Value.AsInt64.ToString);
 end;
 
 procedure TtgParamConverter.AddBoolean(var AFormData: TMultipartFormData; AParam: TtgApiParameter);
 begin
-  if AValue.AsBoolean then
-    AFormData.AddField(AKey, AValue.AsBoolean.ToString(TUseBoolStrs.True));
+  AFormData.AddField(AParam.Key, AParam.Value.AsBoolean.ToString(TUseBoolStrs.True));
 end;
 
 procedure TtgParamConverter.AddClass_TtgFileToSend(var AFormData: TMultipartFormData; AParam: TtgApiParameter);
 var
   LFileToSent: TtgFileToSend;
 begin
-  LFileToSent := AValue.AsType<TtgFileToSend>;
+  LFileToSent := AParam.Value.AsType<TtgFileToSend>;
   if Assigned(LFileToSent.Content) then
-    AFormData.AddStream(AKey, LFileToSent.Content, LFileToSent.FileName)
+    AFormData.AddStream(AParam.Key, LFileToSent.Content, LFileToSent.FileName)
   else
-    AFormData.AddFile(AKey, LFileToSent.FileName);
+    AFormData.AddFile(AParam.Key, LFileToSent.FileName);
 end;
 
 end.

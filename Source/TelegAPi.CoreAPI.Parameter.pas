@@ -13,10 +13,19 @@ type
     Required: Boolean;
     function IsDefaultValue: Boolean;
     function Skip: Boolean;
+    constructor Create(const AKey: string; AValue, ADefaultValue: TValue; ARequired: Boolean = False);
   end;
 
 implementation
 { TtgApiParameter }
+
+constructor TtgApiParameter.Create(const AKey: string; AValue, ADefaultValue: TValue; ARequired: Boolean);
+begin
+  Key := AKey;
+  Value := AValue;
+  DefaultValue := ADefaultValue;
+  Required := ARequired;
+end;
 
 function TtgApiParameter.IsDefaultValue: Boolean;
 begin
