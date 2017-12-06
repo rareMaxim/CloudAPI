@@ -10,7 +10,8 @@ uses
   System.Net.Mime,
   System.SysUtils,
   TelegAPi.CoreAPI.Parameter,
-  TelegAPI.Bot.Impl;
+  TelegAPI.Bot.Impl,
+  System.Classes;
 
 type
   TtgApiRequest = class
@@ -21,12 +22,14 @@ type
     FMethod: string;
     FParams: TObjectList<TtgApiParameter>;
     FHttp: THTTPClient;
-    FOnReceive: TProc<IHTTPResponse>;
+    FOnReceive: TProc<string>;
     FTelega: TTelegramBot;
+    FOnSend: TProc<string, string>;
   protected
     function DoPost: IHTTPResponse;
     function DoGet: IHTTPResponse;
     procedure FillFormData(var AForm: TMultipartFormData);
+    function StreamToString(Stream: TMemoryStream): string;
   public
     constructor Create(Sender: TTelegramBot; const AMethod: string);
     function Execute: IHttpResponse;
@@ -34,7 +37,8 @@ type
     function GetUrl: string;
     destructor Destroy; override;
     property Parameters: TObjectList<TtgApiParameter> read FParams write FParams;
-    property OnReceive: TProc<IHTTPResponse> read FOnReceive write FOnReceive;
+    property OnReceive: TProc<string> read FOnReceive write FOnReceive;
+    property OnSend: TProc<string, string> read FOnSend write FOnSend;
   end;
 
 implementation
@@ -65,6 +69,8 @@ end;
 function TtgApiRequest.DoGet: IHTTPResponse;
 begin
   Result := FHttp.Get(GetUrl);
+  if Assigned(OnSend) then
+    OnSend(GetUrl, '');
 end;
 
 function TtgApiRequest.DoPost: IHTTPResponse;
@@ -75,6 +81,8 @@ begin
   try
     FillFormData(PostData);
     Result := FHttp.Post(GetUrl, PostData);
+    if Assigned(OnSend) then
+      OnSend(GetUrl, StreamToString(PostData.Stream));
   finally
     PostData.Free;
   end;
@@ -87,6 +95,8 @@ begin
     Result := DoPost
   else
     Result := DoGet;
+  if Assigned(OnReceive) then
+    OnReceive(Result.ContentAsString);
 end;
 
 function TtgApiRequest.ExecuteAsString: string;
@@ -140,6 +150,20 @@ end;
 function TtgApiRequest.GetUrl: string;
 begin
   Result := SERVER_URL + FTelega.Token + '/' + FMethod;
+end;
+
+function TtgApiRequest.StreamToString(Stream: TMemoryStream): string;
+var
+  LStrings: TStringList;
+begin
+  LStrings := TStringList.Create;
+  try
+    Stream.Position := 0;
+    LStrings.LoadFromStream(Stream, TEncoding.UTF8);
+    Result := LStrings.Text;
+  finally
+    LStrings.Free;
+  end;
 end;
 
 end.

@@ -17,6 +17,9 @@ type
   end;
 
 implementation
+
+uses
+  System.SysUtils;
 { TtgApiParameter }
 
 constructor TtgApiParameter.Create(const AKey: string; AValue, ADefaultValue: TValue; ARequired: Boolean);
@@ -29,7 +32,7 @@ end;
 
 function TtgApiParameter.IsDefaultValue: Boolean;
 begin
-  Result := Value.GetReferenceToRawData = DefaultValue.GetReferenceToRawData;
+  Result := Value.AsVariant = DefaultValue.AsVariant; // <-- DANGER
 end;
 
 function TtgApiParameter.Skip: Boolean;

@@ -248,7 +248,7 @@ type
       const DisableWebPagePreview: Boolean = False; //
       const DisableNotification: Boolean = False; //
       const ReplyToMessageId: Int64 = 0; //
-      const ReplyMarkup: IReplyMarkup = nil): ITgMessage;
+      ReplyMarkup: IReplyMarkup = nil): ITgMessage;
      /// <summary>
      /// Use this method to forward messages of any kind.
      /// </summary>
@@ -325,7 +325,7 @@ type
       const Caption: string = ''; //
       const DisableNotification: Boolean = False; //
       const ReplyToMessageId: Int64 = 0; //
-      const ReplyMarkup: IReplyMarkup = nil): ITgMessage;
+      ReplyMarkup: IReplyMarkup = nil): ITgMessage;
      /// <summary>
      /// Use this method to send audio files, if you want Telegram clients to
      /// display them in the music player. Your audio must be in the .mp3
@@ -379,7 +379,7 @@ type
       const Performer: string = ''; //
       const DisableNotification: Boolean = False; //
       const ReplyToMessageId: Int64 = 0; //
-      const ReplyMarkup: IReplyMarkup = nil): ITgMessage;
+      ReplyMarkup: IReplyMarkup = nil): ITgMessage;
      /// <summary>
      /// Use this method to send general files.
      /// </summary>
@@ -422,7 +422,7 @@ type
       const Caption: string = ''; //
       const DisableNotification: Boolean = False; //
       const ReplyToMessageId: Int64 = 0; //
-      const ReplyMarkup: IReplyMarkup = nil): ITgMessage;
+      ReplyMarkup: IReplyMarkup = nil): ITgMessage;
      /// <summary>
      /// Use this method to send video files, Telegram clients support mp4
      /// videos (other formats may be sent as Document).
@@ -477,7 +477,7 @@ type
       const Height: Int64 = 0; //
       const DisableNotification: Boolean = False; //
       const ReplyToMessageId: Int64 = 0; //
-      const ReplyMarkup: IReplyMarkup = nil): ITgMessage;
+      ReplyMarkup: IReplyMarkup = nil): ITgMessage;
 
      /// <summary>
      /// Use this method to send audio files, if you want Telegram clients to
@@ -524,7 +524,7 @@ type
       const Duration: Int64 = 0; //
       const DisableNotification: Boolean = False; //
       const ReplyToMessageId: Int64 = 0; //
-      const ReplyMarkup: IReplyMarkup = nil): ITgMessage;
+      ReplyMarkup: IReplyMarkup = nil): ITgMessage;
      /// <summary>
      /// As of <see href="https://telegram.org/blog/video-messages-and-telescope">
      /// v.4.0</see>, Telegram clients support rounded square mp4 videos of up
@@ -573,7 +573,7 @@ type
       const Length: Int64 = 0; //
       const DisableNotification: Boolean = False; //
       const ReplyToMessageId: Int64 = 0; //
-      const ReplyMarkup: IReplyMarkup = nil): ITgMessage;
+      ReplyMarkup: IReplyMarkup = nil): ITgMessage;
 
      /// <summary>
      /// Use this method to send point on the map.
@@ -608,7 +608,7 @@ type
       const LivePeriod: Int64 = 0; //
       const DisableNotification: Boolean = False; //
       const ReplyToMessageId: Int64 = 0; //
-      const ReplyMarkup: IReplyMarkup = nil): ITgMessage;
+      ReplyMarkup: IReplyMarkup = nil): ITgMessage;
      /// <summary>
      /// Use this method to send information about a venue.
      /// </summary>
@@ -649,7 +649,7 @@ type
       const Venue: TtgVenue; //
       const DisableNotification: Boolean = False; //
       const ReplyToMessageId: Int64 = 0; //
-      const ReplyMarkup: IReplyMarkup = nil): ITgMessage;
+      ReplyMarkup: IReplyMarkup = nil): ITgMessage;
      /// <summary>
      /// Use this method to send phone contacts.
      /// </summary>
@@ -683,7 +683,7 @@ type
       const Contact: TtgContact; //
       const DisableNotification: Boolean = False; //
       const ReplyToMessageId: Int64 = 0; //
-      const ReplyMarkup: IReplyMarkup = nil): ITgMessage;
+      ReplyMarkup: IReplyMarkup = nil): ITgMessage;
      /// <summary>
      /// Use this method when you need to tell the user that something is
      /// happening on the bot's side. The status is set for 5 seconds or less
@@ -943,13 +943,13 @@ type
       const Text: string; //
       const ParseMode: TtgParseMode = TtgParseMode.Default; //
       const DisableWebPagePreview: Boolean = False; //
-      const ReplyMarkup: IReplyMarkup = nil): ITgMessage; overload;
+      ReplyMarkup: IReplyMarkup = nil): ITgMessage; overload;
     function EditMessageText(//
       const InlineMessageId: string; //
       const Text: string; //
       const ParseMode: TtgParseMode = TtgParseMode.Default; //
       const DisableWebPagePreview: Boolean = False; //
-      const ReplyMarkup: IReplyMarkup = nil): ITgMessage; overload;
+      ReplyMarkup: IReplyMarkup = nil): ITgMessage; overload;
      /// <summary>
      /// Use this method to edit captions of messages sent by the bot or via
      /// the bot (for inline bots).
@@ -982,12 +982,12 @@ type
       const ChatId: TValue; //
       const MessageId: Int64; //
       const Caption: string; //
-      const ReplyMarkup: IReplyMarkup = nil): Boolean; overload;
+      ReplyMarkup: IReplyMarkup = nil): Boolean; overload;
      { TODO -oM.E.Sysoev -cGeneral : Create Documentatiom }
     function EditMessageCaption(//
       const InlineMessageId: string; //
       const Caption: string; //
-      const ReplyMarkup: IReplyMarkup = nil): Boolean; overload;
+      ReplyMarkup: IReplyMarkup = nil): Boolean; overload;
 
      /// <summary>
      /// Use this method to edit live location messages sent by the bot or via
@@ -1018,7 +1018,7 @@ type
       const ChatId: TValue; //
       const MessageId: Int64; //
       const Location: TtgLocation; //
-      const ReplyMarkup: IReplyMarkup = nil): Boolean; overload;
+      ReplyMarkup: IReplyMarkup = nil): Boolean; overload;
      /// <summary>
      /// Use this method to edit live location messages sent by the bot or via
      /// the bot (for inline bots). A location can be edited until its
@@ -1048,10 +1048,10 @@ type
      /// On success, if the edited message was sent by the bot, the edited
      /// Message is returned, otherwise True is returned.
      /// </returns>
-    function editMessageLiveLocation(//
+    function EditMessageLiveLocation(//
       const InlineMessageId: string; //
       const Location: TtgLocation; //
-      const ReplyMarkup: IReplyMarkup = nil): Boolean; overload;
+      ReplyMarkup: IReplyMarkup = nil): Boolean; overload;
 
      /// <summary>
      /// Use this method to stop updating a live location message sent by the
@@ -1076,7 +1076,7 @@ type
     function stopMessageLiveLocation(//
       const ChatId: TValue; //
       const MessageId: Int64; //
-      const ReplyMarkup: IReplyMarkup = nil): Boolean; overload;
+      ReplyMarkup: IReplyMarkup = nil): Boolean; overload;
      /// <summary>
      /// Use this method to stop updating a live location message sent by the
      /// bot or via the bot (for inline bots) before live_period expires.
@@ -1094,7 +1094,7 @@ type
      /// </returns>
     function stopMessageLiveLocation(//
       const InlineMessageId: string; //
-      const ReplyMarkup: IReplyMarkup = nil): Boolean; overload;
+      ReplyMarkup: IReplyMarkup = nil): Boolean; overload;
      /// <summary>
      /// Use this method to edit only the reply markup of messages sent by the
      /// bot or via the bot (for inline bots).
@@ -1118,7 +1118,7 @@ type
     function EditMessageReplyMarkup(//
       const ChatId: TValue; //
       const MessageId: Int64; //
-      const ReplyMarkup: IReplyMarkup = nil): ITgMessage; overload;
+      ReplyMarkup: IReplyMarkup = nil): ITgMessage; overload;
      /// <summary>
      /// Use this method to edit only the reply markup of messages sent by the
      /// bot or via the bot (for inline bots).
@@ -1136,7 +1136,7 @@ type
      /// </returns>
     function EditMessageReplyMarkup(//
       const InlineMessageId: string; //
-      const ReplyMarkup: IReplyMarkup = nil): ITgMessage; overload;
+      ReplyMarkup: IReplyMarkup = nil): ITgMessage; overload;
      /// <summary>
      /// Use this method to delete a message.
      /// </summary>
@@ -1315,7 +1315,7 @@ type
       const IsFlexible: Boolean = False; //
       const DisableNotification: Boolean = False; //
       const ReplyToMessageId: Int64 = 0; //
-      const ReplyMarkup: IReplyMarkup = nil): ITgMessage;
+      ReplyMarkup: IReplyMarkup = nil): ITgMessage;
      /// <summary>
      /// If you sent an invoice requesting a shipping address and the
      /// parameter is_flexible was specified, the Bot API will send an Update
@@ -1341,10 +1341,11 @@ type
      /// unavailable'). Telegram will display this message to the user.
      /// </param>
      /// <seealso href="https://core.telegram.org/bots/api#answershippingquery" />
-    function AnswerShippingQuery(//
+    function AnswerShippingQueryGood(//
       const ShippingQueryId: string; //
-      const Ok: Boolean; //
-      const ShippingOptions: TArray<TtgShippingOption>; //
+      const ShippingOptions: TArray<TtgShippingOption>): Boolean;
+    function AnswerShippingQueryBad(//
+      const ShippingQueryId: string; //
       const ErrorMessage: string): Boolean;
      /// <summary>
      /// Once the user has confirmed their payment and shipping details, the
@@ -1376,10 +1377,11 @@ type
      /// after the pre-checkout query was sent.
      /// </remarks>
      /// <seealso href="https://core.telegram.org/bots/api#answerprecheckoutquery" />
-    function AnswerPreCheckoutQuery(//
+    function AnswerPreCheckoutQueryGood(//
+      const PreCheckoutQueryId: string): Boolean;
+    function AnswerPreCheckoutQueryBad(//
       const PreCheckoutQueryId: string; //
-      const Ok: Boolean; //
-      const ErrorMessage: string = ''): Boolean;
+      const ErrorMessage: string): Boolean;
 {$ENDREGION}
 {$REGION 'Games'}
      /// <summary>
@@ -1414,7 +1416,7 @@ type
       const GameShortName: string; //
       const DisableNotification: Boolean = False; //
       const ReplyToMessageId: Int64 = 0; //
-      const ReplyMarkup: IReplyMarkup = nil): ITgMessage;
+      ReplyMarkup: IReplyMarkup = nil): ITgMessage;
      /// <summary>
      /// Use this method to set the score of the specified user in a game.
      /// </summary>
@@ -1454,11 +1456,16 @@ type
     function SetGameScore(//
       const UserId: Int64; //
       const Score: Int64; //
+      const InlineMessageId: string; //
       const Force: Boolean = False; //
-      const DisableEditMessage: Boolean = False; //
-      const ChatId: Int64 = 0; //
-      const MessageId: Int64 = 0; //
-      const InlineMessageId: string = ''): ITgMessage;
+      const DisableEditMessage: Boolean = False): ITgMessage; overload;
+    function SetGameScore(//
+      const UserId: Int64; //
+      const Score: Int64; //
+      const ChatId: Int64; //
+      const MessageId: Int64; //
+      const Force: Boolean = False; //
+      const DisableEditMessage: Boolean = False): ITgMessage; overload;
      /// <summary>
      /// Use this method to get data for high score tables. Will return the
      /// score of the specified user and several of his neighbors in a game.
@@ -1493,9 +1500,11 @@ type
      /// </seealso>
     function GetGameHighScores(//
       const UserId: Int64; //
+      const InlineMessageId: string = ''): TArray<ItgGameHighScore>; overload;
+    function GetGameHighScores(//
+      const UserId: Int64; //
       const ChatId: Int64 = 0; //
-      const MessageId: Int64 = 0; //
-      const InlineMessageId: string = ''): TArray<ItgGameHighScore>;
+      const MessageId: Int64 = 0): TArray<ItgGameHighScore>; overload;
 {$ENDREGION}
 {$REGION 'Manage groups and channels'}
      /// <summary>
@@ -1761,7 +1770,7 @@ type
       const Sticker: TValue; //
       const DisableNotification: Boolean = False; //
       const ReplyToMessageId: Int64 = 0; //
-      const ReplyMarkup: IReplyMarkup = nil): ITgMessage;
+      ReplyMarkup: IReplyMarkup = nil): ITgMessage;
      /// <summary>
      /// Use this method to get a sticker set.
      /// </summary>
@@ -1920,6 +1929,7 @@ implementation
 
 uses
   REST.Json,
+  FMX.Types,
   TelegAPI.Helpers,
   TelegAPI.CoreAPI.Request;
 { TTelegramBot }
@@ -1931,6 +1941,16 @@ var
 begin
   LTgRequest := TtgApiRequest.Create(Self, Method);
   try
+    LTgRequest.OnSend :=
+      procedure(Url, Data: string)
+      begin
+        Log.d('%s - %s', [Url, Data]);
+      end;
+    LTgRequest.OnReceive :=
+      procedure(Data: string)
+      begin
+        Log.d('%s', [Data]);
+      end;
     LTgRequest.Parameters.AddRange(Parameters);
     Result := LTgRequest.Execute.ContentAsString(TEncoding.UTF8);
     if Assigned(OnReceiveRawData) then
@@ -2045,6 +2065,8 @@ procedure TTelegramBot.SetExceptionManager(const Value: ItgExceptionHandler);
 begin
   FExceptionManager := Value;
 end;
+
+
 {$ENDREGION}
 {$REGION 'Getting updates'}
 
@@ -2080,7 +2102,7 @@ end;
 {$ENDREGION}
 {$REGION 'Basic methods'}
 
-function TTelegramBot.stopMessageLiveLocation(const ChatId: TValue; const MessageId: Int64; const ReplyMarkup: IReplyMarkup): Boolean;
+function TTelegramBot.stopMessageLiveLocation(const ChatId: TValue; const MessageId: Int64; ReplyMarkup: IReplyMarkup): Boolean;
 begin
   Result := ExtractBool(RequestAPI('stopMessageLiveLocation', [//
     TtgApiParameter.Create('chat_id', ChatId, 0, True), //
@@ -2089,7 +2111,7 @@ begin
     ]));
 end;
 
-function TTelegramBot.stopMessageLiveLocation(const InlineMessageId: string; const ReplyMarkup: IReplyMarkup): Boolean;
+function TTelegramBot.stopMessageLiveLocation(const InlineMessageId: string; ReplyMarkup: IReplyMarkup): Boolean;
 begin
   Result := ExtractBool(RequestAPI('stopMessageLiveLocation', [//
     TtgApiParameter.Create('inline_message_id', InlineMessageId, '', True), //
@@ -2105,7 +2127,7 @@ begin
     ]));
 end;
 
-function TTelegramBot.SendLocation(const ChatId: TValue; const Location: TtgLocation; const LivePeriod: Int64; const DisableNotification: Boolean; const ReplyToMessageId: Int64; const ReplyMarkup: IReplyMarkup): ITgMessage;
+function TTelegramBot.SendLocation(const ChatId: TValue; const Location: TtgLocation; const LivePeriod: Int64; const DisableNotification: Boolean; const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
 begin
   Result := TTgMessage.Create(RequestAPI('sendLocation', [//
     TtgApiParameter.Create('chat_id', ChatId, 0, True), //
@@ -2128,7 +2150,7 @@ begin
     ]));
 end;
 
-function TTelegramBot.SendPhoto(const ChatId, Photo: TValue; const Caption: string; const DisableNotification: Boolean; const ReplyToMessageId: Int64; const ReplyMarkup: IReplyMarkup): ITgMessage;
+function TTelegramBot.SendPhoto(const ChatId, Photo: TValue; const Caption: string; const DisableNotification: Boolean; const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
 begin
   Result := TTgMessage.Create(RequestAPI('sendPhoto', [//
     TtgApiParameter.Create('chat_id', ChatId, 0, True), //
@@ -2140,18 +2162,7 @@ begin
     ]));
 end;
 
-function TTelegramBot.SendSticker(const ChatId, Sticker: TValue; const DisableNotification: Boolean; const ReplyToMessageId: Int64; const ReplyMarkup: IReplyMarkup): ITgMessage;
-begin
-  Result := TTgMessage.Create(RequestAPI('sendSticker', [//
-    TtgApiParameter.Create('chat_id', ChatId, 0, True), //
-    TtgApiParameter.Create('sticker', Sticker, '', True), //
-    TtgApiParameter.Create('disable_notification', DisableNotification, False, False), //
-    TtgApiParameter.Create('reply_to_message_id', ReplyToMessageId, 0, False), //
-    TtgApiParameter.Create('reply_markup', TInterfacedObject(ReplyMarkup), nil, False) //
-    ]));
-end;
-
-function TTelegramBot.SendMessage(const ChatId: TValue; const Text: string; const ParseMode: TtgParseMode; const DisableWebPagePreview, DisableNotification: Boolean; const ReplyToMessageId: Int64; const ReplyMarkup: IReplyMarkup): ITgMessage;
+function TTelegramBot.SendMessage(const ChatId: TValue; const Text: string; const ParseMode: TtgParseMode; const DisableWebPagePreview, DisableNotification: Boolean; const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
 begin
   Result := TTgMessage.Create(RequestAPI('sendMessage', [//
     TtgApiParameter.Create('chat_id', ChatId, 0, True), //
@@ -2164,7 +2175,7 @@ begin
     ]));
 end;
 
-function TTelegramBot.SendVenue(const ChatId: TValue; const Venue: TtgVenue; const DisableNotification: Boolean; const ReplyToMessageId: Int64; const ReplyMarkup: IReplyMarkup): ITgMessage;
+function TTelegramBot.SendVenue(const ChatId: TValue; const Venue: TtgVenue; const DisableNotification: Boolean; const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
 begin
   Result := TTgMessage.Create(RequestAPI('sendVenue', [//
     TtgApiParameter.Create('chat_id', ChatId, 0, True), //
@@ -2179,7 +2190,7 @@ begin
     ]));
 end;
 
-function TTelegramBot.SendVideo(const ChatId, Video: TValue; const Caption: string; const Duration, Width, Height: Int64; const DisableNotification: Boolean; const ReplyToMessageId: Int64; const ReplyMarkup: IReplyMarkup): ITgMessage;
+function TTelegramBot.SendVideo(const ChatId, Video: TValue; const Caption: string; const Duration, Width, Height: Int64; const DisableNotification: Boolean; const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
 begin
   Result := TTgMessage.Create(RequestAPI('sendVideo', [//
     TtgApiParameter.Create('chat_id', ChatId, 0, True), //
@@ -2194,7 +2205,7 @@ begin
     ]));
 end;
 
-function TTelegramBot.SendVideoNote(const ChatId, VideoNote: TValue; const Duration, Length: Int64; const DisableNotification: Boolean; const ReplyToMessageId: Int64; const ReplyMarkup: IReplyMarkup): ITgMessage;
+function TTelegramBot.SendVideoNote(const ChatId, VideoNote: TValue; const Duration, Length: Int64; const DisableNotification: Boolean; const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
 begin
   Result := TTgMessage.Create(RequestAPI('sendVideoNote', [//
     TtgApiParameter.Create('chat_id', ChatId, 0, True), //
@@ -2207,12 +2218,12 @@ begin
     ]));
 end;
 
-function TTelegramBot.SendVoice(const ChatId, Voice: TValue; const Caption: string; const Duration: Int64; const DisableNotification: Boolean; const ReplyToMessageId: Int64; const ReplyMarkup: IReplyMarkup): ITgMessage;
+function TTelegramBot.SendVoice(const ChatId, Voice: TValue; const Caption: string; const Duration: Int64; const DisableNotification: Boolean; const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
 begin
   Result := TTgMessage.Create(RequestAPI('sendVoice', [//
     TtgApiParameter.Create('chat_id', ChatId, 0, True), //
     TtgApiParameter.Create('voice', Voice, '', True), //
-    TtgApiParameter.Create('caption', Caption, 0, False), //
+    TtgApiParameter.Create('caption', Caption, '', False), //
     TtgApiParameter.Create('duration', Duration, 0, False), //
     TtgApiParameter.Create('disable_notification', DisableNotification, False, False), //
     TtgApiParameter.Create('reply_to_message_id', ReplyToMessageId, 0, False), //
@@ -2220,7 +2231,7 @@ begin
     ]));
 end;
 
-function TTelegramBot.SendAudio(const ChatId, Audio: TValue; const Caption: string; const Duration: Int64; const Performer: string; const DisableNotification: Boolean; const ReplyToMessageId: Int64; const ReplyMarkup: IReplyMarkup): ITgMessage;
+function TTelegramBot.SendAudio(const ChatId, Audio: TValue; const Caption: string; const Duration: Int64; const Performer: string; const DisableNotification: Boolean; const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
 begin
   Result := TTgMessage.Create(RequestAPI('sendAudio', [//
     TtgApiParameter.Create('chat_id', ChatId, 0, True), //
@@ -2242,7 +2253,7 @@ begin
     ]));
 end;
 
-function TTelegramBot.SendContact(const ChatId: TValue; const Contact: TtgContact; const DisableNotification: Boolean; const ReplyToMessageId: Int64; const ReplyMarkup: IReplyMarkup): ITgMessage;
+function TTelegramBot.SendContact(const ChatId: TValue; const Contact: TtgContact; const DisableNotification: Boolean; const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
 begin
   Result := TTgMessage.Create(RequestAPI('sendContact', [//
     TtgApiParameter.Create('chat_id', ChatId, 0, True), //
@@ -2255,7 +2266,7 @@ begin
     ]));
 end;
 
-function TTelegramBot.SendDocument(const ChatId, Document: TValue; const Caption: string; const DisableNotification: Boolean; const ReplyToMessageId: Int64; const ReplyMarkup: IReplyMarkup): ITgMessage;
+function TTelegramBot.SendDocument(const ChatId, Document: TValue; const Caption: string; const DisableNotification: Boolean; const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
 begin
   Result := TTgMessage.Create(RequestAPI('sendDocument', [//
     TtgApiParameter.Create('chat_id', ChatId, 0, True), //
@@ -2296,13 +2307,6 @@ begin
   Result := TtgUser.Create(RequestAPI('getMe', nil));
 end;
 
-function TTelegramBot.getStickerSet(const Name: string): TtgStickerSet;
-begin
-  Result := TtgStickerSet.Create(RequestAPI('getStickerSet', [//
-    TtgApiParameter.Create('name', Name, 0, True) //
-    ]));
-end;
-
 function TTelegramBot.ForwardMessage(const ChatId, FromChatId: TValue; const MessageId: Int64; const DisableNotification: Boolean): ITgMessage;
 begin
   Result := TTgMessage.Create(RequestAPI('forwardMessage', [//
@@ -2319,619 +2323,421 @@ begin
 end;
 
 function TTelegramBot.GetChatAdministrators(const ChatId: TValue): TArray<ItgChatMember>;
-var
-  Parameters: TDictionary<string, TValue>;
 begin
-  Parameters := TDictionary<string, TValue>.Create;
-  try
-    Parameters.Add('chat_id', ChatId);
-    Result := GetArrayFromMethod<ItgChatMember>(TtgChatMember, 'getChatAdministrators', Parameters);
-  finally
-    Parameters.Free;
-  end;
+  Result := GetArrayFromMethod<ItgChatMember>(TtgChatMember,  //
+    RequestAPI('getChatAdministrators', //
+    [TtgApiParameter.Create('chat_id', ChatId, 0, true)]));
 end;
 
 function TTelegramBot.GetChatMember(const ChatId: TValue; const UserId: Int64): ItgChatMember;
-var
-  Parameters: TDictionary<string, TValue>;
 begin
-  Parameters := TDictionary<string, TValue>.Create;
-  try
-    Parameters.Add('chat_id', ChatId);
-    Parameters.Add('user_id', UserId);
-    Result := TtgChatMember.Create(RequestAPI('getChatMember', Parameters));
-  finally
-    Parameters.Free;
-  end;
+  Result := TtgChatMember.Create(RequestAPI('getChatMember', [//
+    TtgApiParameter.Create('chat_id', ChatId, 0, True), //
+    TtgApiParameter.Create('user_id', UserId, 0, True)]));
 end;
 
 function TTelegramBot.GetChatMembersCount(const ChatId: TValue): Int64;
 var
-  Parameters: TDictionary<string, TValue>;
   LJson: TJSONValue;
 begin
-  Parameters := TDictionary<string, TValue>.Create;
+  LJson := TJSONObject.ParseJSONValue(RequestAPI('getChatMembersCount', [//
+    TtgApiParameter.Create('chat_id', ChatId, 0, True)]));
   try
-    Parameters.Add('chat_id', ChatId);
-    LJson := TJSONObject.ParseJSONValue(RequestAPI('getChatMembersCount', Parameters));
-    try
-      if not LJson.TryGetValue<Int64>(Result) then
-        Result := 0;
-    finally
-      LJson.Free;
-    end;
+    if not LJson.TryGetValue<Int64>(Result) then
+      Result := 0;
   finally
-    Parameters.Free;
+    LJson.Free;
   end;
 end;
 
 function TTelegramBot.GetFile(const FileId: string): ItgFile;
-var
-  Parameters: TDictionary<string, TValue>;
 begin
-  Parameters := TDictionary<string, TValue>.Create;
-  try
-    Parameters.Add('file_id', FileId);
-    Result := TtgFile.Create(RequestAPI('getFile', Parameters));
-  finally
-    Parameters.Free;
-  end;
-end;
-
-function TTelegramBot.addStickerToSet(const UserId: Int64; const Name: string; const PngSticker: TValue; const Emojis: string; const MaskPosition: TtgMaskPosition): Boolean;
-var
-  Parameters: TDictionary<string, TValue>;
-begin
-  Parameters := TDictionary<string, TValue>.Create;
-  try
-    Parameters.Add('user_id', UserId);
-    Parameters.Add('name', Name);
-    Parameters.Add('png_sticker', PngSticker);
-    Parameters.Add('emojis', Emojis);
-    Parameters.Add('mask_position', MaskPosition);
-    Result := ExecuteMethod('addStickerToSet', Parameters);
-  finally
-    Parameters.Free;
-  end;
+  Result := TtgFile.Create(RequestAPI('getFile', [//
+    TtgApiParameter.Create('file_id', FileId, 0, True)]));
 end;
 
 function TTelegramBot.AnswerCallbackQuery(const CallbackQueryId, Text: string; const ShowAlert: Boolean; const Url: string; const CacheTime: Int64): Boolean;
-var
-  Parameters: TDictionary<string, TValue>;
 begin
-  Parameters := TDictionary<string, TValue>.Create;
-  try
-    Parameters.Add('callback_query_id', CallbackQueryId);
-    Parameters.Add('text', Text);
-    Parameters.Add('show_alert', ShowAlert);
-    Parameters.Add('url', Url);
-    Parameters.Add('cache_time', CacheTime);
-    Result := ExecuteMethod('answerCallbackQuery', Parameters);
-  finally
-    Parameters.Free;
-  end;
+  Result := ExtractBool(RequestAPI('answerCallbackQuery', [//
+    TtgApiParameter.Create('callback_query_id', CallbackQueryId, '', True), //
+    TtgApiParameter.Create('text', Text, '', True), //
+    TtgApiParameter.Create('show_alert', ShowAlert, False, False), //
+    TtgApiParameter.Create('url', Url, '', False), //
+    TtgApiParameter.Create('cache_time', CacheTime, 0, False)]));
 end;
 {$ENDREGION}
 {$REGION 'Updating messages'}
 
-function TTelegramBot.EditMessageText(const InlineMessageId, Text: string; const ParseMode: TtgParseMode; const DisableWebPagePreview: Boolean; const ReplyMarkup: IReplyMarkup): ITgMessage;
-var
-  Parameters: TDictionary<string, TValue>;
+function TTelegramBot.EditMessageText(const InlineMessageId, Text: string; const ParseMode: TtgParseMode; const DisableWebPagePreview: Boolean; ReplyMarkup: IReplyMarkup): ITgMessage;
 begin
-  Parameters := TDictionary<string, TValue>.Create;
-  try
-    Parameters.Add('inline_message_id', InlineMessageId);
-    Parameters.Add('text', Text);
-    Parameters.Add('parse_mode', ParseMode.ToString);
-    Parameters.Add('disable_web_page_preview', DisableWebPagePreview);
-    Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-    Result := TTgMessage.Create(RequestAPI('editMessageText', Parameters));
-  finally
-    Parameters.Free;
-  end;
+  Result := TTgMessage(RequestAPI('editMessageText', [//
+    TtgApiParameter.Create('inline_message_id', InlineMessageId, 0, True), //
+    TtgApiParameter.Create('text', Text, 0, True), //
+    TtgApiParameter.Create('parse_mode', ParseMode.ToString, False, False), //
+    TtgApiParameter.Create('disable_web_page_preview', DisableWebPagePreview, False, False), //
+    TtgApiParameter.Create('reply_markup', TInterfacedObject(ReplyMarkup), 0, False)]));
 end;
 
-function TTelegramBot.EditMessageText(const ChatId: TValue; const MessageId: Int64; const Text: string; const ParseMode: TtgParseMode; const DisableWebPagePreview: Boolean; const ReplyMarkup: IReplyMarkup): ITgMessage;
-var
-  Parameters: TDictionary<string, TValue>;
+function TTelegramBot.EditMessageText(const ChatId: TValue; const MessageId: Int64; const Text: string; const ParseMode: TtgParseMode; const DisableWebPagePreview: Boolean; ReplyMarkup: IReplyMarkup): ITgMessage;
 begin
-  Parameters := TDictionary<string, TValue>.Create;
-  try
-    Parameters.Add('chat_id', ChatId);
-    Parameters.Add('message_id', MessageId);
-    Parameters.Add('text', Text);
-    Parameters.Add('parse_mode', ParseMode.ToString);
-    Parameters.Add('disable_web_page_preview', DisableWebPagePreview);
-    Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-    Result := TTgMessage.Create(RequestAPI('editMessageText', Parameters));
-  finally
-    Parameters.Free;
-  end;
+  Result := TTgMessage.Create(RequestAPI('editMessageText', [//
+    TtgApiParameter.Create('chat_id', ChatId, 0, True), //
+    TtgApiParameter.Create('message_id', MessageId, nil, True), //
+    TtgApiParameter.Create('text', Text, '', False), //
+    TtgApiParameter.Create('parse_mode', ParseMode.ToString, False, False), //
+    TtgApiParameter.Create('disable_web_page_preview', DisableWebPagePreview, 0, False), //
+    TtgApiParameter.Create('reply_markup', TInterfacedObject(ReplyMarkup), nil, False) //
+    ]));
 end;
 
 function TTelegramBot.DeleteMessage(const ChatId: TValue; const MessageId: Int64): Boolean;
-var
-  Parameters: TDictionary<string, TValue>;
 begin
-  Parameters := TDictionary<string, TValue>.Create;
-  try
-    Parameters.Add('chat_id', ChatId);
-    Parameters.Add('message_id', MessageId);
-    Result := ExecuteMethod('deleteMessage', Parameters);
-  finally
-    Parameters.Free;
-  end;
+  Result := ExtractBool(RequestAPI('deleteMessage', [//
+    TtgApiParameter.Create('chat_id', ChatId, 0, True), //
+    TtgApiParameter.Create('message_id', MessageId, nil, True) //
+    ]));
+end;
+
+function TTelegramBot.EditMessageCaption(const ChatId: TValue; const MessageId: Int64; const Caption: string; ReplyMarkup: IReplyMarkup): Boolean;
+begin
+  Result := ExtractBool(RequestAPI('editMessageCaption', [//
+    TtgApiParameter.Create('chat_id', ChatId, 0, True), //
+    TtgApiParameter.Create('message_id', MessageId, nil, True), //
+    TtgApiParameter.Create('caption', Caption, '', False), //
+    TtgApiParameter.Create('reply_markup', TInterfacedObject(ReplyMarkup), nil, False) //
+    ]));
+end;
+
+function TTelegramBot.EditMessageCaption(const InlineMessageId, Caption: string; ReplyMarkup: IReplyMarkup): Boolean;
+begin
+  Result := ExtractBool(RequestAPI('editMessageCaption', [//
+    TtgApiParameter.Create('inline_message_id', InlineMessageId, nil, True), //
+    TtgApiParameter.Create('caption', Caption, '', False), //
+    TtgApiParameter.Create('reply_markup', TInterfacedObject(ReplyMarkup), nil, False) //
+    ]));
+end;
+
+function TTelegramBot.editMessageLiveLocation(const ChatId: TValue; const MessageId: Int64; const Location: TtgLocation; ReplyMarkup: IReplyMarkup): Boolean;
+begin
+  Result := ExtractBool(RequestAPI('editMessageLiveLocation', [//
+    TtgApiParameter.Create('chat_id', ChatId, 0, True), //
+    TtgApiParameter.Create('message_id', MessageId, nil, True), //
+    TtgApiParameter.Create('latitude', Location.Latitude, '', False), //
+    TtgApiParameter.Create('longitude', Location.Longitude, False, False), //
+    TtgApiParameter.Create('reply_markup', TInterfacedObject(ReplyMarkup), nil, False) //
+    ]));
+end;
+
+function TTelegramBot.EditMessageLiveLocation(const InlineMessageId: string; const Location: TtgLocation; ReplyMarkup: IReplyMarkup): Boolean;
+begin
+  Result := ExtractBool(RequestAPI('editMessageLiveLocation', [//
+    TtgApiParameter.Create('inline_message_id', InlineMessageId, 0, True), //
+    TtgApiParameter.Create('latitude', Location.Latitude, '', False), //
+    TtgApiParameter.Create('longitude', Location.Longitude, False, False), //
+    TtgApiParameter.Create('reply_markup', TInterfacedObject(ReplyMarkup), nil, False) //
+    ]));
+end;
+
+function TTelegramBot.EditMessageReplyMarkup(const ChatId: TValue; const MessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
+begin
+  Result := TTgMessage.Create(RequestAPI('editMessageReplyMarkup', [//
+    TtgApiParameter.Create('chat_id', ChatId, 0, True), //
+    TtgApiParameter.Create('message_id', MessageId, '', False), //
+    TtgApiParameter.Create('reply_markup', TInterfacedObject(ReplyMarkup), nil, False) //
+    ]));
+end;
+
+function TTelegramBot.EditMessageReplyMarkup(const InlineMessageId: string; ReplyMarkup: IReplyMarkup): ITgMessage;
+begin
+  Result := TTgMessage.Create(RequestAPI('editMessageReplyMarkup', [//
+    TtgApiParameter.Create('inline_message_id', InlineMessageId, 0, True), //
+    TtgApiParameter.Create('reply_markup', TInterfacedObject(ReplyMarkup), nil, False) //
+    ]));
+end;
+{$ENDREGION}
+
+
+
+{$REGION 'Manage groups and channels'}
+
+function TTelegramBot.DeleteChatPhoto(const ChatId: TValue): Boolean;
+begin
+  Result := ExtractBool(RequestAPI('deleteChatPhoto', [//
+    TtgApiParameter.Create('chat_id', ChatId, 0, True)]));
+end;
+
+function TTelegramBot.deleteChatStickerSet(const ChatId: TValue): Boolean;
+begin
+  Result := ExtractBool(RequestAPI('deleteChatStickerSet', [//
+    TtgApiParameter.Create('chat_id', ChatId, 0, True)]));
+end;
+
+function TTelegramBot.ExportChatInviteLink(const ChatId: TValue): string;
+begin
+  Result := GetValueFromMethod(RequestAPI('exportChatInviteLink', [//
+    TtgApiParameter.Create('chat_id', ChatId, 0, True)]));
+end;
+
+function TTelegramBot.PinChatMessage(const ChatId: TValue; const MessageId: Int64; const DisableNotification: Boolean): Boolean;
+begin
+  Result := ExtractBool(RequestAPI('pinChatMessage', [//
+    TtgApiParameter.Create('chat_id', ChatId, 0, True), //
+    TtgApiParameter.Create('message_id', MessageId, 0, True), //
+    TtgApiParameter.Create('disable_notification', DisableNotification, False, False)]));
+end;
+
+function TTelegramBot.SetChatDescription(const ChatId: TValue; const Description: string): Boolean;
+begin
+  Result := ExtractBool(RequestAPI('setChatDescription', [//
+    TtgApiParameter.Create('chat_id', ChatId, 0, True), //
+    TtgApiParameter.Create('description', Description, '', True)]));
+end;
+
+function TTelegramBot.SetChatPhoto(const ChatId: TValue; const Photo: TtgFileToSend): Boolean;
+begin
+  Result := ExtractBool(RequestAPI('setChatPhoto', [//
+    TtgApiParameter.Create('chat_id', ChatId, 0, True), //
+    TtgApiParameter.Create('photo', Photo, nil, True)]));
+end;
+
+function TTelegramBot.setChatStickerSet(const ChatId: TValue; const StickerSetName: string): Boolean;
+begin
+  Result := ExtractBool(RequestAPI('setChatStickerSet', [//
+    TtgApiParameter.Create('chat_id', ChatId, 0, True), //
+    TtgApiParameter.Create('sticker_set_name', StickerSetName, '', True)]));
+end;
+
+function TTelegramBot.SetChatTitle(const ChatId: TValue; const Title: string): Boolean;
+begin
+  Result := ExtractBool(RequestAPI('setChatTitle', [//
+    TtgApiParameter.Create('chat_id', ChatId, 0, True), //
+    TtgApiParameter.Create('title', Title, '', True)]));
+end;
+
+function TTelegramBot.UnpinChatMessage(const ChatId: TValue): Boolean;
+begin
+  Result := ExtractBool(RequestAPI('unpinChatMessage', [//
+    TtgApiParameter.Create('chat_id', ChatId, 0, True)]));
+end;
+
+
+{$ENDREGION}
+{$REGION 'Manage users and admins'}
+
+function TTelegramBot.PromoteChatMember(const ChatId: TValue; const UserId: Int64; const CanChangeInfo, CanPostMessages, CanEditMessages, CanDeleteMessages, CanInviteUsers, CanRestrictMembers, CanPinMessages, CanPromoteMembers: Boolean): Boolean;
+begin
+  Result := ExtractBool(RequestAPI('promoteChatMember', [//
+    TtgApiParameter.Create('chat_id', ChatId, 0, True), //
+    TtgApiParameter.Create('user_id', UserId, 0, True), //
+    TtgApiParameter.Create('can_change_info', CanChangeInfo, False, False), //
+    TtgApiParameter.Create('can_post_messages', CanPostMessages, False, False), //
+    TtgApiParameter.Create('can_edit_messages', CanEditMessages, False, False), //
+    TtgApiParameter.Create('can_delete_messages', CanDeleteMessages, False, False), //
+    TtgApiParameter.Create('can_invite_users', CanInviteUsers, False, False), //
+    TtgApiParameter.Create('can_restrict_members', CanRestrictMembers, False, False), //
+    TtgApiParameter.Create('can_pin_messages', CanPinMessages, False, False), //
+    TtgApiParameter.Create('can_promote_members', CanPromoteMembers, False, False)]));
+end;
+
+function TTelegramBot.RestrictChatMember(const ChatId: TValue; const UserId, UntilDate: Int64; const CanSendMessages, CanSendMediaMessages, CanSendOtherMessages, CanAddWebPagePreviews: Boolean): Boolean;
+begin
+  Result := ExtractBool(RequestAPI('restrictChatMember', [//
+    TtgApiParameter.Create('chat_id', ChatId, 0, True), //
+    TtgApiParameter.Create('user_id', UserId, 0, True), //
+    TtgApiParameter.Create('until_date', UntilDate, 0, False), //
+    TtgApiParameter.Create('can_send_messages', CanSendMessages, False, False), //
+    TtgApiParameter.Create('can_send_media_messages', CanSendMediaMessages, False, False), //
+    TtgApiParameter.Create('can_send_other_messages', CanSendOtherMessages, False, False), //
+    TtgApiParameter.Create('can_add_web_page_previews', CanAddWebPagePreviews, False, False)]));
+end;
+{$ENDREGION}
+{$REGION 'Stickers'}
+
+function TTelegramBot.addStickerToSet(const UserId: Int64; const Name: string; const PngSticker: TValue; const Emojis: string; const MaskPosition: TtgMaskPosition): Boolean;
+begin
+  Result := ExtractBool(RequestAPI('addStickerToSet', [//
+    TtgApiParameter.Create('user_id', UserId, 0, True), //
+    TtgApiParameter.Create('name', Name, 0, True), //
+    TtgApiParameter.Create('png_sticker', PngSticker, False, False), //
+    TtgApiParameter.Create('emojis', Emojis, False, False), //
+    TtgApiParameter.Create('mask_position', MaskPosition, 0, False)]));
+end;
+
+function TTelegramBot.createNewStickerSet(const UserId: Int64; const Name, Title: string; const PngSticker: TValue; const Emojis: string; const ContainsMasks: Boolean; const MaskPosition: TtgMaskPosition): Boolean;
+begin
+  Result := ExtractBool(RequestAPI('createNewStickerSet', [//
+    TtgApiParameter.Create('user_id', UserId, 0, True), //
+    TtgApiParameter.Create('name', Name, nil, True), //
+    TtgApiParameter.Create('title', Title, 0, True), //
+    TtgApiParameter.Create('png_sticker', PngSticker, 0, True), //
+    TtgApiParameter.Create('emojis', Emojis, nil, True), //
+    TtgApiParameter.Create('contains_masks', ContainsMasks, 0, True), //
+    TtgApiParameter.Create('mask_position', MaskPosition, '', False)]));
 end;
 
 function TTelegramBot.deleteStickerFromSet(const Sticker: string): Boolean;
-var
-  Parameters: TDictionary<string, TValue>;
 begin
-  Parameters := TDictionary<string, TValue>.Create;
-  try
-    Parameters.Add('sticker', Sticker);
-    Result := ExecuteMethod('deleteStickerFromSet', Parameters);
-  finally
-    Parameters.Free;
-  end;
+  Result := ExtractBool(RequestAPI('deleteStickerFromSet', [//
+    TtgApiParameter.Create('sticker', Sticker, 0, True)]));
 end;
 
-function TTelegramBot.EditMessageCaption(const ChatId: TValue; const MessageId: Int64; const Caption: string; const ReplyMarkup: IReplyMarkup): Boolean;
-var
-  Parameters: TDictionary<string, TValue>;
+function TTelegramBot.getStickerSet(const Name: string): TtgStickerSet;
 begin
-  Parameters := TDictionary<string, TValue>.Create;
-  try
-    Parameters.Add('chat_id', ChatId);
-    Parameters.Add('message_id', MessageId);
-    Parameters.Add('caption', Caption);
-    Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-    Result := ExecuteMethod('editMessageCaption', Parameters);
-  finally
-    Parameters.Free;
-  end;
+  Result := TtgStickerSet.Create(RequestAPI('getStickerSet', [//
+    TtgApiParameter.Create('name', Name, 0, True)]));
 end;
 
-function TTelegramBot.EditMessageCaption(const InlineMessageId, Caption: string; const ReplyMarkup: IReplyMarkup): Boolean;
-var
-  Parameters: TDictionary<string, TValue>;
+function TTelegramBot.SendSticker(const ChatId, Sticker: TValue; const DisableNotification: Boolean; const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
 begin
-  Parameters := TDictionary<string, TValue>.Create;
-  try
-    Parameters.Add('caption', Caption);
-    Parameters.Add('inline_message_id', InlineMessageId);
-    Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-    Result := ExecuteMethod('editMessageCaption', Parameters);
-  finally
-    Parameters.Free;
-  end;
+  Result := TTgMessage.Create(RequestAPI('sendSticker', [//
+    TtgApiParameter.Create('chat_id', ChatId, 0, True), //
+    TtgApiParameter.Create('sticker', Sticker, '', True), //
+    TtgApiParameter.Create('disable_notification', DisableNotification, False, False), //
+    TtgApiParameter.Create('reply_to_message_id', ReplyToMessageId, 0, False), //
+    TtgApiParameter.Create('reply_markup', TInterfacedObject(ReplyMarkup), nil, False) //
+    ]));
 end;
 
-function TTelegramBot.editMessageLiveLocation(const ChatId: TValue; const MessageId: Int64; const Location: TtgLocation; const ReplyMarkup: IReplyMarkup): Boolean;
-var
-  Parameters: TDictionary<string, TValue>;
+function TTelegramBot.setStickerPositionInSet(const Sticker: string; const Position: Int64): Boolean;
 begin
-  Parameters := TDictionary<string, TValue>.Create;
-  try
-    Parameters.Add('chat_id', ChatId);
-    Parameters.Add('message_id', MessageId);
-    Parameters.Add('latitude', Location.Latitude);
-    Parameters.Add('longitude', Location.Longitude);
-    Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-    Result := ExecuteMethod('editMessageLiveLocation', Parameters);
-  finally
-    Parameters.Free;
-  end;
+  Result := ExtractBool(RequestAPI('setStickerPositionInSet', [//
+    TtgApiParameter.Create('sticker', Sticker, 0, True), //
+    TtgApiParameter.Create('position', Position, nil, True)]));
 end;
 
-function TTelegramBot.editMessageLiveLocation(const InlineMessageId: string; const Location: TtgLocation; const ReplyMarkup: IReplyMarkup): Boolean;
-var
-  Parameters: TDictionary<string, TValue>;
+function TTelegramBot.uploadStickerFile(const UserId: Int64; const PngSticker: TtgFileToSend): ItgFile;
 begin
-  Parameters := TDictionary<string, TValue>.Create;
-  try
-    Parameters.Add('inline_message_id', InlineMessageId);
-    Parameters.Add('latitude', Location.Latitude);
-    Parameters.Add('longitude', Location.Longitude);
-    Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-    Result := ExecuteMethod('editMessageLiveLocation', Parameters);
-  finally
-    Parameters.Free;
-  end;
-end;
-
-function TTelegramBot.EditMessageReplyMarkup(const ChatId: TValue; const MessageId: Int64; const ReplyMarkup: IReplyMarkup): ITgMessage;
-var
-  Parameters: TDictionary<string, TValue>;
-begin
-  Parameters := TDictionary<string, TValue>.Create;
-  try
-    Parameters.Add('chat_id', ChatId);
-    Parameters.Add('message_id', MessageId);
-    Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-    Result := TTgMessage.Create(RequestAPI('editMessageReplyMarkup', Parameters));
-  finally
-    Parameters.Free;
-  end;
-end;
-
-function TTelegramBot.EditMessageReplyMarkup(const InlineMessageId: string; const ReplyMarkup: IReplyMarkup): ITgMessage;
-var
-  Parameters: TDictionary<string, TValue>;
-begin
-  Parameters := TDictionary<string, TValue>.Create;
-  try
-    Parameters.Add('inline_message_id', InlineMessageId);
-    Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-    Result := TTgMessage.Create(RequestAPI('editMessageReplyMarkup', Parameters));
-  finally
-    Parameters.Free;
-  end;
+  Result := TtgFile.Create(RequestAPI('uploadStickerFile', [//
+    TtgApiParameter.Create('user_id', UserId, 0, True), //
+    TtgApiParameter.Create('png_sticker', PngSticker, nil, True)]));
 end;
 {$ENDREGION}
 {$REGION 'Inline mode'}
 
 function TTelegramBot.AnswerInlineQuery(const InlineQueryId: string; const Results: TArray<TtgInlineQueryResult>; const CacheTime: Int64; const IsPersonal: Boolean; const NextOffset, SwitchPmText, SwitchPmParameter: string): Boolean;
-var
-  Parameters: TDictionary<string, TValue>;
 begin
-  Parameters := TDictionary<string, TValue>.Create;
-  try
-    Parameters.Add('inline_query_id', InlineQueryId);
-    Parameters.Add('results', TJsonUtils.ArrayToJString<TtgInlineQueryResult>(Results));
-    Parameters.Add('cache_time', CacheTime);
-    Parameters.Add('is_personal', IsPersonal);
-    Parameters.Add('next_offset', NextOffset);
-    Parameters.Add('switch_pm_text', SwitchPmText);
-    Parameters.Add('switch_pm_parameter', SwitchPmParameter);
-    Result := ExecuteMethod('answerInlineQuery', Parameters);
-  finally
-    Parameters.Free;
-  end;
+  Result := ExtractBool(RequestAPI('answerInlineQuery', [//
+    TtgApiParameter.Create('inline_query_id', InlineQueryId, '', True), //
+    TtgApiParameter.Create('results', TJsonUtils.ArrayToJString<TtgInlineQueryResult>(Results), nil, True), //
+    TtgApiParameter.Create('cache_time', CacheTime, 0, False), //
+    TtgApiParameter.Create('is_personal', IsPersonal, False, False), //
+    TtgApiParameter.Create('next_offset', NextOffset, '', False), //
+    TtgApiParameter.Create('switch_pm_text', SwitchPmText, '', False), //
+    TtgApiParameter.Create('switch_pm_parameter', SwitchPmParameter, '', False) //
+    ]));
 end;
+
+
 {$ENDREGION}
 {$REGION 'Payments'}
 
-function TTelegramBot.SendInvoice(const ChatId: Int64; const title: string; const Description: string; const Payload: string; const ProviderToken: string; const StartParameter: string; const Currency: string; const Prices: TArray<TtgLabeledPrice>; const ProviderData: string; const PhotoUrl: string; const PhotoSize: Int64; const PhotoWidth: Int64; const PhotoHeight: Int64; const NeedName: Boolean; const NeedPhoneNumber: Boolean; const NeedEmail: Boolean; const NeedShippingAddress: Boolean; const IsFlexible: Boolean; const DisableNotification: Boolean; const ReplyToMessageId: Int64; const ReplyMarkup: IReplyMarkup): ITgMessage;
-var
-  LParameters: TDictionary<string, TValue>;
+function TTelegramBot.SendInvoice(const ChatId: Int64; const title: string; const Description: string; const Payload: string; const ProviderToken: string; const StartParameter: string; const Currency: string; const Prices: TArray<TtgLabeledPrice>; const ProviderData: string; const PhotoUrl: string; const PhotoSize: Int64; const PhotoWidth: Int64; const PhotoHeight: Int64; const NeedName: Boolean; const NeedPhoneNumber: Boolean; const NeedEmail: Boolean; const NeedShippingAddress: Boolean; const IsFlexible: Boolean; const DisableNotification: Boolean; const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
 begin
-  LParameters := TDictionary<string, TValue>.Create;
-  try
-    LParameters.Add('chat_id', ChatId);
-    LParameters.Add('title', title);
-    LParameters.Add('description', Description);
-    LParameters.Add('payload', Payload);
-    LParameters.Add('provider_token', ProviderToken);
-    LParameters.Add('start_parameter', StartParameter);
-    LParameters.Add('currency', Currency);
-    LParameters.Add('prices', TJsonUtils.ArrayToJString<TtgLabeledPrice>(Prices));
-    LParameters.Add('provider_data', ProviderData);
-    LParameters.Add('photo_url', PhotoUrl);
-    LParameters.Add('photo_size', PhotoSize);
-    LParameters.Add('photo_width', PhotoWidth);
-    LParameters.Add('photo_height', PhotoHeight);
-    LParameters.Add('need_name', NeedName);
-    LParameters.Add('need_phone_number', NeedPhoneNumber);
-    LParameters.Add('need_email', NeedEmail);
-    LParameters.Add('need_shipping_address', NeedShippingAddress);
-    LParameters.Add('is_flexible', IsFlexible);
-    LParameters.Add('disable_notification', DisableNotification);
-    LParameters.Add('reply_to_message_id', ReplyToMessageId);
-    LParameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-    Result := TTgMessage.Create(RequestAPI('sendInvoice', LParameters));
-  finally
-    LParameters.Free;
-  end;
+  Result := TTgMessage.Create(RequestAPI('sendInvoice', [//
+    TtgApiParameter.Create('chat_id', ChatId, 0, True), //
+    TtgApiParameter.Create('title', title, '', True), //
+    TtgApiParameter.Create('description', Description, '', True), //
+    TtgApiParameter.Create('payload', Payload, '', True), //
+    TtgApiParameter.Create('provider_token', ProviderToken, '', True), //
+    TtgApiParameter.Create('start_parameter', StartParameter, '', True), //
+    TtgApiParameter.Create('currency', Currency, '', True), //
+    TtgApiParameter.Create('prices', TJsonUtils.ArrayToJString<TtgLabeledPrice>(Prices), nil, True), //
+    TtgApiParameter.Create('provider_data', ProviderData, '', False), //
+    TtgApiParameter.Create('photo_url', PhotoUrl, '', False), //
+    TtgApiParameter.Create('photo_size', PhotoSize, 0, False), //
+    TtgApiParameter.Create('photo_width', PhotoWidth, 0, False), //
+    TtgApiParameter.Create('photo_height', PhotoHeight, 0, False), //
+    TtgApiParameter.Create('need_name', NeedName, False, False), //
+    TtgApiParameter.Create('need_phone_number', NeedPhoneNumber, False, False), //
+    TtgApiParameter.Create('need_email', NeedEmail, False, False), //
+    TtgApiParameter.Create('need_shipping_address', NeedShippingAddress, False, False), //
+    TtgApiParameter.Create('is_flexible', IsFlexible, False, False), //
+    TtgApiParameter.Create('disable_notification', DisableNotification, False, False), //
+    TtgApiParameter.Create('reply_to_message_id', ReplyToMessageId, False, False), //
+    TtgApiParameter.Create('reply_markup', TInterfacedObject(ReplyMarkup), nil, False) //
+    ]));
 end;
 
-function TTelegramBot.AnswerPreCheckoutQuery(const PreCheckoutQueryId: string; const Ok: Boolean; const ErrorMessage: string): Boolean;
-var
-  Parameters: TDictionary<string, TValue>;
+function TTelegramBot.AnswerPreCheckoutQueryBad(const PreCheckoutQueryId, ErrorMessage: string): Boolean;
 begin
-  Parameters := TDictionary<string, TValue>.Create;
-  try
-    Parameters.Add('Pre_checkout_query_id', PreCheckoutQueryId);
-    Parameters.Add('Ok', Ok);
-    Parameters.Add('Error_message', ErrorMessage);
-    Result := ExecuteMethod('AnswerPreCheckoutQuery', Parameters);
-  finally
-    Parameters.Free;
-  end;
+  Result := ExtractBool(RequestAPI('AnswerPreCheckoutQuery', [//
+    TtgApiParameter.Create('Pre_checkout_query_id', PreCheckoutQueryId, 0, True), //
+    TtgApiParameter.Create('Ok', False, True, False), //
+    TtgApiParameter.Create('Error_message', ErrorMessage, '', True)]));
 end;
 
-function TTelegramBot.AnswerShippingQuery(const ShippingQueryId: string; const Ok: Boolean; const ShippingOptions: TArray<TtgShippingOption>; const ErrorMessage: string): Boolean;
-var
-  Parameters: TDictionary<string, TValue>;
+function TTelegramBot.AnswerPreCheckoutQueryGood(const PreCheckoutQueryId: string): Boolean;
 begin
-  Parameters := TDictionary<string, TValue>.Create;
-  try
-    Parameters.Add('Shipping_query_id', ShippingQueryId);
-    Parameters.Add('Ok', Ok);
-    Parameters.Add('Shipping_options', TJsonUtils.ArrayToJString<TtgShippingOption>(ShippingOptions));
-    Parameters.Add('Error_message', ErrorMessage);
-    Result := ExecuteMethod('answerShippingQuery', Parameters);
-  finally
-    Parameters.Free;
-  end;
+  Result := ExtractBool(RequestAPI('AnswerPreCheckoutQuery', [//
+    TtgApiParameter.Create('Pre_checkout_query_id', PreCheckoutQueryId, 0, True), //
+    TtgApiParameter.Create('Ok', True, False, False)]));
 end;
 
-function TTelegramBot.createNewStickerSet(const UserId: Int64; const Name, Title: string; const PngSticker: TValue; const Emojis: string; const ContainsMasks: Boolean; const MaskPosition: TtgMaskPosition): Boolean;
-var
-  Parameters: TDictionary<string, TValue>;
+function TTelegramBot.AnswerShippingQueryBad(const ShippingQueryId, ErrorMessage: string): Boolean;
 begin
-  Parameters := TDictionary<string, TValue>.Create;
-  try
-    Parameters.Add('user_id', UserId);
-    Parameters.Add('name', Name);
-    Parameters.Add('title', Title);
-    Parameters.Add('png_sticker', PngSticker);
-    Parameters.Add('emojis', Emojis);
-    Parameters.Add('contains_masks', ContainsMasks);
-    Parameters.Add('mask_position', MaskPosition);
-    Result := ExecuteMethod('createNewStickerSet', Parameters);
-  finally
-    Parameters.Free;
-  end;
+  Result := ExtractBool(RequestAPI('answerShippingQuery', [//
+    TtgApiParameter.Create('Shipping_query_id', ShippingQueryId, 0, True), //
+    TtgApiParameter.Create('Ok', False, False, False), //
+    TtgApiParameter.Create('Error_message', ErrorMessage, '', False) //
+    ]));
 end;
+
+function TTelegramBot.AnswerShippingQueryGood(const ShippingQueryId: string; const ShippingOptions: TArray<TtgShippingOption>): Boolean;
+begin
+  Result := ExtractBool(RequestAPI('answerShippingQuery', [//
+    TtgApiParameter.Create('Shipping_query_id', ShippingQueryId, 0, True), //
+    TtgApiParameter.Create('Ok', True, False, False), //
+    TtgApiParameter.Create('Shipping_options', TJsonUtils.ArrayToJString<TtgShippingOption>(ShippingOptions), nil, True)]));
+end;
+
 {$ENDREGION}
+
 {$REGION 'Games'}
 
-function TTelegramBot.SetGameScore(const UserId, Score: Int64; const Force, DisableEditMessage: Boolean; const ChatId, MessageId: Int64; const InlineMessageId: string): ITgMessage;
-var
-  Parameters: TDictionary<string, TValue>;
+function TTelegramBot.GetGameHighScores(const UserId: Int64; const InlineMessageId: string): TArray<ItgGameHighScore>;
 begin
-  Parameters := TDictionary<string, TValue>.Create;
-  try
-    Parameters.Add('user_id', UserId);
-    Parameters.Add('score', Score);
-    Parameters.Add('force', Force);
-    Parameters.Add('disable_edit_message', DisableEditMessage);
-    Parameters.Add('chat_id', ChatId);
-    Parameters.Add('message_id', MessageId);
-    Parameters.Add('inline_message_id', InlineMessageId);
-    Result := TTgMessage.Create(RequestAPI('setGameScore', Parameters));
-  finally
-    Parameters.Free;
-  end;
+  Result := GetArrayFromMethod<ItgGameHighScore>(TtgGameHighScore, RequestAPI('getGameHighScores', [//
+    TtgApiParameter.Create('user_id', UserId, 0, True), //
+    TtgApiParameter.Create('inline_message_id', InlineMessageId, 0, True)]))
 end;
 
-function TTelegramBot.setStickerPositionInSet(const Sticker: string; const Position: Int64): Boolean;
-var
-  Parameters: TDictionary<string, TValue>;
+function TTelegramBot.GetGameHighScores(const UserId, ChatId, MessageId: Int64): TArray<ItgGameHighScore>;
 begin
-  Parameters := TDictionary<string, TValue>.Create;
-  try
-    Parameters.Add('sticker', Sticker);
-    Parameters.Add('position', Position);
-    Result := ExecuteMethod('setStickerPositionInSet', Parameters);
-  finally
-    Parameters.Free;
-  end;
+  Result := GetArrayFromMethod<ItgGameHighScore>(TtgGameHighScore, RequestAPI('getGameHighScores', [//
+    TtgApiParameter.Create('chat_id', ChatId, 0, True), //
+    TtgApiParameter.Create('user_id', UserId, 0, True), //
+    TtgApiParameter.Create('message_id', MessageId, 0, True)]))
 end;
 
-function TTelegramBot.SendGame(const ChatId: Int64; const GameShortName: string; const DisableNotification: Boolean; const ReplyToMessageId: Int64; const ReplyMarkup: IReplyMarkup): ITgMessage;
-var
-  Parameters: TDictionary<string, TValue>;
+function TTelegramBot.SendGame(const ChatId: Int64; const GameShortName: string; const DisableNotification: Boolean; const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
 begin
-  Parameters := TDictionary<string, TValue>.Create;
-  try
-    Parameters.Add('chat_id', ChatId);
-    Parameters.Add('game_short_name', GameShortName);
-    Parameters.Add('disable_notification', DisableNotification);
-    Parameters.Add('reply_to_message_id', ReplyToMessageId);
-    Parameters.Add('reply_markup', TInterfacedObject(ReplyMarkup));
-    Result := TTgMessage.Create(RequestAPI('sendGame', Parameters));
-  finally
-    Parameters.Free;
-  end;
+  Result := TTgMessage.Create(RequestAPI('sendGame', [//
+    TtgApiParameter.Create('chat_id', ChatId, 0, True), //
+    TtgApiParameter.Create('game_short_name', GameShortName, '', True), //
+    TtgApiParameter.Create('disable_notification', DisableNotification, False, False), //
+    TtgApiParameter.Create('reply_to_message_id', ReplyToMessageId, False, False), //
+    TtgApiParameter.Create('reply_markup', TInterfacedObject(ReplyMarkup), nil, False)]));
 end;
 
-function TTelegramBot.GetGameHighScores(const UserId, ChatId, MessageId: Int64; const InlineMessageId: string): TArray<ItgGameHighScore>;
-var
-  Parameters: TDictionary<string, TValue>;
-  LJson: TJSONArray;
-  I: Integer;
+function TTelegramBot.SetGameScore(const UserId, Score: Int64; const InlineMessageId: string; const Force, DisableEditMessage: Boolean): ITgMessage;
 begin
-  Parameters := TDictionary<string, TValue>.Create;
-  try
-    Parameters.Add('user_id', UserId);
-    Parameters.Add('chat_id', ChatId);
-    Parameters.Add('message_id', MessageId);
-    Parameters.Add('inline_message_id', InlineMessageId);
-    LJson := TJSONObject.ParseJSONValue(RequestAPI('getGameHighScores', Parameters)) as TJSONArray;
-    try
-      SetLength(Result, LJson.Count);
-      for I := 0 to High(Result) do
-        Result[I] := TtgGameHighScore.Create(LJson.Items[I].ToJSON);
-    finally
-      LJson.Free;
-    end;
-  finally
-    Parameters.Free;
-  end;
-end;
-{$ENDREGION}
-{$REGION 'Manage groups and channels'}
-
-function TTelegramBot.DeleteChatPhoto(const ChatId: TValue): Boolean;
-var
-  Parameters: TDictionary<string, TValue>;
-begin
-  Parameters := TDictionary<string, TValue>.Create;
-  try
-    Parameters.Add('chat_id', ChatId);
-    Result := ExecuteMethod('deleteChatPhoto', Parameters);
-  finally
-    Parameters.Free;
-  end;
+  Result := TTgMessage.Create(RequestAPI('setGameScore', [//
+    TtgApiParameter.Create('user_id', UserId, 0, True), //
+    TtgApiParameter.Create('score', Score, 0, True), //
+    TtgApiParameter.Create('force', Force, False, False), //
+    TtgApiParameter.Create('disable_edit_message', DisableEditMessage, False, False), //
+    TtgApiParameter.Create('inline_message_id', InlineMessageId, 0, True)]));
 end;
 
-function TTelegramBot.deleteChatStickerSet(const ChatId: TValue): Boolean;
-var
-  Parameters: TDictionary<string, TValue>;
+function TTelegramBot.SetGameScore(const UserId, Score, ChatId, MessageId: Int64; const Force, DisableEditMessage: Boolean): ITgMessage;
 begin
-  Parameters := TDictionary<string, TValue>.Create;
-  try
-    Parameters.Add('chat_id', ChatId);
-    Result := ExecuteMethod('deleteChatStickerSet', Parameters);
-  finally
-    Parameters.Free;
-  end;
-end;
-
-function TTelegramBot.ExportChatInviteLink(const ChatId: TValue): string;
-var
-  Parameters: TDictionary<string, TValue>;
-begin
-  Parameters := TDictionary<string, TValue>.Create;
-  try
-    Parameters.Add('chat_id', ChatId);
-    Result := GetValueFromMethod('exportChatInviteLink', Parameters);
-  finally
-    Parameters.Free;
-  end;
-end;
-
-function TTelegramBot.PinChatMessage(const ChatId: TValue; const MessageId: Int64; const DisableNotification: Boolean): Boolean;
-var
-  Parameters: TDictionary<string, TValue>;
-begin
-  Parameters := TDictionary<string, TValue>.Create;
-  try
-    Parameters.Add('chat_id', ChatId);
-    Parameters.Add('message_id', MessageId);
-    Parameters.Add('disable_notification', DisableNotification);
-    Result := ExecuteMethod('pinChatMessage', Parameters);
-  finally
-    Parameters.Free;
-  end;
-end;
-
-function TTelegramBot.SetChatDescription(const ChatId: TValue; const Description: string): Boolean;
-var
-  Parameters: TDictionary<string, TValue>;
-begin
-  Parameters := TDictionary<string, TValue>.Create;
-  try
-    Parameters.Add('chat_id', ChatId);
-    Parameters.Add('description', Description);
-    Result := ExecuteMethod('setChatDescription', Parameters);
-  finally
-    Parameters.Free;
-  end;
-end;
-
-function TTelegramBot.SetChatPhoto(const ChatId: TValue; const Photo: TtgFileToSend): Boolean;
-var
-  Parameters: TDictionary<string, TValue>;
-begin
-  Parameters := TDictionary<string, TValue>.Create;
-  try
-    Parameters.Add('chat_id', ChatId);
-    Parameters.Add('photo', Photo);
-    Result := ExecuteMethod('setChatPhoto', Parameters);
-  finally
-    Parameters.Free;
-  end;
-end;
-
-function TTelegramBot.setChatStickerSet(const ChatId: TValue; const StickerSetName: string): Boolean;
-var
-  Parameters: TDictionary<string, TValue>;
-begin
-  Parameters := TDictionary<string, TValue>.Create;
-  try
-    Parameters.Add('chat_id', ChatId);
-    Parameters.Add('sticker_set_name', StickerSetName);
-    Result := ExecuteMethod('setChatStickerSet', Parameters);
-  finally
-    Parameters.Free;
-  end;
-end;
-
-function TTelegramBot.SetChatTitle(const ChatId: TValue; const Title: string): Boolean;
-var
-  Parameters: TDictionary<string, TValue>;
-begin
-  Parameters := TDictionary<string, TValue>.Create;
-  try
-    Parameters.Add('chat_id', ChatId);
-    Parameters.Add('title', Title);
-    Result := ExecuteMethod('setChatTitle', Parameters);
-  finally
-    Parameters.Free;
-  end;
-end;
-
-function TTelegramBot.UnpinChatMessage(const ChatId: TValue): Boolean;
-var
-  Parameters: TDictionary<string, TValue>;
-begin
-  Parameters := TDictionary<string, TValue>.Create;
-  try
-    Parameters.Add('chat_id', ChatId);
-    Result := ExecuteMethod('unpinChatMessage', Parameters);
-  finally
-    Parameters.Free;
-  end;
-end;
-
-function TTelegramBot.uploadStickerFile(const UserId: Int64; const PngSticker: TtgFileToSend): ItgFile;
-var
-  Parameters: TDictionary<string, TValue>;
-begin
-  Parameters := TDictionary<string, TValue>.Create;
-  try
-    Parameters.Add('user_id', UserId);
-    Parameters.Add('png_sticker', PngSticker);
-    Result := TtgFile.Create(RequestAPI('uploadStickerFile', Parameters));
-  finally
-    Parameters.Free;
-  end;
-end;
-{$ENDREGION}
-{$REGION 'Manage users and admins'}
-
-function TTelegramBot.PromoteChatMember(const ChatId: TValue; const UserId: Int64; const CanChangeInfo, CanPostMessages, CanEditMessages, CanDeleteMessages, CanInviteUsers, CanRestrictMembers, CanPinMessages, CanPromoteMembers: Boolean): Boolean;
-var
-  Parameters: TDictionary<string, TValue>;
-begin
-  Parameters := TDictionary<string, TValue>.Create;
-  try
-    Parameters.Add('chat_id', ChatId);
-    Parameters.Add('user_id', UserId);
-    Parameters.Add('can_change_info', CanChangeInfo);
-    Parameters.Add('can_post_messages', CanPostMessages);
-    Parameters.Add('can_edit_messages', CanEditMessages);
-    Parameters.Add('can_delete_messages', CanDeleteMessages);
-    Parameters.Add('can_invite_users', CanInviteUsers);
-    Parameters.Add('can_restrict_members', CanRestrictMembers);
-    Parameters.Add('can_pin_messages', CanPinMessages);
-    Parameters.Add('can_promote_members', CanPromoteMembers);
-    Result := ExecuteMethod('promoteChatMember', Parameters);
-  finally
-    Parameters.Free;
-  end;
-end;
-
-function TTelegramBot.RestrictChatMember(const ChatId: TValue; const UserId, UntilDate: Int64; const CanSendMessages, CanSendMediaMessages, CanSendOtherMessages, CanAddWebPagePreviews: Boolean): Boolean;
-var
-  Parameters: TDictionary<string, TValue>;
-begin
-  Parameters := TDictionary<string, TValue>.Create;
-  try
-    Parameters.Add('chat_id', ChatId);
-    Parameters.Add('user_id', UserId);
-    Parameters.Add('until_date', UntilDate);
-    Parameters.Add('can_send_messages', CanSendMessages);
-    Parameters.Add('can_send_media_messages', CanSendMediaMessages);
-    Parameters.Add('can_send_other_messages', CanSendOtherMessages);
-    Parameters.Add('can_add_web_page_previews', CanAddWebPagePreviews);
-    Result := ExecuteMethod('restrictChatMember', Parameters);
-  finally
-    Parameters.Free;
-  end;
+  Result := TTgMessage.Create(RequestAPI('setGameScore', [//
+    TtgApiParameter.Create('user_id', UserId, 0, True), //
+    TtgApiParameter.Create('score', Score, nil, True), //
+    TtgApiParameter.Create('force', Force, False, False), //
+    TtgApiParameter.Create('disable_edit_message', DisableEditMessage, False, False), //
+    TtgApiParameter.Create('chat_id', ChatId, 0, True), //
+    TtgApiParameter.Create('message_id', MessageId, 0, True)]));
 end;
 {$ENDREGION}
 
