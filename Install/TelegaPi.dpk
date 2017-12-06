@@ -31,7 +31,8 @@ package TelegaPi;
 
 requires
   rtl,
-  RESTComponents;
+  RESTComponents,
+  fmx;
 
 contains
   TelegAPI.Base in '..\Source\TelegAPI.Base.pas',
@@ -50,8 +51,10 @@ contains
   TelegAPi.Types in '..\Source\TelegAPi.Types.pas',
   TelegaPi.Types.ReplyMarkups in '..\Source\TelegaPi.Types.ReplyMarkups.pas',
   TelegAPI.Utils.Json in '..\Source\TelegAPI.Utils.Json.pas',
-  TelegAPI.Utils.Params in '..\Source\TelegAPI.Utils.Params.pas',
+  TelegAPI.CoreAPI.ParameterConverter in '..\Source\TelegAPI.CoreAPI.ParameterConverter.pas',
   TelegAPI.Receiver.UI in '..\Source\TelegAPI.Receiver.UI.pas',
-  TelegaPi.Factory in '..\Source\TelegaPi.Factory.pas';
+  TelegaPi.Factory in '..\Source\TelegaPi.Factory.pas',
+  TelegAPi.CoreAPI.Request in '..\Source\TelegAPi.CoreAPI.Request.pas',
+  TelegAPi.CoreAPI.Parameter in '..\Source\TelegAPi.CoreAPI.Parameter.pas';
 
 end.

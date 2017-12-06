@@ -216,7 +216,7 @@ type
       const DisableWebPagePreview: Boolean = False; //
       const DisableNotification: Boolean = False; //
       const ReplyToMessageId: Int64 = 0; //
-      const ReplyMarkup: IReplyMarkup = nil): ITgMessage;
+      ReplyMarkup: IReplyMarkup = nil): ITgMessage;
      /// <summary>
      /// Use this method to forward messages of any kind.
      /// </summary>
@@ -293,7 +293,7 @@ type
       const Caption: string = ''; //
       const DisableNotification: Boolean = False; //
       const ReplyToMessageId: Int64 = 0; //
-      const ReplyMarkup: IReplyMarkup = nil): ITgMessage;
+      ReplyMarkup: IReplyMarkup = nil): ITgMessage;
      /// <summary>
      /// Use this method to send audio files, if you want Telegram clients to
      /// display them in the music player. Your audio must be in the .mp3
@@ -347,7 +347,7 @@ type
       const Performer: string = ''; //
       const DisableNotification: Boolean = False; //
       const ReplyToMessageId: Int64 = 0; //
-      const ReplyMarkup: IReplyMarkup = nil): ITgMessage;
+      ReplyMarkup: IReplyMarkup = nil): ITgMessage;
      /// <summary>
      /// Use this method to send general files.
      /// </summary>
@@ -390,7 +390,7 @@ type
       const Caption: string = ''; //
       const DisableNotification: Boolean = False; //
       const ReplyToMessageId: Int64 = 0; //
-      const ReplyMarkup: IReplyMarkup = nil): ITgMessage;
+      ReplyMarkup: IReplyMarkup = nil): ITgMessage;
      /// <summary>
      /// Use this method to send video files, Telegram clients support mp4
      /// videos (other formats may be sent as Document).
@@ -445,7 +445,7 @@ type
       const Height: Int64 = 0; //
       const DisableNotification: Boolean = False; //
       const ReplyToMessageId: Int64 = 0; //
-      const ReplyMarkup: IReplyMarkup = nil): ITgMessage;
+      ReplyMarkup: IReplyMarkup = nil): ITgMessage;
 
      /// <summary>
      /// Use this method to send audio files, if you want Telegram clients to
@@ -492,7 +492,7 @@ type
       const Duration: Int64 = 0; //
       const DisableNotification: Boolean = False; //
       const ReplyToMessageId: Int64 = 0; //
-      const ReplyMarkup: IReplyMarkup = nil): ITgMessage;
+      ReplyMarkup: IReplyMarkup = nil): ITgMessage;
      /// <summary>
      /// As of <see href="https://telegram.org/blog/video-messages-and-telescope">
      /// v.4.0</see>, Telegram clients support rounded square mp4 videos of up
@@ -541,7 +541,7 @@ type
       const Length: Int64 = 0; //
       const DisableNotification: Boolean = False; //
       const ReplyToMessageId: Int64 = 0; //
-      const ReplyMarkup: IReplyMarkup = nil): ITgMessage;
+      ReplyMarkup: IReplyMarkup = nil): ITgMessage;
 
      /// <summary>
      /// Use this method to send point on the map.
@@ -576,7 +576,7 @@ type
       const LivePeriod: Int64 = 0; //
       const DisableNotification: Boolean = False; //
       const ReplyToMessageId: Int64 = 0; //
-      const ReplyMarkup: IReplyMarkup = nil): ITgMessage;
+      ReplyMarkup: IReplyMarkup = nil): ITgMessage;
      /// <summary>
      /// Use this method to send information about a venue.
      /// </summary>
@@ -617,7 +617,7 @@ type
       const Venue: TtgVenue; //
       const DisableNotification: Boolean = False; //
       const ReplyToMessageId: Int64 = 0; //
-      const ReplyMarkup: IReplyMarkup = nil): ITgMessage;
+      ReplyMarkup: IReplyMarkup = nil): ITgMessage;
      /// <summary>
      /// Use this method to send phone contacts.
      /// </summary>
@@ -651,7 +651,7 @@ type
       const Contact: TtgContact; //
       const DisableNotification: Boolean = False; //
       const ReplyToMessageId: Int64 = 0; //
-      const ReplyMarkup: IReplyMarkup = nil): ITgMessage;
+      ReplyMarkup: IReplyMarkup = nil): ITgMessage;
      /// <summary>
      /// Use this method when you need to tell the user that something is
      /// happening on the bot's side. The status is set for 5 seconds or less
@@ -911,13 +911,13 @@ type
       const Text: string; //
       const ParseMode: TtgParseMode = TtgParseMode.Default; //
       const DisableWebPagePreview: Boolean = False; //
-      const ReplyMarkup: IReplyMarkup = nil): ITgMessage; overload;
+      ReplyMarkup: IReplyMarkup = nil): ITgMessage; overload;
     function EditMessageText(//
       const InlineMessageId: string; //
       const Text: string; //
       const ParseMode: TtgParseMode = TtgParseMode.Default; //
       const DisableWebPagePreview: Boolean = False; //
-      const ReplyMarkup: IReplyMarkup = nil): ITgMessage; overload;
+      ReplyMarkup: IReplyMarkup = nil): ITgMessage; overload;
      /// <summary>
      /// Use this method to edit captions of messages sent by the bot or via
      /// the bot (for inline bots).
@@ -950,12 +950,12 @@ type
       const ChatId: TValue; //
       const MessageId: Int64; //
       const Caption: string; //
-      const ReplyMarkup: IReplyMarkup = nil): Boolean; overload;
+      ReplyMarkup: IReplyMarkup = nil): Boolean; overload;
      { TODO -oM.E.Sysoev -cGeneral : Create Documentatiom }
     function EditMessageCaption(//
       const InlineMessageId: string; //
       const Caption: string; //
-      const ReplyMarkup: IReplyMarkup = nil): Boolean; overload;
+      ReplyMarkup: IReplyMarkup = nil): Boolean; overload;
 
      /// <summary>
      /// Use this method to edit live location messages sent by the bot or via
@@ -986,7 +986,7 @@ type
       const ChatId: TValue; //
       const MessageId: Int64; //
       const Location: TtgLocation; //
-      const ReplyMarkup: IReplyMarkup = nil): Boolean; overload;
+      ReplyMarkup: IReplyMarkup = nil): Boolean; overload;
      /// <summary>
      /// Use this method to edit live location messages sent by the bot or via
      /// the bot (for inline bots). A location can be edited until its
@@ -1019,7 +1019,7 @@ type
     function editMessageLiveLocation(//
       const InlineMessageId: string; //
       const Location: TtgLocation; //
-      const ReplyMarkup: IReplyMarkup = nil): Boolean; overload;
+      ReplyMarkup: IReplyMarkup = nil): Boolean; overload;
 
      /// <summary>
      /// Use this method to stop updating a live location message sent by the
@@ -1044,7 +1044,7 @@ type
     function stopMessageLiveLocation(//
       const ChatId: TValue; //
       const MessageId: Int64; //
-      const ReplyMarkup: IReplyMarkup = nil): Boolean; overload;
+      ReplyMarkup: IReplyMarkup = nil): Boolean; overload;
      /// <summary>
      /// Use this method to stop updating a live location message sent by the
      /// bot or via the bot (for inline bots) before live_period expires.
@@ -1062,7 +1062,7 @@ type
      /// </returns>
     function stopMessageLiveLocation(//
       const InlineMessageId: string; //
-      const ReplyMarkup: IReplyMarkup = nil): Boolean; overload;
+      ReplyMarkup: IReplyMarkup = nil): Boolean; overload;
      /// <summary>
      /// Use this method to edit only the reply markup of messages sent by the
      /// bot or via the bot (for inline bots).
@@ -1086,7 +1086,7 @@ type
     function EditMessageReplyMarkup(//
       const ChatId: TValue; //
       const MessageId: Int64; //
-      const ReplyMarkup: IReplyMarkup = nil): ITgMessage; overload;
+      ReplyMarkup: IReplyMarkup = nil): ITgMessage; overload;
      /// <summary>
      /// Use this method to edit only the reply markup of messages sent by the
      /// bot or via the bot (for inline bots).
@@ -1104,7 +1104,7 @@ type
      /// </returns>
     function EditMessageReplyMarkup(//
       const InlineMessageId: string; //
-      const ReplyMarkup: IReplyMarkup = nil): ITgMessage; overload;
+      ReplyMarkup: IReplyMarkup = nil): ITgMessage; overload;
      /// <summary>
      /// Use this method to delete a message.
      /// </summary>
@@ -1283,7 +1283,7 @@ type
       const IsFlexible: Boolean = False; //
       const DisableNotification: Boolean = False; //
       const ReplyToMessageId: Int64 = 0; //
-      const ReplyMarkup: IReplyMarkup = nil): ITgMessage;
+      ReplyMarkup: IReplyMarkup = nil): ITgMessage;
      /// <summary>
      /// If you sent an invoice requesting a shipping address and the
      /// parameter is_flexible was specified, the Bot API will send an Update
@@ -1309,10 +1309,11 @@ type
      /// unavailable'). Telegram will display this message to the user.
      /// </param>
      /// <seealso href="https://core.telegram.org/bots/api#answershippingquery" />
-    function AnswerShippingQuery(//
+    function AnswerShippingQueryGood(//
       const ShippingQueryId: string; //
-      const Ok: Boolean; //
-      const ShippingOptions: TArray<TtgShippingOption>; //
+      const ShippingOptions: TArray<TtgShippingOption>): Boolean;
+    function AnswerShippingQueryBad(//
+      const ShippingQueryId: string; //
       const ErrorMessage: string): Boolean;
      /// <summary>
      /// Once the user has confirmed their payment and shipping details, the
@@ -1344,10 +1345,11 @@ type
      /// after the pre-checkout query was sent.
      /// </remarks>
      /// <seealso href="https://core.telegram.org/bots/api#answerprecheckoutquery" />
-    function AnswerPreCheckoutQuery(//
+    function AnswerPreCheckoutQueryGood(//
+      const PreCheckoutQueryId: string): Boolean;
+    function AnswerPreCheckoutQueryBad(//
       const PreCheckoutQueryId: string; //
-      const Ok: Boolean; //
-      const ErrorMessage: string = ''): Boolean;
+      const ErrorMessage: string): Boolean;
 {$ENDREGION}
 {$REGION 'Games'}
      /// <summary>
@@ -1382,7 +1384,7 @@ type
       const GameShortName: string; //
       const DisableNotification: Boolean = False; //
       const ReplyToMessageId: Int64 = 0; //
-      const ReplyMarkup: IReplyMarkup = nil): ITgMessage;
+      ReplyMarkup: IReplyMarkup = nil): ITgMessage;
      /// <summary>
      /// Use this method to set the score of the specified user in a game.
      /// </summary>
@@ -1422,11 +1424,16 @@ type
     function SetGameScore(//
       const UserId: Int64; //
       const Score: Int64; //
+      const InlineMessageId: string; //
       const Force: Boolean = False; //
-      const DisableEditMessage: Boolean = False; //
-      const ChatId: Int64 = 0; //
-      const MessageId: Int64 = 0; //
-      const InlineMessageId: string = ''): ITgMessage;
+      const DisableEditMessage: Boolean = False): ITgMessage; overload;
+    function SetGameScore(//
+      const UserId: Int64; //
+      const Score: Int64; //
+      const ChatId: Int64; //
+      const MessageId: Int64; //
+      const Force: Boolean = False; //
+      const DisableEditMessage: Boolean = False): ITgMessage; overload;
      /// <summary>
      /// Use this method to get data for high score tables. Will return the
      /// score of the specified user and several of his neighbors in a game.
@@ -1461,9 +1468,11 @@ type
      /// </seealso>
     function GetGameHighScores(//
       const UserId: Int64; //
+      const InlineMessageId: string = ''): TArray<ItgGameHighScore>; overload;
+    function GetGameHighScores(//
+      const UserId: Int64; //
       const ChatId: Int64 = 0; //
-      const MessageId: Int64 = 0; //
-      const InlineMessageId: string = ''): TArray<ItgGameHighScore>;
+      const MessageId: Int64 = 0): TArray<ItgGameHighScore>; overload;
 {$ENDREGION}
 {$REGION 'Manage groups and channels'}
      /// <summary>
@@ -1729,7 +1738,7 @@ type
       const Sticker: TValue; //
       const DisableNotification: Boolean = False; //
       const ReplyToMessageId: Int64 = 0; //
-      const ReplyMarkup: IReplyMarkup = nil): ITgMessage;
+      ReplyMarkup: IReplyMarkup = nil): ITgMessage;
      /// <summary>
      /// Use this method to get a sticker set.
      /// </summary>
