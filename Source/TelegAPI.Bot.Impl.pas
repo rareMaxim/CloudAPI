@@ -321,7 +321,8 @@ type
      /// End; </code>
      /// </example>
     function SendPhoto(//
-      const ChatId, Photo: TValue; //
+      const ChatId: TValue; //
+      const Photo: TtgFileToSend; //
       const Caption: string = ''; //
       const DisableNotification: Boolean = False; //
       const ReplyToMessageId: Int64 = 0; //
@@ -2150,11 +2151,11 @@ begin
     ]));
 end;
 
-function TTelegramBot.SendPhoto(const ChatId, Photo: TValue; const Caption: string; const DisableNotification: Boolean; const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
+function TTelegramBot.SendPhoto(const ChatId: TValue; const Photo: TtgFileToSend; const Caption: string; const DisableNotification: Boolean; const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
 begin
   Result := TTgMessage.Create(RequestAPI('sendPhoto', [//
     TtgApiParameter.Create('chat_id', ChatId, 0, True), //
-    TtgApiParameter.Create('photo', Photo, '', True), //
+    TtgApiParameter.Create('photo', Photo, nil, True), //
     TtgApiParameter.Create('caption', Caption, '', False), //
     TtgApiParameter.Create('disable_notification', DisableNotification, False, False), //
     TtgApiParameter.Create('reply_to_message_id', ReplyToMessageId, 0, False), //

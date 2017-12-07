@@ -9,7 +9,7 @@ uses
   System.SysUtils,
   System.TypInfo,
   TelegAPI.Types,
-  TelegAPi.CoreAPI.Parameter;
+  TelegAPI.CoreAPI.Parameter;
 
 type
   /// <summary>
@@ -31,6 +31,7 @@ type
     ParamLoaders: TDictionary<PTypeInfo, TtgParamConverter.TLoader>;
     constructor Create;
     destructor Destroy; override;
+    function IsSupported(Param: TtgApiParameter): Boolean;
     function ApplyParamToFormData(const AParam: TtgApiParameter; var Form: TMultipartFormData): Boolean;
   end;
 
@@ -76,6 +77,11 @@ begin
   inherited;
 end;
 
+function TtgParamConverter.IsSupported(Param: TtgApiParameter): Boolean;
+begin
+  Result := ParamLoaders.ContainsKey(Param.Value.TypeInfo);
+end;
+
 procedure TtgParamConverter.AddInt64(var AFormData: TMultipartFormData; AParam: TtgApiParameter);
 begin
   AFormData.AddField(AParam.Key, AParam.Value.AsInt64.ToString);
@@ -91,10 +97,18 @@ var
   LFileToSent: TtgFileToSend;
 begin
   LFileToSent := AParam.Value.AsType<TtgFileToSend>;
-  if Assigned(LFileToSent.Content) then
-    AFormData.AddStream(AParam.Key, LFileToSent.Content, LFileToSent.FileName)
-  else
-    AFormData.AddFile(AParam.Key, LFileToSent.FileName);
+  try
+    if LFileToSent.Tag = TtgFileToSend.FILE_TO_SEND_STREAM then
+      AFormData.AddStream(AParam.Key, LFileToSent.Content, LFileToSent.Data)
+    else if LFileToSent.Tag = TtgFileToSend.FILE_TO_SEND_FILE then
+      AFormData.AddFile(AParam.Key, LFileToSent.Data)
+    else if (LFileToSent.Tag = TtgFileToSend.FILE_TO_SEND_ID) or (LFileToSent.Tag = TtgFileToSend.FILE_TO_SEND_URL) then
+      AFormData.AddField(AParam.Key, LFileToSent.Data)
+    else
+      raise Exception.Create('Cant convert TTgFileToSend: Unknown prototype tag');
+  finally
+    LFileToSent.Free;
+  end;
 end;
 
 end.

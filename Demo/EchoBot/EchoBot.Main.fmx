@@ -44,7 +44,6 @@ object Main: TMain
       Touch.InteractiveGestures = [LongTap, DoubleTap]
       Align = Client
       TabOrder = 1
-      Text = '283107814:AAF9VZC6TRv6qKmOMCsLFoI8SBlV_xFMI80'
       Margins.Right = 5.000000000000000000
       Size.Width = 346.000000000000000000
       Size.Height = 23.000000000000000000

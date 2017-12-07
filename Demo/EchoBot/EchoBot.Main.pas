@@ -150,9 +150,9 @@ end;
 
 procedure TMain.SendPhoto(Msg: ITgMessage);
 const
-  PATH_PHOTO = 'C:\Users\Public\Pictures\Sample Pictures\Tulips.jpg';
-var
-  LFile: TtgFileToSend;
+  PATH_PHOTO = 'D:\git\Мои проекты\ms301-TelegAPI\Install\pJNqeRflXYU.png';
+//var
+//  LFile: TtgFileToSend;
 begin
   tgBot.SendChatAction(Msg.Chat.Id, TtgSendChatAction.UploadPhoto);
   if not TFile.Exists(PATH_PHOTO) then
@@ -160,12 +160,12 @@ begin
     WriteLine('Change path to photo in metod: TMain.SendPhoto');
     Exit;
   end;
-  LFile := TtgFileToSend.Create(PATH_PHOTO);
-  try
-    tgBot.SendPhoto(Msg.Chat.Id, LFile, 'Nice Picture');
-  finally
-    LFile.Free;
-  end;
+//  LFile := TtgFileToSend.Create(PATH_PHOTO);
+//  try
+  tgBot.SendPhoto(Msg.Chat.Id, TtgFileToSend.FromFile(PATH_PHOTO), 'Nice Picture');
+//  finally
+//    LFile.Free;
+//  end;
 end;
 
 procedure TMain.SendInline;

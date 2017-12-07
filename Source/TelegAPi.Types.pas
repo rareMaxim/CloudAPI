@@ -379,19 +379,6 @@ type
     function AllowedUpdates: TArray<string>;
   end;
 
-  ItgFileToSend = interface
-    ['{91FF9D95-7BF3-49B3-B7CB-6C836305FEC2}']
-    function getContent: TStream;
-  end;
-
-  TtgFileToSend = class
-  public
-    FileName: string;
-    Content: TStream;
-    constructor Create(const AFileName: string); overload;
-    constructor Create(AContent: TStream; const AFileName: string); overload;
-  end;
-
   TtgInputMedia = class
   private
     FType: string;
@@ -414,34 +401,29 @@ type
     constructor Create(AMedia: TValue; const ACaption: string = ''; AWidth: Integer = 0; AHeight: Integer = 0; ADuration: Integer = 0); reintroduce;
   end;
 
+  TtgFileToSend = class
+  public
+    const
+      FILE_TO_SEND_ERROR = 254;
+      FILE_TO_SEND_ID = 0;
+      FILE_TO_SEND_URL = 1;
+      FILE_TO_SEND_FILE = 2;
+      FILE_TO_SEND_STREAM = 3;
+  public
+    Data: string;
+    Content: TStream;
+    Tag: Byte;
+    constructor Create(const ATag: Byte = FILE_TO_SEND_ERROR; AData: string = ''; AContent: TStream = nil);
+    class function FromFile(const AFileName: string): TtgFileToSend;
+    class function FromID(const AID: string): TtgFileToSend;
+    class function FromURL(const AURL: string): TtgFileToSend;
+    class function FromStream(const AContent: TStream; const AFileName: string): TtgFileToSend;
+  end;
+
 implementation
 
 uses
   System.SysUtils;
-
-{ TtgFileToSend }
-constructor TtgFileToSend.Create(const AFileName: string);
-begin
-  Content := nil;
-  FileName := AFileName;
-  if not FileExists(AFileName) then
-    raise EFileNotFoundException.CreateFmt('File %S not found!', [AFileName]);
-end;
-
-constructor TtgFileToSend.Create(AContent: TStream; const AFileName: string);
-begin
-  FileName := AFileName;
-  Content := AContent;
-  // I guess, in most cases, AFilename param should contain a non-empty string.
-  // It is odd to receive a file with filename and
-  // extension which both are not connected with its content.
-  if AFileName.IsEmpty then
-    raise Exception.Create('TtgFileToSend: Filename is empty!');
-  if not Assigned(AContent) then
-    raise EStreamError.Create('Stream not assigned!');
-  FileName := AFileName;
-  Content := AContent;
-end;
 
 { TtgInputMedia }
 
@@ -468,6 +450,44 @@ begin
   Width := AWidth;
   Height := AHeight;
   Duration := ADuration;
+end;
+
+{ TtgFileToSend }
+
+constructor TtgFileToSend.Create(const ATag: Byte; AData: string; AContent: TStream);
+begin
+  Tag := ATag;
+  Data := AData;
+  Content := Content;
+end;
+
+class function TtgFileToSend.FromFile(const AFileName: string): TtgFileToSend;
+begin
+  if not FileExists(AFileName) then
+    raise EFileNotFoundException.CreateFmt('File %S not found!', [AFileName]);
+  Result := TtgFileToSend.Create(FILE_TO_SEND_FILE, AFileName, nil);
+end;
+
+class function TtgFileToSend.FromID(const AID: string): TtgFileToSend;
+begin
+  Result := TtgFileToSend.Create(FILE_TO_SEND_ID, AID, nil);
+end;
+
+class function TtgFileToSend.FromStream(const AContent: TStream; const AFileName: string): TtgFileToSend;
+begin
+    // I guess, in most cases, AFilename param should contain a non-empty string.
+    // It is odd to receive a file with filename and
+    // extension which both are not connected with its content.
+  if AFileName.IsEmpty then
+    raise Exception.Create('TtgFileToSend: Filename is empty!');
+  if not Assigned(AContent) then
+    raise EStreamError.Create('Stream not assigned!');
+  Result := TtgFileToSend.Create(FILE_TO_SEND_STREAM, AFileName, AContent);
+end;
+
+class function TtgFileToSend.FromURL(const AURL: string): TtgFileToSend;
+begin
+  Result := TtgFileToSend.Create(FILE_TO_SEND_URL, AURL, nil);
 end;
 
 end.

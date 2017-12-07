@@ -289,7 +289,8 @@ type
      /// End; </code>
      /// </example>
     function SendPhoto(//
-      const ChatId, Photo: TValue; //
+      const ChatId: TValue; //
+      const Photo: TtgFileToSend; //
       const Caption: string = ''; //
       const DisableNotification: Boolean = False; //
       const ReplyToMessageId: Int64 = 0; //
