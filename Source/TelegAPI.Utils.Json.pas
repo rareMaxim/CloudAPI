@@ -1,4 +1,4 @@
-unit TelegAPI.Utils.Json;
+﻿unit TelegAPI.Utils.Json;
 
 interface
 
@@ -51,6 +51,7 @@ begin
       Result := Result + ',';
   end;
   Result := Result + ']';
+  Result := Result.Replace('"inline_keyboard":null', '', [rfReplaceAll]);// какашечка
 end;
 
 { TBaseJson }
