@@ -374,7 +374,8 @@ type
      /// sendVoice</see> method instead.
      /// </remarks>
     function SendAudio(//
-      const ChatId, Audio: TValue; //
+      const ChatId: TValue; //
+      const Audio: TtgFileToSend; //
       const Caption: string = ''; //
       const Duration: Int64 = 0; //
       const Performer: string = ''; //
@@ -419,7 +420,8 @@ type
      /// this limit may be changed in the future.
      /// </remarks>
     function SendDocument(//
-      const ChatId, Document: TValue; //
+      const ChatId: TValue; //
+      const Document: TtgFileToSend; //
       const Caption: string = ''; //
       const DisableNotification: Boolean = False; //
       const ReplyToMessageId: Int64 = 0; //
@@ -471,7 +473,8 @@ type
      /// limit may be changed in the future.
      /// </remarks>
     function SendVideo(//
-      const ChatId, Video: TValue; //
+      const ChatId: TValue; //
+      const Video: TtgFileToSend; //
       const Caption: string = ''; //
       const Duration: Int64 = 0; //
       const Width: Int64 = 0; //
@@ -520,7 +523,8 @@ type
      /// limit may be changed in the future.
      /// </remarks>
     function SendVoice(//
-      const ChatId, Voice: TValue; //
+      const ChatId: TValue; //
+      const Voice: TtgFileToSend; //
       const Caption: string = ''; //
       const Duration: Int64 = 0; //
       const DisableNotification: Boolean = False; //
@@ -569,7 +573,7 @@ type
      /// </remarks>
     function SendVideoNote(//
       const ChatId: TValue; //
-      const VideoNote: TValue; //
+      const VideoNote: TtgFileToSend; //
       const Duration: Int64 = 0; //
       const Length: Int64 = 0; //
       const DisableNotification: Boolean = False; //
@@ -2191,7 +2195,7 @@ begin
     ]));
 end;
 
-function TTelegramBot.SendVideo(const ChatId, Video: TValue; const Caption: string; const Duration, Width, Height: Int64; const DisableNotification: Boolean; const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
+function TTelegramBot.SendVideo(const ChatId: TValue; const Video: TtgFileToSend; const Caption: string; const Duration, Width, Height: Int64; const DisableNotification: Boolean; const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
 begin
   Result := TTgMessage.Create(RequestAPI('sendVideo', [//
     TtgApiParameter.Create('chat_id', ChatId, 0, True), //
@@ -2206,7 +2210,7 @@ begin
     ]));
 end;
 
-function TTelegramBot.SendVideoNote(const ChatId, VideoNote: TValue; const Duration, Length: Int64; const DisableNotification: Boolean; const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
+function TTelegramBot.SendVideoNote(const ChatId: TValue; const VideoNote: TtgFileToSend; const Duration, Length: Int64; const DisableNotification: Boolean; const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
 begin
   Result := TTgMessage.Create(RequestAPI('sendVideoNote', [//
     TtgApiParameter.Create('chat_id', ChatId, 0, True), //
@@ -2219,7 +2223,7 @@ begin
     ]));
 end;
 
-function TTelegramBot.SendVoice(const ChatId, Voice: TValue; const Caption: string; const Duration: Int64; const DisableNotification: Boolean; const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
+function TTelegramBot.SendVoice(const ChatId: TValue; const Voice: TtgFileToSend; const Caption: string; const Duration: Int64; const DisableNotification: Boolean; const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
 begin
   Result := TTgMessage.Create(RequestAPI('sendVoice', [//
     TtgApiParameter.Create('chat_id', ChatId, 0, True), //
@@ -2232,11 +2236,11 @@ begin
     ]));
 end;
 
-function TTelegramBot.SendAudio(const ChatId, Audio: TValue; const Caption: string; const Duration: Int64; const Performer: string; const DisableNotification: Boolean; const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
+function TTelegramBot.SendAudio(const ChatId: TValue; const Audio: TtgFileToSend; const Caption: string; const Duration: Int64; const Performer: string; const DisableNotification: Boolean; const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
 begin
   Result := TTgMessage.Create(RequestAPI('sendAudio', [//
     TtgApiParameter.Create('chat_id', ChatId, 0, True), //
-    TtgApiParameter.Create('audio', Audio, '', True), //
+    TtgApiParameter.Create('audio', Audio, nil, True), //
     TtgApiParameter.Create('duration', Duration, 0, False), //
     TtgApiParameter.Create('performer', Performer, '', False), //
     TtgApiParameter.Create('caption', Caption, 0, False), //
@@ -2267,7 +2271,7 @@ begin
     ]));
 end;
 
-function TTelegramBot.SendDocument(const ChatId, Document: TValue; const Caption: string; const DisableNotification: Boolean; const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
+function TTelegramBot.SendDocument(const ChatId: TValue; const Document: TtgFileToSend; const Caption: string; const DisableNotification: Boolean; const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
 begin
   Result := TTgMessage.Create(RequestAPI('sendDocument', [//
     TtgApiParameter.Create('chat_id', ChatId, 0, True), //

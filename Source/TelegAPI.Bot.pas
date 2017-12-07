@@ -342,7 +342,8 @@ type
      /// sendVoice</see> method instead.
      /// </remarks>
     function SendAudio(//
-      const ChatId, Audio: TValue; //
+      const ChatId: TValue; //
+      const Audio: TtgFileToSend; //
       const Caption: string = ''; //
       const Duration: Int64 = 0; //
       const Performer: string = ''; //
@@ -387,7 +388,8 @@ type
      /// this limit may be changed in the future.
      /// </remarks>
     function SendDocument(//
-      const ChatId, Document: TValue; //
+      const ChatId: TValue; //
+      const Document: TtgFileToSend; //
       const Caption: string = ''; //
       const DisableNotification: Boolean = False; //
       const ReplyToMessageId: Int64 = 0; //
@@ -439,7 +441,8 @@ type
      /// limit may be changed in the future.
      /// </remarks>
     function SendVideo(//
-      const ChatId, Video: TValue; //
+      const ChatId: TValue; //
+      const Video: TtgFileToSend; //
       const Caption: string = ''; //
       const Duration: Int64 = 0; //
       const Width: Int64 = 0; //
@@ -488,7 +491,8 @@ type
      /// limit may be changed in the future.
      /// </remarks>
     function SendVoice(//
-      const ChatId, Voice: TValue; //
+      const ChatId: TValue; //
+      const Voice: TtgFileToSend; //
       const Caption: string = ''; //
       const Duration: Int64 = 0; //
       const DisableNotification: Boolean = False; //
@@ -537,7 +541,7 @@ type
      /// </remarks>
     function SendVideoNote(//
       const ChatId: TValue; //
-      const VideoNote: TValue; //
+      const VideoNote: TtgFileToSend; //
       const Duration: Int64 = 0; //
       const Length: Int64 = 0; //
       const DisableNotification: Boolean = False; //
