@@ -56,6 +56,7 @@ type
     procedure ParseTextMessage(Msg: ITgMessage);
     procedure ParsePhotoMessage(Msg: ITgMessage);
     procedure ParseLocationMessage(Msg: ITgMessage);
+    procedure ParseContactMessage(Msg: ITgMessage);
   public
     { Public declarations }
   end;
@@ -77,6 +78,11 @@ uses
 procedure TMain.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   tgReceiverUI1.IsActive := False;
+end;
+
+procedure TMain.ParseContactMessage(Msg: ITgMessage);
+begin
+  WriteLine('Contact: ' + Msg.Contact.LastName + ' ' + Msg.Contact.FirstName + ' ' + Msg.Contact.PhoneNumber);
 end;
 
 procedure TMain.ParseLocationMessage(Msg: ITgMessage);
@@ -257,6 +263,8 @@ begin
       ParsePhotoMessage(AMessage);
     TtgMessageType.LocationMessage:
       ParseLocationMessage(AMessage);
+    TtgMessageType.ContactMessage:
+      ParseContactMessage(AMessage);
   end;
 end;
 
