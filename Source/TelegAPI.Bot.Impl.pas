@@ -157,7 +157,7 @@ type
     function KickChatMember(//
       const ChatId: TValue; //
       const UserId: Int64; //
-      const UntilDate: Int64 = 0): Boolean;
+      const UntilDate: TDateTime = 0): Boolean;
     function UnbanChatMember(//
       const ChatId: TValue; //
       const UserId: Int64): Boolean;
@@ -320,7 +320,7 @@ type
     function RestrictChatMember(//
       const ChatId: TValue; //
       const UserId: Int64; //
-      const UntilDate: Int64 = 0; //
+      const UntilDate: TDateTime = 0; //
       const CanSendMessages: Boolean = False; //
       const CanSendMediaMessages: Boolean = False; //
       const CanSendOtherMessages: Boolean = False; //
@@ -731,12 +731,12 @@ begin
     ]));
 end;
 
-function TTelegramBot.KickChatMember(const ChatId: TValue; const UserId, UntilDate: Int64): Boolean;
+function TTelegramBot.KickChatMember(const ChatId: TValue; const UserId: Int64; const UntilDate: TDateTime): Boolean;
 begin
   Result := ExtractBool(RequestAPI('kickChatMember', [//
     TtgApiParameter.Create('chat_id', ChatId, 0, True), //
     TtgApiParameter.Create('user_id', UserId, 0, True), //
-    TtgApiParameter.Create('until_date', UntilDate, '', False)//
+    TtgApiParameter.Create('until_date', UntilDate, 0, False)//
     ]));
 end;
 
@@ -992,7 +992,7 @@ begin
     TtgApiParameter.Create('can_promote_members', CanPromoteMembers, False, False)]));
 end;
 
-function TTelegramBot.RestrictChatMember(const ChatId: TValue; const UserId, UntilDate: Int64; const CanSendMessages, CanSendMediaMessages, CanSendOtherMessages, CanAddWebPagePreviews: Boolean): Boolean;
+function TTelegramBot.RestrictChatMember(const ChatId: TValue; const UserId: Int64;const UntilDate: TDateTime; const CanSendMessages, CanSendMediaMessages, CanSendOtherMessages, CanAddWebPagePreviews: Boolean): Boolean;
 begin
   Result := ExtractBool(RequestAPI('restrictChatMember', [//
     TtgApiParameter.Create('chat_id', ChatId, 0, True), //

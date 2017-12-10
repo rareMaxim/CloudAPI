@@ -751,7 +751,7 @@ type
     function KickChatMember(//
       const ChatId: TValue; //
       const UserId: Int64; //
-      const UntilDate: Int64 = 0): Boolean;
+      const UntilDate: TDateTime = 0): Boolean;
      /// <summary>
      /// Use this method to unban a previously kicked user in a supergroup.
      /// The user will not return to the group automatically, but will be able
@@ -1645,7 +1645,7 @@ type
     function RestrictChatMember(//
       const ChatId: TValue; //
       const UserId: Int64; //
-      const UntilDate: Int64 = 0; //
+      const UntilDate: TDateTime = 0; //
       const CanSendMessages: Boolean = False; //
       const CanSendMediaMessages: Boolean = False; //
       const CanSendOtherMessages: Boolean = False; //

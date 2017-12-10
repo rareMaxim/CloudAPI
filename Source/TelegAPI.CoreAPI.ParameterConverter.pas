@@ -5,7 +5,7 @@ interface
 uses
   System.Generics.Collections,
   System.Net.Mime,
-  System.rtti,
+  System.Rtti,
   System.SysUtils,
   System.TypInfo,
   TelegAPI.Types,
@@ -23,6 +23,7 @@ type
       TLoader = procedure(var AFormData: TMultipartFormData; AParam: TtgApiParameter) of object;
   protected
     procedure AddInteger(var AFormData: TMultipartFormData; AParam: TtgApiParameter);
+    procedure AddTDateTime(var AFormData: TMultipartFormData; AParam: TtgApiParameter);
     procedure AddString(var AFormData: TMultipartFormData; AParam: TtgApiParameter);
     procedure AddInt64(var AFormData: TMultipartFormData; AParam: TtgApiParameter);
     procedure AddBoolean(var AFormData: TMultipartFormData; AParam: TtgApiParameter);
@@ -38,6 +39,7 @@ type
 implementation
 
 uses
+  System.DateUtils,
   TelegAPI.Helpers;
 
 procedure TtgParamConverter.AddInteger(var AFormData: TMultipartFormData; AParam: TtgApiParameter);
@@ -48,6 +50,12 @@ end;
 procedure TtgParamConverter.AddString(var AFormData: TMultipartFormData; AParam: TtgApiParameter);
 begin
   AFormData.AddField(AParam.Key, AParam.Value.AsString);
+end;
+
+procedure TtgParamConverter.AddTDateTime(var AFormData: TMultipartFormData;
+  AParam: TtgApiParameter);
+begin
+  AFormData.AddField(AParam.Key, DateTimeToUnix(AParam.Value.AsType<TDateTime>, False).ToString);
 end;
 
 function TtgParamConverter.ApplyParamToFormData(const AParam: TtgApiParameter; var Form: TMultipartFormData): Boolean;
@@ -67,6 +75,7 @@ begin
   ParamLoaders.Add(PTypeInfo(TypeInfo(string)), AddString);
   ParamLoaders.Add(PTypeInfo(TypeInfo(Int64)), AddInt64);
   ParamLoaders.Add(PTypeInfo(TypeInfo(Boolean)), AddBoolean);
+  ParamLoaders.Add(PTypeInfo(TypeInfo(TDateTime)), AddTDateTime);
   //class types
   ParamLoaders.Add(PTypeInfo(TypeInfo(TtgFileToSend)), AddClass_TtgFileToSend);
 end;
