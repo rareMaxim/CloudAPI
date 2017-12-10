@@ -21,7 +21,7 @@ type
   ItgChatMember = interface
     ['{BE073F97-DA34-43E6-A15E-14A2B90CAB7E}']
     function User: ItgUser;
-    function Status: string;
+    function Status: TtgChatMemberStatus;
     function UntilDate: TDateTime;
     function CanBeEdited: Boolean;
     function CanChangeInfo: Boolean;
