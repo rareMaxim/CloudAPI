@@ -1197,8 +1197,9 @@ end;
 
 function TtgChatMember.Status: TtgChatMemberStatus;
 var
-  LStatus:string;
+  LStatus: string;
 begin
+  Result := TtgChatMemberStatus.Member;
   LStatus := ReadToSimpleType<string>('status');
   if LStatus = 'creator' then
     Result := TtgChatMemberStatus.Creator
@@ -1212,7 +1213,8 @@ begin
     Result := TtgChatMemberStatus.Left
   else if LStatus = 'kicked' then
     Result := TtgChatMemberStatus.Kicked
-  else TBaseJson.UnSupported;
+  else
+    TBaseJson.UnSupported;
 end;
 
 function TtgChatMember.UntilDate: TDateTime;

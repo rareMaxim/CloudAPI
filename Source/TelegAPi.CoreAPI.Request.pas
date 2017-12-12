@@ -25,6 +25,7 @@ type
     FOnReceive: TProc<string>;
     FTelega: TTelegramBot;
     FOnSend: TProc<string, string>;
+    FOnError: TProc<Exception>;
   protected
     function DoPost: IHTTPResponse;
     function DoGet: IHTTPResponse;
@@ -32,13 +33,14 @@ type
     function StreamToString(Stream: TMemoryStream): string;
   public
     constructor Create(Sender: TTelegramBot; const AMethod: string);
-    function Execute: IHTTPResponse;
-    function ExecuteAsString: string;
+    function Execute(out Return: IHTTPResponse): Boolean; overload;
+    function Execute(out Return: string): Boolean; overload;
     function GetUrl: string;
     destructor Destroy; override;
     property Parameters: TObjectList<TtgApiParameter> read FParams write FParams;
     property OnReceive: TProc<string> read FOnReceive write FOnReceive;
     property OnSend: TProc<string, string> read FOnSend write FOnSend;
+    property OnError: TProc<Exception> read FOnError write FOnError;
   end;
 
 implementation
@@ -89,20 +91,37 @@ begin
   end;
 end;
 
-function TtgApiRequest.Execute: IHTTPResponse;
+function TtgApiRequest.Execute(out Return: IHTTPResponse): Boolean;
 begin
+  Result := False;
   FHttp.ProxySettings := FTelega.ProxySettings;
-  if Parameters.Count > 0 then
-    Result := DoPost
-  else
-    Result := DoGet;
-  if Assigned(OnReceive) then
-    OnReceive(Result.ContentAsString);
+  try
+    if Parameters.Count > 0 then
+      Return := DoPost
+    else
+      Return := DoGet;
+    if Return = nil then
+      Exit;
+    Result := True;
+    if Assigned(OnReceive) then
+      OnReceive(Return.ContentAsString);
+  except
+    on E: Exception do
+    begin
+      Result := False;
+      if Assigned(OnError) then
+        OnError(E);
+    end;
+  end;
 end;
 
-function TtgApiRequest.ExecuteAsString: string;
+function TtgApiRequest.Execute(out Return: string): Boolean;
+var
+  LResponse: IHTTPResponse;
 begin
-  Result := Execute.ContentAsString(TEncoding.UTF8);
+  Result := Execute(LResponse);
+  if Result then
+    Return := LResponse.ContentAsString(TEncoding.UTF8);
 end;
 
 procedure TtgApiRequest.FillFormData(var AForm: TMultipartFormData);

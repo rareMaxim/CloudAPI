@@ -406,15 +406,26 @@ begin
       procedure(Data: string)
       begin
         Log.d('%s', [Data]);
+        if Assigned(OnReceiveRawData) then
+          OnReceiveRawData(Self, Data);
+      end;
+    LTgRequest.OnError :=
+      procedure(E: Exception)
+      begin
+        ExceptionManager.HaveGlobalExeption('RequestAPI', E)
       end;
     LTgRequest.Parameters.AddRange(Parameters);
-    Result := LTgRequest.Execute.ContentAsString(TEncoding.UTF8);
-    if Assigned(OnReceiveRawData) then
-      OnReceiveRawData(Self, Result);
-    if Result.IsEmpty then
-      ExceptionManager.HaveGlobalExeption('RequestAPI', ETelegramUnknownData.Create('Can''t parse response'))
+    if LTgRequest.Execute(Result) then
+    begin
+      if Result.IsEmpty then
+        ExceptionManager.HaveGlobalExeption('RequestAPI', ETelegramUnknownData.Create('Can''t parse response'))
+      else
+        Result := ApiTest(Result, Parameters);
+    end
     else
-      Result := ApiTest(Result, Parameters);
+    begin
+      ExceptionManager.HaveGlobalExeption('RequestAPI', ETelegramUnknownData.Create('Can''t send data'))
+    end;
   finally
     LTgRequest.Free;
   end;
@@ -992,7 +1003,7 @@ begin
     TtgApiParameter.Create('can_promote_members', CanPromoteMembers, False, False)]));
 end;
 
-function TTelegramBot.RestrictChatMember(const ChatId: TValue; const UserId: Int64;const UntilDate: TDateTime; const CanSendMessages, CanSendMediaMessages, CanSendOtherMessages, CanAddWebPagePreviews: Boolean): Boolean;
+function TTelegramBot.RestrictChatMember(const ChatId: TValue; const UserId: Int64; const UntilDate: TDateTime; const CanSendMessages, CanSendMediaMessages, CanSendOtherMessages, CanAddWebPagePreviews: Boolean): Boolean;
 begin
   Result := ExtractBool(RequestAPI('restrictChatMember', [//
     TtgApiParameter.Create('chat_id', ChatId, 0, True), //
