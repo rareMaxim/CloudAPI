@@ -901,7 +901,7 @@ end;
 
 { TtgLocation }
 
-constructor TtgLocation.Create(ALongitude, ALatitude: Single);
+constructor TtgLocation.Create(const ALongitude, ALatitude: Single);
 begin
   SetLongitude(ALongitude);
   SetLatitude(ALatitude);
@@ -1769,25 +1769,41 @@ end;
 
 function TtgUserProfilePhotos.Photos: TArray<TArray<ItgPhotoSize>>;
 var
-  LArr1, LArr2: TJSONArray;
-  I: Integer;
-  j: Integer;
+  photoArr, sizeArr: TJSONArray;
+  photoIndex, resultPhotoIndex : Integer;
+  sizeIndex : Integer;
   GUID: TGUID;
 begin
-  LArr1 := FJSON.GetValue('photos') as TJSONArray;
-  if (not Assigned(LArr1)) or LArr1.Null then
-    Exit(nil);
+  photoArr := FJSON.GetValue('photos') as TJSONArray;
+  if (not Assigned(photoArr)) or photoArr.Null then exit(nil);
+
   GUID := GetTypeData(TypeInfo(ItgPhotoSize))^.GUID;
-  SetLength(Result, LArr1.Count);
-  for I := 0 to High(Result) do
+  SetLength(Result, photoArr.Count);
+
+  //Some photos could be empty(?), so we should
+  //use separated counter instead of copy of the FOR-loop variable value.
+  resultPhotoIndex:=0;
+  for photoIndex:=0 to High(Result) do
   begin
-    LArr2 := LArr1.Items[I] as TJSONArray;
-    if (not Assigned(LArr2)) or LArr2.Null then
-      Exit(nil);
-    SetLength(Result[I], LArr2.Count);
-    for j := 0 to High(Result[I]) do
-      GetTgClass.Create(LArr2.Items[j].ToJson).GetInterface(GUID, Result[I, j]);
+    //get array of photoSizes from photoArr[i]
+    sizeArr := photoArr.Items[photoIndex] as TJSONArray;
+
+    //check for empty photo
+    if (not Assigned(sizeArr)) or sizeArr.Null then continue;
+
+    //set length of photoSize array
+    SetLength(Result[resultPhotoIndex], sizeArr.Count);
+
+    //fills the result[RealIndex] with array of sizes
+    for sizeIndex := 0 to High(Result[resultPhotoIndex]) do
+      GetTgClass.Create(sizeArr.Items[sizeIndex].ToJson).GetInterface(GUID, Result[resultPhotoIndex, sizeIndex]);
+
+    //inc counter of processed photos
+    inc(resultPhotoIndex);
   end;
+
+  //Set real length of the result array. length = zero based index + 1;
+  SetLength(Result, resultPhotoIndex+1);
 end;
 
 function TtgUserProfilePhotos.TotalCount: Int64;
