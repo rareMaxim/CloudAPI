@@ -19,6 +19,7 @@ as well as many others who ask / suggest features / points bugs.
 
 ### **Donate**
 
+- **[Eldar](https://github.com/deadalice) - [🤖Challenge Of The Day](https://goo.gl/4TbFH9)**
 - [Ad Past](https://t.me/att77)
 - [Mail](https://t.me/rapa_pa)
 - 1️⃣ eugene afx
@@ -64,6 +65,7 @@ Telega π - Библиотека для работы с Telegram Bot API в Delp
 
 ### **Donate**
 
+- **[Eldar](https://github.com/deadalice) - [🤖Challenge Of The Day](https://goo.gl/4TbFH9)**
 - [Ad Past](https://t.me/att77)
 - [Mail](https://t.me/rapa_pa)
 - 1️⃣ eugene afx
