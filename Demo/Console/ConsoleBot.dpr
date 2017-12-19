@@ -6,20 +6,33 @@ program ConsoleBot;
 uses
   TelegAPI.Bot,
   Rest.Json,
-  TelegAPI.Recesiver.Console,
+  TelegAPI.Receiver.Console,
   System.SysUtils,
   TelegAPI.Types,
-  TelegAPI.Types.Impl;
+  TelegaPi.Exceptions,
+  TelegaPi.Factory;
 
 procedure Main;
 var
   LBot: ITelegramBot;
-  LRecesiver: TtgRecesiverConsole;
+  LRecesiver: TtgReceiverConsole;
+  LExcp: TtgExceptionManagerConsole;
   LStop: string;
 begin
-  LBot := CreateTelegramBot('283107814:AAF9VZC6TRv6qKmOMCsLFoI8SBlV_xFMI80');
-  LRecesiver := TtgRecesiverConsole.Create(LBot);
+  LBot := TtgFactory.CreateTelegram('283107814:AAGOGxUCwTC2bOs2krUSuEtqZd2UnA8NZ2g');
+  LRecesiver := TtgReceiverConsole.Create(LBot);
   try
+    LExcp := LBot.ExceptionManager as TtgExceptionManagerConsole;
+    LExcp.OnApiException :=
+      procedure(AMethod: string; AExp: EApiRequestException)
+      begin
+        Writeln(AExp.ToString);
+      end;
+    LExcp.OnGlobalException :=
+      procedure(AMethod: string; AExp: Exception)
+      begin
+        Writeln(AExp.ToString);
+      end;
     LRecesiver.OnStart :=
       procedure
       begin
@@ -30,16 +43,14 @@ begin
       begin
         Writeln('stoped');
       end;
+
     LRecesiver.OnMessage :=
       procedure(AMessage: ITgMessage)
       begin
-        Writeln(AMessage.From.Username, ': ', AMessage.Text);
-        LBot.SendMessage(AMessage.Chat.ID, AMessage.Text);
+        Writeln(AMessage.From.ID, ': ', AMessage.Text);
+        LBot.SendMessage(AMessage.From.ID, AMessage.Text);
       end;
-    with LBot.GetMe do
-    begin
-      Writeln('Bot nick: ', Username);
-    end;
+    Writeln('Bot nick: ', LBot.GetMe.Username);
     LRecesiver.IsActive := True;
     while LStop.ToLower.Trim <> 'exit' do
     begin

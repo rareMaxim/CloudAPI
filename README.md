@@ -3,7 +3,7 @@
 Telega π - Library for working with Telegram Bot API in Delphi
 
 
-Version Bot API: *3.5.0*
+Version Bot API: *3.5.1*
 
 ## Support project
 
@@ -19,6 +19,9 @@ as well as many others who ask / suggest features / points bugs.
 
 ### **Donate**
 
+- **[Eldar](https://github.com/deadalice) - [🤖Challenge Of The Day](https://goo.gl/4TbFH9)**
+- [Ad Past](https://t.me/att77)
+- [Mail](https://t.me/rapa_pa)
 - 1️⃣ eugene afx
 
 **Webmoney:**
@@ -36,6 +39,7 @@ as well as many others who ask / suggest features / points bugs.
 ## Powered by TelegaPi
 * [🤖ChallengeOfTheDay](https://goo.gl/4TbFH9)
 * [racecontrol](https://t.me/racecontrol)
+* [Troloload](https://t.me/trololoadBot) - bot for sharing files in internet
 
 ## Dependencies
 
@@ -46,7 +50,7 @@ as well as many others who ask / suggest features / points bugs.
 
 Telega π - Библиотека для работы с Telegram Bot API в Delphi
 
-Версия Bot API: *3.5.0*
+Версия Bot API: *3.5.1*
 
 ## Помощь проекту
 
@@ -61,6 +65,9 @@ Telega π - Библиотека для работы с Telegram Bot API в Delp
 
 ### **Donate**
 
+- **[Eldar](https://github.com/deadalice) - [🤖Challenge Of The Day](https://goo.gl/4TbFH9)**
+- [Ad Past](https://t.me/att77)
+- [Mail](https://t.me/rapa_pa)
 - 1️⃣ eugene afx
 
 **Webmoney:**
@@ -79,7 +86,7 @@ Telega π - Библиотека для работы с Telegram Bot API в Delp
 
 * [🤖ChallengeOfTheDay](https://goo.gl/4TbFH9)
 * [racecontrol](https://t.me/racecontrol)
-
+* [Troloload](https://t.me/trololoadBot) - бот поможет Вам поделиться файлами в сети Интернет
 
 ## Зависимости
 

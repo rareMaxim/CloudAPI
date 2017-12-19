@@ -1,4 +1,4 @@
-﻿unit TelegAPI.Recesiver.Base;
+﻿unit TelegAPI.Receiver.Base;
 
 interface
 
@@ -18,7 +18,7 @@ type
     procedure Stop;
   end;
 
-  TTgBotRecesiverBase = class(TtgAbstractComponent, ITgBotRecesiverBase)
+  TTgBotReceiverBase = class(TtgAbstractComponent, ITgBotRecesiverBase)
   private
     FBot: ITelegramBot;
     FAllowedUpdates: TAllowedUpdates;
@@ -48,7 +48,7 @@ type
     procedure DoOnPreCheckoutQuery(APreCheckoutQuery: ItgPreCheckoutQuery); virtual; abstract;
   public
     constructor Create(AOwner: TComponent); overload; override;
-    constructor Create(ABot: ITelegramBot); overload;
+    constructor Create(ABot: ITelegramBot); reintroduce; overload;
     procedure Start;
     procedure Stop;
   published
@@ -65,9 +65,9 @@ type
 
 implementation
 
-{ TTgBotRecesiverBase }
+{ TTgBotReceiverBase }
 
-constructor TTgBotRecesiverBase.Create(AOwner: TComponent);
+constructor TTgBotReceiverBase.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
   MessageOffset := 0;
@@ -75,13 +75,13 @@ begin
   PollingInterval := 1000;
 end;
 
-constructor TTgBotRecesiverBase.Create(ABot: ITelegramBot);
+constructor TTgBotReceiverBase.Create(ABot: ITelegramBot);
 begin
   Create(TComponent(nil));
   Bot := ABot;
 end;
 
-procedure TTgBotRecesiverBase.EventParser(AUpdates: TArray<ItgUpdate>);
+procedure TTgBotReceiverBase.EventParser(AUpdates: TArray<ItgUpdate>);
 var
   LUpdate: ItgUpdate;
 begin
@@ -93,7 +93,7 @@ begin
   end;
 end;
 
-procedure TTgBotRecesiverBase.Go;
+procedure TTgBotReceiverBase.Go;
 var
   LUpdates: TArray<ItgUpdate>;
 begin
@@ -101,28 +101,29 @@ begin
   while FIsActive do
   begin
     LUpdates := ReadUpdates;
+    if Length(LUpdates) = 0 then
+    begin
+      Sleep(FPollingInterval);
+      Continue;
+    end;
+    MessageOffset := LUpdates[High(LUpdates)].ID + 1;
     EventParser(LUpdates);
-    if LUpdates <> nil then
-      MessageOffset := LUpdates[High(LUpdates)].ID + 1;
     Sleep(FPollingInterval);
   end;
   DoOnStop;
 end;
 
-function TTgBotRecesiverBase.ReadUpdates: TArray<ItgUpdate>;
+function TTgBotReceiverBase.ReadUpdates: TArray<ItgUpdate>;
 begin
   try
     Result := FBot.GetUpdates(MessageOffset, 100, 0, AllowedUpdates);
   except
     on E: Exception do
-      if Bot.ExceptionManager <> nil then
-        Bot.ExceptionManager.HaveGlobalExeption('TTgBotRecesiverBase.ReadUpdates', E)
-      else
-        raise E;
+      Bot.ExceptionManager.HaveGlobalExeption('TTgBotReceiverBase.ReadUpdates', E)
   end;
 end;
 
-procedure TTgBotRecesiverBase.SetIsActive(const Value: Boolean);
+procedure TTgBotReceiverBase.SetIsActive(const Value: Boolean);
 begin
   if FIsActive = Value then
     Exit;
@@ -133,17 +134,17 @@ begin
     FIsActive := False;
 end;
 
-procedure TTgBotRecesiverBase.Start;
+procedure TTgBotReceiverBase.Start;
 begin
   IsActive := True;
 end;
 
-procedure TTgBotRecesiverBase.Stop;
+procedure TTgBotReceiverBase.Stop;
 begin
   IsActive := False;
 end;
 
-procedure TTgBotRecesiverBase.TypeUpdate(AUpdate: ItgUpdate);
+procedure TTgBotReceiverBase.TypeUpdate(AUpdate: ItgUpdate);
 begin
   case AUpdate.&Type of
     TtgUpdateType.MessageUpdate:

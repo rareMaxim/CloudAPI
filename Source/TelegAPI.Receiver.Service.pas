@@ -1,9 +1,9 @@
-unit TelegAPI.Recesiver.Service;
+unit TelegAPI.Receiver.Service;
 
 interface
 
 uses
-  TelegAPI.Recesiver.Base,
+  TelegAPI.Receiver.Base,
   System.Classes,
   TelegAPI.Types;
 
@@ -27,7 +27,7 @@ type
   TtgOnPreCheckoutQuery = procedure(ASender: TObject; APreCheckoutQuery: ItgPreCheckoutQuery) of object;
 
 
-  TtgRecesiverService = class(TTgBotRecesiverBase)
+  TtgReceiverService = class(TTgBotReceiverBase)
   private
     FOnUpdate: TtgOnUpdate;
     FOnMessage: TtgOnMessage;
@@ -76,91 +76,91 @@ implementation
 
 { TtgRecesiverConsole }
 
-procedure TtgRecesiverService.DoOnCallbackQuery(ACallbackQuery: ItgCallbackQuery);
+procedure TtgReceiverService.DoOnCallbackQuery(ACallbackQuery: ItgCallbackQuery);
 begin
   inherited;
   if Assigned(OnCallbackQuery) then
     OnCallbackQuery(Self, ACallbackQuery);
 end;
 
-procedure TtgRecesiverService.DoOnChannelPost(AChannelPost: ITgMessage);
+procedure TtgReceiverService.DoOnChannelPost(AChannelPost: ITgMessage);
 begin
   inherited;
   if Assigned(OnChannelPost) then
     OnChannelPost(Self, AChannelPost);
 end;
 
-procedure TtgRecesiverService.DoOnChosenInlineResult(AChosenInlineResult: ItgChosenInlineResult);
+procedure TtgReceiverService.DoOnChosenInlineResult(AChosenInlineResult: ItgChosenInlineResult);
 begin
   inherited;
   if Assigned(OnChosenInlineResult) then
     OnChosenInlineResult(Self, AChosenInlineResult);
 end;
 
-procedure TtgRecesiverService.DoOnEditedChannelPost(AEditedChannelPost: ITgMessage);
+procedure TtgReceiverService.DoOnEditedChannelPost(AEditedChannelPost: ITgMessage);
 begin
   inherited;
   if Assigned(OnEditedChannelPost) then
     OnEditedChannelPost(Self, AEditedChannelPost);
 end;
 
-procedure TtgRecesiverService.DoOnEditedMessage(AEditedMessage: ITgMessage);
+procedure TtgReceiverService.DoOnEditedMessage(AEditedMessage: ITgMessage);
 begin
   inherited;
   if Assigned(OnEditedMessage) then
     OnEditedMessage(Self, AEditedMessage);
 end;
 
-procedure TtgRecesiverService.DoOnInlineQuery(AInlineQuery: ItgInlineQuery);
+procedure TtgReceiverService.DoOnInlineQuery(AInlineQuery: ItgInlineQuery);
 begin
   inherited;
   if Assigned(OnInlineQuery) then
     OnInlineQuery(Self, AInlineQuery);
 end;
 
-procedure TtgRecesiverService.DoOnMessage(AMessage: ITgMessage);
+procedure TtgReceiverService.DoOnMessage(AMessage: ITgMessage);
 begin
   inherited;
   if Assigned(OnMessage) then
     OnMessage(Self, AMessage);
 end;
 
-procedure TtgRecesiverService.DoOnPreCheckoutQuery(APreCheckoutQuery: ItgPreCheckoutQuery);
+procedure TtgReceiverService.DoOnPreCheckoutQuery(APreCheckoutQuery: ItgPreCheckoutQuery);
 begin
   inherited;
   if Assigned(OnPreCheckoutQuery) then
     OnPreCheckoutQuery(Self, APreCheckoutQuery);
 end;
 
-procedure TtgRecesiverService.DoOnShippingQuery(AShippingQuery: ItgShippingQuery);
+procedure TtgReceiverService.DoOnShippingQuery(AShippingQuery: ItgShippingQuery);
 begin
   inherited;
   if Assigned(OnShippingQuery) then
     OnShippingQuery(Self, AShippingQuery);
 end;
 
-procedure TtgRecesiverService.DoOnStart;
+procedure TtgReceiverService.DoOnStart;
 begin
   inherited;
   if Assigned(OnStart) then
     OnStart(Self);
 end;
 
-procedure TtgRecesiverService.DoOnStop;
+procedure TtgReceiverService.DoOnStop;
 begin
   inherited;
   if Assigned(OnStop) then
     OnStop(Self);
 end;
 
-procedure TtgRecesiverService.DoOnUpdate(AUpdate: ItgUpdate);
+procedure TtgReceiverService.DoOnUpdate(AUpdate: ItgUpdate);
 begin
   inherited;
   if Assigned(OnUpdate) then
     OnUpdate(Self, AUpdate);
 end;
 
-procedure TtgRecesiverService.DoOnUpdates(AUpdates: TArray<ItgUpdate>);
+procedure TtgReceiverService.DoOnUpdates(AUpdates: TArray<ItgUpdate>);
 begin
   inherited;
   if Assigned(OnUpdates) then

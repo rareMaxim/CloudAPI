@@ -31,7 +31,8 @@ package TelegaPi;
 
 requires
   rtl,
-  RESTComponents;
+  RESTComponents,
+  fmx;
 
 contains
   TelegAPI.Base in '..\Source\TelegAPI.Base.pas',
@@ -39,9 +40,9 @@ contains
   TelegAPI.Bot in '..\Source\TelegAPI.Bot.pas',
   TelegaPi.Exceptions in '..\Source\TelegaPi.Exceptions.pas',
   TelegAPi.Helpers in '..\Source\TelegAPi.Helpers.pas',
-  TelegAPI.Recesiver.Base in '..\Source\TelegAPI.Recesiver.Base.pas',
-  TelegAPI.Recesiver.Console in '..\Source\TelegAPI.Recesiver.Console.pas',
-  TelegAPI.Recesiver.Service in '..\Source\TelegAPI.Recesiver.Service.pas',
+  TelegAPI.Receiver.Base in '..\Source\TelegAPI.Receiver.Base.pas',
+  TelegAPI.Receiver.Console in '..\Source\TelegAPI.Receiver.Console.pas',
+  TelegAPI.Receiver.Service in '..\Source\TelegAPI.Receiver.Service.pas',
   TelegAPi.RegisterIDE in '..\Source\TelegAPi.RegisterIDE.pas',
   TelegaPi.Types.Enums in '..\Source\TelegaPi.Types.Enums.pas',
   TelegAPI.Types.Impl in '..\Source\TelegAPI.Types.Impl.pas',
@@ -50,7 +51,11 @@ contains
   TelegAPi.Types in '..\Source\TelegAPi.Types.pas',
   TelegaPi.Types.ReplyMarkups in '..\Source\TelegaPi.Types.ReplyMarkups.pas',
   TelegAPI.Utils.Json in '..\Source\TelegAPI.Utils.Json.pas',
-  TelegAPI.Utils.Params in '..\Source\TelegAPI.Utils.Params.pas',
-  TelegAPI.Recesiver.UI in '..\Source\TelegAPI.Recesiver.UI.pas';
+  TelegAPI.CoreAPI.ParameterConverter in '..\Source\TelegAPI.CoreAPI.ParameterConverter.pas',
+  TelegAPI.Receiver.UI in '..\Source\TelegAPI.Receiver.UI.pas',
+  TelegaPi.Factory in '..\Source\TelegaPi.Factory.pas',
+  TelegAPi.CoreAPI.Request in '..\Source\TelegAPi.CoreAPI.Request.pas',
+  TelegAPi.CoreAPI.Parameter in '..\Source\TelegAPi.CoreAPI.Parameter.pas',
+  TelegaPi.Ext.Sessions in '..\Source\TelegaPi.Ext.Sessions.pas';
 
 end.

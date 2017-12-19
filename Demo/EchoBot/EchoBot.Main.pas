@@ -19,11 +19,11 @@ uses
   FMX.Controls.Presentation,
   FMX.ScrollBox,
   FMX.Layouts,
-  TelegAPI.Recesiver.Base,
-  TelegAPI.Recesiver.UI,
+  TelegAPI.Receiver.Base,
+  TelegAPI.Receiver.UI,
   TelegAPI.Bot.Impl,
   TelegAPI.Base,
-  TelegAPI.Recesiver.Service;
+  TelegAPI.Receiver.Service;
 
 type
   TMain = class(TForm)
@@ -34,16 +34,16 @@ type
     swtchToken: TSwitch;
     tgBot: TTelegramBot;
     tgExceptionManagerUI1: TtgExceptionManagerUI;
-    tgRecesiverUI1: TtgRecesiverUI;
+    tgReceiverUI1: TtgReceiverUI;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure swtchTokenSwitch(Sender: TObject);
     procedure tgExceptionManagerUI1GlobalException(ASender: TObject; const AMethod: string; AException: Exception);
     procedure tgExceptionManagerUI1ApiException(ASender: TObject; const AMethod: string; AApiRequestException: EApiRequestException);
-    procedure tgRecesiverUI1CallbackQuery(ASender: TObject; ACallbackQuery: ItgCallbackQuery);
-    procedure tgRecesiverUI1Message(ASender: TObject; AMessage: ITgMessage);
-    procedure tgRecesiverUI1ChosenInlineResult(ASender: TObject; AChosenInlineResult: ItgChosenInlineResult);
-    procedure tgRecesiverUI1InlineQuery(ASender: TObject; AInlineQuery: ItgInlineQuery);
-    procedure tgRecesiverUI1Start(Sender: TObject);
+    procedure tgReceiverUI1CallbackQuery(ASender: TObject; ACallbackQuery: ItgCallbackQuery);
+    procedure tgReceiverUI1Message(ASender: TObject; AMessage: ITgMessage);
+    procedure tgReceiverUI1ChosenInlineResult(ASender: TObject; AChosenInlineResult: ItgChosenInlineResult);
+    procedure tgReceiverUI1InlineQuery(ASender: TObject; AInlineQuery: ItgInlineQuery);
+    procedure tgReceiverUI1Start(Sender: TObject);
   private
     { Private declarations }
     procedure WriteLine(const AValue: string);
@@ -56,6 +56,7 @@ type
     procedure ParseTextMessage(Msg: ITgMessage);
     procedure ParsePhotoMessage(Msg: ITgMessage);
     procedure ParseLocationMessage(Msg: ITgMessage);
+    procedure ParseContactMessage(Msg: ITgMessage);
   public
     { Public declarations }
   end;
@@ -76,7 +77,12 @@ uses
 
 procedure TMain.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
-  tgRecesiverUI1.IsActive := False;
+  tgReceiverUI1.IsActive := False;
+end;
+
+procedure TMain.ParseContactMessage(Msg: ITgMessage);
+begin
+  WriteLine('Contact: ' + Msg.Contact.LastName + ' ' + Msg.Contact.FirstName + ' ' + Msg.Contact.PhoneNumber);
 end;
 
 procedure TMain.ParseLocationMessage(Msg: ITgMessage);
@@ -145,14 +151,12 @@ begin
   tgBot.Token := edtToken.Text;
   if not tgBot.IsValidToken then
     raise ELoginCredentialError.Create('invalid token format');
-  tgRecesiverUI1.IsActive := swtchToken.IsChecked;
+  tgReceiverUI1.IsActive := swtchToken.IsChecked;
 end;
 
 procedure TMain.SendPhoto(Msg: ITgMessage);
 const
-  PATH_PHOTO = 'C:\Users\Public\Pictures\Sample Pictures\Tulips.jpg';
-var
-  LFile: TtgFileToSend;
+  PATH_PHOTO = 'Photo.png';
 begin
   tgBot.SendChatAction(Msg.Chat.Id, TtgSendChatAction.UploadPhoto);
   if not TFile.Exists(PATH_PHOTO) then
@@ -160,12 +164,7 @@ begin
     WriteLine('Change path to photo in metod: TMain.SendPhoto');
     Exit;
   end;
-  LFile := TtgFileToSend.Create(PATH_PHOTO);
-  try
-    tgBot.SendPhoto(Msg.Chat.Id, LFile, 'Nice Picture');
-  finally
-    LFile.Free;
-  end;
+  tgBot.SendPhoto(Msg.Chat.Id, TtgFileToSend.FromFile(PATH_PHOTO), 'Nice Picture');
 end;
 
 procedure TMain.SendInline;
@@ -220,17 +219,17 @@ begin
   WriteLine(AMethod + '@' + AException.ToString);
 end;
 
-procedure TMain.tgRecesiverUI1CallbackQuery(ASender: TObject; ACallbackQuery: ItgCallbackQuery);
+procedure TMain.tgReceiverUI1CallbackQuery(ASender: TObject; ACallbackQuery: ItgCallbackQuery);
 begin
   tgBot.AnswerCallbackQuery(ACallbackQuery.Id, 'Received ' + ACallbackQuery.Data);
 end;
 
-procedure TMain.tgRecesiverUI1ChosenInlineResult(ASender: TObject; AChosenInlineResult: ItgChosenInlineResult);
+procedure TMain.tgReceiverUI1ChosenInlineResult(ASender: TObject; AChosenInlineResult: ItgChosenInlineResult);
 begin
   WriteLine('Received choosen inline result: ' + AChosenInlineResult.ResultId);
 end;
 
-procedure TMain.tgRecesiverUI1InlineQuery(ASender: TObject; AInlineQuery: ItgInlineQuery);
+procedure TMain.tgReceiverUI1InlineQuery(ASender: TObject; AInlineQuery: ItgInlineQuery);
 var
   results: TArray<TtgInlineQueryResult>;
 begin
@@ -255,7 +254,7 @@ begin
   tgBot.AnswerInlineQuery(AInlineQuery.Id, results, 0, True);
 end;
 
-procedure TMain.tgRecesiverUI1Message(ASender: TObject; AMessage: ITgMessage);
+procedure TMain.tgReceiverUI1Message(ASender: TObject; AMessage: ITgMessage);
 begin
   case AMessage.&Type of
     TtgMessageType.TextMessage:
@@ -264,10 +263,12 @@ begin
       ParsePhotoMessage(AMessage);
     TtgMessageType.LocationMessage:
       ParseLocationMessage(AMessage);
+    TtgMessageType.ContactMessage:
+      ParseContactMessage(AMessage);
   end;
 end;
 
-procedure TMain.tgRecesiverUI1Start(Sender: TObject);
+procedure TMain.tgReceiverUI1Start(Sender: TObject);
 begin
   WriteLine('Bot connected');
   Caption := tgBot.GetMe.Username;

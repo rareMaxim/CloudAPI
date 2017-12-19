@@ -126,14 +126,18 @@ end;
 procedure TtgExceptionManagerConsole.HaveApiExeption(const Method: string; AException: EApiRequestException);
 begin
   if Assigned(OnApiException) then
-    OnApiException(Method, AException);
+    OnApiException(Method, AException)
+  else
+    raise AException;
 //  AException.Free;
 end;
 
 procedure TtgExceptionManagerConsole.HaveGlobalExeption(const Method: string; AException: Exception);
 begin
   if Assigned(OnGlobalException) then
-    OnGlobalException(Method, AException);
+    OnGlobalException(Method, AException)
+  else
+    raise AException;
  // AException.Free;
 end;
 
@@ -142,14 +146,18 @@ end;
 procedure TtgExceptionManagerUI.HaveApiExeption(const Method: string; AException: EApiRequestException);
 begin
   if Assigned(OnGlobalException) then
-    OnApiException(Self, Method, AException);
+    OnApiException(Self, Method, AException)
+  else
+    raise AException;
 //  AException.Free;
 end;
 
 procedure TtgExceptionManagerUI.HaveGlobalExeption(const Method: string; AException: Exception);
 begin
   if Assigned(OnGlobalException) then
-    OnGlobalException(Self, Method, AException);
+    OnGlobalException(Self, Method, AException)
+  else
+    raise AException;
 //  AException.Free;
 end;
 
