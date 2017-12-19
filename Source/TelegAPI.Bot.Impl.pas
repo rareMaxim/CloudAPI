@@ -399,6 +399,7 @@ var
 begin
   LTgRequest := TtgApiRequest.Create(SERVER_URL + Token + '/' + Method);
   try
+    LTgRequest.ProxySettings := Self.ProxySettings;
     LTgRequest.OnSend :=
       procedure(Url, Data: string)
       begin
