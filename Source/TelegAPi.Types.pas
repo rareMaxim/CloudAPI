@@ -205,6 +205,7 @@ type
   end;
 
   ItgInvoice = interface
+    ['{1D8923E1-068C-4747-84DE-A1B3B4674FD3}']
     function Title: string;
     function Description: string;
     function StartParameter: string;
@@ -213,6 +214,7 @@ type
   end;
 
   ItgSuccessfulPayment = interface
+    ['{B2BE36C2-61F9-4D4B-AB9D-75BB524661AB}']
     function Currency: string;
     function TotalAmount: Int64;
   end;
@@ -413,7 +415,7 @@ type
     Data: string;
     Content: TStream;
     Tag: Byte;
-    constructor Create(const ATag: Byte = FILE_TO_SEND_ERROR; AData: string = ''; AContent: TStream = nil);
+    constructor Create(const ATag: Byte = FILE_TO_SEND_ERROR; const AData: string = ''; AContent: TStream = nil);
     class function FromFile(const AFileName: string): TtgFileToSend;
     class function FromID(const AID: string): TtgFileToSend;
     class function FromURL(const AURL: string): TtgFileToSend;
@@ -454,11 +456,11 @@ end;
 
 { TtgFileToSend }
 
-constructor TtgFileToSend.Create(const ATag: Byte; AData: string; AContent: TStream);
+constructor TtgFileToSend.Create(const ATag: Byte; const AData: string; AContent: TStream);
 begin
   Tag := ATag;
   Data := AData;
-  Content := Content;
+  Content := AContent;
 end;
 
 class function TtgFileToSend.FromFile(const AFileName: string): TtgFileToSend;

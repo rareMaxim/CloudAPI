@@ -624,6 +624,7 @@ var
   LJsonArray: TJSONArray;
   I: Integer;
 begin
+  Result := nil;
   if FJSON.TryGetValue<string>('new_chat_members', LValue) then
   begin
     LJsonArray := TJSONObject.ParseJSONValue(LValue) as TJSONArray;
@@ -643,6 +644,7 @@ var
   LJsonArray: TJSONArray;
   I: Integer;
 begin
+  Result := nil;
   if FJSON.TryGetValue<string>('new_chat_photo', LValue) then
   begin
     LJsonArray := TJSONObject.ParseJSONValue(LValue) as TJSONArray;

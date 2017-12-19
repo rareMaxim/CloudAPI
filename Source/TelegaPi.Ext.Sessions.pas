@@ -46,7 +46,7 @@ type
   TtgSessionManager = class(TInterfacedObject, ItgSessionManager)
   private
     class var
-      Instance: TtgSessionManager;
+      FInstance: TtgSessionManager;
   private
     FItems: TDictionary<Int64, ItgSession>;
     function GetItem(const AID: Int64): ItgSession;
@@ -129,9 +129,9 @@ end;
 
 class function TtgSessionManager.NewInstance: TObject;
 begin
-  if Instance = nil then
-    Instance := TtgSessionManager(inherited NewInstance);
-  Result := Instance;
+  if FInstance = nil then
+    FInstance := TtgSessionManager(inherited NewInstance);
+  Result := FInstance;
 end;
 
 procedure TtgSessionManager.SetItem(const AID: Int64; const Value: ItgSession);

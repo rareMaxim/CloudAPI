@@ -422,10 +422,6 @@ begin
       else
         Result := ApiTest(Result, Parameters);
     end
-    else
-    begin
-      ExceptionManager.HaveGlobalExeption('RequestAPI', ETelegramUnknownData.Create('Can''t send data'))
-    end;
   finally
     LTgRequest.Free;
   end;
