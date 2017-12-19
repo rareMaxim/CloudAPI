@@ -3,7 +3,7 @@
 Telega π - Library for working with Telegram Bot API in Delphi
 
 
-Version Bot API: *3.5.0*
+Version Bot API: *3.5.1*
 
 ## Support project
 
@@ -50,7 +50,7 @@ as well as many others who ask / suggest features / points bugs.
 
 Telega π - Библиотека для работы с Telegram Bot API в Delphi
 
-Версия Bot API: *3.5.0*
+Версия Bot API: *3.5.1*
 
 ## Помощь проекту
 

@@ -69,23 +69,33 @@ $(PreBuildEvent)]]>
         <DCC_CBuilderOutput>None</DCC_CBuilderOutput>
         <DCC_UsePackage>rtl;fmx;RESTComponents;$(DCC_UsePackage)</DCC_UsePackage>
         <EnabledSysJars>android-support-v4.dex.jar;cloud-messaging.dex.jar;fmx.dex.jar;google-analytics-v2.dex.jar;google-play-billing.dex.jar;google-play-licensing.dex.jar;google-play-services.dex.jar</EnabledSysJars>
+        <VerInfo_AutoIncVersion>true</VerInfo_AutoIncVersion>
+        <VerInfo_Build>1</VerInfo_Build>
         <VerInfo_Keys>package=com.embarcadero.$(MSBuildProjectName);label=$(MSBuildProjectName);versionCode=1;versionName=1.0.0;persistent=False;restoreAnyVersion=False;installLocation=auto;largeHeap=False;theme=TitleBar;hardwareAccelerated=true;apiKey=</VerInfo_Keys>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
         <BT_BuildType>Debug</BT_BuildType>
         <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
         <DCC_UsePackage>rtl;fmx;RESTComponents;$(DCC_UsePackage)</DCC_UsePackage>
+        <VerInfo_AutoIncVersion>true</VerInfo_AutoIncVersion>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=Maxim Sysoev;FileDescription=$(MSBuildProjectName);FileVersion=3.5.1.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <VerInfo_Locale>1033</VerInfo_Locale>
+        <VerInfo_MajorVer>3</VerInfo_MajorVer>
+        <VerInfo_MinorVer>5</VerInfo_MinorVer>
+        <VerInfo_Release>1</VerInfo_Release>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win64)'!=''">
         <BT_BuildType>Debug</BT_BuildType>
         <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;$(DCC_Namespace)</DCC_Namespace>
         <DCC_UsePackage>rtl;fmx;RESTComponents;$(DCC_UsePackage)</DCC_UsePackage>
+        <VerInfo_AutoIncVersion>true</VerInfo_AutoIncVersion>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=Maxim Sysoev;FileDescription=$(MSBuildProjectName);FileVersion=3.5.1.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <VerInfo_Locale>1033</VerInfo_Locale>
+        <VerInfo_MajorVer>3</VerInfo_MajorVer>
+        <VerInfo_MinorVer>5</VerInfo_MinorVer>
+        <VerInfo_Release>1</VerInfo_Release>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1)'!=''">
         <DCC_DebugDCUs>true</DCC_DebugDCUs>
@@ -113,6 +123,7 @@ $(PreBuildEvent)]]>
         <DCCReference Include="TTelegramBot.dcr"/>
         <DCCReference Include="rtl.dcp"/>
         <DCCReference Include="RESTComponents.dcp"/>
+        <DCCReference Include="fmx.dcp"/>
         <DCCReference Include="..\Source\TelegAPI.Base.pas"/>
         <DCCReference Include="..\Source\TelegAPI.Bot.Impl.pas"/>
         <DCCReference Include="..\Source\TelegAPI.Bot.pas"/>
@@ -123,15 +134,18 @@ $(PreBuildEvent)]]>
         <DCCReference Include="..\Source\TelegAPI.Receiver.Service.pas"/>
         <DCCReference Include="..\Source\TelegAPi.RegisterIDE.pas"/>
         <DCCReference Include="..\Source\TelegaPi.Types.Enums.pas"/>
-        <DCCReference Include="..\Source\TelegAPi.Types.Impl.pas"/>
+        <DCCReference Include="..\Source\TelegAPI.Types.Impl.pas"/>
         <DCCReference Include="..\Source\TelegaPi.Types.InlineQueryResults.pas"/>
         <DCCReference Include="..\Source\TelegaPi.Types.InputMessageContents.pas"/>
         <DCCReference Include="..\Source\TelegAPi.Types.pas"/>
         <DCCReference Include="..\Source\TelegaPi.Types.ReplyMarkups.pas"/>
         <DCCReference Include="..\Source\TelegAPI.Utils.Json.pas"/>
-        <DCCReference Include="..\Source\TelegAPI.Utils.Params.pas"/>
+        <DCCReference Include="..\Source\TelegAPI.CoreAPI.ParameterConverter.pas"/>
         <DCCReference Include="..\Source\TelegAPI.Receiver.UI.pas"/>
         <DCCReference Include="..\Source\TelegaPi.Factory.pas"/>
+        <DCCReference Include="..\Source\TelegAPi.CoreAPI.Request.pas"/>
+        <DCCReference Include="..\Source\TelegAPi.CoreAPI.Parameter.pas"/>
+        <DCCReference Include="..\Source\TelegaPi.Ext.Sessions.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -155,7 +169,6 @@ $(PreBuildEvent)]]>
                 <Excluded_Packages>
                     <Excluded_Packages Name="$(BDSBIN)\dcloffice2k240.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
                     <Excluded_Packages Name="$(BDSBIN)\dclofficexp240.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
-                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\18.0\Bpl\DJSON_Project.bpl">(untitled)</Excluded_Packages>
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">

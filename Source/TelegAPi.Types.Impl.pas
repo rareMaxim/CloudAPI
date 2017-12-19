@@ -23,7 +23,7 @@ type
   TtgChatMember = class(TBaseJson, ItgChatMember)
   public
     function User: ItgUser;
-    function Status: string;
+    function Status: TtgChatMemberStatus;
     function UntilDate: TDateTime;
     function CanBeEdited: Boolean;
     function CanChangeInfo: Boolean;
@@ -624,6 +624,7 @@ var
   LJsonArray: TJSONArray;
   I: Integer;
 begin
+  Result := nil;
   if FJSON.TryGetValue<string>('new_chat_members', LValue) then
   begin
     LJsonArray := TJSONObject.ParseJSONValue(LValue) as TJSONArray;
@@ -643,6 +644,7 @@ var
   LJsonArray: TJSONArray;
   I: Integer;
 begin
+  Result := nil;
   if FJSON.TryGetValue<string>('new_chat_photo', LValue) then
   begin
     LJsonArray := TJSONObject.ParseJSONValue(LValue) as TJSONArray;
@@ -1195,9 +1197,26 @@ begin
   Result := ReadToSimpleType<Boolean>('can_send_other_messages');
 end;
 
-function TtgChatMember.Status: string;
+function TtgChatMember.Status: TtgChatMemberStatus;
+var
+  LStatus: string;
 begin
-  Result := ReadToSimpleType<string>('status');
+  Result := TtgChatMemberStatus.Member;
+  LStatus := ReadToSimpleType<string>('status');
+  if LStatus = 'creator' then
+    Result := TtgChatMemberStatus.Creator
+  else if LStatus = 'administrator' then
+    Result := TtgChatMemberStatus.Administrator
+  else if LStatus = 'member' then
+    Result := TtgChatMemberStatus.Member
+  else if LStatus = 'restricted' then
+    Result := TtgChatMemberStatus.Restricted
+  else if LStatus = 'left' then
+    Result := TtgChatMemberStatus.Left
+  else if LStatus = 'kicked' then
+    Result := TtgChatMemberStatus.Kicked
+  else
+    TBaseJson.UnSupported;
 end;
 
 function TtgChatMember.UntilDate: TDateTime;

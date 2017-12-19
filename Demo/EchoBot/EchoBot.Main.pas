@@ -56,6 +56,7 @@ type
     procedure ParseTextMessage(Msg: ITgMessage);
     procedure ParsePhotoMessage(Msg: ITgMessage);
     procedure ParseLocationMessage(Msg: ITgMessage);
+    procedure ParseContactMessage(Msg: ITgMessage);
   public
     { Public declarations }
   end;
@@ -77,6 +78,11 @@ uses
 procedure TMain.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   tgReceiverUI1.IsActive := False;
+end;
+
+procedure TMain.ParseContactMessage(Msg: ITgMessage);
+begin
+  WriteLine('Contact: ' + Msg.Contact.LastName + ' ' + Msg.Contact.FirstName + ' ' + Msg.Contact.PhoneNumber);
 end;
 
 procedure TMain.ParseLocationMessage(Msg: ITgMessage);
@@ -150,9 +156,7 @@ end;
 
 procedure TMain.SendPhoto(Msg: ITgMessage);
 const
-  PATH_PHOTO = 'C:\Users\Public\Pictures\Sample Pictures\Tulips.jpg';
-var
-  LFile: TtgFileToSend;
+  PATH_PHOTO = 'Photo.png';
 begin
   tgBot.SendChatAction(Msg.Chat.Id, TtgSendChatAction.UploadPhoto);
   if not TFile.Exists(PATH_PHOTO) then
@@ -160,12 +164,7 @@ begin
     WriteLine('Change path to photo in metod: TMain.SendPhoto');
     Exit;
   end;
-  LFile := TtgFileToSend.Create(PATH_PHOTO);
-  try
-    tgBot.SendPhoto(Msg.Chat.Id, LFile, 'Nice Picture');
-  finally
-    LFile.Free;
-  end;
+  tgBot.SendPhoto(Msg.Chat.Id, TtgFileToSend.FromFile(PATH_PHOTO), 'Nice Picture');
 end;
 
 procedure TMain.SendInline;
@@ -264,6 +263,8 @@ begin
       ParsePhotoMessage(AMessage);
     TtgMessageType.LocationMessage:
       ParseLocationMessage(AMessage);
+    TtgMessageType.ContactMessage:
+      ParseContactMessage(AMessage);
   end;
 end;
 

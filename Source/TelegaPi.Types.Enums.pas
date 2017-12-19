@@ -79,6 +79,7 @@ type
     ///   Normal member of the <see cref="Chat" />
     /// </summary>
     Member,
+    Restricted,
 
     /// <summary>
     ///   A <see cref="User" /> who left the <see cref="Chat" />
