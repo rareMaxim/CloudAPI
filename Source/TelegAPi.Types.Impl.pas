@@ -165,7 +165,7 @@ type
     procedure SetLatitude(const Value: Single);
     procedure SetLongitude(const Value: Single);
   public
-    constructor Create(ALongitude, ALatitude: Single); reintroduce; overload;
+    constructor Create(const ALongitude, ALatitude: Single); reintroduce; overload;
     constructor Create(const AJson: string); overload; override;
     property Longitude: Single read GetLongitude write SetLongitude;
     property Latitude: Single read GetLatitude write SetLatitude;
@@ -1769,41 +1769,37 @@ end;
 
 function TtgUserProfilePhotos.Photos: TArray<TArray<ItgPhotoSize>>;
 var
-  photoArr, sizeArr: TJSONArray;
-  photoIndex, resultPhotoIndex : Integer;
-  sizeIndex : Integer;
+  PhotoArr, SizeArr: TJSONArray;
+  PhotoIndex, ResultPhotoIndex: Integer;
+  SizeIndex: Integer;
   GUID: TGUID;
 begin
-  photoArr := FJSON.GetValue('photos') as TJSONArray;
-  if (not Assigned(photoArr)) or photoArr.Null then exit(nil);
-
+  Result := nil;
+  PhotoArr := FJSON.GetValue('photos') as TJSONArray;
+  if (not Assigned(PhotoArr)) or PhotoArr.Null then
+    Exit;
   GUID := GetTypeData(TypeInfo(ItgPhotoSize))^.GUID;
-  SetLength(Result, photoArr.Count);
-
+  SetLength(Result, PhotoArr.Count);
   //Some photos could be empty(?), so we should
   //use separated counter instead of copy of the FOR-loop variable value.
-  resultPhotoIndex:=0;
-  for photoIndex:=0 to High(Result) do
+  ResultPhotoIndex := 0;
+  for PhotoIndex := 0 to High(Result) do
   begin
     //get array of photoSizes from photoArr[i]
-    sizeArr := photoArr.Items[photoIndex] as TJSONArray;
-
+    SizeArr := PhotoArr.Items[PhotoIndex] as TJSONArray;
     //check for empty photo
-    if (not Assigned(sizeArr)) or sizeArr.Null then continue;
-
+    if (not Assigned(SizeArr)) or SizeArr.Null then
+      Continue;
     //set length of photoSize array
-    SetLength(Result[resultPhotoIndex], sizeArr.Count);
-
+    SetLength(Result[ResultPhotoIndex], SizeArr.Count);
     //fills the result[RealIndex] with array of sizes
-    for sizeIndex := 0 to High(Result[resultPhotoIndex]) do
-      GetTgClass.Create(sizeArr.Items[sizeIndex].ToJson).GetInterface(GUID, Result[resultPhotoIndex, sizeIndex]);
-
+    for SizeIndex := 0 to High(Result[ResultPhotoIndex]) do
+      GetTgClass.Create(SizeArr.Items[SizeIndex].ToJson).GetInterface(GUID, Result[ResultPhotoIndex, SizeIndex]);
     //inc counter of processed photos
-    inc(resultPhotoIndex);
+    Inc(ResultPhotoIndex);
   end;
-
   //Set real length of the result array. length = zero based index + 1;
-  SetLength(Result, resultPhotoIndex+1);
+  SetLength(Result, ResultPhotoIndex + 1);
 end;
 
 function TtgUserProfilePhotos.TotalCount: Int64;
