@@ -1,4 +1,4 @@
-unit TelegAPi.CoreAPI.Request;
+п»їunit TelegAPi.CoreAPI.Request;
 
 interface
 
@@ -16,28 +16,27 @@ uses
 type
   TtgApiRequest = class
   private
-    const
-      SERVER_URL = 'https://api.telegram.org/bot';
-  private
-    FMethod: string;
     FParams: TObjectList<TtgApiParameter>;
     FHttp: THTTPClient;
     FOnReceive: TProc<string>;
-    FTelega: TTelegramBot;
     FOnSend: TProc<string, string>;
     FOnError: TProc<Exception>;
+    FProxySettings: TProxySettings;
+    FUrl: string;
   protected
+    procedure DoHaveException(const AException: Exception);
     function DoPost: IHTTPResponse;
     function DoGet: IHTTPResponse;
     procedure FillFormData(var AForm: TMultipartFormData);
     function StreamToString(Stream: TMemoryStream): string;
   public
-    constructor Create(Sender: TTelegramBot; const AMethod: string);
+    constructor Create(const AURL: string);
     function Execute(out Return: IHTTPResponse): Boolean; overload;
     function Execute(out Return: string): Boolean; overload;
-    function GetUrl: string;
     destructor Destroy; override;
     property Parameters: TObjectList<TtgApiParameter> read FParams write FParams;
+    property ProxySettings: TProxySettings read FProxySettings write FProxySettings;
+    property Url: string read FUrl write FUrl;
     property OnReceive: TProc<string> read FOnReceive write FOnReceive;
     property OnSend: TProc<string, string> read FOnSend write FOnSend;
     property OnError: TProc<Exception> read FOnError write FOnError;
@@ -54,10 +53,9 @@ uses
 
 { TtgApiRequest }
 
-constructor TtgApiRequest.Create(Sender: TTelegramBot; const AMethod: string);
+constructor TtgApiRequest.Create(const AURL: string);
 begin
-  FMethod := AMethod;
-  FTelega := Sender;
+  FUrl := AURL;
   FParams := TObjectList<TtgApiParameter>.Create;
   FHttp := THTTPClient.Create;
 end;
@@ -71,9 +69,25 @@ end;
 
 function TtgApiRequest.DoGet: IHTTPResponse;
 begin
-  Result := FHttp.Get(GetUrl);
-  if Assigned(OnSend) then
-    OnSend(GetUrl, '');
+  try
+    Result := FHttp.Get(FUrl);
+    if Assigned(OnSend) then
+      OnSend(FUrl, '');
+  except
+    on E: Exception do
+    begin
+      Result := nil;
+      DoHaveException(E);
+    end;
+  end;
+end;
+
+procedure TtgApiRequest.DoHaveException(const AException: Exception);
+begin
+  if Assigned(OnError) then
+    OnError(AException)
+  else
+    raise AException;
 end;
 
 function TtgApiRequest.DoPost: IHTTPResponse;
@@ -82,10 +96,18 @@ var
 begin
   PostData := TMultipartFormData.Create;
   try
-    FillFormData(PostData);
-    Result := FHttp.Post(GetUrl, PostData);
-    if Assigned(OnSend) then
-      OnSend(GetUrl, StreamToString(PostData.Stream));
+    try
+      FillFormData(PostData);
+      Result := FHttp.Post(FUrl, PostData);
+      if Assigned(OnSend) then
+        OnSend(FUrl, StreamToString(PostData.Stream));
+    except
+      on E: Exception do
+      begin
+        Result := nil;
+        DoHaveException(E);
+      end;
+    end;
   finally
     PostData.Free;
   end;
@@ -94,25 +116,16 @@ end;
 function TtgApiRequest.Execute(out Return: IHTTPResponse): Boolean;
 begin
   Result := False;
-  FHttp.ProxySettings := FTelega.ProxySettings;
-  try
-    if Parameters.Count > 0 then
-      Return := DoPost
-    else
-      Return := DoGet;
-    if Return = nil then
-      Exit;
-    Result := True;
-    if Assigned(OnReceive) then
-      OnReceive(Return.ContentAsString);
-  except
-    on E: Exception do
-    begin
-      Result := False;
-      if Assigned(OnError) then
-        OnError(E);
-    end;
-  end;
+  FHttp.ProxySettings := FProxySettings;
+  if Parameters.Count > 0 then
+    Return := DoPost
+  else
+    Return := DoGet;
+  if Return = nil then
+    Exit;
+  Result := True;
+  if Assigned(OnReceive) then
+    OnReceive(Return.ContentAsString);
 end;
 
 function TtgApiRequest.Execute(out Return: string): Boolean;
@@ -137,31 +150,17 @@ begin
       if LParam.Skip then
         Continue;
       if LParam.Required and (LParam.IsDefaultValue or LParam.Value.IsEmpty) then
-        FTelega.ExceptionManager.HaveGlobalExeption('TtgApiRequest.FillFormData', ETelegramException.Create('Not assigned required data'));
+        DoHaveException(ETelegramException.Create('Not assigned required data [TtgApiRequest.FillFormData]'));
       if ParamConverter.IsSupported(LParam) then
         ParamConverter.ApplyParamToFormData(LParam, AForm)
-      else if LParam.Value.Kind = tkClass then        // last variant to search
-      begin
-        { TODO -oOwner -cGeneral : Проверить че за херня тут твориться }
-        if not LParam.Value.IsEmpty then
-        begin
-          if LParam.Value.IsType<IReplyMarkup>then
-            AForm.AddField(LParam.Key, TJson.ObjectToJsonString(LParam.Value.AsObject))
-          else
-            FTelega.ExceptionManager.HaveGlobalExeption('TTelegramBot.ParamsToFormData', Exception.Create('Unknown object'));
-        end;
-      end
+      else if LParam.Value.IsType<IReplyMarkup>then
+        AForm.AddField(LParam.Key, TJson.ObjectToJsonString(LParam.Value.AsObject))
       else
-        FTelega.ExceptionManager.HaveGlobalExeption('ParamsToFormData', ETelegramDataConvert.Create('Check parameter type ' + LParam.Value.ToString))
+        DoHaveException(ETelegramException.Create('Check parameter type ' + LParam.Value.ToString + ' [TtgApiRequest.FillFormData]'));
     end;
   finally
     ParamConverter.Free;
   end;
-end;
-
-function TtgApiRequest.GetUrl: string;
-begin
-  Result := SERVER_URL + FTelega.Token + '/' + FMethod;
 end;
 
 function TtgApiRequest.StreamToString(Stream: TMemoryStream): string;

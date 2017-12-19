@@ -52,8 +52,7 @@ begin
   AFormData.AddField(AParam.Key, AParam.Value.AsString);
 end;
 
-procedure TtgParamConverter.AddTDateTime(var AFormData: TMultipartFormData;
-  AParam: TtgApiParameter);
+procedure TtgParamConverter.AddTDateTime(var AFormData: TMultipartFormData; AParam: TtgApiParameter);
 begin
   AFormData.AddField(AParam.Key, DateTimeToUnix(AParam.Value.AsType<TDateTime>, False).ToString);
 end;
@@ -108,10 +107,12 @@ begin
   LFileToSent := AParam.Value.AsType<TtgFileToSend>;
   try
     case LFileToSent.Tag of
-      TtgFileToSend.FILE_TO_SEND_STREAM: AFormData.AddStream(AParam.Key, LFileToSent.Content, LFileToSent.Data);
-      TtgFileToSend.FILE_TO_SEND_FILE:   AFormData.AddFile(AParam.Key, LFileToSent.Data);
-      TtgFileToSend.FILE_TO_SEND_ID,
-      TtgFileToSend.FILE_TO_SEND_URL:    AFormData.AddField(AParam.Key, LFileToSent.Data);
+      TtgFileToSend.FILE_TO_SEND_STREAM:
+        AFormData.AddStream(AParam.Key, LFileToSent.Content, LFileToSent.Data);
+      TtgFileToSend.FILE_TO_SEND_FILE:
+        AFormData.AddFile(AParam.Key, LFileToSent.Data);
+      TtgFileToSend.FILE_TO_SEND_ID, TtgFileToSend.FILE_TO_SEND_URL:
+        AFormData.AddField(AParam.Key, LFileToSent.Data);
     else
       raise Exception.Create('Cant convert TTgFileToSend: Unknown prototype tag');
     end;

@@ -392,10 +392,12 @@ uses
 {$REGION 'Core'}
 
 function TTelegramBot.RequestAPI(const Method: string; const Parameters: TArray<TtgApiParameter>): string;
+const
+  SERVER_URL = 'https://api.telegram.org/bot';
 var
   LTgRequest: TtgApiRequest;
 begin
-  LTgRequest := TtgApiRequest.Create(Self, Method);
+  LTgRequest := TtgApiRequest.Create(SERVER_URL + Token + '/' + Method);
   try
     LTgRequest.OnSend :=
       procedure(Url, Data: string)
