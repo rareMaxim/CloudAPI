@@ -1,4 +1,4 @@
-unit TelegAPI.CoreAPI.ParameterConverter;
+unit CoreAPI.ParameterConverter.SystemNet;
 
 interface
 
@@ -9,7 +9,7 @@ uses
   System.SysUtils,
   System.TypInfo,
   TelegAPI.Types,
-  TelegAPI.CoreAPI.Parameter;
+  CoreAPI.Parameter;
 
 type
   /// <summary>

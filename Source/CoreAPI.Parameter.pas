@@ -1,4 +1,4 @@
-﻿unit TelegAPi.CoreAPI.Parameter;
+﻿unit CoreAPI.Parameter;
 
 interface
 

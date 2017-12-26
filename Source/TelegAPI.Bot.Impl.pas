@@ -7,12 +7,15 @@ uses
   System.Classes,
   System.TypInfo,
   System.SysUtils,
-  System.Net.Mime,
-  System.Net.URLClient,
-  System.Net.HttpClient,
+  System.JSON,
   System.Generics.Collections,
+{$IFDEF  USE_INDY}
+  IdHTTPHeaderInfo,
+{$ELSE}
+  System.Net.URLClient,
+{$ENDIF}
   TelegAPI.Base,
-  TelegAPI.CoreAPI.Parameter,
+  CoreAPI.Parameter,
   TelegAPI.Bot,
   TelegAPI.Types,
   TelegAPI.Types.Impl,
@@ -20,8 +23,7 @@ uses
   TelegAPI.Types.ReplyMarkups,
   TelegAPI.Types.InlineQueryResults,
   TelegAPI.Exceptions,
-  TelegAPI.Utils.Json,
-  System.Json;
+  TelegAPI.Utils.Json;
 
 type
   TtgOnReceiveRawData = procedure(ASender: TObject; const AData: string) of object;
@@ -29,7 +31,11 @@ type
   TTelegramBot = class(TtgAbstractComponent, ITelegramBot)
   private
     FToken: string;
+{$IFDEF USE_INDY}
+    FProxySettings: TIdProxyConnectionInfo;
+{$ELSE}
     FProxySettings: TProxySettings;
+{$ENDIF}
     FOnRawData: TtgOnReceiveRawData;
     FExceptionManager: ItgExceptionHandler;
     function GetToken: string;
@@ -372,7 +378,11 @@ type
 {$ENDREGION}
   published
 {$REGION 'Property|Свойства'}
+{$IFDEF USE_INDY}
+    property ProxySettings: TIdProxyConnectionInfo read FProxySettings write FProxySettings;
+{$ELSE}
     property ProxySettings: TProxySettings read FProxySettings write FProxySettings;
+{$ENDIF}
     property Token: string read GetToken write SetToken;
     property ExceptionManager: ItgExceptionHandler read GetExceptionManager write SetExceptionManager;
 {$ENDREGION}
@@ -384,10 +394,13 @@ type
 implementation
 
 uses
+{$IFDEF  USE_INDY}
+  CoreAPI.Request.Indy,
+{$ELSE}
+  CoreAPI.Request.SystemNet,
+{$ENDIF}
   REST.Json,
-  FMX.Types,
-  TelegAPI.Helpers,
-  TelegAPI.CoreAPI.Request;
+  TelegAPI.Helpers;
 { TTelegramBot }
 {$REGION 'Core'}
 
@@ -400,15 +413,9 @@ begin
   LTgRequest := TtgApiRequest.Create(SERVER_URL + Token + '/' + Method);
   try
     LTgRequest.ProxySettings := Self.ProxySettings;
-    LTgRequest.OnSend :=
-      procedure(Url, Data: string)
-      begin
-        Log.d('%s - %s', [Url, Data]);
-      end;
     LTgRequest.OnReceive :=
       procedure(Data: string)
       begin
-        Log.d('%s', [Data]);
         if Assigned(OnReceiveRawData) then
           OnReceiveRawData(Self, Data);
       end;

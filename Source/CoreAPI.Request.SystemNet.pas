@@ -1,4 +1,4 @@
-﻿unit TelegAPi.CoreAPI.Request;
+﻿unit CoreAPI.Request.SystemNet;
 
 interface
 
@@ -9,7 +9,7 @@ uses
   System.Net.URLClient,
   System.Net.Mime,
   System.SysUtils,
-  TelegAPi.CoreAPI.Parameter,
+  CoreAPI.Parameter,
   TelegAPi.Bot.Impl,
   System.Classes;
 
@@ -28,7 +28,7 @@ type
     function DoPost: IHTTPResponse;
     function DoGet: IHTTPResponse;
     procedure FillFormData(var AForm: TMultipartFormData);
-    function StreamToString(Stream: TMemoryStream): string;
+    function StreamToString(Stream: TStream): string;
   public
     constructor Create(const AURL: string);
     function Execute(out Return: IHTTPResponse): Boolean; overload;
@@ -49,7 +49,7 @@ uses
   TelegAPi.Types.ReplyMarkups,
   REST.Json,
   TelegAPi.Exceptions,
-  TelegAPi.CoreAPI.ParameterConverter;
+  CoreAPI.ParameterConverter.SystemNet;
 
 { TtgApiRequest }
 
@@ -163,7 +163,7 @@ begin
   end;
 end;
 
-function TtgApiRequest.StreamToString(Stream: TMemoryStream): string;
+function TtgApiRequest.StreamToString(Stream: TStream): string;
 var
   LStrings: TStringList;
 begin
