@@ -394,7 +394,7 @@ type
 implementation
 
 uses
-{$IFDEF  USE_INDY}
+{$IFDEF USE_INDY}
   CoreAPI.Request.Indy,
 {$ELSE}
   CoreAPI.Request.SystemNet,
