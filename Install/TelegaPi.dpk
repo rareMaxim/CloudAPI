@@ -31,12 +31,10 @@ package TelegaPi;
 
 requires
   rtl,
-{$IFDEF USE_INDY}
+  RESTComponents,
   IndySystem,
   IndyProtocols,
-  IndyCore,
-{$ENDIF}
-  RESTComponents;
+  IndyCore;
 
 contains
   TelegAPI.Base in '..\Source\TelegAPI.Base.pas',
@@ -57,14 +55,11 @@ contains
   TelegAPI.Utils.Json in '..\Source\TelegAPI.Utils.Json.pas',
   TelegAPI.Receiver.UI in '..\Source\TelegAPI.Receiver.UI.pas',
   TelegaPi.Factory in '..\Source\TelegaPi.Factory.pas',
-{$IFDEF USE_INDY}
-  CoreAPI.Request.Indy in '..\Source\CoreAPI.Request.Indy.pas',
   CoreAPI.ParameterConverter.Indy in '..\Source\CoreAPI.ParameterConverter.Indy.pas',
-{$ELSE}
-  CoreAPI.ParameterConverter.SystemNet in '..\Source\CoreAPI.ParameterConverter.SystemNet.pas',
-  CoreAPI.Request.SystemNet in '..\Source\CoreAPI.Request.SystemNet.pas',
-{$ENDIF}
   TelegaPi.Ext.Sessions in '..\Source\TelegaPi.Ext.Sessions.pas',
-  CoreAPI.Parameter in '..\Source\CoreAPI.Parameter.pas';
+  CoreAPI.Parameter in '..\Source\CoreAPI.Parameter.pas',
+  CoreAPI in '..\Source\CoreAPI.pas',
+  CoreAPI.ParameterConverter.SystemNet in '..\Source\CoreAPI.ParameterConverter.SystemNet.pas';
+
 end.
 

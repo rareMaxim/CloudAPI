@@ -62,7 +62,7 @@ begin
   if AJson.IsEmpty then
     Exit;
   FJSON := TJSONObject.ParseJSONValue(AJson) as TJSONObject;
-  FJSONAsString := FJSON.ToJSON;
+  FJSONAsString := FJSON.ToString;
 end;
 
 function TBaseJson.ReadToArray<TI>(TgClass: TBaseJsonClass; const AKey: string): TArray<TI>;
@@ -84,7 +84,7 @@ begin
   SetLength(Result, LJsonArray.Count);
   for I := 0 to High(Result) do
   begin
-    TgClass.GetTgClass.Create(LJsonArray.Items[I].ToJSON).GetInterface(GUID, Result[I]);
+    TgClass.GetTgClass.Create(LJsonArray.Items[I].ToString).GetInterface(GUID, Result[I]);
   end;
 end;
 
@@ -97,7 +97,7 @@ begin
   LObj := FJSON.GetValue(AKey);
   if Assigned(LObj) and (not LObj.Null) then
   begin
-    LValue := LObj.ToJSON;
+    LValue := LObj.ToString;
     Result := TBaseJsonClass(T).Create(LValue) as T;
   end
 end;

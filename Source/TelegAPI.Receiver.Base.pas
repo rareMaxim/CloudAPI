@@ -5,7 +5,7 @@ interface
 uses
   System.Classes,
   System.SysUtils,
-  System.Threading,
+ // System.Threading,
   TelegAPI.Base,
   TelegAPI.Bot,
   TelegAPI.Types,
@@ -24,7 +24,7 @@ type
     FAllowedUpdates: TAllowedUpdates;
     FMessageOffset: Int64;
     FPollingInterval: Integer;
-    FTask: ITask;
+    FThread: TThread;
     FIsActive: Boolean;
     procedure SetIsActive(const Value: Boolean);
   protected
@@ -49,8 +49,11 @@ type
   public
     constructor Create(AOwner: TComponent); overload; override;
     constructor Create(ABot: ITelegramBot); reintroduce; overload;
+    destructor Destroy; override;
     procedure Start;
     procedure Stop;
+    [Default(False)]
+    property IsActive: Boolean read FIsActive write SetIsActive;
   published
     property Bot: ITelegramBot read FBot write FBot;
     [Default(0)]
@@ -58,9 +61,6 @@ type
     property AllowedUpdates: TAllowedUpdates read FAllowedUpdates write FAllowedUpdates default UPDATES_ALLOWED_ALL;
     [Default(1000)]
     property PollingInterval: Integer read FPollingInterval write FPollingInterval;
-  public
-    [Default(False)]
-    property IsActive: Boolean read FIsActive write SetIsActive;
   end;
 
 implementation
@@ -79,6 +79,12 @@ constructor TTgBotReceiverBase.Create(ABot: ITelegramBot);
 begin
   Create(TComponent(nil));
   Bot := ABot;
+end;
+
+destructor TTgBotReceiverBase.Destroy;
+begin
+  //FreeAndNil(FThread);
+  inherited;
 end;
 
 procedure TTgBotReceiverBase.EventParser(AUpdates: TArray<ItgUpdate>);
@@ -129,7 +135,12 @@ begin
     Exit;
   FIsActive := Value;
   if FIsActive then
-    FTask := TTask.Run(Go)
+  begin
+    FThread := TThread.CreateAnonymousThread(go);
+    FThread.FreeOnTerminate := True;
+    FThread.Start;
+  end
+   // FTask := TTask.Run(Go)
   else
     FIsActive := False;
 end;

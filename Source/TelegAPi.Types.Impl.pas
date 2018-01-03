@@ -673,7 +673,7 @@ begin
     Exit(nil);
   SetLength(Result, LJsonArray.Count);
   for I := 0 to LJsonArray.Count - 1 do
-    Result[I] := TtgMessageEntity.Create(LJsonArray.Items[I].ToJson);
+    Result[I] := TtgMessageEntity.Create(LJsonArray.Items[I].ToString);
 end;
 
 function TTgMessage.Photo: TArray<ItgPhotoSize>;
@@ -1358,7 +1358,7 @@ begin
     Exit(nil);
   SetLength(Result, LJsonArray.Count);
   for I := 0 to LJsonArray.Count - 1 do
-    Result[I] := ReadToSimpleType<string>(LJsonArray.Items[I].ToJson);
+    Result[I] := ReadToSimpleType<string>(LJsonArray.Items[I].ToString);
 end;
 
 function TtgWebhookInfo.HasCustomCertificate: Boolean;
@@ -1794,7 +1794,7 @@ begin
     SetLength(Result[ResultPhotoIndex], SizeArr.Count);
     //fills the result[RealIndex] with array of sizes
     for SizeIndex := 0 to High(Result[ResultPhotoIndex]) do
-      GetTgClass.Create(SizeArr.Items[SizeIndex].ToJson).GetInterface(GUID, Result[ResultPhotoIndex, SizeIndex]);
+      GetTgClass.Create(SizeArr.Items[SizeIndex].ToString).GetInterface(GUID, Result[ResultPhotoIndex, SizeIndex]);
     //inc counter of processed photos
     Inc(ResultPhotoIndex);
   end;

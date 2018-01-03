@@ -1828,7 +1828,7 @@ type
     function addStickerToSet(//
       const UserId: Int64; //
       const Name: string; //
-      const PngSticker: TValue; //
+      const PngSticker: TtgFileToSend; //
       const Emojis: string; //
       const MaskPosition: TtgMaskPosition = nil): Boolean;
      /// <summary>
