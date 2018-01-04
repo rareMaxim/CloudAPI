@@ -1,5 +1,6 @@
 unit CoreAPI;
 
+{$I config.inc}
 interface
 
 uses
@@ -22,6 +23,7 @@ uses
 
 type
   ItgRequestAPI = interface
+  ['{3DC5A653-F52D-4A31-87AD-0C008AFA7111}']
     // private
     function GetOnError: TProc<Exception>;
     procedure SetOnError(const Value: TProc<Exception>);
@@ -168,8 +170,10 @@ end;
 
 destructor TtgRequestAPI.Destroy;
 begin
-  FHttp.Free;
+{$IFDEF USE_INDY}
   FSSL.Free;
+{$ENDIF}
+  FHttp.Free;
   FParameters.Free;
   inherited;
 end;

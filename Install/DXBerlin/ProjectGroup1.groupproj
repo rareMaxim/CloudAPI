@@ -1,0 +1,48 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{B02367B5-89D5-49ED-93FF-C6DE21D1B106}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="TelegaPi.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="..\..\Demo\EchoBot\EchoBot.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="TelegaPi">
+        <MSBuild Projects="TelegaPi.dproj"/>
+    </Target>
+    <Target Name="TelegaPi:Clean">
+        <MSBuild Projects="TelegaPi.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="TelegaPi:Make">
+        <MSBuild Projects="TelegaPi.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="EchoBot">
+        <MSBuild Projects="..\..\Demo\EchoBot\EchoBot.dproj"/>
+    </Target>
+    <Target Name="EchoBot:Clean">
+        <MSBuild Projects="..\..\Demo\EchoBot\EchoBot.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="EchoBot:Make">
+        <MSBuild Projects="..\..\Demo\EchoBot\EchoBot.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="TelegaPi;EchoBot"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="TelegaPi:Clean;EchoBot:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="TelegaPi:Make;EchoBot:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

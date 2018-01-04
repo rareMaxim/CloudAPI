@@ -83,7 +83,6 @@ end;
 
 destructor TTgBotReceiverBase.Destroy;
 begin
-  //FreeAndNil(FThread);
   inherited;
 end;
 
@@ -136,13 +135,14 @@ begin
   FIsActive := Value;
   if FIsActive then
   begin
-    FThread := TThread.CreateAnonymousThread(go);
+    FThread := TThread.CreateAnonymousThread(Go);
     FThread.FreeOnTerminate := True;
     FThread.Start;
   end
-   // FTask := TTask.Run(Go)
   else
+  begin
     FIsActive := False;
+  end;
 end;
 
 procedure TTgBotReceiverBase.Start;
