@@ -36,6 +36,8 @@ type
 {$ENDIF}
     function GetOnSend: TProc<string, string>;
     procedure SetOnSend(const Value: TProc<string, string>);
+    function GetOnReceive: TProc<string>;
+    procedure SetOnReceive(const Value: TProc<string>);
     function GetDataExtractor: TFunc<string, string>;
     procedure SetDataExtractor(const Value: TFunc<string, string>);
     // public
@@ -56,6 +58,7 @@ type
     // events
     property OnError: TProc<Exception> read GetOnError write SetOnError;
     property OnSend: TProc<string, string> read GetOnSend write SetOnSend;
+    property OnReceive: TProc<string> read GetOnReceive write SetOnReceive;
   end;
 
   TtgRequestAPI = class(TInterfacedObject, ItgRequestAPI)

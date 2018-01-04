@@ -28,8 +28,7 @@ uses
   TelegAPI.Utils.JSON;
 
 type
-  TtgOnReceiveRawData = procedure(ASender: TObject; const AData: string)
-    of object;
+  TtgOnReceiveRawData = procedure(ASender: TObject; const AData: string) of object;
 
   TTelegramBot = class(TtgAbstractComponent, ITelegramBot)
   private
@@ -47,8 +46,7 @@ type
     // Returns TJSONArray as method request result
     function GetJSONArrayFromMethod(const AValue: string): TJSONArray;
     // Returns response JSON from server as result of request
-    function GetArrayFromMethod<TI: IInterface>(const TgClass: TBaseJsonClass;
-      const AValue: string): TArray<TI>;
+    function GetArrayFromMethod<TI: IInterface>(const TgClass: TBaseJsonClass; const AValue: string): TArray<TI>;
     function GetExceptionManager: ItgExceptionHandler;
     procedure SetExceptionManager(const Value: ItgExceptionHandler);
   public
@@ -59,8 +57,7 @@ type
       const Offset: Int64 = 0; //
       const Limit: Int64 = 100; //
       const Timeout: Int64 = 0; //
-      const AllowedUpdates: TAllowedUpdates = UPDATES_ALLOWED_ALL)
-      : TArray<ItgUpdate>;
+      const AllowedUpdates: TAllowedUpdates = UPDATES_ALLOWED_ALL): TArray<ItgUpdate>;
     function SetWebhook( //
       const Url: string; //
       const Certificate: TtgFileToSend = nil; //
@@ -310,10 +307,8 @@ type
       const ChatId: TValue; //
       const MessageId: Int64; //
       const DisableNotification: Boolean = False): Boolean;
-    function SetChatDescription(const ChatId: TValue;
-      const Description: string): Boolean;
-    function SetChatPhoto(const ChatId: TValue;
-      const Photo: TtgFileToSend): Boolean;
+    function SetChatDescription(const ChatId: TValue; const Description: string): Boolean;
+    function SetChatPhoto(const ChatId: TValue; const Photo: TtgFileToSend): Boolean;
     function SetChatTitle(const ChatId: TValue; const Title: string): Boolean;
     function UnpinChatMessage(const ChatId: TValue): Boolean;
 {$ENDREGION}
@@ -346,8 +341,7 @@ type
       const ReplyToMessageId: Int64 = 0; //
       ReplyMarkup: IReplyMarkup = nil): ITgMessage;
     function getStickerSet(const Name: string): TtgStickerSet;
-    function uploadStickerFile(const UserId: Int64;
-      const PngSticker: TtgFileToSend): ItgFile;
+    function uploadStickerFile(const UserId: Int64; const PngSticker: TtgFileToSend): ItgFile;
     function createNewStickerSet( //
       const UserId: Int64; //
       const Name, Title: string; //
@@ -361,11 +355,9 @@ type
       const PngSticker: TtgFileToSend; //
       const Emojis: string; //
       const MaskPosition: TtgMaskPosition = nil): Boolean;
-    function setStickerPositionInSet(const Sticker: string;
-      const Position: Int64): Boolean;
+    function setStickerPositionInSet(const Sticker: string; const Position: Int64): Boolean;
     function deleteStickerFromSet(const Sticker: string): Boolean;
-    function setChatStickerSet(const ChatId: TValue;
-      const StickerSetName: string): Boolean;
+    function setChatStickerSet(const ChatId: TValue; const StickerSetName: string): Boolean;
     function deleteChatStickerSet(const ChatId: TValue): Boolean;
     function sendMediaGroup( //
       const ChatId: TValue; //
@@ -377,19 +369,15 @@ type
   published
 {$REGION 'Property|Свойства'}
 {$IFDEF USE_INDY}
-    property ProxySettings: TIdProxyConnectionInfo read FProxySettings
-      write FProxySettings;
+    property ProxySettings: TIdProxyConnectionInfo read FProxySettings write FProxySettings;
 {$ELSE}
-    property ProxySettings: TProxySettings read FProxySettings
-      write FProxySettings;
+    property ProxySettings: TProxySettings read FProxySettings write FProxySettings;
 {$ENDIF}
     property Token: string read GetToken write SetToken;
-    property ExceptionManager: ItgExceptionHandler read GetExceptionManager
-      write SetExceptionManager;
+    property ExceptionManager: ItgExceptionHandler read GetExceptionManager write SetExceptionManager;
 {$ENDREGION}
 {$REGION 'События|Events'}
-    property OnReceiveRawData: TtgOnReceiveRawData read FOnRawData
-      write FOnRawData;
+    property OnReceiveRawData: TtgOnReceiveRawData read FOnRawData write FOnRawData;
 {$ENDREGION}
   end;
 
@@ -405,11 +393,19 @@ constructor TTelegramBot.Create(AOwner: TComponent);
 begin
   inherited;
   FRequest := TtgFactory.RequestAPI;
-  FRequest.OnError := procedure(E: Exception)
+  FRequest.OnError :=
+    procedure(E: Exception)
     begin
       ExceptionManager.HaveGlobalExeption('RequestAPI', E)
     end;
-  FRequest.DataExtractor := function(AInput: string): string
+  FRequest.OnReceive :=
+    procedure(AData: string)
+    begin
+      if Assigned(OnReceiveRawData) then
+        OnReceiveRawData(Self, AData);
+    end;
+  FRequest.DataExtractor :=
+    function(AInput: string): string
     var
       FJSON: TJSONObject;
     begin
@@ -419,8 +415,7 @@ begin
       FJSON := TJSONObject.ParseJSONValue(AInput) as TJSONObject;
       try
         if FJSON.GetValue('ok') is TJSONFalse then
-          ExceptionManager.HaveApiExeption('TTelegramBot.ApiTest',
-            EApiRequestException.Create(AInput, 0))
+          ExceptionManager.HaveApiExeption('TTelegramBot.ApiTest', EApiRequestException.Create(AInput, 0))
         else
           Result := FJSON.GetValue('result').ToString;
       finally
@@ -434,8 +429,7 @@ begin
   Result := TJSONObject.ParseJSONValue(AValue) as TJSONArray;
 end;
 
-function TTelegramBot.GetArrayFromMethod<TI>(const TgClass: TBaseJsonClass;
-  const AValue: string): TArray<TI>;
+function TTelegramBot.GetArrayFromMethod<TI>(const TgClass: TBaseJsonClass; const AValue: string): TArray<TI>;
 var
   LJsonArr: TJSONArray;
   I: Integer;
@@ -446,8 +440,7 @@ begin
   GUID := GetTypeData(TypeInfo(TI))^.GUID;
   // check for TI interface support
   if TgClass.GetInterfaceEntry(GUID) = nil then
-    raise Exception.Create('GetArrayFromMethod: unsupported interface for ' +
-      TgClass.ClassName);
+    raise Exception.Create('GetArrayFromMethod: unsupported interface for ' + TgClass.ClassName);
   // stage 2: proceed data
   LJsonArr := GetJSONArrayFromMethod(AValue);
   if (not Assigned(LJsonArr)) or LJsonArr.Null then
@@ -455,8 +448,7 @@ begin
   try
     SetLength(Result, LJsonArr.Count);
     for I := 0 to High(Result) do
-      TgClass.GetTgClass.Create(LJsonArr.Items[I].ToString)
-        .GetInterface(GUID, Result[I]);
+      TgClass.GetTgClass.Create(LJsonArr.Items[I].ToString).GetInterface(GUID, Result[I]);
   finally
     LJsonArr.Free;
   end;
@@ -488,9 +480,7 @@ end;
 {$ENDREGION}
 {$REGION 'Getting updates'}
 
-function TTelegramBot.SetWebhook(const Url: string;
-  const Certificate: TtgFileToSend; const MaxConnections: Int64;
-  const AllowedUpdates: TAllowedUpdates): Boolean;
+function TTelegramBot.SetWebhook(const Url: string; const Certificate: TtgFileToSend; const MaxConnections: Int64; const AllowedUpdates: TAllowedUpdates): Boolean;
 begin
   Result := FRequest.SetMethod('setWebhook') //
     .AddParameter('url', TValue.From(Url), '', True) //
@@ -505,11 +495,9 @@ begin
   Result := TtgWebhookInfo.Create(FRequest.SetMethod('getWebhookInfo').Execute);
 end;
 
-function TTelegramBot.GetUpdates(const Offset, Limit, Timeout: Int64;
-  const AllowedUpdates: TAllowedUpdates): TArray<ItgUpdate>;
+function TTelegramBot.GetUpdates(const Offset, Limit, Timeout: Int64; const AllowedUpdates: TAllowedUpdates): TArray<ItgUpdate>;
 begin
-  Result := GetArrayFromMethod<ItgUpdate>(TtgUpdate,
-    FRequest.SetMethod('getUpdates') //
+  Result := GetArrayFromMethod<ItgUpdate>(TtgUpdate, FRequest.SetMethod('getUpdates') //
     .AddParameter('offset', Offset, 0, False) //
     .AddParameter('limit', Limit, 100, False) //
     .AddParameter('timeout', Timeout, 0, False) //
@@ -531,8 +519,7 @@ end;
 {$ENDREGION}
 {$REGION 'Basic methods'}
 
-function TTelegramBot.stopMessageLiveLocation(const ChatId: TValue;
-  const MessageId: Int64; ReplyMarkup: IReplyMarkup): Boolean;
+function TTelegramBot.stopMessageLiveLocation(const ChatId: TValue; const MessageId: Int64; ReplyMarkup: IReplyMarkup): Boolean;
 begin
   Result := FRequest.SetMethod('stopMessageLiveLocation') //
     .AddParameter('chat_id', ChatId, 0, True) //
@@ -541,8 +528,7 @@ begin
     .ExecuteAsBool;
 end;
 
-function TTelegramBot.stopMessageLiveLocation(const InlineMessageId: string;
-  ReplyMarkup: IReplyMarkup): Boolean;
+function TTelegramBot.stopMessageLiveLocation(const InlineMessageId: string; ReplyMarkup: IReplyMarkup): Boolean;
 begin
   Result := FRequest.SetMethod('stopMessageLiveLocation') //
     .AddParameter('inline_message_id', InlineMessageId, 0, True) //
@@ -550,8 +536,7 @@ begin
     .ExecuteAsBool;
 end;
 
-function TTelegramBot.UnbanChatMember(const ChatId: TValue;
-  const UserId: Int64): Boolean;
+function TTelegramBot.UnbanChatMember(const ChatId: TValue; const UserId: Int64): Boolean;
 begin
   Result := FRequest.SetMethod('unbanChatMember') //
     .AddParameter('chat_id', ChatId, 0, True) //
@@ -559,10 +544,7 @@ begin
     .ExecuteAsBool;
 end;
 
-function TTelegramBot.SendLocation(const ChatId: TValue;
-  const Location: TtgLocation; const LivePeriod: Int64;
-  const DisableNotification: Boolean; const ReplyToMessageId: Int64;
-  ReplyMarkup: IReplyMarkup): ITgMessage;
+function TTelegramBot.SendLocation(const ChatId: TValue; const Location: TtgLocation; const LivePeriod: Int64; const DisableNotification: Boolean; const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
 begin
   Result := TTgMessage.Create(FRequest.SetMethod('unbanChatMember') //
     .AddParameter('chat_id', ChatId, 0, True) //
@@ -575,24 +557,17 @@ begin
     .Execute);
 end;
 
-function TTelegramBot.sendMediaGroup(const ChatId: TValue;
-  const AMedia: TArray<TtgInputMedia>; const ADisableNotification: Boolean;
-  const ReplyToMessageId: Int64): TArray<ITgMessage>;
+function TTelegramBot.sendMediaGroup(const ChatId: TValue; const AMedia: TArray<TtgInputMedia>; const ADisableNotification: Boolean; const ReplyToMessageId: Int64): TArray<ITgMessage>;
 begin
-  Result := GetArrayFromMethod<ITgMessage>(TTgMessage,
-    FRequest.SetMethod('sendMediaGroup') //
+  Result := GetArrayFromMethod<ITgMessage>(TTgMessage, FRequest.SetMethod('sendMediaGroup') //
     .AddParameter('chat_id', ChatId, 0, True) //
-    .AddParameter('media', TJsonUtils.ArrayToJString<TtgInputMedia>(AMedia),
-    '[]', True) //
+    .AddParameter('media', TJsonUtils.ArrayToJString<TtgInputMedia>(AMedia), '[]', True) //
     .AddParameter('disable_notification', ADisableNotification, False, False) //
     .AddParameter('reply_to_message_id', ReplyToMessageId, 0, False) //
     .Execute);
 end;
 
-function TTelegramBot.SendPhoto(const ChatId: TValue;
-  const Photo: TtgFileToSend; const Caption: string;
-  const DisableNotification: Boolean; const ReplyToMessageId: Int64;
-  ReplyMarkup: IReplyMarkup): ITgMessage;
+function TTelegramBot.SendPhoto(const ChatId: TValue; const Photo: TtgFileToSend; const Caption: string; const DisableNotification: Boolean; const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
 begin
   Result := TTgMessage.Create(FRequest.SetMethod('sendPhoto') //
     .AddParameter('chat_id', ChatId, 0, True) //
@@ -604,26 +579,20 @@ begin
     .Execute);
 end;
 
-function TTelegramBot.SendMessage(const ChatId: TValue; const Text: string;
-  const ParseMode: TtgParseMode; const DisableWebPagePreview,
-  DisableNotification: Boolean; const ReplyToMessageId: Int64;
-  ReplyMarkup: IReplyMarkup): ITgMessage;
+function TTelegramBot.SendMessage(const ChatId: TValue; const Text: string; const ParseMode: TtgParseMode; const DisableWebPagePreview, DisableNotification: Boolean; const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
 begin
   Result := TTgMessage.Create(FRequest.SetMethod('sendMessage') //
     .AddParameter('chat_id', ChatId, 0, True) //
     .AddParameter('text', Text, '', True) //
     .AddParameter('parse_mode', ParseMode.ToString, '', False) //
-    .AddParameter('disable_web_page_preview', DisableWebPagePreview,
-    False, False) //
+    .AddParameter('disable_web_page_preview', DisableWebPagePreview, False, False) //
     .AddParameter('disable_notification', DisableNotification, False, False) //
     .AddParameter('reply_to_message_id', ReplyToMessageId, 0, False) //
     .AddParameter('reply_markup', TInterfacedObject(ReplyMarkup), nil, False) //
     .Execute);
 end;
 
-function TTelegramBot.SendVenue(const ChatId: TValue; const Venue: TtgVenue;
-  const DisableNotification: Boolean; const ReplyToMessageId: Int64;
-  ReplyMarkup: IReplyMarkup): ITgMessage;
+function TTelegramBot.SendVenue(const ChatId: TValue; const Venue: TtgVenue; const DisableNotification: Boolean; const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
 begin
   Result := TTgMessage.Create(FRequest.SetMethod('sendVenue') //
     .AddParameter('chat_id', ChatId, 0, True) //
@@ -638,10 +607,7 @@ begin
     .Execute);
 end;
 
-function TTelegramBot.SendVideo(const ChatId: TValue;
-  const Video: TtgFileToSend; const Caption: string;
-  const Duration, Width, Height: Int64; const DisableNotification: Boolean;
-  const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
+function TTelegramBot.SendVideo(const ChatId: TValue; const Video: TtgFileToSend; const Caption: string; const Duration, Width, Height: Int64; const DisableNotification: Boolean; const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
 begin
   Result := TTgMessage.Create(FRequest.SetMethod('sendVideo') //
     .AddParameter('chat_id', ChatId, 0, True) //
@@ -656,10 +622,7 @@ begin
     .Execute);
 end;
 
-function TTelegramBot.SendVideoNote(const ChatId: TValue;
-  const VideoNote: TtgFileToSend; const Duration, Length: Int64;
-  const DisableNotification: Boolean; const ReplyToMessageId: Int64;
-  ReplyMarkup: IReplyMarkup): ITgMessage;
+function TTelegramBot.SendVideoNote(const ChatId: TValue; const VideoNote: TtgFileToSend; const Duration, Length: Int64; const DisableNotification: Boolean; const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
 begin
   Result := TTgMessage.Create(FRequest.SetMethod('sendVideoNote') //
     .AddParameter('chat_id', ChatId, 0, True) //
@@ -672,10 +635,7 @@ begin
     .Execute);
 end;
 
-function TTelegramBot.SendVoice(const ChatId: TValue;
-  const Voice: TtgFileToSend; const Caption: string; const Duration: Int64;
-  const DisableNotification: Boolean; const ReplyToMessageId: Int64;
-  ReplyMarkup: IReplyMarkup): ITgMessage;
+function TTelegramBot.SendVoice(const ChatId: TValue; const Voice: TtgFileToSend; const Caption: string; const Duration: Int64; const DisableNotification: Boolean; const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
 begin
   Result := TTgMessage.Create(FRequest.SetMethod('sendVoice') //
     .AddParameter('chat_id', ChatId, 0, True) //
@@ -688,10 +648,7 @@ begin
     .Execute);
 end;
 
-function TTelegramBot.SendAudio(const ChatId: TValue;
-  const Audio: TtgFileToSend; const Caption: string; const Duration: Int64;
-  const Performer: string; const DisableNotification: Boolean;
-  const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
+function TTelegramBot.SendAudio(const ChatId: TValue; const Audio: TtgFileToSend; const Caption: string; const Duration: Int64; const Performer: string; const DisableNotification: Boolean; const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
 begin
   Result := TTgMessage.Create(FRequest.SetMethod('sendAudio') //
     .AddParameter('chat_id', ChatId, 0, True) //
@@ -705,8 +662,7 @@ begin
     .Execute);
 end;
 
-function TTelegramBot.SendChatAction(const ChatId: TValue;
-  const Action: TtgSendChatAction): Boolean;
+function TTelegramBot.SendChatAction(const ChatId: TValue; const Action: TtgSendChatAction): Boolean;
 begin
   Result := FRequest.SetMethod('sendChatAction') //
     .AddParameter('chat_id', ChatId, 0, True) //
@@ -714,9 +670,7 @@ begin
     .ExecuteAsBool;
 end;
 
-function TTelegramBot.SendContact(const ChatId: TValue;
-  const Contact: TtgContact; const DisableNotification: Boolean;
-  const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
+function TTelegramBot.SendContact(const ChatId: TValue; const Contact: TtgContact; const DisableNotification: Boolean; const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
 begin
   Result := TTgMessage.Create(FRequest.SetMethod('sendContact') //
     .AddParameter('chat_id', ChatId, 0, True) //
@@ -729,10 +683,7 @@ begin
     .Execute);
 end;
 
-function TTelegramBot.SendDocument(const ChatId: TValue;
-  const Document: TtgFileToSend; const Caption: string;
-  const DisableNotification: Boolean; const ReplyToMessageId: Int64;
-  ReplyMarkup: IReplyMarkup): ITgMessage;
+function TTelegramBot.SendDocument(const ChatId: TValue; const Document: TtgFileToSend; const Caption: string; const DisableNotification: Boolean; const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
 begin
   Result := TTgMessage.Create(FRequest.SetMethod('sendDocument') //
     .AddParameter('chat_id', ChatId, 0, True) //
@@ -744,8 +695,7 @@ begin
     .Execute);
 end;
 
-function TTelegramBot.KickChatMember(const ChatId: TValue; const UserId: Int64;
-  const UntilDate: TDateTime): Boolean;
+function TTelegramBot.KickChatMember(const ChatId: TValue; const UserId: Int64; const UntilDate: TDateTime): Boolean;
 begin
   Result := FRequest.SetMethod('kickChatMember') //
     .AddParameter('chat_id', ChatId, 0, True) //
@@ -761,11 +711,9 @@ begin
     .ExecuteAsBool;
 end;
 
-function TTelegramBot.GetUserProfilePhotos(const ChatId: TValue;
-  const Offset, Limit: Int64): ItgUserProfilePhotos;
+function TTelegramBot.GetUserProfilePhotos(const ChatId: TValue; const Offset, Limit: Int64): ItgUserProfilePhotos;
 begin
-  Result := TtgUserProfilePhotos.Create
-    (FRequest.SetMethod('getUserProfilePhotos') //
+  Result := TtgUserProfilePhotos.Create(FRequest.SetMethod('getUserProfilePhotos') //
     .AddParameter('chat_id', ChatId, 0, True) //
     .AddParameter('offset', Offset, 0, True) //
     .AddParameter('limit', Limit, 100, False) //
@@ -777,8 +725,7 @@ begin
   Result := TtgUser.Create(FRequest.SetMethod('getMe').Execute);
 end;
 
-function TTelegramBot.ForwardMessage(const ChatId, FromChatId: TValue;
-  const MessageId: Int64; const DisableNotification: Boolean): ITgMessage;
+function TTelegramBot.ForwardMessage(const ChatId, FromChatId: TValue; const MessageId: Int64; const DisableNotification: Boolean): ITgMessage;
 begin
   Result := TTgMessage.Create(FRequest.SetMethod('forwardMessage') //
     .AddParameter('chat_id', ChatId, 0, True) //
@@ -793,16 +740,13 @@ begin
   Result := TtgChat.Create(FRequest.SetMethod('getChat').Execute);
 end;
 
-function TTelegramBot.GetChatAdministrators(const ChatId: TValue)
-  : TArray<ItgChatMember>;
+function TTelegramBot.GetChatAdministrators(const ChatId: TValue): TArray<ItgChatMember>;
 begin
-  Result := GetArrayFromMethod<ItgChatMember>(TtgChatMember,
-    FRequest.SetMethod('getChatAdministrators') //
+  Result := GetArrayFromMethod<ItgChatMember>(TtgChatMember, FRequest.SetMethod('getChatAdministrators') //
     .AddParameter('chat_id', ChatId, 0, True).Execute);
 end;
 
-function TTelegramBot.GetChatMember(const ChatId: TValue; const UserId: Int64)
-  : ItgChatMember;
+function TTelegramBot.GetChatMember(const ChatId: TValue; const UserId: Int64): ItgChatMember;
 begin
   Result := TtgChatMember.Create(FRequest.SetMethod('getChatMember') //
     .AddParameter('chat_id', ChatId, 0, True) //
@@ -831,8 +775,7 @@ begin
     .AddParameter('file_id', FileId, '', True).Execute);
 end;
 
-function TTelegramBot.AnswerCallbackQuery(const CallbackQueryId, Text: string;
-  const ShowAlert: Boolean; const Url: string; const CacheTime: Int64): Boolean;
+function TTelegramBot.AnswerCallbackQuery(const CallbackQueryId, Text: string; const ShowAlert: Boolean; const Url: string; const CacheTime: Int64): Boolean;
 begin
   Result := FRequest.SetMethod('answerCallbackQuery') //
     .AddParameter('callback_query_id', CallbackQueryId, '', True) //
@@ -845,37 +788,30 @@ end;
 {$ENDREGION}
 {$REGION 'Updating messages'}
 
-function TTelegramBot.EditMessageText(const InlineMessageId, Text: string;
-  const ParseMode: TtgParseMode; const DisableWebPagePreview: Boolean;
-  ReplyMarkup: IReplyMarkup): ITgMessage;
+function TTelegramBot.EditMessageText(const InlineMessageId, Text: string; const ParseMode: TtgParseMode; const DisableWebPagePreview: Boolean; ReplyMarkup: IReplyMarkup): ITgMessage;
 begin
   Result := TTgMessage.Create(FRequest.SetMethod('editMessageText') //
     .AddParameter('inline_message_id', InlineMessageId, 0, True) //
     .AddParameter('text', Text, '', True) //
     .AddParameter('parse_mode', ParseMode.ToString, '', False) //
-    .AddParameter('disable_web_page_preview', DisableWebPagePreview,
-    False, False) //
+    .AddParameter('disable_web_page_preview', DisableWebPagePreview, False, False) //
     .AddParameter('reply_markup', TInterfacedObject(ReplyMarkup), nil, False) //
     .Execute);
 end;
 
-function TTelegramBot.EditMessageText(const ChatId: TValue;
-  const MessageId: Int64; const Text: string; const ParseMode: TtgParseMode;
-  const DisableWebPagePreview: Boolean; ReplyMarkup: IReplyMarkup): ITgMessage;
+function TTelegramBot.EditMessageText(const ChatId: TValue; const MessageId: Int64; const Text: string; const ParseMode: TtgParseMode; const DisableWebPagePreview: Boolean; ReplyMarkup: IReplyMarkup): ITgMessage;
 begin
   Result := TTgMessage.Create(FRequest.SetMethod('editMessageText') //
     .AddParameter('chat_id', ChatId, 0, True) //
     .AddParameter('message_id', MessageId, 0, True) //
     .AddParameter('text', Text, '', True) //
     .AddParameter('parse_mode', ParseMode.ToString, '', False) //
-    .AddParameter('disable_web_page_preview', DisableWebPagePreview,
-    False, False) //
+    .AddParameter('disable_web_page_preview', DisableWebPagePreview, False, False) //
     .AddParameter('reply_markup', TInterfacedObject(ReplyMarkup), nil, False) //
     .Execute);
 end;
 
-function TTelegramBot.DeleteMessage(const ChatId: TValue;
-  const MessageId: Int64): Boolean;
+function TTelegramBot.DeleteMessage(const ChatId: TValue; const MessageId: Int64): Boolean;
 begin
   Result := FRequest.SetMethod('deleteMessage') //
     .AddParameter('chat_id', ChatId, 0, True) //
@@ -883,9 +819,7 @@ begin
     .ExecuteAsBool;
 end;
 
-function TTelegramBot.EditMessageCaption(const ChatId: TValue;
-  const MessageId: Int64; const Caption: string;
-  ReplyMarkup: IReplyMarkup): Boolean;
+function TTelegramBot.EditMessageCaption(const ChatId: TValue; const MessageId: Int64; const Caption: string; ReplyMarkup: IReplyMarkup): Boolean;
 begin
   Result := FRequest.SetMethod('editMessageText') //
     .AddParameter('chat_id', ChatId, 0, True) //
@@ -895,8 +829,7 @@ begin
     .ExecuteAsBool;
 end;
 
-function TTelegramBot.EditMessageCaption(const InlineMessageId, Caption: string;
-  ReplyMarkup: IReplyMarkup): Boolean;
+function TTelegramBot.EditMessageCaption(const InlineMessageId, Caption: string; ReplyMarkup: IReplyMarkup): Boolean;
 begin
   Result := FRequest.SetMethod('editMessageCaption') //
     .AddParameter('inline_message_id', InlineMessageId, 0, True) //
@@ -905,9 +838,7 @@ begin
     .ExecuteAsBool;
 end;
 
-function TTelegramBot.editMessageLiveLocation(const ChatId: TValue;
-  const MessageId: Int64; const Location: TtgLocation;
-  ReplyMarkup: IReplyMarkup): Boolean;
+function TTelegramBot.editMessageLiveLocation(const ChatId: TValue; const MessageId: Int64; const Location: TtgLocation; ReplyMarkup: IReplyMarkup): Boolean;
 begin
   Result := FRequest.SetMethod('editMessageLiveLocation') //
     .AddParameter('chat_id', ChatId, 0, True) //
@@ -918,8 +849,7 @@ begin
     .ExecuteAsBool;
 end;
 
-function TTelegramBot.editMessageLiveLocation(const InlineMessageId: string;
-  const Location: TtgLocation; ReplyMarkup: IReplyMarkup): Boolean;
+function TTelegramBot.editMessageLiveLocation(const InlineMessageId: string; const Location: TtgLocation; ReplyMarkup: IReplyMarkup): Boolean;
 begin
   Result := FRequest.SetMethod('editMessageLiveLocation') //
     .AddParameter('inline_message_id', InlineMessageId, 0, True) //
@@ -929,8 +859,7 @@ begin
     .ExecuteAsBool;
 end;
 
-function TTelegramBot.EditMessageReplyMarkup(const ChatId: TValue;
-  const MessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
+function TTelegramBot.EditMessageReplyMarkup(const ChatId: TValue; const MessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
 begin
   Result := TTgMessage.Create(FRequest.SetMethod('editMessageReplyMarkup') //
     .AddParameter('chat_id', ChatId, 0, True) //
@@ -939,8 +868,7 @@ begin
     .Execute);
 end;
 
-function TTelegramBot.EditMessageReplyMarkup(const InlineMessageId: string;
-  ReplyMarkup: IReplyMarkup): ITgMessage;
+function TTelegramBot.EditMessageReplyMarkup(const InlineMessageId: string; ReplyMarkup: IReplyMarkup): ITgMessage;
 begin
   Result := TTgMessage.Create(FRequest.SetMethod('editMessageReplyMarkup') //
     .AddParameter('inline_message_id', InlineMessageId, 0, True) //
@@ -968,8 +896,7 @@ begin
     .AddParameter('chat_id', ChatId, 0, True).ExecuteAndReadValue;
 end;
 
-function TTelegramBot.PinChatMessage(const ChatId: TValue;
-  const MessageId: Int64; const DisableNotification: Boolean): Boolean;
+function TTelegramBot.PinChatMessage(const ChatId: TValue; const MessageId: Int64; const DisableNotification: Boolean): Boolean;
 begin
   Result := FRequest.SetMethod('pinChatMessage') //
     .AddParameter('chat_id', ChatId, 0, True) //
@@ -978,8 +905,7 @@ begin
     .ExecuteAsBool;
 end;
 
-function TTelegramBot.SetChatDescription(const ChatId: TValue;
-  const Description: string): Boolean;
+function TTelegramBot.SetChatDescription(const ChatId: TValue; const Description: string): Boolean;
 begin
   Result := FRequest.SetMethod('setChatDescription') //
     .AddParameter('chat_id', ChatId, 0, True) //
@@ -987,8 +913,7 @@ begin
     .ExecuteAsBool;
 end;
 
-function TTelegramBot.SetChatPhoto(const ChatId: TValue;
-  const Photo: TtgFileToSend): Boolean;
+function TTelegramBot.SetChatPhoto(const ChatId: TValue; const Photo: TtgFileToSend): Boolean;
 begin
   Result := FRequest.SetMethod('setChatDescription') //
     .AddParameter('chat_id', ChatId, 0, True) //
@@ -996,8 +921,7 @@ begin
     .ExecuteAsBool;
 end;
 
-function TTelegramBot.setChatStickerSet(const ChatId: TValue;
-  const StickerSetName: string): Boolean;
+function TTelegramBot.setChatStickerSet(const ChatId: TValue; const StickerSetName: string): Boolean;
 begin
   Result := FRequest.SetMethod('setChatStickerSet') //
     .AddParameter('chat_id', ChatId, 0, True) //
@@ -1005,8 +929,7 @@ begin
     .ExecuteAsBool;
 end;
 
-function TTelegramBot.SetChatTitle(const ChatId: TValue;
-  const Title: string): Boolean;
+function TTelegramBot.SetChatTitle(const ChatId: TValue; const Title: string): Boolean;
 begin
   Result := FRequest.SetMethod('setChatTitle') //
     .AddParameter('chat_id', ChatId, 0, True) //
@@ -1023,10 +946,7 @@ end;
 {$ENDREGION}
 {$REGION 'Manage users and admins'}
 
-function TTelegramBot.PromoteChatMember(const ChatId: TValue;
-  const UserId: Int64; const CanChangeInfo, CanPostMessages, CanEditMessages,
-  CanDeleteMessages, CanInviteUsers, CanRestrictMembers, CanPinMessages,
-  CanPromoteMembers: Boolean): Boolean;
+function TTelegramBot.PromoteChatMember(const ChatId: TValue; const UserId: Int64; const CanChangeInfo, CanPostMessages, CanEditMessages, CanDeleteMessages, CanInviteUsers, CanRestrictMembers, CanPinMessages, CanPromoteMembers: Boolean): Boolean;
 begin
   Result := FRequest.SetMethod('promoteChatMember') //
     .AddParameter('chat_id', ChatId, 0, True) //
@@ -1042,10 +962,7 @@ begin
     .ExecuteAsBool;
 end;
 
-function TTelegramBot.RestrictChatMember(const ChatId: TValue;
-  const UserId: Int64; const UntilDate: TDateTime;
-  const CanSendMessages, CanSendMediaMessages, CanSendOtherMessages,
-  CanAddWebPagePreviews: Boolean): Boolean;
+function TTelegramBot.RestrictChatMember(const ChatId: TValue; const UserId: Int64; const UntilDate: TDateTime; const CanSendMessages, CanSendMediaMessages, CanSendOtherMessages, CanAddWebPagePreviews: Boolean): Boolean;
 begin
   Result := FRequest.SetMethod('restrictChatMember') //
     .AddParameter('chat_id', ChatId, 0, True) //
@@ -1056,16 +973,13 @@ begin
   //
     .AddParameter('can_send_other_messages', CanSendOtherMessages, False, False)
   //
-    .AddParameter('can_add_web_page_previews', CanAddWebPagePreviews,
-    False, False) //
+    .AddParameter('can_add_web_page_previews', CanAddWebPagePreviews, False, False) //
     .ExecuteAsBool;
 end;
 {$ENDREGION}
 {$REGION 'Stickers'}
 
-function TTelegramBot.addStickerToSet(const UserId: Int64; const Name: string;
-  const PngSticker: TtgFileToSend; const Emojis: string;
-  const MaskPosition: TtgMaskPosition): Boolean;
+function TTelegramBot.addStickerToSet(const UserId: Int64; const Name: string; const PngSticker: TtgFileToSend; const Emojis: string; const MaskPosition: TtgMaskPosition): Boolean;
 begin
   Result := FRequest.SetMethod('addStickerToSet') //
     .AddParameter('user_id', UserId, 0, True) //
@@ -1076,9 +990,7 @@ begin
     .ExecuteAsBool;
 end;
 
-function TTelegramBot.createNewStickerSet(const UserId: Int64;
-  const Name, Title: string; const PngSticker: TValue; const Emojis: string;
-  const ContainsMasks: Boolean; const MaskPosition: TtgMaskPosition): Boolean;
+function TTelegramBot.createNewStickerSet(const UserId: Int64; const Name, Title: string; const PngSticker: TValue; const Emojis: string; const ContainsMasks: Boolean; const MaskPosition: TtgMaskPosition): Boolean;
 begin
   Result := FRequest.SetMethod('createNewStickerSet') //
     .AddParameter('user_id', UserId, 0, True) //
@@ -1104,9 +1016,7 @@ begin
     .AddParameter('name', Name, '', True).Execute);
 end;
 
-function TTelegramBot.SendSticker(const ChatId, Sticker: TValue;
-  const DisableNotification: Boolean; const ReplyToMessageId: Int64;
-  ReplyMarkup: IReplyMarkup): ITgMessage;
+function TTelegramBot.SendSticker(const ChatId, Sticker: TValue; const DisableNotification: Boolean; const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
 begin
   Result := TTgMessage.Create(FRequest.SetMethod('sendSticker') //
     .AddParameter('chat_id', ChatId, 0, True) //
@@ -1117,8 +1027,7 @@ begin
     .Execute);
 end;
 
-function TTelegramBot.setStickerPositionInSet(const Sticker: string;
-  const Position: Int64): Boolean;
+function TTelegramBot.setStickerPositionInSet(const Sticker: string; const Position: Int64): Boolean;
 begin
   Result := FRequest.SetMethod('deleteStickerFromSet') //
     .AddParameter('sticker', Sticker, '', True) //
@@ -1126,8 +1035,7 @@ begin
     .ExecuteAsBool;
 end;
 
-function TTelegramBot.uploadStickerFile(const UserId: Int64;
-  const PngSticker: TtgFileToSend): ItgFile;
+function TTelegramBot.uploadStickerFile(const UserId: Int64; const PngSticker: TtgFileToSend): ItgFile;
 begin
   Result := TtgFile.Create(FRequest.SetMethod('uploadStickerFile') //
     .AddParameter('user_id', UserId, 0, True) //
@@ -1137,15 +1045,11 @@ end;
 {$ENDREGION}
 {$REGION 'Inline mode'}
 
-function TTelegramBot.AnswerInlineQuery(const InlineQueryId: string;
-  const Results: TArray<TtgInlineQueryResult>; const CacheTime: Int64;
-  const IsPersonal: Boolean; const NextOffset, SwitchPmText, SwitchPmParameter
-  : string): Boolean;
+function TTelegramBot.AnswerInlineQuery(const InlineQueryId: string; const Results: TArray<TtgInlineQueryResult>; const CacheTime: Int64; const IsPersonal: Boolean; const NextOffset, SwitchPmText, SwitchPmParameter: string): Boolean;
 begin
   Result := FRequest.SetMethod('answerInlineQuery') //
     .AddParameter('inline_query_id', InlineQueryId, '', True) //
-    .AddParameter('results', TJsonUtils.ArrayToJString<TtgInlineQueryResult>
-    (Results), '[]', True) //
+    .AddParameter('results', TJsonUtils.ArrayToJString<TtgInlineQueryResult>(Results), '[]', True) //
     .AddParameter('cache_time', CacheTime, 0, False) //
     .AddParameter('is_personal', IsPersonal, False, False) //
     .AddParameter('next_offset', NextOffset, '', False) //
@@ -1157,16 +1061,7 @@ end;
 {$ENDREGION}
 {$REGION 'Payments'}
 
-function TTelegramBot.SendInvoice(const ChatId: Int64; const Title: string;
-  const Description: string; const Payload: string; const ProviderToken: string;
-  const StartParameter: string; const Currency: string;
-  const Prices: TArray<TtgLabeledPrice>; const ProviderData: string;
-  const PhotoUrl: string; const PhotoSize: Int64; const PhotoWidth: Int64;
-  const PhotoHeight: Int64; const NeedName: Boolean;
-  const NeedPhoneNumber: Boolean; const NeedEmail: Boolean;
-  const NeedShippingAddress: Boolean; const IsFlexible: Boolean;
-  const DisableNotification: Boolean; const ReplyToMessageId: Int64;
-  ReplyMarkup: IReplyMarkup): ITgMessage;
+function TTelegramBot.SendInvoice(const ChatId: Int64; const Title: string; const Description: string; const Payload: string; const ProviderToken: string; const StartParameter: string; const Currency: string; const Prices: TArray<TtgLabeledPrice>; const ProviderData: string; const PhotoUrl: string; const PhotoSize: Int64; const PhotoWidth: Int64; const PhotoHeight: Int64; const NeedName: Boolean; const NeedPhoneNumber: Boolean; const NeedEmail: Boolean; const NeedShippingAddress: Boolean; const IsFlexible: Boolean; const DisableNotification: Boolean; const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
 begin
   Result := TTgMessage.Create(FRequest.SetMethod('sendInvoice') //
     .AddParameter('chat_id', ChatId, 0, True) //
@@ -1176,8 +1071,7 @@ begin
     .AddParameter('provider_token', ProviderToken, '', True) //
     .AddParameter('start_parameter', StartParameter, '', True) //
     .AddParameter('currency', Currency, '', True) //
-    .AddParameter('prices', TJsonUtils.ArrayToJString<TtgLabeledPrice>(Prices),
-    nil, True) //
+    .AddParameter('prices', TJsonUtils.ArrayToJString<TtgLabeledPrice>(Prices), nil, True) //
     .AddParameter('provider_data', ProviderData, '', False) //
     .AddParameter('photo_url', PhotoUrl, '', False) //
     .AddParameter('photo_size', PhotoSize, 0, False) //
@@ -1194,8 +1088,7 @@ begin
     .Execute);
 end;
 
-function TTelegramBot.AnswerPreCheckoutQueryBad(const PreCheckoutQueryId,
-  ErrorMessage: string): Boolean;
+function TTelegramBot.AnswerPreCheckoutQueryBad(const PreCheckoutQueryId, ErrorMessage: string): Boolean;
 begin
   Result := FRequest.SetMethod('answerPreCheckoutQuery') //
     .AddParameter('pre_checkout_query_id', PreCheckoutQueryId, 0, True) //
@@ -1204,8 +1097,7 @@ begin
     .ExecuteAsBool;
 end;
 
-function TTelegramBot.AnswerPreCheckoutQueryGood(const PreCheckoutQueryId
-  : string): Boolean;
+function TTelegramBot.AnswerPreCheckoutQueryGood(const PreCheckoutQueryId: string): Boolean;
 begin
   Result := FRequest.SetMethod('answerPreCheckoutQuery') //
     .AddParameter('pre_checkout_query_id', PreCheckoutQueryId, 0, True) //
@@ -1213,8 +1105,7 @@ begin
     .ExecuteAsBool;
 end;
 
-function TTelegramBot.AnswerShippingQueryBad(const ShippingQueryId,
-  ErrorMessage: string): Boolean;
+function TTelegramBot.AnswerShippingQueryBad(const ShippingQueryId, ErrorMessage: string): Boolean;
 begin
   Result := FRequest.SetMethod('answerShippingQuery') //
     .AddParameter('Shipping_query_id', ShippingQueryId, 0, True) //
@@ -1223,44 +1114,36 @@ begin
     .ExecuteAsBool;
 end;
 
-function TTelegramBot.AnswerShippingQueryGood(const ShippingQueryId: string;
-  const ShippingOptions: TArray<TtgShippingOption>): Boolean;
+function TTelegramBot.AnswerShippingQueryGood(const ShippingQueryId: string; const ShippingOptions: TArray<TtgShippingOption>): Boolean;
 begin
   Result := FRequest.SetMethod('answerShippingQuery') //
     .AddParameter('Shipping_query_id', ShippingQueryId, 0, True) //
     .AddParameter('ok', True, False, False) //
-    .AddParameter('Shipping_options',
-    TJsonUtils.ArrayToJString<TtgShippingOption>(ShippingOptions), nil, True) //
+    .AddParameter('Shipping_options', TJsonUtils.ArrayToJString<TtgShippingOption>(ShippingOptions), nil, True) //
     .ExecuteAsBool;
 end;
 
 {$ENDREGION}
 {$REGION 'Games'}
 
-function TTelegramBot.GetGameHighScores(const UserId: Int64;
-  const InlineMessageId: string): TArray<ItgGameHighScore>;
+function TTelegramBot.GetGameHighScores(const UserId: Int64; const InlineMessageId: string): TArray<ItgGameHighScore>;
 begin
-  Result := GetArrayFromMethod<ItgGameHighScore>(TtgGameHighScore,
-    FRequest.SetMethod('getGameHighScores') //
+  Result := GetArrayFromMethod<ItgGameHighScore>(TtgGameHighScore, FRequest.SetMethod('getGameHighScores') //
     .AddParameter('user_id', UserId, 0, True) //
     .AddParameter('inline_message_id', InlineMessageId, 0, True) //
     .Execute);
 end;
 
-function TTelegramBot.GetGameHighScores(const UserId, ChatId, MessageId: Int64)
-  : TArray<ItgGameHighScore>;
+function TTelegramBot.GetGameHighScores(const UserId, ChatId, MessageId: Int64): TArray<ItgGameHighScore>;
 begin
-  Result := GetArrayFromMethod<ItgGameHighScore>(TtgGameHighScore,
-    FRequest.SetMethod('getGameHighScores') //
+  Result := GetArrayFromMethod<ItgGameHighScore>(TtgGameHighScore, FRequest.SetMethod('getGameHighScores') //
     .AddParameter('chat_id', ChatId, 0, True) //
     .AddParameter('user_id', UserId, 0, True) //
     .AddParameter('message_id', MessageId, 0, True) //
     .Execute);
 end;
 
-function TTelegramBot.SendGame(const ChatId: Int64; const GameShortName: string;
-  const DisableNotification: Boolean; const ReplyToMessageId: Int64;
-  ReplyMarkup: IReplyMarkup): ITgMessage;
+function TTelegramBot.SendGame(const ChatId: Int64; const GameShortName: string; const DisableNotification: Boolean; const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
 begin
   Result := TTgMessage.Create(FRequest.SetMethod('sendGame') //
     .AddParameter('chat_id', ChatId, 0, True) //
@@ -1271,9 +1154,7 @@ begin
     .Execute);
 end;
 
-function TTelegramBot.SetGameScore(const UserId, Score: Int64;
-  const InlineMessageId: string; const Force, DisableEditMessage: Boolean)
-  : ITgMessage;
+function TTelegramBot.SetGameScore(const UserId, Score: Int64; const InlineMessageId: string; const Force, DisableEditMessage: Boolean): ITgMessage;
 begin
   Result := TTgMessage.Create(FRequest.SetMethod('setGameScore') //
     .AddParameter('user_id', UserId, 0, True) //
@@ -1284,8 +1165,7 @@ begin
     .Execute);
 end;
 
-function TTelegramBot.SetGameScore(const UserId, Score, ChatId,
-  MessageId: Int64; const Force, DisableEditMessage: Boolean): ITgMessage;
+function TTelegramBot.SetGameScore(const UserId, Score, ChatId, MessageId: Int64; const Force, DisableEditMessage: Boolean): ITgMessage;
 begin
   Result := TTgMessage.Create(FRequest.SetMethod('setGameScore') //
     .AddParameter('user_id', UserId, 0, True) //
@@ -1299,3 +1179,4 @@ end;
 {$ENDREGION}
 
 end.
+
