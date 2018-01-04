@@ -30,6 +30,8 @@ uses
 type
   TtgOnReceiveRawData = procedure(ASender: TObject; const AData: string) of object;
 
+  TtgOnSendData = procedure(ASender: TObject; const AUrl, AData: string) of object;
+
   TTelegramBot = class(TtgAbstractComponent, ITelegramBot)
   private
     FToken: string;
@@ -41,6 +43,7 @@ type
     FOnRawData: TtgOnReceiveRawData;
     FExceptionManager: ItgExceptionHandler;
     FRequest: ItgRequestAPI;
+    FOnSendData: TtgOnSendData;
     function GetToken: string;
     procedure SetToken(const Value: string);
     // Returns TJSONArray as method request result
@@ -378,6 +381,7 @@ type
 {$ENDREGION}
 {$REGION 'События|Events'}
     property OnReceiveRawData: TtgOnReceiveRawData read FOnRawData write FOnRawData;
+    property OnSendData: TtgOnSendData read FOnSendData write FOnSendData;
 {$ENDREGION}
   end;
 
@@ -403,6 +407,12 @@ begin
     begin
       if Assigned(OnReceiveRawData) then
         OnReceiveRawData(Self, AData);
+    end;
+  FRequest.OnSend :=
+    procedure(AURL, AData: string)
+    begin
+      if Assigned(OnSendData) then
+        OnSendData(Self, AURL, AData);
     end;
   FRequest.DataExtractor :=
     function(AInput: string): string
