@@ -1,5 +1,7 @@
 ﻿unit TelegAPI.Base;
 
+{$I config.inc}
+
 interface
 
 uses
@@ -29,8 +31,12 @@ begin
   inherited;
   FAutor := 'Maxim Sysoev';
   FVersion := '3.5.1';
+{$IFDEF USE_SYS_NET}
+  FVersion := FVersion + ' SysNet';
+{$ELSE}
+  FVersion := FVersion + ' InDy';
+{$ENDIF}
 end;
 
 end.
-
 

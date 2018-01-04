@@ -1,6 +1,9 @@
 unit CoreAPI.ParameterConverter.Indy;
 
+{$I config.inc}
+
 interface
+
 {$IFDEF USE_INDY}
 
 uses

@@ -1,8 +1,10 @@
 unit CoreAPI.ParameterConverter.SystemNet;
 
+{$I config.inc}
+
 interface
 
-{/$IFNDEF USE_INDY}
+{$IFDEF USE_SYS_NET}
 
 uses
   System.Generics.Collections,
@@ -44,11 +46,11 @@ type
     function ApplyParamToFormData(const AParam: TtgApiParameter;
       var Form: TMultipartFormData): Boolean;
   end;
-{/$ENDIF}
+{$ENDIF}
 
 implementation
 
-{/$IFNDEF USE_INDY}
+{$IFDEF USE_SYS_NET}
 
 uses
   System.Classes,
@@ -194,6 +196,6 @@ begin
     LFileToSent.Free;
   end;
 end;
-{/$ENDIF}
+{$ENDIF}
 
 end.

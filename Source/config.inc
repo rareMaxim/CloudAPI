@@ -1,5 +1,3 @@
-
-
 {$IF CompilerVersion < 28}
 	{$DEFINE USE_INDY}
 {$ELSE}
