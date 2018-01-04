@@ -33,7 +33,9 @@ end;
 function TtgApiParameter.IsDefaultValue: Boolean;
 begin
   try
-    Result := Value.AsVariant = DefaultValue.AsVariant; // <-- DANGER
+    Result := False;
+    if Value.Kind = DefaultValue.Kind then
+      Result := Value.AsVariant = DefaultValue.AsVariant; // <-- DANGER
   except
     raise EProgrammerNotFound.Create('Несовместимые типы параметров');
   end;
