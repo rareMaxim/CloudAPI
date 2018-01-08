@@ -18,7 +18,7 @@ object Form3: TForm3
     Top = 0
     Width = 582
     Height = 356
-    ActivePage = tsSettings
+    ActivePage = tsSendPhoto
     Align = alClient
     TabOrder = 0
     object tsSettings: TTabSheet
@@ -135,10 +135,10 @@ object Form3: TForm3
         Width = 115
         Height = 25
         Caption = 'Send'
-        TabOrder = 3
+        TabOrder = 2
         OnClick = btnSendMsgTextClick
       end
-      object rgParseMode: TRadioGroup
+      object rgSendMsgParseMode: TRadioGroup
         Left = 0
         Top = 41
         Width = 574
@@ -154,38 +154,28 @@ object Form3: TForm3
         TabOrder = 1
         ExplicitTop = 42
       end
-      object chkDisableWebPagePreview: TCheckBox
-        Left = 0
-        Top = 81
-        Width = 574
-        Height = 17
-        Align = alTop
-        Caption = 'Disable Web Page Preview'
-        TabOrder = 2
-        ExplicitTop = 87
-      end
-      object chkDisableNotification: TCheckBox
+      object chkSendMsgDisableNotification: TCheckBox
         Left = 0
         Top = 98
         Width = 574
         Height = 17
         Align = alTop
         Caption = 'Disable Notification'
-        TabOrder = 4
+        TabOrder = 3
         ExplicitLeft = 120
         ExplicitTop = 128
         ExplicitWidth = 97
       end
-      object grpReplyToMsgID: TGroupBox
+      object grpSendMsgReplyToMsgID: TGroupBox
         Left = 0
         Top = 115
         Width = 574
         Height = 41
         Align = alTop
         Caption = 'Reply To MessageId'
-        TabOrder = 5
+        TabOrder = 4
         ExplicitTop = 184
-        object seReplyToMsgID: TSpinEdit
+        object seSendMsgReplyToMsgID: TSpinEdit
           Left = 147
           Top = 16
           Width = 150
@@ -196,24 +186,132 @@ object Form3: TForm3
           Value = 0
         end
       end
+      object chkSendMsgDisableWebPagePreview: TCheckBox
+        Left = 0
+        Top = 81
+        Width = 574
+        Height = 17
+        Align = alTop
+        Caption = 'Disable Web Page Preview'
+        TabOrder = 5
+        ExplicitTop = 87
+      end
+    end
+    object tsSendPhoto: TTabSheet
+      Caption = 'SendPhoto'
+      ImageIndex = 3
+      object btnSendPhoto: TButton
+        Left = 456
+        Top = 303
+        Width = 115
+        Height = 25
+        Caption = 'Send'
+        TabOrder = 0
+        OnClick = btnSendPhotoClick
+      end
+      object chkSendPhotoNotification: TCheckBox
+        Left = 0
+        Top = 82
+        Width = 574
+        Height = 17
+        Align = alTop
+        Caption = 'Disable Notification'
+        TabOrder = 1
+        ExplicitTop = 8
+      end
+      object grpSendPhotoReplyToMsgID: TGroupBox
+        Left = 0
+        Top = 99
+        Width = 574
+        Height = 41
+        Align = alTop
+        Caption = 'Reply To MessageId'
+        TabOrder = 2
+        ExplicitTop = 184
+        object seSendPhotoReplyToMsgID: TSpinEdit
+          Left = 147
+          Top = 16
+          Width = 150
+          Height = 22
+          MaxValue = 0
+          MinValue = 0
+          TabOrder = 0
+          Value = 0
+        end
+      end
+      object grpSendPhotoFile: TGroupBox
+        Left = 0
+        Top = 0
+        Width = 574
+        Height = 41
+        Align = alTop
+        Caption = 'Photo'
+        TabOrder = 3
+        ExplicitTop = 8
+        object edtSendPhotoFile: TEdit
+          Left = 2
+          Top = 15
+          Width = 495
+          Height = 24
+          Align = alClient
+          TabOrder = 0
+          ExplicitLeft = -4
+          ExplicitTop = 11
+        end
+        object btnSendPhotoFile: TButton
+          Left = 497
+          Top = 15
+          Width = 75
+          Height = 24
+          Align = alRight
+          Caption = 'Browse'
+          TabOrder = 1
+          OnClick = btnSendPhotoFileClick
+          ExplicitLeft = 248
+          ExplicitTop = 8
+          ExplicitHeight = 25
+        end
+      end
+      object grpSendPhotoCaption: TGroupBox
+        Left = 0
+        Top = 41
+        Width = 574
+        Height = 41
+        Align = alTop
+        Caption = 'Caption'
+        TabOrder = 4
+        ExplicitLeft = 2
+        ExplicitTop = 15
+        ExplicitWidth = 570
+        object edtSendPhotoCaption: TEdit
+          Left = 2
+          Top = 15
+          Width = 570
+          Height = 21
+          Align = alTop
+          TabOrder = 0
+          Text = 'Photo sign'
+          ExplicitWidth = 566
+        end
+      end
     end
   end
   object TelegramBot1: TTelegramBot
     ExceptionManager = tgExceptionManagerUI1
-    Left = 300
-    Top = 208
+    Left = 252
+    Top = 304
   end
   object tgReceiverUI1: TtgReceiverUI
     Bot = TelegramBot1
     OnMessage = tgReceiverUI1Message
-    Left = 412
-    Top = 200
+    Left = 180
+    Top = 312
   end
   object tgExceptionManagerUI1: TtgExceptionManagerUI
     OnApiException = tgExceptionManagerUI1ApiException
     OnGlobalException = tgExceptionManagerUI1GlobalException
     Left = 108
-    Top = 224
+    Top = 304
   end
   object OpenDialog1: TOpenDialog
     Left = 260

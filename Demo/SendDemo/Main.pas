@@ -41,19 +41,31 @@ type
     grpSendMsgText: TGroupBox;
     edtSendMsgText: TEdit;
     btnSendMsgText: TButton;
-    rgParseMode: TRadioGroup;
+    rgSendMsgParseMode: TRadioGroup;
     OpenDialog1: TOpenDialog;
-    chkDisableWebPagePreview: TCheckBox;
-    chkDisableNotification: TCheckBox;
-    grpReplyToMsgID: TGroupBox;
-    seReplyToMsgID: TSpinEdit;
+    chkSendMsgDisableNotification: TCheckBox;
+    grpSendMsgReplyToMsgID: TGroupBox;
+    seSendMsgReplyToMsgID: TSpinEdit;
     mmoInfo: TMemo;
     mmoExceptions: TMemo;
+    tsSendPhoto: TTabSheet;
+    btnSendPhoto: TButton;
+    chkSendPhotoNotification: TCheckBox;
+    grpSendPhotoReplyToMsgID: TGroupBox;
+    seSendPhotoReplyToMsgID: TSpinEdit;
+    grpSendPhotoFile: TGroupBox;
+    edtSendPhotoFile: TEdit;
+    grpSendPhotoCaption: TGroupBox;
+    edtSendPhotoCaption: TEdit;
+    btnSendPhotoFile: TButton;
+    chkSendMsgDisableWebPagePreview: TCheckBox;
     procedure btn1Click(Sender: TObject);
     procedure btnSendMsgTextClick(Sender: TObject);
     procedure tgReceiverUI1Message(ASender: TObject; AMessage: ITgMessage);
     procedure tgExceptionManagerUI1ApiException(ASender: TObject; const AMethod: string; AApiRequestException: EApiRequestException);
     procedure tgExceptionManagerUI1GlobalException(ASender: TObject; const AMethod: string; AException: Exception);
+    procedure btnSendPhotoFileClick(Sender: TObject);
+    procedure btnSendPhotoClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -79,14 +91,32 @@ begin
   tgReceiverUI1.Start;
 end;
 
+procedure TForm3.btnSendPhotoFileClick(Sender: TObject);
+begin
+  if OpenDialog1.Execute then
+    edtSendPhotoFile.Text := OpenDialog1.FileName;
+end;
+
 procedure TForm3.btnSendMsgTextClick(Sender: TObject);
 begin
   TelegramBot1.SendMessage(//
     edtChatID.Text, //
     edtSendMsgText.Text, //
-    TtgParseMode(rgParseMode.ItemIndex), //
-    chkDisableWebPagePreview.Checked, //
-    chkDisableNotification.Checked//
+    TtgParseMode(rgSendMsgParseMode.ItemIndex), //
+    chkSendMsgDisableWebPagePreview.Checked, //
+    chkSendMsgDisableNotification.Checked, //
+    seSendMsgReplyToMsgID.Value//
+  );
+end;
+
+procedure TForm3.btnSendPhotoClick(Sender: TObject);
+begin
+  TelegramBot1.SendPhoto(//
+    edtChatID.Text, //
+    TtgFileToSend.FromFile(edtSendPhotoFile.Text), //
+    edtSendPhotoCaption.Text, //
+    chkSendPhotoNotification.Checked, //
+    seSendMsgReplyToMsgID.Value//
   );
 end;
 
