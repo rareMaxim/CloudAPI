@@ -1,14 +1,14 @@
 program SendMethods;
 
 uses
-  System.StartUpCopy,
-  FMX.Forms,
-  Main in 'Main.pas' {Form2};
+  Vcl.Forms,
+  Main in 'Main.pas' {Form3};
 
 {$R *.res}
 
 begin
   Application.Initialize;
-  Application.CreateForm(TForm2, Form2);
+  Application.MainFormOnTaskbar := True;
+  Application.CreateForm(TForm3, Form3);
   Application.Run;
 end.

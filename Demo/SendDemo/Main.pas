@@ -3,53 +3,57 @@ unit Main;
 interface
 
 uses
+  Winapi.Windows,
+  Winapi.Messages,
   System.SysUtils,
-  System.Types,
-  System.UITypes,
-  System.Classes,
   System.Variants,
-  FMX.Types,
-  FMX.Controls,
-  FMX.Forms,
-  FMX.Graphics,
-  FMX.Dialogs,
-  TelegAPI.Base,
-  TelegAPI.Bot.Impl,
-  TelegAPi.Types,
-  FMX.StdCtrls,
-  FMX.Edit,
-  FMX.Controls.Presentation,
-  FMX.Layouts,
+  System.Classes,
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  TelegaPi.Exceptions,
   TelegAPI.Receiver.Base,
   TelegAPI.Receiver.Service,
-  TelegAPI.Receiver.UI;
+  TelegAPI.Receiver.UI,
+  TelegAPI.Base,
+  TelegAPI.Bot.Impl,
+  Vcl.StdCtrls,
+  Vcl.ExtCtrls,
+  Vcl.ComCtrls,
+  TelegAPi.Types,
+  Vcl.Samples.Spin;
 
 type
-  TForm2 = class(TForm)
-    lyt1: TLayout;
-    lblToken: TLabel;
-    edtToken: TEdit;
-    lytUser: TLayout;
-    lblUser: TLabel;
-    edtUser: TEdit;
-    lytSendMessage: TLayout;
-    lblSendMessage: TLabel;
-    edtSendMessage: TEdit;
-    btnSendMessage: TButton;
+  TForm3 = class(TForm)
+    pgc1: TPageControl;
+    tsSettings: TTabSheet;
+    grpToken: TGroupBox;
+    btn1: TButton;
+    grpChatID: TGroupBox;
+    tsSendMessage: TTabSheet;
     TelegramBot1: TTelegramBot;
     tgReceiverUI1: TtgReceiverUI;
-    btnApplyToken: TEditButton;
-    lytPhoto: TLayout;
-    lblPhoto: TLabel;
-    edtPhoto: TEdit;
-    btnPhoto: TButton;
-    btnBrowse: TEditButton;
-    dlgOpen1: TOpenDialog;
-    procedure btnSendMessageClick(Sender: TObject);
-    procedure btnApplyTokenClick(Sender: TObject);
+    tgExceptionManagerUI1: TtgExceptionManagerUI;
+    tsExceptions: TTabSheet;
+    edtToken: TEdit;
+    edtChatID: TEdit;
+    grpSendMsgText: TGroupBox;
+    edtSendMsgText: TEdit;
+    btnSendMsgText: TButton;
+    rgParseMode: TRadioGroup;
+    OpenDialog1: TOpenDialog;
+    chkDisableWebPagePreview: TCheckBox;
+    chkDisableNotification: TCheckBox;
+    grpReplyToMsgID: TGroupBox;
+    seReplyToMsgID: TSpinEdit;
+    mmoInfo: TMemo;
+    mmoExceptions: TMemo;
+    procedure btn1Click(Sender: TObject);
+    procedure btnSendMsgTextClick(Sender: TObject);
     procedure tgReceiverUI1Message(ASender: TObject; AMessage: ITgMessage);
-    procedure btnBrowseClick(Sender: TObject);
-    procedure btnPhotoClick(Sender: TObject);
+    procedure tgExceptionManagerUI1ApiException(ASender: TObject; const AMethod: string; AApiRequestException: EApiRequestException);
+    procedure tgExceptionManagerUI1GlobalException(ASender: TObject; const AMethod: string; AException: Exception);
   private
     { Private declarations }
   public
@@ -57,13 +61,15 @@ type
   end;
 
 var
-  Form2: TForm2;
+  Form3: TForm3;
 
 implementation
 
-{$R *.fmx}
+uses
+  TelegaPi.Types.Enums;
+{$R *.dfm}
 
-procedure TForm2.btnApplyTokenClick(Sender: TObject);
+procedure TForm3.btn1Click(Sender: TObject);
 begin
   if tgReceiverUI1.IsActive then
   begin
@@ -73,25 +79,32 @@ begin
   tgReceiverUI1.Start;
 end;
 
-procedure TForm2.btnBrowseClick(Sender: TObject);
+procedure TForm3.btnSendMsgTextClick(Sender: TObject);
 begin
-  if dlgOpen1.Execute then
-    edtPhoto.Text := dlgOpen1.FileName;
+  TelegramBot1.SendMessage(//
+    edtChatID.Text, //
+    edtSendMsgText.Text, //
+    TtgParseMode(rgParseMode.ItemIndex), //
+    chkDisableWebPagePreview.Checked, //
+    chkDisableNotification.Checked//
+  );
 end;
 
-procedure TForm2.btnPhotoClick(Sender: TObject);
+procedure TForm3.tgExceptionManagerUI1ApiException(ASender: TObject; const AMethod: string; AApiRequestException: EApiRequestException);
 begin
-  TelegramBot1.SendPhoto(edtUser.Text, TtgFileToSend.FromFile(edtPhoto.Text));
+  mmoExceptions.Lines.Add(Format('%S%S%S%S%S', [AMethod, slinebreak, AApiRequestException.ToString, slinebreak, '---------------------------------']));
+  pgc1.ActivePage := tsExceptions;
 end;
 
-procedure TForm2.btnSendMessageClick(Sender: TObject);
+procedure TForm3.tgExceptionManagerUI1GlobalException(ASender: TObject; const AMethod: string; AException: Exception);
 begin
-  TelegramBot1.SendMessage(edtUser.Text, edtSendMessage.Text);
+  mmoExceptions.Lines.Add(Format('%S%S%S%S%S', [AMethod, slinebreak, AException.ToString, slinebreak, '---------------------------------']));
+  pgc1.ActivePage := tsExceptions;
 end;
 
-procedure TForm2.tgReceiverUI1Message(ASender: TObject; AMessage: ITgMessage);
+procedure TForm3.tgReceiverUI1Message(ASender: TObject; AMessage: ITgMessage);
 begin
-  edtUser.Text := AMessage.Chat.ID.ToString;
+  edtChatID.Text := AMessage.Chat.ID.ToString;
 end;
 
 end.
