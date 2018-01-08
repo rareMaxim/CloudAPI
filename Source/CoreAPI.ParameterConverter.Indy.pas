@@ -132,11 +132,11 @@ begin
   LFileToSent := AParam.Value.AsType<TtgFileToSend>;
   try
     case LFileToSent.Tag of
-      TtgFileToSend.FILE_TO_SEND_STREAM:
+      TtgFileToSendTag.FromStream:
         AFormData.AddStream(AParam.Key, LFileToSent.Content, LFileToSent.Data);
-      TtgFileToSend.FILE_TO_SEND_FILE:
+      TtgFileToSendTag.FromFile:
         AFormData.AddFile(AParam.Key, LFileToSent.Data);
-      TtgFileToSend.FILE_TO_SEND_ID, TtgFileToSend.FILE_TO_SEND_URL:
+      TtgFileToSendTag.ID, TtgFileToSendTag.FromURL:
         AFormData.AddFormField(AParam.Key, LFileToSent.Data);
     else
       raise Exception.Create('Cant convert TTgFileToSend: Unknown prototype tag');

@@ -402,20 +402,17 @@ type
     Duration: Integer;
     constructor Create(AMedia: TValue; const ACaption: string = ''; AWidth: Integer = 0; AHeight: Integer = 0; ADuration: Integer = 0); reintroduce;
   end;
+{$SCOPEDENUMS ON}
+
+  TtgFileToSendTag = (ERROR = 254, ID = 0, FromURL = 1, FromFile = 2, FromStream = 3);
+{$SCOPEDENUMS OFF}
 
   TtgFileToSend = class
   public
-    const
-      FILE_TO_SEND_ERROR = 254;
-      FILE_TO_SEND_ID = 0;
-      FILE_TO_SEND_URL = 1;
-      FILE_TO_SEND_FILE = 2;
-      FILE_TO_SEND_STREAM = 3;
-  public
     Data: string;
     Content: TStream;
-    Tag: Byte;
-    constructor Create(const ATag: Byte = FILE_TO_SEND_ERROR; const AData: string = ''; AContent: TStream = nil);
+    Tag: TtgFileToSendTag;
+    constructor Create(const ATag: TtgFileToSendTag = TtgFileToSendTag.ERROR; const AData: string = ''; AContent: TStream = nil);
     class function FromFile(const AFileName: string): TtgFileToSend;
     class function FromID(const AID: string): TtgFileToSend;
     class function FromURL(const AURL: string): TtgFileToSend;
@@ -456,7 +453,7 @@ end;
 
 { TtgFileToSend }
 
-constructor TtgFileToSend.Create(const ATag: Byte; const AData: string; AContent: TStream);
+constructor TtgFileToSend.Create(const ATag: TtgFileToSendTag; const AData: string; AContent: TStream);
 begin
   Tag := ATag;
   Data := AData;
@@ -467,12 +464,12 @@ class function TtgFileToSend.FromFile(const AFileName: string): TtgFileToSend;
 begin
   if not FileExists(AFileName) then
     raise EFileNotFoundException.CreateFmt('File %S not found!', [AFileName]);
-  Result := TtgFileToSend.Create(FILE_TO_SEND_FILE, AFileName, nil);
+  Result := TtgFileToSend.Create(TtgFileToSendTag.FromFile, AFileName, nil);
 end;
 
 class function TtgFileToSend.FromID(const AID: string): TtgFileToSend;
 begin
-  Result := TtgFileToSend.Create(FILE_TO_SEND_ID, AID, nil);
+  Result := TtgFileToSend.Create(TtgFileToSendTag.ID, AID, nil);
 end;
 
 class function TtgFileToSend.FromStream(const AContent: TStream; const AFileName: string): TtgFileToSend;
@@ -484,12 +481,12 @@ begin
     raise Exception.Create('TtgFileToSend: Filename is empty!');
   if not Assigned(AContent) then
     raise EStreamError.Create('Stream not assigned!');
-  Result := TtgFileToSend.Create(FILE_TO_SEND_STREAM, AFileName, AContent);
+  Result := TtgFileToSend.Create(TtgFileToSendTag.FromStream, AFileName, AContent);
 end;
 
 class function TtgFileToSend.FromURL(const AURL: string): TtgFileToSend;
 begin
-  Result := TtgFileToSend.Create(FILE_TO_SEND_URL, AURL, nil);
+  Result := TtgFileToSend.Create(TtgFileToSendTag.FromURL, AURL, nil);
 end;
 
 end.
