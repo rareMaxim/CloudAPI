@@ -59,6 +59,8 @@ type
     edtSendPhotoCaption: TEdit;
     btnSendPhotoFile: TButton;
     chkSendMsgDisableWebPagePreview: TCheckBox;
+    tsOnUpdates: TTabSheet;
+    mmoOnUpdadtes: TMemo;
     procedure btn1Click(Sender: TObject);
     procedure btnSendMsgTextClick(Sender: TObject);
     procedure tgReceiverUI1Message(ASender: TObject; AMessage: ITgMessage);
@@ -66,6 +68,7 @@ type
     procedure tgExceptionManagerUI1GlobalException(ASender: TObject; const AMethod: string; AException: Exception);
     procedure btnSendPhotoFileClick(Sender: TObject);
     procedure btnSendPhotoClick(Sender: TObject);
+    procedure TelegramBot1ReceiveRawData(ASender: TObject; const AData: string);
   private
     { Private declarations }
   public
@@ -95,6 +98,13 @@ procedure TForm3.btnSendPhotoFileClick(Sender: TObject);
 begin
   if OpenDialog1.Execute then
     edtSendPhotoFile.Text := OpenDialog1.FileName;
+end;
+
+procedure TForm3.TelegramBot1ReceiveRawData(ASender: TObject; const AData: string);
+begin
+  mmoOnUpdadtes.Lines.Add('------------');
+  mmoOnUpdadtes.Lines.Add(AData);
+  mmoOnUpdadtes.Lines.Add('------------');
 end;
 
 procedure TForm3.btnSendMsgTextClick(Sender: TObject);
