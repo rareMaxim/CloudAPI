@@ -25,6 +25,8 @@ type
     type
       //parameter loader method
       TLoader = procedure(var AFormData: TIdMultiPartFormDataStream; AParam: TtgApiParameter) of object;
+  private
+    procedure AddDataStr(var AFormData: TIdMultiPartFormDataStream; const Key, Value: string);
   protected
     procedure AddInteger(var AFormData: TIdMultiPartFormDataStream; AParam: TtgApiParameter);
     procedure AddTDateTime(var AFormData: TIdMultiPartFormDataStream; AParam: TtgApiParameter);
@@ -69,17 +71,17 @@ type
 
 procedure TtgParamConverter.AddInteger(var AFormData: TIdMultiPartFormDataStream; AParam: TtgApiParameter);
 begin
-  AFormData.AddFormField(AParam.Key, AParam.Value.AsInteger.ToString);
+  AddDataStr(AFormData, AParam.Key, AParam.Value.AsInteger.ToString);
 end;
 
 procedure TtgParamConverter.AddString(var AFormData: TIdMultiPartFormDataStream; AParam: TtgApiParameter);
 begin
-  AFormData.AddFormField(AParam.Key, AParam.Value.AsString);
+  AddDataStr(AFormData, AParam.Key, AParam.Value.AsString);
 end;
 
 procedure TtgParamConverter.AddTDateTime(var AFormData: TIdMultiPartFormDataStream; AParam: TtgApiParameter);
 begin
-  AFormData.AddFormField(AParam.Key, DateTimeToUnix(AParam.Value.AsType<TDateTime>, False).ToString);
+  AddDataStr(AFormData, AParam.Key, DateTimeToUnix(AParam.Value.AsType<TDateTime>, False).ToString);
 end;
 
 function TtgParamConverter.ApplyParamToFormData(const AParam: TtgApiParameter; var Form: TIdMultiPartFormDataStream): Boolean;
@@ -117,12 +119,12 @@ end;
 
 procedure TtgParamConverter.AddInt64(var AFormData: TIdMultiPartFormDataStream; AParam: TtgApiParameter);
 begin
-  AFormData.AddFormField(AParam.Key, AParam.Value.AsInt64.ToString);
+  AddDataStr(AFormData, AParam.Key, AParam.Value.AsInt64.ToString);
 end;
 
 procedure TtgParamConverter.AddBoolean(var AFormData: TIdMultiPartFormDataStream; AParam: TtgApiParameter);
 begin
-  AFormData.AddFormField(AParam.Key, AParam.Value.AsBoolean.ToString(TUseBoolStrs.True));
+  AddDataStr(AFormData, AParam.Key, AParam.Value.AsBoolean.ToString(TUseBoolStrs.True));
 end;
 
 procedure TtgParamConverter.AddClass_TtgFileToSend(var AFormData: TIdMultiPartFormDataStream; AParam: TtgApiParameter);
@@ -137,13 +139,18 @@ begin
       TtgFileToSendTag.FromFile:
         AFormData.AddFile(AParam.Key, LFileToSent.Data);
       TtgFileToSendTag.ID, TtgFileToSendTag.FromURL:
-        AFormData.AddFormField(AParam.Key, LFileToSent.Data);
+        AddDataStr(AFormData, AParam.Key, LFileToSent.Data);
     else
       raise Exception.Create('Cant convert TTgFileToSend: Unknown prototype tag');
     end;
   finally
     LFileToSent.Free;
   end;
+end;
+
+procedure TtgParamConverter.AddDataStr(var AFormData: TIdMultiPartFormDataStream; const Key, Value: string);
+begin
+  AFormData.AddFormField(Key, Value, 'utf-8').ContentTransfer := '8bit';
 end;
 
 { TtgTMultipartFormDataHelper }

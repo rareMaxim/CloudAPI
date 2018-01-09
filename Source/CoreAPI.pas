@@ -23,7 +23,7 @@ uses
 
 type
   ItgRequestAPI = interface
-  ['{3DC5A653-F52D-4A31-87AD-0C008AFA7111}']
+    ['{3DC5A653-F52D-4A31-87AD-0C008AFA7111}']
     // private
     function GetOnError: TProc<Exception>;
     procedure SetOnError(const Value: TProc<Exception>);
@@ -137,6 +137,7 @@ implementation
 uses
 {$IFDEF USE_INDY}
   CoreAPI.ParameterConverter.Indy,
+  IdGlobal,
 {$ELSE}
   CoreAPI.ParameterConverter.SystemNet,
 {$ENDIF}
@@ -166,6 +167,7 @@ begin
   FHttp := TIdHTTP.Create;
   FSSL := TIdSSLIOHandlerSocketOpenSSL.Create;
   FHttp.IOHandler := FSSL;
+  FHttp.IOHandler.DefStringEncoding := IndyTextEncoding_UTF8;
 {$ELSE}
   FHttp := THTTPClient.Create;
 {$ENDIF}
@@ -314,12 +316,15 @@ end;
 function TtgRequestAPI.DoPost: string;
 var
   PostData: TIdMultiPartFormDataStream;
+  Response: TStringStream;
 begin
   PostData := TIdMultiPartFormDataStream.Create;
+  Response := TStringStream.Create('', TEncoding.UTF8);
   try
     try
       FillFormData(PostData);
-      Result := FHttp.Post(Url, PostData);
+      FHttp.Post(Url, PostData, Response);
+      Result := (Response.DataString);
       if Assigned(OnSend) then
         OnSend(Url, StreamToString(PostData));
     except
@@ -331,6 +336,7 @@ begin
     end;
   finally
     PostData.Free;
+    Response.Free;
   end;
 end;
 
