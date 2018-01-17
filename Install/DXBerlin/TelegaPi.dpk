@@ -52,11 +52,10 @@ contains
   TelegAPI.Utils.Json in '..\..\Source\TelegAPI.Utils.Json.pas',
   TelegAPI.Receiver.UI in '..\..\Source\TelegAPI.Receiver.UI.pas',
   TelegaPi.Factory in '..\..\Source\TelegaPi.Factory.pas',
-  CoreAPI.ParameterConverter.Indy in '..\..\Source\CoreAPI.ParameterConverter.Indy.pas',
   TelegaPi.Ext.Sessions in '..\..\Source\TelegaPi.Ext.Sessions.pas',
   CoreAPI.Parameter in '..\..\Source\CoreAPI.Parameter.pas',
-  CoreAPI in '..\..\Source\CoreAPI.pas',
-  CoreAPI.ParameterConverter.SystemNet in '..\..\Source\CoreAPI.ParameterConverter.SystemNet.pas';
+  CoreAPI.Base in '..\..\Source\CoreAPI.Base.pas',
+  CoreAPI in '..\..\Source\CoreAPI.pas';
 
 end.
 

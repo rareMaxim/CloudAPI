@@ -1,5 +1,7 @@
 ﻿unit TelegAPI.Bot.Impl;
 
+{$I config.inc}
+
 interface
 
 uses
@@ -11,8 +13,10 @@ uses
   System.Generics.Collections,
 {$IFDEF USE_INDY}
   IdHTTPHeaderInfo,
+  CoreAPI.Indy,
 {$ELSE}
   System.Net.URLClient,
+  CoreAPI.SysNet,
 {$ENDIF}
   TelegAPI.Base,
   CoreAPI,
@@ -40,9 +44,10 @@ type
 {$ELSE}
     FProxySettings: TProxySettings;
 {$ENDIF}
+    FRequest: TtgCoreApi;
     FOnRawData: TtgOnReceiveRawData;
     FExceptionManager: ItgExceptionHandler;
-    FRequest: ItgRequestAPI;
+  //  FRequest: ItgRequestAPI;
     FOnSendData: TtgOnSendData;
     function GetToken: string;
     procedure SetToken(const Value: string);
@@ -395,8 +400,8 @@ uses
 
 constructor TTelegramBot.Create(AOwner: TComponent);
 begin
-  inherited;
-  FRequest := TtgFactory.RequestAPI;
+  inherited Create(AOwner);
+  FRequest := TtgCoreApi.Create(FProxySettings);
   FRequest.OnError :=
     procedure(E: Exception)
     begin
@@ -522,6 +527,7 @@ end;
 
 destructor TTelegramBot.Destroy;
 begin
+  FRequest.Free;
   FRequest := nil;
   inherited;
 end;

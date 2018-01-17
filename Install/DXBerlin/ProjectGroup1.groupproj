@@ -9,6 +9,9 @@
         <Projects Include="..\..\Demo\EchoBot\EchoBot.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="..\..\Demo\SendDemo\SendMethods.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -35,14 +38,23 @@
     <Target Name="EchoBot:Make">
         <MSBuild Projects="..\..\Demo\EchoBot\EchoBot.dproj" Targets="Make"/>
     </Target>
+    <Target Name="SendMethods">
+        <MSBuild Projects="..\..\Demo\SendDemo\SendMethods.dproj"/>
+    </Target>
+    <Target Name="SendMethods:Clean">
+        <MSBuild Projects="..\..\Demo\SendDemo\SendMethods.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="SendMethods:Make">
+        <MSBuild Projects="..\..\Demo\SendDemo\SendMethods.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="TelegaPi;EchoBot"/>
+        <CallTarget Targets="TelegaPi;EchoBot;SendMethods"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="TelegaPi:Clean;EchoBot:Clean"/>
+        <CallTarget Targets="TelegaPi:Clean;EchoBot:Clean;SendMethods:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="TelegaPi:Make;EchoBot:Make"/>
+        <CallTarget Targets="TelegaPi:Make;EchoBot:Make;SendMethods:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

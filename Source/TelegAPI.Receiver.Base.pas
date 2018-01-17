@@ -5,7 +5,6 @@ interface
 uses
   System.Classes,
   System.SysUtils,
- // System.Threading,
   TelegAPI.Base,
   TelegAPI.Bot,
   TelegAPI.Types,
@@ -20,7 +19,7 @@ type
 
   TTgBotReceiverBase = class(TtgAbstractComponent, ITgBotRecesiverBase)
   private
-    FBot: ITelegramBot;
+    FBotDonor: ITelegramBot;
     FAllowedUpdates: TAllowedUpdates;
     FMessageOffset: Int64;
     FPollingInterval: Integer;
@@ -46,16 +45,16 @@ type
     procedure DoOnEditedChannelPost(AEditedChannelPost: ITgMessage); virtual; abstract;
     procedure DoOnShippingQuery(AShippingQuery: ItgShippingQuery); virtual; abstract;
     procedure DoOnPreCheckoutQuery(APreCheckoutQuery: ItgPreCheckoutQuery); virtual; abstract;
+    function GetBot: ITelegramBot;
   public
     constructor Create(AOwner: TComponent); overload; override;
-    constructor Create(ABot: ITelegramBot); reintroduce; overload;
     destructor Destroy; override;
     procedure Start;
     procedure Stop;
     [Default(False)]
     property IsActive: Boolean read FIsActive write SetIsActive;
   published
-    property Bot: ITelegramBot read FBot write FBot;
+    property Bot: ITelegramBot read FBotDonor write FBotDonor;
     [Default(0)]
     property MessageOffset: Int64 read FMessageOffset write FMessageOffset;
     property AllowedUpdates: TAllowedUpdates read FAllowedUpdates write FAllowedUpdates default UPDATES_ALLOWED_ALL;
@@ -65,6 +64,8 @@ type
 
 implementation
 
+uses
+  TelegAPI.Factory;
 { TTgBotReceiverBase }
 
 constructor TTgBotReceiverBase.Create(AOwner: TComponent);
@@ -73,12 +74,6 @@ begin
   MessageOffset := 0;
   AllowedUpdates := UPDATES_ALLOWED_ALL;
   PollingInterval := 1000;
-end;
-
-constructor TTgBotReceiverBase.Create(ABot: ITelegramBot);
-begin
-  Create(TComponent(nil));
-  Bot := ABot;
 end;
 
 destructor TTgBotReceiverBase.Destroy;
@@ -96,6 +91,12 @@ begin
     DoOnUpdate(LUpdate);
     TypeUpdate(LUpdate);
   end;
+end;
+
+function TTgBotReceiverBase.GetBot: ITelegramBot;
+begin
+  Result := TtgFactory.CreateTelegram(FBotDonor.Token);
+  Result.ExceptionManager := FBotDonor.ExceptionManager;
 end;
 
 procedure TTgBotReceiverBase.Go;
@@ -121,7 +122,7 @@ end;
 function TTgBotReceiverBase.ReadUpdates: TArray<ItgUpdate>;
 begin
   try
-    Result := FBot.GetUpdates(MessageOffset, 100, 0, AllowedUpdates);
+    Result := GetBot.GetUpdates(MessageOffset, 100, 0, AllowedUpdates);
   except
     on E: Exception do
       Bot.ExceptionManager.HaveGlobalExeption('TTgBotReceiverBase.ReadUpdates', E)
@@ -141,7 +142,9 @@ begin
   end
   else
   begin
+    FThread.Terminate;
     FIsActive := False;
+    FThread.WaitFor;
   end;
 end;
 

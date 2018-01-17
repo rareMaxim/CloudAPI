@@ -238,7 +238,6 @@ object Form3: TForm3
           Height = 24
           Align = alClient
           TabOrder = 0
-          ExplicitHeight = 21
         end
         object btnSendPhotoFile: TButton
           Left = 497
@@ -282,10 +281,6 @@ object Form3: TForm3
         Lines.Strings = (
           'mmoOnUpdadtes')
         TabOrder = 0
-        ExplicitLeft = 192
-        ExplicitTop = 120
-        ExplicitWidth = 185
-        ExplicitHeight = 89
       end
     end
   end
