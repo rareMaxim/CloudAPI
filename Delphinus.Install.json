@@ -3,7 +3,7 @@
     [
         {
             "pathes": "Source",
-            "platforms": "Win32;Win64;OSX32"
+            "platforms": "Win32;Win64;OSX32;Android;IOSDevice32;IOSDevice64;Linux64"
         }
     ],
 	
