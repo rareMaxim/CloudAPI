@@ -72,7 +72,9 @@ type
       const Offset: Int64 = 0; //
       const Limit: Int64 = 100; //
       const Timeout: Int64 = 0; //
-      const AllowedUpdates: TAllowedUpdates = UPDATES_ALLOWED_ALL): TArray<ItgUpdate>;
+      const AllowedUpdates: TAllowedUpdates = UPDATES_ALLOWED_ALL): TArray<ItgUpdate>; overload;
+      function GetUpdates( //
+        const JSON: string): TArray<ItgUpdate>; overload;
      /// <summary>
      /// Use this method to specify a url and receive incoming updates via an
      /// outgoing webhook. Whenever there is an update for the bot, we will

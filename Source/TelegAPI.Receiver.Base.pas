@@ -5,7 +5,7 @@ interface
 uses
   System.Classes,
   System.SysUtils,
-  TelegAPI.Base,
+  TelegAPI.UpdateParser,
   TelegAPI.Bot,
   TelegAPI.Types,
   TelegAPI.Types.Enums;
@@ -17,7 +17,7 @@ type
     procedure Stop;
   end;
 
-  TTgBotReceiverBase = class(TtgAbstractComponent, ITgBotRecesiverBase)
+  TTgBotReceiverBase = class(TTgBotUpdateParser, ITgBotRecesiverBase)
   private
     FBotDonor: ITelegramBot;
     FAllowedUpdates: TAllowedUpdates;
@@ -29,26 +29,12 @@ type
   protected
     function ReadUpdates: TArray<ItgUpdate>; virtual;
     procedure Go; virtual;
-    procedure EventParser(AUpdates: TArray<ItgUpdate>); virtual;
-    procedure TypeUpdate(AUpdate: ItgUpdate); virtual;
     //События
     procedure DoOnStart; virtual; abstract;
     procedure DoOnStop; virtual; abstract;
-    procedure DoOnUpdates(AUpdates: TArray<ItgUpdate>); virtual; abstract;
-    procedure DoOnUpdate(AUpdate: ItgUpdate); virtual; abstract;
-    procedure DoOnMessage(AMessage: ITgMessage); virtual; abstract;
-    procedure DoOnInlineQuery(AInlineQuery: ItgInlineQuery); virtual; abstract;
-    procedure DoOnChosenInlineResult(AChosenInlineResult: ItgChosenInlineResult); virtual; abstract;
-    procedure DoOnCallbackQuery(ACallbackQuery: ItgCallbackQuery); virtual; abstract;
-    procedure DoOnEditedMessage(AEditedMessage: ITgMessage); virtual; abstract;
-    procedure DoOnChannelPost(AChannelPost: ITgMessage); virtual; abstract;
-    procedure DoOnEditedChannelPost(AEditedChannelPost: ITgMessage); virtual; abstract;
-    procedure DoOnShippingQuery(AShippingQuery: ItgShippingQuery); virtual; abstract;
-    procedure DoOnPreCheckoutQuery(APreCheckoutQuery: ItgPreCheckoutQuery); virtual; abstract;
     function GetBot: ITelegramBot;
   public
     constructor Create(AOwner: TComponent); overload; override;
-    destructor Destroy; override;
     procedure Start;
     procedure Stop;
     [Default(False)]
@@ -74,23 +60,6 @@ begin
   MessageOffset := 0;
   AllowedUpdates := UPDATES_ALLOWED_ALL;
   PollingInterval := 1000;
-end;
-
-destructor TTgBotReceiverBase.Destroy;
-begin
-  inherited;
-end;
-
-procedure TTgBotReceiverBase.EventParser(AUpdates: TArray<ItgUpdate>);
-var
-  LUpdate: ItgUpdate;
-begin
-  DoOnUpdates(AUpdates);
-  for LUpdate in AUpdates do
-  begin
-    DoOnUpdate(LUpdate);
-    TypeUpdate(LUpdate);
-  end;
 end;
 
 function TTgBotReceiverBase.GetBot: ITelegramBot;
@@ -156,38 +125,6 @@ end;
 procedure TTgBotReceiverBase.Stop;
 begin
   IsActive := False;
-end;
-
-procedure TTgBotReceiverBase.TypeUpdate(AUpdate: ItgUpdate);
-begin
-  case AUpdate.&Type of
-    TtgUpdateType.MessageUpdate:
-      DoOnMessage(AUpdate.Message);
-
-    TtgUpdateType.InlineQueryUpdate:
-      DoOnInlineQuery(AUpdate.InlineQuery);
-
-    TtgUpdateType.ChosenInlineResultUpdate:
-      DoOnChosenInlineResult(AUpdate.ChosenInlineResult);
-
-    TtgUpdateType.CallbackQueryUpdate:
-      DoOnCallbackQuery(AUpdate.CallbackQuery);
-
-    TtgUpdateType.EditedMessage:
-      DoOnEditedMessage(AUpdate.EditedMessage);
-
-    TtgUpdateType.ChannelPost:
-      DoOnChannelPost(AUpdate.ChannelPost);
-
-    TtgUpdateType.EditedChannelPost:
-      DoOnEditedChannelPost(AUpdate.EditedChannelPost);
-
-    TtgUpdateType.ShippingQueryUpdate:
-      DoOnShippingQuery(AUpdate.ShippingQuery);
-
-    TtgUpdateType.PreCheckoutQueryUpdate:
-      DoOnPreCheckoutQuery(AUpdate.PreCheckoutQuery);
-  end;
 end;
 
 end.

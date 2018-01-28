@@ -65,7 +65,9 @@ type
       const Offset: Int64 = 0; //
       const Limit: Int64 = 100; //
       const Timeout: Int64 = 0; //
-      const AllowedUpdates: TAllowedUpdates = UPDATES_ALLOWED_ALL): TArray<ItgUpdate>;
+      const AllowedUpdates: TAllowedUpdates = UPDATES_ALLOWED_ALL): TArray<ItgUpdate>; overload;
+    function GetUpdates( //
+      const JSON: string): TArray<ItgUpdate>; overload;
     function SetWebhook( //
       const Url: string; //
       const Certificate: TtgFileToSend = nil; //
@@ -518,6 +520,11 @@ begin
     .AddParameter('timeout', Timeout, 0, False) //
     .AddParameter('allowed_updates', AllowedUpdates.ToString, '[]', False) //
     .Execute);
+end;
+
+function TTelegramBot.GetUpdates(const JSON: string): TArray<ItgUpdate>;
+begin
+  Result := GetArrayFromMethod<ItgUpdate>(TtgUpdate, JSON);
 end;
 
 function TTelegramBot.DeleteWebhook: Boolean;
