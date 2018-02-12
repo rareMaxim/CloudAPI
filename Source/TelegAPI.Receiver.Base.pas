@@ -35,6 +35,7 @@ type
     function GetBot: ITelegramBot;
   public
     constructor Create(AOwner: TComponent); overload; override;
+    constructor Create(ABot: ITelegramBot); overload;
     procedure Start;
     procedure Stop;
     [Default(False)]
@@ -60,6 +61,12 @@ begin
   MessageOffset := 0;
   AllowedUpdates := UPDATES_ALLOWED_ALL;
   PollingInterval := 1000;
+end;
+
+constructor TTgBotReceiverBase.Create(ABot: ITelegramBot);
+begin
+  Self.Create(nil);
+  FBotDonor := ABot;
 end;
 
 function TTgBotReceiverBase.GetBot: ITelegramBot;
