@@ -1,0 +1,65 @@
+package TelegaPi;
+
+{$R *.res}
+{$R '..\TTelegramBot.dcr'}
+{$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
+{$ALIGN 8}
+{$ASSERTIONS ON}
+{$BOOLEVAL OFF}
+{$DEBUGINFO OFF}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS ON}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION OFF}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO ON}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES ON}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST OFF}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DEFINE DEBUG}
+{$DEFINE USE_INDY}
+{$ENDIF IMPLICITBUILDING}
+{$DESCRIPTION 'Telegram API for Delphi'}
+{$IMPLICITBUILD ON}
+
+requires
+  rtl,
+  RESTComponents,
+  IndySystem,
+  IndyProtocols,
+  IndyCore;
+
+contains
+  TelegAPI.Base in '..\..\Source\TelegAPI.Base.pas',
+  TelegAPI.Bot.Impl in '..\..\Source\TelegAPI.Bot.Impl.pas',
+  TelegAPI.Bot in '..\..\Source\TelegAPI.Bot.pas',
+  TelegaPi.Exceptions in '..\..\Source\TelegaPi.Exceptions.pas',
+  TelegAPi.Helpers in '..\..\Source\TelegAPi.Helpers.pas',
+  TelegAPI.Receiver.Base in '..\..\Source\TelegAPI.Receiver.Base.pas',
+  TelegAPI.Receiver.Console in '..\..\Source\TelegAPI.Receiver.Console.pas',
+  TelegAPI.Receiver.Service in '..\..\Source\TelegAPI.Receiver.Service.pas',
+  TelegAPi.RegisterIDE in '..\..\Source\TelegAPi.RegisterIDE.pas',
+  TelegaPi.Types.Enums in '..\..\Source\TelegaPi.Types.Enums.pas',
+  TelegAPI.Types.Impl in '..\..\Source\TelegAPI.Types.Impl.pas',
+  TelegaPi.Types.InlineQueryResults in '..\..\Source\TelegaPi.Types.InlineQueryResults.pas',
+  TelegaPi.Types.InputMessageContents in '..\..\Source\TelegaPi.Types.InputMessageContents.pas',
+  TelegAPi.Types in '..\..\Source\TelegAPi.Types.pas',
+  TelegaPi.Types.ReplyMarkups in '..\..\Source\TelegaPi.Types.ReplyMarkups.pas',
+  TelegAPI.Utils.Json in '..\..\Source\TelegAPI.Utils.Json.pas',
+  TelegAPI.Receiver.UI in '..\..\Source\TelegAPI.Receiver.UI.pas',
+  TelegaPi.Factory in '..\..\Source\TelegaPi.Factory.pas',
+  CoreAPI.ParameterConverter.Indy in '..\..\Source\CoreAPI.ParameterConverter.Indy.pas',
+  TelegaPi.Ext.Sessions in '..\..\Source\TelegaPi.Ext.Sessions.pas',
+  CoreAPI.Parameter in '..\..\Source\CoreAPI.Parameter.pas',
+  CoreAPI in '..\..\Source\CoreAPI.pas';
+
+end.
+

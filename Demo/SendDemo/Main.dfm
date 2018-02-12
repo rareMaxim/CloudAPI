@@ -23,6 +23,10 @@ object Form3: TForm3
     TabOrder = 0
     object tsSettings: TTabSheet
       Caption = 'Settings'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object grpToken: TGroupBox
         Left = 0
         Top = 0
@@ -91,6 +95,10 @@ object Form3: TForm3
     object tsExceptions: TTabSheet
       Caption = 'Exceptions'
       ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object mmoExceptions: TMemo
         Left = 0
         Top = 0
@@ -103,6 +111,10 @@ object Form3: TForm3
     object tsSendMessage: TTabSheet
       Caption = 'SendMessage'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object grpSendMsgText: TGroupBox
         Left = 0
         Top = 0
@@ -186,6 +198,10 @@ object Form3: TForm3
     object tsSendPhoto: TTabSheet
       Caption = 'SendPhoto'
       ImageIndex = 3
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object btnSendPhoto: TButton
         Left = 456
         Top = 303
@@ -272,6 +288,10 @@ object Form3: TForm3
     object tsOnUpdates: TTabSheet
       Caption = 'tsOnUpdates'
       ImageIndex = 4
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object mmoOnUpdadtes: TMemo
         Left = 0
         Top = 0

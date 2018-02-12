@@ -22,7 +22,7 @@ uses
   Vcl.ExtCtrls,
   Vcl.ComCtrls,
   TelegAPi.Types,
-  Vcl.Samples.Spin;
+  Vcl.Samples.Spin, TelegAPI.UpdateParser;
 
 type
   TForm3 = class(TForm)
