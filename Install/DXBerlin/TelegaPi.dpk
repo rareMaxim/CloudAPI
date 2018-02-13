@@ -51,7 +51,6 @@ contains
   TelegaPi.Types.ReplyMarkups in '..\..\Source\TelegaPi.Types.ReplyMarkups.pas',
   TelegAPI.Utils.Json in '..\..\Source\TelegAPI.Utils.Json.pas',
   TelegAPI.Receiver.UI in '..\..\Source\TelegAPI.Receiver.UI.pas',
-  TelegaPi.Factory in '..\..\Source\TelegaPi.Factory.pas',
   TelegaPi.Ext.Sessions in '..\..\Source\TelegaPi.Ext.Sessions.pas',
   CoreAPI.Parameter in '..\..\Source\CoreAPI.Parameter.pas',
   CoreAPI.Base in '..\..\Source\CoreAPI.Base.pas',

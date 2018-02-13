@@ -150,7 +150,6 @@
         </DelphiCompile>
         <DCCReference Include="EchoBot.Main.pas">
             <Form>Main</Form>
-            <FormType>fmx</FormType>
         </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>

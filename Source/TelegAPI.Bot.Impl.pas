@@ -20,7 +20,6 @@ uses
 {$ENDIF}
   TelegAPI.Base,
   CoreAPI,
-  TelegAPI.Factory,
   CoreAPI.Parameter,
   TelegAPI.Bot,
   TelegAPI.Types,
@@ -441,6 +440,14 @@ begin
     end;
 end;
 
+destructor TTelegramBot.Destroy;
+begin
+  FRequest.Free;
+  FRequest := nil;
+  FExceptionManager := nil;
+  inherited;
+end;
+
 function TTelegramBot.GetJSONArrayFromMethod(const AValue: string): TJSONArray;
 begin
   Result := TJSONObject.ParseJSONValue(AValue) as TJSONArray;
@@ -532,12 +539,7 @@ begin
   Result := FRequest.SetMethod('deleteWebhook').ExecuteAsBool;
 end;
 
-destructor TTelegramBot.Destroy;
-begin
-  FRequest.Free;
-  FRequest := nil;
-  inherited;
-end;
+
 
 {$ENDREGION}
 {$REGION 'Basic methods'}

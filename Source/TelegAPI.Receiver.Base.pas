@@ -7,6 +7,7 @@ uses
   System.SysUtils,
   TelegAPI.UpdateParser,
   TelegAPI.Bot,
+  TelegAPI.Bot.Impl,
   TelegAPI.Types,
   TelegAPI.Types.Enums;
 
@@ -19,7 +20,8 @@ type
 
   TTgBotReceiverBase = class(TTgBotUpdateParser, ITgBotRecesiverBase)
   private
-    FBotDonor: ITelegramBot;
+    FBotDonor: TTelegramBot;
+    FBotLocal: TTelegramBot;
     FAllowedUpdates: TAllowedUpdates;
     FMessageOffset: Int64;
     FPollingInterval: Integer;
@@ -35,13 +37,14 @@ type
     function GetBot: ITelegramBot;
   public
     constructor Create(AOwner: TComponent); overload; override;
-    constructor Create(ABot: ITelegramBot); overload;
+    constructor Create(ABot: TTelegramBot); overload;
+    destructor Destroy; override;
     procedure Start;
     procedure Stop;
     [Default(False)]
     property IsActive: Boolean read FIsActive write SetIsActive;
   published
-    property Bot: ITelegramBot read FBotDonor write FBotDonor;
+    property Bot: TTelegramBot read FBotDonor write FBotDonor;
     [Default(0)]
     property MessageOffset: Int64 read FMessageOffset write FMessageOffset;
     property AllowedUpdates: TAllowedUpdates read FAllowedUpdates write FAllowedUpdates default UPDATES_ALLOWED_ALL;
@@ -51,8 +54,7 @@ type
 
 implementation
 
-uses
-  TelegAPI.Factory;
+
 { TTgBotReceiverBase }
 
 constructor TTgBotReceiverBase.Create(AOwner: TComponent);
@@ -61,18 +63,27 @@ begin
   MessageOffset := 0;
   AllowedUpdates := UPDATES_ALLOWED_ALL;
   PollingInterval := 1000;
+  FBotLocal := TTelegramBot.Create(nil);
 end;
 
-constructor TTgBotReceiverBase.Create(ABot: ITelegramBot);
+constructor TTgBotReceiverBase.Create(ABot: TTelegramBot);
 begin
   Self.Create(nil);
   FBotDonor := ABot;
 end;
 
+destructor TTgBotReceiverBase.Destroy;
+begin
+  FBotLocal.Free;
+  FBotDonor := nil;
+  inherited;
+end;
+
 function TTgBotReceiverBase.GetBot: ITelegramBot;
 begin
-  Result := TtgFactory.CreateTelegram(FBotDonor.Token);
-  Result.ExceptionManager := FBotDonor.ExceptionManager;
+  FBotLocal.Token := FBotDonor.Token;
+  FBotLocal.ExceptionManager := FBotDonor.ExceptionManager;
+  Result := FBotLocal;
 end;
 
 procedure TTgBotReceiverBase.Go;
@@ -113,14 +124,13 @@ begin
   if FIsActive then
   begin
     FThread := TThread.CreateAnonymousThread(Go);
-    FThread.FreeOnTerminate := True;
+    FThread.FreeOnTerminate := False;
     FThread.Start;
   end
   else
   begin
-    FThread.Terminate;
     FIsActive := False;
-    FThread.WaitFor;
+    FreeAndNil(FThread);
   end;
 end;
 

@@ -35,7 +35,7 @@ type
 implementation
 
 uses
-  TelegAPI.Factory;
+  TelegAPI.Bot.Impl;
 { TTgBotReceiverBase }
 
 procedure TTgBotUpdateParser.EventParser(AUpdates: TArray<ItgUpdate>);
@@ -53,8 +53,10 @@ end;
 procedure TTgBotUpdateParser.ParseResponse(const JSON: string);
 var
   LUpdates: TArray<ItgUpdate>;
+  LBot: ITelegramBot;
 begin
-  LUpdates := TtgFactory.CreateTelegram().GetUpdates(JSON);
+  LBot := TTelegramBot.Create(nil);
+  LUpdates := LBot.GetUpdates(JSON);
   EventParser(LUpdates);
 end;
 
