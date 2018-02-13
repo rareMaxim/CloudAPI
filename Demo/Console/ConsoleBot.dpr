@@ -9,8 +9,8 @@ uses
   TelegAPI.Receiver.Console,
   System.SysUtils,
   TelegAPI.Types,
-  TelegaPi.Exceptions,
-  TelegaPi.Factory;
+  TelegAPI.Bot.Impl,
+  TelegaPi.Exceptions;
 
 procedure Main;
 var
@@ -19,7 +19,7 @@ var
   LExcp: TtgExceptionManagerConsole;
   LStop: string;
 begin
-  LBot := TtgFactory.CreateTelegram('283107814:AAGOGxUCwTC2bOs2krUSuEtqZd2UnA8NZ2g');
+  LBot := TTelegramBot.Create('YOUR_TOKEN');
   LRecesiver := TtgReceiverConsole.Create(LBot);
   try
     LExcp := LBot.ExceptionManager as TtgExceptionManagerConsole;

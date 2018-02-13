@@ -57,7 +57,8 @@ type
     function GetExceptionManager: ItgExceptionHandler;
     procedure SetExceptionManager(const Value: ItgExceptionHandler);
   public
-    constructor Create(AOwner: TComponent); override;
+    constructor Create(AOwner: TComponent); overload; override;
+    constructor Create(const AToken: string); overload;
     destructor Destroy; override;
 {$REGION 'Getting updates'}
     function GetUpdates( //
@@ -438,6 +439,12 @@ begin
         FJSON.Free;
       end;
     end;
+end;
+
+constructor TTelegramBot.Create(const AToken: string);
+begin
+  Self.Create(nil);
+  SetToken(AToken);
 end;
 
 destructor TTelegramBot.Destroy;
@@ -1147,6 +1154,8 @@ begin
     .AddParameter('Shipping_options', TJsonUtils.ArrayToJString<TtgShippingOption>(ShippingOptions), nil, True) //
     .ExecuteAsBool;
 end;
+
+
 
 {$ENDREGION}
 {$REGION 'Games'}

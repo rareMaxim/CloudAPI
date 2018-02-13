@@ -20,7 +20,7 @@ type
 
   TTgBotReceiverBase = class(TTgBotUpdateParser, ITgBotRecesiverBase)
   private
-    FBotDonor: TTelegramBot;
+    FBotDonor: ITelegramBot;
     FBotLocal: TTelegramBot;
     FAllowedUpdates: TAllowedUpdates;
     FMessageOffset: Int64;
@@ -37,14 +37,14 @@ type
     function GetBot: ITelegramBot;
   public
     constructor Create(AOwner: TComponent); overload; override;
-    constructor Create(ABot: TTelegramBot); overload;
+    constructor Create(ABot: ITelegramBot); overload;
     destructor Destroy; override;
     procedure Start;
     procedure Stop;
     [Default(False)]
     property IsActive: Boolean read FIsActive write SetIsActive;
   published
-    property Bot: TTelegramBot read FBotDonor write FBotDonor;
+    property Bot: ITelegramBot read FBotDonor write FBotDonor;
     [Default(0)]
     property MessageOffset: Int64 read FMessageOffset write FMessageOffset;
     property AllowedUpdates: TAllowedUpdates read FAllowedUpdates write FAllowedUpdates default UPDATES_ALLOWED_ALL;
@@ -66,7 +66,7 @@ begin
   FBotLocal := TTelegramBot.Create(nil);
 end;
 
-constructor TTgBotReceiverBase.Create(ABot: TTelegramBot);
+constructor TTgBotReceiverBase.Create(ABot: ITelegramBot);
 begin
   Self.Create(nil);
   FBotDonor := ABot;
