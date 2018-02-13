@@ -15,12 +15,12 @@ uses
 procedure Main;
 var
   LBot: ITelegramBot;
-  LRecesiver: TtgReceiverConsole;
+  LReceiver: TtgReceiverConsole;
   LExcp: TtgExceptionManagerConsole;
   LStop: string;
 begin
   LBot := TTelegramBot.Create('YOUR_TOKEN');
-  LRecesiver := TtgReceiverConsole.Create(LBot);
+  LReceiver := TtgReceiverConsole.Create(LBot);
   try
     LExcp := LBot.ExceptionManager as TtgExceptionManagerConsole;
     LExcp.OnApiException :=
@@ -33,35 +33,34 @@ begin
       begin
         Writeln(AExp.ToString);
       end;
-    LRecesiver.OnStart :=
+    LReceiver.OnStart :=
       procedure
       begin
         Writeln('started');
       end;
-    LRecesiver.OnStop :=
+    LReceiver.OnStop :=
       procedure
       begin
         Writeln('stoped');
       end;
-
-    LRecesiver.OnMessage :=
+    LReceiver.OnMessage :=
       procedure(AMessage: ITgMessage)
       begin
         Writeln(AMessage.From.ID, ': ', AMessage.Text);
         LBot.SendMessage(AMessage.From.ID, AMessage.Text);
       end;
     Writeln('Bot nick: ', LBot.GetMe.Username);
-    LRecesiver.IsActive := True;
+    LReceiver.IsActive := True;
     while LStop.ToLower.Trim <> 'exit' do
     begin
       Readln(LStop);
       if LStop.ToLower.Trim = 'stop' then
-        LRecesiver.IsActive := False
+        LReceiver.IsActive := False
       else if LStop.ToLower.Trim = 'start' then
-        LRecesiver.IsActive := True;
+        LReceiver.IsActive := True;
     end;
   finally
-    LRecesiver.Free;
+    LReceiver.Free;
   end;
 end;
 
