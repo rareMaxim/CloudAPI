@@ -81,9 +81,12 @@ end;
 
 function TTgBotReceiverBase.GetBot: ITelegramBot;
 begin
-  FBotLocal.Token := FBotDonor.Token;
-  FBotLocal.ExceptionManager := FBotDonor.ExceptionManager;
-  Result := FBotLocal;
+  if FBotDonor <> nil then
+  begin
+    FBotLocal.Token := FBotDonor.Token;
+    FBotLocal.ExceptionManager := FBotDonor.ExceptionManager;
+    Result := FBotLocal;
+  end;
 end;
 
 procedure TTgBotReceiverBase.Go;
@@ -109,7 +112,8 @@ end;
 function TTgBotReceiverBase.ReadUpdates: TArray<ItgUpdate>;
 begin
   try
-    Result := GetBot.GetUpdates(MessageOffset, 100, 0, AllowedUpdates);
+    if GetBot <> nil then
+      Result := GetBot.GetUpdates(MessageOffset, 100, 0, AllowedUpdates);
   except
     on E: Exception do
       Bot.ExceptionManager.HaveGlobalExeption('TTgBotReceiverBase.ReadUpdates', E)

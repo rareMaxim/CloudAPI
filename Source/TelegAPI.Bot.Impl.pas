@@ -427,7 +427,7 @@ begin
       FJSON: TJSONObject;
     begin
       Result := '';
-      if AInput.IsEmpty then
+      if AInput.IsEmpty or AInput.StartsWith('<html') then
         Exit;
       FJSON := TJSONObject.ParseJSONValue(AInput) as TJSONObject;
       try
