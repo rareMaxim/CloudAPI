@@ -122,6 +122,7 @@ $(PreBuildEvent)]]>
         <DCCReference Include="..\..\Source\CoreAPI.Base.pas"/>
         <DCCReference Include="..\..\Source\CoreAPI.pas"/>
         <DCCReference Include="..\..\Source\TelegAPI.UpdateParser.pas"/>
+        <DCCReference Include="..\..\Source\TelegaPi.Ext.Menu.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

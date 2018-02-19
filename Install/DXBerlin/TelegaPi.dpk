@@ -55,7 +55,8 @@ contains
   CoreAPI.Parameter in '..\..\Source\CoreAPI.Parameter.pas',
   CoreAPI.Base in '..\..\Source\CoreAPI.Base.pas',
   CoreAPI in '..\..\Source\CoreAPI.pas',
-  TelegAPI.UpdateParser in '..\..\Source\TelegAPI.UpdateParser.pas';
+  TelegAPI.UpdateParser in '..\..\Source\TelegAPI.UpdateParser.pas',
+  TelegaPi.Ext.Menu in '..\..\Source\TelegaPi.Ext.Menu.pas';
 
 end.
 
