@@ -72,6 +72,7 @@ end;
 destructor TTgBotReceiverBase.Destroy;
 begin
  // FBotDonor.Free;
+  Stop;
   inherited;
 end;
 
@@ -99,17 +100,13 @@ function TTgBotReceiverBase.ReadUpdates: TArray<ItgUpdate>;
 var
   LBot: TTelegramBot;
 begin
-  LBot := TTelegramBot.Create(nil);
+  LBot := TTelegramBot.Create(Self);
   try
-    try
-      FBotDonor.AssignTo(LBot);
-      Result := LBot.GetUpdates(MessageOffset, 100, 0, AllowedUpdates);
-    except
-      on E: Exception do
-        Bot.ExceptionManager.HaveGlobalExeption('TTgBotReceiverBase.ReadUpdates', E)
-    end;
-  finally
-    LBot.Free;
+    FBotDonor.AssignTo(LBot);
+    Result := LBot.GetUpdates(MessageOffset, 100, 0, AllowedUpdates);
+  except
+    on E: Exception do
+      Bot.ExceptionManager.HaveGlobalExeption('TTgBotReceiverBase.ReadUpdates', E)
   end;
 end;
 
