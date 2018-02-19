@@ -56,7 +56,10 @@ type
     function GetArrayFromMethod<TI: IInterface>(const TgClass: TBaseJsonClass; const AValue: string): TArray<TI>;
     function GetExceptionManager: ItgExceptionHandler;
     procedure SetExceptionManager(const Value: ItgExceptionHandler);
+  protected
+
   public
+    procedure AssignTo(Dest: TPersistent); override;
     constructor Create(AOwner: TComponent); overload; override;
     constructor Create(const AToken: string); overload;
     destructor Destroy; override;
@@ -1155,7 +1158,17 @@ begin
     .ExecuteAsBool;
 end;
 
-
+procedure TTelegramBot.AssignTo(Dest: TPersistent);
+begin
+  if not (Assigned(Dest) or (Dest is TTelegramBot)) then
+    Exit;
+  (Dest as TTelegramBot).Token := Self.Token;
+  (Dest as TTelegramBot).ProxySettings := Self.ProxySettings;
+  (Dest as TTelegramBot).FExceptionManager := Self.FExceptionManager;
+  (Dest as TTelegramBot).OnReceiveRawData := Self.OnReceiveRawData;
+  (Dest as TTelegramBot).OnSendData := Self.OnSendData;
+ // inherited AssignTo(Dest);
+end;
 
 {$ENDREGION}
 {$REGION 'Games'}

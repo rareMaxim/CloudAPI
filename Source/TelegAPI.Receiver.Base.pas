@@ -21,7 +21,6 @@ type
   TTgBotReceiverBase = class(TTgBotUpdateParser, ITgBotRecesiverBase)
   private
     FBotDonor: TTelegramBot;
-    FBotLocal: TTelegramBot;
     FAllowedUpdates: TAllowedUpdates;
     FMessageOffset: Int64;
     FPollingInterval: Integer;
@@ -34,7 +33,6 @@ type
     //События
     procedure DoOnStart; virtual; abstract;
     procedure DoOnStop; virtual; abstract;
-    function GetBot: ITelegramBot;
   public
     constructor Create(AOwner: TComponent); overload; override;
     constructor Create(ABot: ITelegramBot); overload;
@@ -63,7 +61,6 @@ begin
   MessageOffset := 0;
   AllowedUpdates := UPDATES_ALLOWED_ALL;
   PollingInterval := 1000;
-  FBotLocal := TTelegramBot.Create(nil);
 end;
 
 constructor TTgBotReceiverBase.Create(ABot: ITelegramBot);
@@ -74,19 +71,8 @@ end;
 
 destructor TTgBotReceiverBase.Destroy;
 begin
-  FBotLocal.Free;
-  FBotDonor := nil;
+ // FBotDonor.Free;
   inherited;
-end;
-
-function TTgBotReceiverBase.GetBot: ITelegramBot;
-begin
-  if FBotDonor <> nil then
-  begin
-    FBotLocal.Token := FBotDonor.Token;
-    FBotLocal.ExceptionManager := FBotDonor.ExceptionManager;
-    Result := FBotLocal;
-  end;
 end;
 
 procedure TTgBotReceiverBase.Go;
@@ -110,13 +96,20 @@ begin
 end;
 
 function TTgBotReceiverBase.ReadUpdates: TArray<ItgUpdate>;
+var
+  LBot: TTelegramBot;
 begin
+  LBot := TTelegramBot.Create(nil);
   try
-    if GetBot <> nil then
-      Result := GetBot.GetUpdates(MessageOffset, 100, 0, AllowedUpdates);
-  except
-    on E: Exception do
-      Bot.ExceptionManager.HaveGlobalExeption('TTgBotReceiverBase.ReadUpdates', E)
+    try
+      FBotDonor.AssignTo(LBot);
+      Result := LBot.GetUpdates(MessageOffset, 100, 0, AllowedUpdates);
+    except
+      on E: Exception do
+        Bot.ExceptionManager.HaveGlobalExeption('TTgBotReceiverBase.ReadUpdates', E)
+    end;
+  finally
+    LBot.Free;
   end;
 end;
 
