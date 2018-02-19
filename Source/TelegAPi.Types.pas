@@ -262,6 +262,7 @@ type
     function PinnedMessage: ITgMessage;
     function Invoice: ItgInvoice;
     function SuccessfulPayment: ItgSuccessfulPayment;
+    function ConnectedWebsite: string;
     function &Type: TtgMessageType;
     function IsCommand(const AValue: string): Boolean;
   end;

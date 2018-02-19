@@ -248,7 +248,8 @@ type
     function PinnedMessage: ITgMessage;
     function Invoice: ItgInvoice;
     function SuccessfulPayment: ItgSuccessfulPayment;
-    function &type: TtgMessageType;
+    function ConnectedWebsite: string;
+    function &Type: TtgMessageType;
     function IsCommand(const AValue: string): Boolean;
   end;
 
@@ -383,7 +384,7 @@ type
     function EditedChannelPost: ITgMessage;
     function ShippingQuery: ItgShippingQuery;
     function PreCheckoutQuery: ItgPreCheckoutQuery;
-    function &type: TtgUpdateType;
+    function &Type: TtgUpdateType;
   end;
 
   TtgWebhookInfo = class(TBaseJson, ItgWebhookInfo)
@@ -711,7 +712,7 @@ begin
   Result := ReadToSimpleType<string>('text');
 end;
 
-function TTgMessage.&type: TtgMessageType;
+function TTgMessage.&Type: TtgMessageType;
 begin
   if Audio <> nil then
     Exit(TtgMessageType.AudioMessage);
@@ -770,6 +771,11 @@ end;
 function TTgMessage.Chat: ItgChat;
 begin
   Result := ReadToClass<TtgChat>('chat');
+end;
+
+function TTgMessage.ConnectedWebsite: string;
+begin
+  Result := ReadToSimpleType<string>('connected_website');
 end;
 
 function TTgMessage.Contact: ItgContact;
@@ -875,7 +881,7 @@ begin
   Result := ReadToClass<TtgShippingQuery>('shipping_query');
 end;
 
-function TtgUpdate.&type: TtgUpdateType;
+function TtgUpdate.&Type: TtgUpdateType;
 begin
   if CallbackQuery <> nil then
     Result := TtgUpdateType.CallbackQueryUpdate
