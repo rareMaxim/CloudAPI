@@ -499,7 +499,7 @@ end;
 function TTelegramBot.GetExceptionManager: ItgExceptionHandler;
 begin
   if FExceptionManager = nil then
-    FExceptionManager := TtgExceptionManagerConsole.Create;
+    FExceptionManager := TtgExceptionManagerConsole.Create(nil);
   Result := FExceptionManager;
 end;
 

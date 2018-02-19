@@ -60,13 +60,19 @@ type
     procedure HaveGlobalExeption(const Method: string; AException: Exception);
   end;
 
-  TtgExceptionManagerConsole = class(TInterfacedObject, ItgExceptionHandler)
+  TtgExceptionManagerBase = class(TtgAbstractComponent, ItgExceptionHandler)
+  public
+    procedure HaveApiExeption(const Method: string; AException: EApiRequestException); virtual; abstract;
+    procedure HaveGlobalExeption(const Method: string; AException: Exception); virtual; abstract;
+  end;
+
+  TtgExceptionManagerConsole = class(TtgExceptionManagerBase)
   private
     FOnApiException: TProc<string, EApiRequestException>;
     FOnGlobalException: TProc<string, Exception>;
   public
-    procedure HaveApiExeption(const Method: string; AException: EApiRequestException);
-    procedure HaveGlobalExeption(const Method: string; AException: Exception);
+    procedure HaveApiExeption(const Method: string; AException: EApiRequestException); override;
+    procedure HaveGlobalExeption(const Method: string; AException: Exception); override;
     property OnApiException: TProc<string, EApiRequestException> read FOnApiException write FOnApiException;
     property OnGlobalException: TProc<string, Exception> read FOnGlobalException write FOnGlobalException;
   end;
@@ -75,13 +81,13 @@ type
 
   TtgOnReceiveGlobalError = procedure(ASender: TObject; const AMethod: string; AException: Exception) of object;
 
-  TtgExceptionManagerUI = class(TtgAbstractComponent, ItgExceptionHandler)
+  TtgExceptionManagerUI = class(TtgExceptionManagerBase)
   private
     FOnApiException: TtgOnReceiveApiError;
     FOnGlobalException: TtgOnReceiveGlobalError;
   public
-    procedure HaveApiExeption(const Method: string; AException: EApiRequestException);
-    procedure HaveGlobalExeption(const Method: string; AException: Exception);
+    procedure HaveApiExeption(const Method: string; AException: EApiRequestException); override;
+    procedure HaveGlobalExeption(const Method: string; AException: Exception); override;
   published
     property OnApiException: TtgOnReceiveApiError read FOnApiException write FOnApiException;
     property OnGlobalException: TtgOnReceiveGlobalError read FOnGlobalException write FOnGlobalException;
@@ -125,6 +131,7 @@ end;
 
 procedure TtgExceptionManagerConsole.HaveApiExeption(const Method: string; AException: EApiRequestException);
 begin
+  inherited;
   if Assigned(OnApiException) then
     OnApiException(Method, AException)
   else
@@ -134,6 +141,7 @@ end;
 
 procedure TtgExceptionManagerConsole.HaveGlobalExeption(const Method: string; AException: Exception);
 begin
+  inherited;
   if Assigned(OnGlobalException) then
     OnGlobalException(Method, AException)
   else
@@ -145,6 +153,7 @@ end;
 
 procedure TtgExceptionManagerUI.HaveApiExeption(const Method: string; AException: EApiRequestException);
 begin
+  inherited;
   if Assigned(OnGlobalException) then
     OnApiException(Self, Method, AException)
   else
@@ -154,6 +163,7 @@ end;
 
 procedure TtgExceptionManagerUI.HaveGlobalExeption(const Method: string; AException: Exception);
 begin
+  inherited;
   if Assigned(OnGlobalException) then
     OnGlobalException(Self, Method, AException)
   else
