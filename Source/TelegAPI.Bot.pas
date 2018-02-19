@@ -73,8 +73,8 @@ type
       const Limit: Int64 = 100; //
       const Timeout: Int64 = 0; //
       const AllowedUpdates: TAllowedUpdates = UPDATES_ALLOWED_ALL): TArray<ItgUpdate>; overload;
-      function GetUpdates( //
-        const JSON: string): TArray<ItgUpdate>; overload;
+    function GetUpdates( //
+      const JSON: string): TArray<ItgUpdate>; overload;
      /// <summary>
      /// Use this method to specify a url and receive incoming updates via an
      /// outgoing webhook. Whenever there is an update for the bot, we will
@@ -294,6 +294,7 @@ type
       const ChatId: TValue; //
       const Photo: TtgFileToSend; //
       const Caption: string = ''; //
+      const ParseMode: TtgParseMode = TtgParseMode.Default; //
       const DisableNotification: Boolean = False; //
       const ReplyToMessageId: Int64 = 0; //
       ReplyMarkup: IReplyMarkup = nil): ITgMessage;
@@ -347,6 +348,7 @@ type
       const ChatId: TValue; //
       const Audio: TtgFileToSend; //
       const Caption: string = ''; //
+      const ParseMode: TtgParseMode = TtgParseMode.Default; //
       const Duration: Int64 = 0; //
       const Performer: string = ''; //
       const DisableNotification: Boolean = False; //
@@ -393,6 +395,7 @@ type
       const ChatId: TValue; //
       const Document: TtgFileToSend; //
       const Caption: string = ''; //
+      const ParseMode: TtgParseMode = TtgParseMode.Default; //
       const DisableNotification: Boolean = False; //
       const ReplyToMessageId: Int64 = 0; //
       ReplyMarkup: IReplyMarkup = nil): ITgMessage;
@@ -446,6 +449,7 @@ type
       const ChatId: TValue; //
       const Video: TtgFileToSend; //
       const Caption: string = ''; //
+      const ParseMode: TtgParseMode = TtgParseMode.Default; //
       const Duration: Int64 = 0; //
       const Width: Int64 = 0; //
       const Height: Int64 = 0; //
@@ -496,6 +500,7 @@ type
       const ChatId: TValue; //
       const Voice: TtgFileToSend; //
       const Caption: string = ''; //
+      const ParseMode: TtgParseMode = TtgParseMode.Default; //
       const Duration: Int64 = 0; //
       const DisableNotification: Boolean = False; //
       const ReplyToMessageId: Int64 = 0; //
@@ -957,11 +962,13 @@ type
       const ChatId: TValue; //
       const MessageId: Int64; //
       const Caption: string; //
+      const ParseMode: TtgParseMode = TtgParseMode.Default; //
       ReplyMarkup: IReplyMarkup = nil): Boolean; overload;
      { TODO -oM.E.Sysoev -cGeneral : Create Documentatiom }
     function EditMessageCaption(//
       const InlineMessageId: string; //
       const Caption: string; //
+      const ParseMode: TtgParseMode = TtgParseMode.Default; //
       ReplyMarkup: IReplyMarkup = nil): Boolean; overload;
 
      /// <summary>

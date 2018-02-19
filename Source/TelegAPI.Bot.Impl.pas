@@ -57,7 +57,6 @@ type
     function GetExceptionManager: ItgExceptionHandler;
     procedure SetExceptionManager(const Value: ItgExceptionHandler);
   protected
-
   public
     procedure AssignTo(Dest: TPersistent); override;
     constructor Create(AOwner: TComponent); overload; override;
@@ -97,6 +96,7 @@ type
       const ChatId: TValue; //
       const Photo: TtgFileToSend; //
       const Caption: string = ''; //
+      const ParseMode: TtgParseMode = TtgParseMode.Default; //
       const DisableNotification: Boolean = False; //
       const ReplyToMessageId: Int64 = 0; //
       ReplyMarkup: IReplyMarkup = nil): ITgMessage;
@@ -104,6 +104,7 @@ type
       const ChatId: TValue; //
       const Audio: TtgFileToSend; //
       const Caption: string = ''; //
+      const ParseMode: TtgParseMode = TtgParseMode.Default; //
       const Duration: Int64 = 0; //
       const Performer: string = ''; //
       const DisableNotification: Boolean = False; //
@@ -113,6 +114,7 @@ type
       const ChatId: TValue; //
       const Document: TtgFileToSend; //
       const Caption: string = ''; //
+      const ParseMode: TtgParseMode = TtgParseMode.Default; //
       const DisableNotification: Boolean = False; //
       const ReplyToMessageId: Int64 = 0; //
       ReplyMarkup: IReplyMarkup = nil): ITgMessage;
@@ -120,6 +122,7 @@ type
       const ChatId: TValue; //
       const Video: TtgFileToSend; //
       const Caption: string = ''; //
+      const ParseMode: TtgParseMode = TtgParseMode.Default; //
       const Duration: Int64 = 0; //
       const Width: Int64 = 0; //
       const Height: Int64 = 0; //
@@ -130,6 +133,7 @@ type
       const ChatId: TValue; //
       const Voice: TtgFileToSend; //
       const Caption: string = ''; //
+      const ParseMode: TtgParseMode = TtgParseMode.Default; //
       const Duration: Int64 = 0; //
       const DisableNotification: Boolean = False; //
       const ReplyToMessageId: Int64 = 0; //
@@ -208,10 +212,12 @@ type
       const ChatId: TValue; //
       const MessageId: Int64; //
       const Caption: string; //
+      const ParseMode: TtgParseMode = TtgParseMode.Default; //
       ReplyMarkup: IReplyMarkup = nil): Boolean; overload;
     function EditMessageCaption( //
       const InlineMessageId: string; //
       const Caption: string; //
+      const ParseMode: TtgParseMode = TtgParseMode.Default; //
       ReplyMarkup: IReplyMarkup = nil): Boolean; overload;
     function editMessageLiveLocation( //
       const ChatId: TValue; //
@@ -602,12 +608,13 @@ begin
     .Execute);
 end;
 
-function TTelegramBot.SendPhoto(const ChatId: TValue; const Photo: TtgFileToSend; const Caption: string; const DisableNotification: Boolean; const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
+function TTelegramBot.SendPhoto(const ChatId: TValue; const Photo: TtgFileToSend; const Caption: string; const ParseMode: TtgParseMode; const DisableNotification: Boolean; const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
 begin
   Result := TTgMessage.Create(FRequest.SetMethod('sendPhoto') //
     .AddParameter('chat_id', ChatId, 0, True) //
     .AddParameter('photo', Photo, nil, True) //
     .AddParameter('caption', Caption, '', False) //
+    .AddParameter('parse_mode', ParseMode.ToString, '', False) //
     .AddParameter('disable_notification', DisableNotification, False, False) //
     .AddParameter('reply_to_message_id', ReplyToMessageId, 0, False) //
     .AddParameter('reply_markup', TInterfacedObject(ReplyMarkup), nil, False) //
@@ -642,7 +649,7 @@ begin
     .Execute);
 end;
 
-function TTelegramBot.SendVideo(const ChatId: TValue; const Video: TtgFileToSend; const Caption: string; const Duration, Width, Height: Int64; const DisableNotification: Boolean; const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
+function TTelegramBot.SendVideo(const ChatId: TValue; const Video: TtgFileToSend; const Caption: string; const ParseMode: TtgParseMode; const Duration, Width, Height: Int64; const DisableNotification: Boolean; const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
 begin
   Result := TTgMessage.Create(FRequest.SetMethod('sendVideo') //
     .AddParameter('chat_id', ChatId, 0, True) //
@@ -651,6 +658,7 @@ begin
     .AddParameter('width', Width, 0, False) //
     .AddParameter('height', Height, 0, False) //
     .AddParameter('caption', Caption, '', False) //
+    .AddParameter('parse_mode', ParseMode.ToString, '', False) //
     .AddParameter('disable_notification', DisableNotification, False, False) //
     .AddParameter('reply_to_message_id', ReplyToMessageId, 0, False) //
     .AddParameter('reply_markup', TInterfacedObject(ReplyMarkup), nil, False) //
@@ -670,20 +678,21 @@ begin
     .Execute);
 end;
 
-function TTelegramBot.SendVoice(const ChatId: TValue; const Voice: TtgFileToSend; const Caption: string; const Duration: Int64; const DisableNotification: Boolean; const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
+function TTelegramBot.SendVoice(const ChatId: TValue; const Voice: TtgFileToSend; const Caption: string; const ParseMode: TtgParseMode; const Duration: Int64; const DisableNotification: Boolean; const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
 begin
   Result := TTgMessage.Create(FRequest.SetMethod('sendVoice') //
     .AddParameter('chat_id', ChatId, 0, True) //
     .AddParameter('voice', Voice, nil, True) //
     .AddParameter('duration', Duration, 0, False) //
     .AddParameter('caption', Caption, '', False) //
+    .AddParameter('parse_mode', ParseMode.ToString, '', False) //
     .AddParameter('disable_notification', DisableNotification, False, False) //
     .AddParameter('reply_to_message_id', ReplyToMessageId, 0, False) //
     .AddParameter('reply_markup', TInterfacedObject(ReplyMarkup), nil, False) //
     .Execute);
 end;
 
-function TTelegramBot.SendAudio(const ChatId: TValue; const Audio: TtgFileToSend; const Caption: string; const Duration: Int64; const Performer: string; const DisableNotification: Boolean; const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
+function TTelegramBot.SendAudio(const ChatId: TValue; const Audio: TtgFileToSend; const Caption: string; const ParseMode: TtgParseMode; const Duration: Int64; const Performer: string; const DisableNotification: Boolean; const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
 begin
   Result := TTgMessage.Create(FRequest.SetMethod('sendAudio') //
     .AddParameter('chat_id', ChatId, 0, True) //
@@ -691,6 +700,7 @@ begin
     .AddParameter('duration', Duration, 0, False) //
     .AddParameter('performer', Performer, '', False) //
     .AddParameter('caption', Caption, '', False) //
+    .AddParameter('parse_mode', ParseMode.ToString, '', False) //
     .AddParameter('disable_notification', DisableNotification, False, False) //
     .AddParameter('reply_to_message_id', ReplyToMessageId, 0, False) //
     .AddParameter('reply_markup', TInterfacedObject(ReplyMarkup), nil, False) //
@@ -718,12 +728,13 @@ begin
     .Execute);
 end;
 
-function TTelegramBot.SendDocument(const ChatId: TValue; const Document: TtgFileToSend; const Caption: string; const DisableNotification: Boolean; const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
+function TTelegramBot.SendDocument(const ChatId: TValue; const Document: TtgFileToSend; const Caption: string; const ParseMode: TtgParseMode; const DisableNotification: Boolean; const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
 begin
   Result := TTgMessage.Create(FRequest.SetMethod('sendDocument') //
     .AddParameter('chat_id', ChatId, 0, True) //
     .AddParameter('document', Document, nil, True) //
     .AddParameter('caption', Caption, '', False) //
+    .AddParameter('parse_mode', ParseMode.ToString, '', False) //
     .AddParameter('disable_notification', DisableNotification, False, False) //
     .AddParameter('reply_to_message_id', ReplyToMessageId, 0, False) //
     .AddParameter('reply_markup', TInterfacedObject(ReplyMarkup), nil, False) //
@@ -854,21 +865,23 @@ begin
     .ExecuteAsBool;
 end;
 
-function TTelegramBot.EditMessageCaption(const ChatId: TValue; const MessageId: Int64; const Caption: string; ReplyMarkup: IReplyMarkup): Boolean;
+function TTelegramBot.EditMessageCaption(const ChatId: TValue; const MessageId: Int64; const Caption: string; const ParseMode: TtgParseMode;ReplyMarkup: IReplyMarkup): Boolean;
 begin
   Result := FRequest.SetMethod('editMessageText') //
     .AddParameter('chat_id', ChatId, 0, True) //
     .AddParameter('message_id', MessageId, 0, True) //
     .AddParameter('caption', Caption, '', True) //
+    .AddParameter('parse_mode', ParseMode.ToString, '', False) //
     .AddParameter('reply_markup', TInterfacedObject(ReplyMarkup), nil, False) //
     .ExecuteAsBool;
 end;
 
-function TTelegramBot.EditMessageCaption(const InlineMessageId, Caption: string; ReplyMarkup: IReplyMarkup): Boolean;
+function TTelegramBot.EditMessageCaption(const InlineMessageId, Caption: string;const ParseMode: TtgParseMode; ReplyMarkup: IReplyMarkup): Boolean;
 begin
   Result := FRequest.SetMethod('editMessageCaption') //
     .AddParameter('inline_message_id', InlineMessageId, 0, True) //
     .AddParameter('caption', Caption, '', True) //
+    .AddParameter('parse_mode', ParseMode.ToString, '', False) //
     .AddParameter('reply_markup', TInterfacedObject(ReplyMarkup), nil, False) //
     .ExecuteAsBool;
 end;
