@@ -12,13 +12,13 @@ uses
   TelegAPI.Types.Enums;
 
 type
-  ITgBotRecesiverBase = interface
+  ITgBotReceiverBase = interface
     ['{98A444BC-D8E3-4542-B75F-3A7AACFCAE74}']
     procedure Start;
     procedure Stop;
   end;
 
-  TTgBotReceiverBase = class(TTgBotUpdateParser, ITgBotRecesiverBase)
+  TTgBotReceiverBase = class(TTgBotUpdateParser, ITgBotReceiverBase)
   private
     FBotDonor: TTelegramBot;
     FAllowedUpdates: TAllowedUpdates;
