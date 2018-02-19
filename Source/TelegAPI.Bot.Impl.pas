@@ -123,6 +123,7 @@ type
       const Video: TtgFileToSend; //
       const Caption: string = ''; //
       const ParseMode: TtgParseMode = TtgParseMode.Default; //
+      const SupportsStreaming: Boolean = True;//
       const Duration: Int64 = 0; //
       const Width: Int64 = 0; //
       const Height: Int64 = 0; //
@@ -649,7 +650,7 @@ begin
     .Execute);
 end;
 
-function TTelegramBot.SendVideo(const ChatId: TValue; const Video: TtgFileToSend; const Caption: string; const ParseMode: TtgParseMode; const Duration, Width, Height: Int64; const DisableNotification: Boolean; const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
+function TTelegramBot.SendVideo(const ChatId: TValue; const Video: TtgFileToSend; const Caption: string; const ParseMode: TtgParseMode; const SupportsStreaming: Boolean; const Duration, Width, Height: Int64; const DisableNotification: Boolean; const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
 begin
   Result := TTgMessage.Create(FRequest.SetMethod('sendVideo') //
     .AddParameter('chat_id', ChatId, 0, True) //
@@ -659,6 +660,7 @@ begin
     .AddParameter('height', Height, 0, False) //
     .AddParameter('caption', Caption, '', False) //
     .AddParameter('parse_mode', ParseMode.ToString, '', False) //
+    .AddParameter('supports_streaming', SupportsStreaming, False, False) //
     .AddParameter('disable_notification', DisableNotification, False, False) //
     .AddParameter('reply_to_message_id', ReplyToMessageId, 0, False) //
     .AddParameter('reply_markup', TInterfacedObject(ReplyMarkup), nil, False) //
@@ -865,7 +867,7 @@ begin
     .ExecuteAsBool;
 end;
 
-function TTelegramBot.EditMessageCaption(const ChatId: TValue; const MessageId: Int64; const Caption: string; const ParseMode: TtgParseMode;ReplyMarkup: IReplyMarkup): Boolean;
+function TTelegramBot.EditMessageCaption(const ChatId: TValue; const MessageId: Int64; const Caption: string; const ParseMode: TtgParseMode; ReplyMarkup: IReplyMarkup): Boolean;
 begin
   Result := FRequest.SetMethod('editMessageText') //
     .AddParameter('chat_id', ChatId, 0, True) //
@@ -876,7 +878,7 @@ begin
     .ExecuteAsBool;
 end;
 
-function TTelegramBot.EditMessageCaption(const InlineMessageId, Caption: string;const ParseMode: TtgParseMode; ReplyMarkup: IReplyMarkup): Boolean;
+function TTelegramBot.EditMessageCaption(const InlineMessageId, Caption: string; const ParseMode: TtgParseMode; ReplyMarkup: IReplyMarkup): Boolean;
 begin
   Result := FRequest.SetMethod('editMessageCaption') //
     .AddParameter('inline_message_id', InlineMessageId, 0, True) //

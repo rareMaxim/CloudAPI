@@ -450,13 +450,13 @@ type
       const Video: TtgFileToSend; //
       const Caption: string = ''; //
       const ParseMode: TtgParseMode = TtgParseMode.Default; //
+      const SupportsStreaming: Boolean = True; //
       const Duration: Int64 = 0; //
       const Width: Int64 = 0; //
       const Height: Int64 = 0; //
       const DisableNotification: Boolean = False; //
       const ReplyToMessageId: Int64 = 0; //
       ReplyMarkup: IReplyMarkup = nil): ITgMessage;
-
      /// <summary>
      /// Use this method to send audio files, if you want Telegram clients to
      /// display the file as a playable voice message. For this to work, your
@@ -554,7 +554,6 @@ type
       const DisableNotification: Boolean = False; //
       const ReplyToMessageId: Int64 = 0; //
       ReplyMarkup: IReplyMarkup = nil): ITgMessage;
-
      /// <summary>
      /// Use this method to send point on the map.
      /// </summary>

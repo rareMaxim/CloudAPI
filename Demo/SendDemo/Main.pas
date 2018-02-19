@@ -125,6 +125,7 @@ begin
     edtChatID.Text, //
     TtgFileToSend.FromFile(edtSendPhotoFile.Text), //
     edtSendPhotoCaption.Text, //
+    TtgParseMode.default,//
     chkSendPhotoNotification.Checked, //
     seSendMsgReplyToMsgID.Value//
   );

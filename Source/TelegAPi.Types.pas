@@ -400,7 +400,8 @@ type
     Width: Integer;
     Height: Integer;
     Duration: Integer;
-    constructor Create(AMedia: TValue; const ACaption: string = ''; AWidth: Integer = 0; AHeight: Integer = 0; ADuration: Integer = 0); reintroduce;
+    supports_streaming: Boolean;
+    constructor Create(AMedia: TValue; const ACaption: string = ''; AWidth: Integer = 0; AHeight: Integer = 0; ADuration: Integer = 0; supports_streaming: Boolean = True); reintroduce;
   end;
 {$SCOPEDENUMS ON}
 
@@ -442,13 +443,14 @@ end;
 
 { TtgInputMediaVideo }
 
-constructor TtgInputMediaVideo.Create(AMedia: TValue; const ACaption: string; AWidth, AHeight, ADuration: Integer);
+constructor TtgInputMediaVideo.Create(AMedia: TValue; const ACaption: string; AWidth, AHeight, ADuration: Integer; supports_streaming: Boolean);
 begin
   inherited Create(AMedia, ACaption);
   FType := 'video';
   Width := AWidth;
   Height := AHeight;
   Duration := ADuration;
+  Self.supports_streaming := supports_streaming;
 end;
 
 { TtgFileToSend }
