@@ -12,7 +12,6 @@ type
   private
   protected
     FJSON: TJSONObject;
-    FJSONAsString: string;
     function ReadToClass<T: class, constructor>(const AKey: string): T;
     function ReadToSimpleType<T>(const AKey: string): T;
     function ReadToDateTime(const AKey: string): TDateTime;
@@ -20,7 +19,6 @@ type
   public
     class function FromJson(const AJson: string): TBaseJson;
     class function GetTgClass: TBaseJsonClass; virtual;// abstract;
-
     class procedure UnSupported;
     constructor Create(const AJson: string); virtual;
     destructor Destroy; override;
@@ -62,7 +60,6 @@ begin
   if AJson.IsEmpty then
     Exit;
   FJSON := TJSONObject.ParseJSONValue(AJson) as TJSONObject;
-  FJSONAsString := FJSON.ToString;
 end;
 
 function TBaseJson.ReadToArray<TI>(TgClass: TBaseJsonClass; const AKey: string): TArray<TI>;
