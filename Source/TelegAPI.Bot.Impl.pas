@@ -602,13 +602,13 @@ end;
 function TTelegramBot.sendMediaGroup(const ChatId: TValue; const AMedia: TArray<TtgInputMedia>; const ADisableNotification: Boolean; const ReplyToMessageId: Int64): TArray<ITgMessage>;
 begin
   TBaseJson.UnSupported;
- { Result := GetArrayFromMethod<ITgMessage>(TTgMessage, FRequest.SetMethod('sendMediaGroup') //
-     .AddParameter('chat_id', ChatId, 0, True) //
-         .AddParameter('media', TJsonUtils.ArrayToJString<TtgInputMedia>(AMedia), '[]', True) //
-             .AddParameter('disable_notification', ADisableNotification, False, False) //
-                 .AddParameter('reply_to_message_id', ReplyToMessageId, 0, False) //
-                     .Execute);
- }
+  Result := GetArrayFromMethod<ITgMessage>(TTgMessage, FRequest.SetMethod('sendMediaGroup') //
+    .AddParameter('chat_id', ChatId, 0, True) //
+    .AddParameter('media', TValue.From<TArray<TtgInputMedia>>(AMedia), TValue.From<TArray<TtgInputMedia>>([]), True) //
+    .AddParameter('disable_notification', ADisableNotification, False, False) //
+    .AddParameter('reply_to_message_id', ReplyToMessageId, 0, False) //
+    .Execute);
+
 end;
 
 function TTelegramBot.SendPhoto(const ChatId: TValue; const Photo: TtgFileToSend; const Caption: string; const ParseMode: TtgParseMode; const DisableNotification: Boolean; const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;

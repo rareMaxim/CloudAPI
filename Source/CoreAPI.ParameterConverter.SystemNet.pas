@@ -32,6 +32,7 @@ type
     procedure AddInt64(var AFormData: TMultipartFormData; AParam: TtgApiParameter);
     procedure AddBoolean(var AFormData: TMultipartFormData; AParam: TtgApiParameter);
     procedure AddClass_TtgFileToSend(var AFormData: TMultipartFormData; AParam: TtgApiParameter);
+    procedure AddClass_TArrayTtgInputMedia(var AFormData: TMultipartFormData; AParam: TtgApiParameter);
   public
     ParamLoaders: TDictionary<PTypeInfo, TtgParamConverter.TLoader>;
     constructor Create;
@@ -77,7 +78,7 @@ var
   LTmpFilename: string;
 begin
   // get filename for tmp folder e.g. ..\AppData\local\temp\4F353A8AC6AB446D9F592A30B157291B
-  LTmpDir := IncludeTrailingPathDelimiter(TPath.GetTempPath) + TPath.GetGUIDFileName(false);
+  LTmpDir := IncludeTrailingPathDelimiter(TPath.GetTempPath) + TPath.GetGUIDFileName(False);
   LTmpFilename := IncludeTrailingPathDelimiter(LTmpDir) + ExtractFileName(AFileName);
   try
     TDirectory.CreateDirectory(LTmpDir);
@@ -109,7 +110,7 @@ end;
 
 procedure TtgParamConverter.AddTDateTime(var AFormData: TMultipartFormData; AParam: TtgApiParameter);
 begin
-  AFormData.AddField(AParam.Key, DateTimeToUnix(AParam.Value.AsType<TDateTime>, false).ToString);
+  AFormData.AddField(AParam.Key, DateTimeToUnix(AParam.Value.AsType<TDateTime>, False).ToString);
 end;
 
 function TtgParamConverter.ApplyParamToFormData(const AParam: TtgApiParameter; var Form: TMultipartFormData): Boolean;
@@ -132,6 +133,8 @@ begin
   ParamLoaders.Add(PTypeInfo(TypeInfo(TDateTime)), AddTDateTime);
   // class types
   ParamLoaders.Add(PTypeInfo(TypeInfo(TtgFileToSend)), AddClass_TtgFileToSend);
+  // array
+  ParamLoaders.Add(PTypeInfo(TypeInfo(TArray<TtgInputMedia>)), AddClass_TArrayTtgInputMedia);
 end;
 
 destructor TtgParamConverter.Destroy;
@@ -153,6 +156,21 @@ end;
 procedure TtgParamConverter.AddBoolean(var AFormData: TMultipartFormData; AParam: TtgApiParameter);
 begin
   AFormData.AddField(AParam.Key, AParam.Value.AsBoolean.ToString(TUseBoolStrs.True));
+end;
+
+procedure TtgParamConverter.AddClass_TArrayTtgInputMedia(var AFormData: TMultipartFormData; AParam: TtgApiParameter);
+var
+  LInputMedias: TArray<TtgInputMedia>;
+  LInputMedia: TtgInputMedia;
+  I: Integer;
+begin
+  SetLength(LInputMedias, Length(AParam.Value.AsType<TArray<TtgInputMedia>>));
+  AParam.Value.ExtractRawData(@LInputMedias);
+
+  for LInputMedia in LInputMedias do
+  begin
+//  LInputMedia.
+  end;
 end;
 
 procedure TtgParamConverter.AddClass_TtgFileToSend(var AFormData: TMultipartFormData; AParam: TtgApiParameter);
