@@ -94,7 +94,12 @@ begin
   LObj := FJSON.GetValue(AKey);
   if Assigned(LObj) and (not LObj.Null) then
   begin
+{$IFDEF USE_INDY}
+    // Директива не совсем подходит. Это в случае если используется старая версия ИДЕ
+    LValue := LObj.ToString;
+{$ELSE}
     LValue := LObj.ToJSON;
+{$ENDIF}
     Result := TBaseJsonClass(T).Create(LValue) as T;
   end
 end;
