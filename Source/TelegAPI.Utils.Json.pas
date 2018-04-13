@@ -94,7 +94,7 @@ begin
   LObj := FJSON.GetValue(AKey);
   if Assigned(LObj) and (not LObj.Null) then
   begin
-    LValue := LObj.ToString;
+    LValue := LObj.ToJSON;
     Result := TBaseJsonClass(T).Create(LValue) as T;
   end
 end;
