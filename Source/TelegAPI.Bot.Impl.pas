@@ -434,19 +434,27 @@ begin
   FRequest.DataExtractor :=
     function(AInput: string): string
     var
-      FJSON: TJSONObject;
+      LJSON: TJSONObject;
+      LException: EApiRequestException;
     begin
       Result := '';
       if AInput.IsEmpty or AInput.StartsWith('<html') then
         Exit;
-      FJSON := TJSONObject.ParseJSONValue(AInput) as TJSONObject;
+      LJSON := TJSONObject.ParseJSONValue(AInput) as TJSONObject;
       try
-        if FJSON.GetValue('ok') is TJSONFalse then
-          ExceptionManager.HaveApiExeption('TTelegramBot.ApiTest', EApiRequestException.Create(AInput, 0))
+        if LJSON.GetValue('ok') is TJSONFalse then
+        begin
+          LException := EApiRequestException.Create(AInput, 0);
+          try
+            ExceptionManager.HaveApiExeption('TTelegramBot.ApiTest', LException)
+          finally
+            LException.Free;
+          end;
+        end
         else
-          Result := FJSON.GetValue('result').ToString;
+          Result := LJSON.GetValue('result').ToString;
       finally
-        FJSON.Free;
+        LJSON.Free;
       end;
     end;
 end;
@@ -475,13 +483,21 @@ var
   LJsonArr: TJSONArray;
   I: Integer;
   GUID: TGUID;
+  LException: Exception;
 begin
   // stage 1: type checking
   // cache value fot further use
   GUID := GetTypeData(TypeInfo(TI))^.GUID;
   // check for TI interface support
   if TgClass.GetInterfaceEntry(GUID) = nil then
-    raise Exception.Create('GetArrayFromMethod: unsupported interface for ' + TgClass.ClassName);
+  begin
+    LException := Exception.Create('GetArrayFromMethod: unsupported interface for ' + TgClass.ClassName);
+    try
+      ExceptionManager.HaveGlobalExeption('GetArrayFromMethod', LException);
+    finally
+      LException.Free;
+    end;
+  end;
   // stage 2: proceed data
   LJsonArr := GetJSONArrayFromMethod(AValue);
   if (not Assigned(LJsonArr)) or LJsonArr.Null then
@@ -555,8 +571,6 @@ function TTelegramBot.DeleteWebhook: Boolean;
 begin
   Result := FRequest.SetMethod('deleteWebhook').ExecuteAsBool;
 end;
-
-
 
 {$ENDREGION}
 {$REGION 'Basic methods'}
