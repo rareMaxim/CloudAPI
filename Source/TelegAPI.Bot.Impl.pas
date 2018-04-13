@@ -436,6 +436,8 @@ begin
     var
       LJSON: TJSONObject;
       LException: EApiRequestException;
+      LExcCode: Integer;
+      LExcDesc: string;
     begin
       Result := '';
       if AInput.IsEmpty or AInput.StartsWith('<html') then
@@ -444,7 +446,9 @@ begin
       try
         if LJSON.GetValue('ok') is TJSONFalse then
         begin
-          LException := EApiRequestException.Create(AInput, 0);
+          LExcCode := (LJSON.GetValue('error_code') as TJSONNumber).AsInt;
+          LExcDesc := (LJSON.GetValue('description') as TJSONString).Value;
+          LException := EApiRequestException.Create(LExcDesc, LExcCode);
           try
             ExceptionManager.HaveApiExeption('TTelegramBot.ApiTest', LException)
           finally
