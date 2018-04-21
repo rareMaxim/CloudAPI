@@ -26,7 +26,7 @@ type
     FPollingInterval: Integer;
     FThread: TThread;
     FIsActive: Boolean;
-    procedure SetIsActive(const Value: Boolean);
+    procedure SetIsActive(const AValue: Boolean);
   protected
     function ReadUpdates: TArray<ItgUpdate>; virtual;
     procedure Go; virtual;
@@ -110,22 +110,19 @@ begin
   end;
 end;
 
-procedure TTgBotReceiverBase.SetIsActive(const Value: Boolean);
+procedure TTgBotReceiverBase.SetIsActive(const AValue: Boolean);
 begin
-  if FIsActive = Value then
+  if FIsActive = AValue then
     Exit;
-  FIsActive := Value;
-  if FIsActive then
+  if AValue then
   begin
     FThread := TThread.CreateAnonymousThread(Go);
     FThread.FreeOnTerminate := False;
     FThread.Start;
   end
   else
-  begin
-    FIsActive := False;
     FreeAndNil(FThread);
-  end;
+  FIsActive := AValue;
 end;
 
 procedure TTgBotReceiverBase.Start;
