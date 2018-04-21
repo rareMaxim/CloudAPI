@@ -95,7 +95,7 @@ begin
   if Parameters.Count > 0 then
   begin
     Result := DoPost;
-    ClearParameter;
+    ClearParameters;
   end
   else
     Result := DoGet;

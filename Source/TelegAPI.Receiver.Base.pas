@@ -106,7 +106,7 @@ begin
     Result := LBot.GetUpdates(MessageOffset, 100, 0, AllowedUpdates);
   except
     on E: Exception do
-      Bot.ExceptionManager.HaveGlobalExeption('TTgBotReceiverBase.ReadUpdates', E)
+      Bot.ExceptionManager.HaveGlobalException('TTgBotReceiverBase.ReadUpdates', E)
   end;
 end;
 

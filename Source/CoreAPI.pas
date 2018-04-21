@@ -25,7 +25,7 @@ type
     function SetToken(const AToken: string): ItgRequestAPI;
     function SetMethod(const AMethod: string): ItgRequestAPI;
     function AddParameter(const AKey: string; AValue, ADefaultValue: TValue; ARequired: Boolean = False): ItgRequestAPI;
-    function ClearParameter: ItgRequestAPI;
+    function ClearParameters: ItgRequestAPI;
     function Execute: string;
     function ExecuteAsBool: Boolean;
     function ExecuteAndReadValue: string;

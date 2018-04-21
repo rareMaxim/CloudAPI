@@ -417,7 +417,7 @@ begin
   FRequest.OnError :=
     procedure(E: Exception)
     begin
-      ExceptionManager.HaveGlobalExeption('RequestAPI', E)
+      ExceptionManager.HaveGlobalException('RequestAPI', E)
     end;
   FRequest.OnReceive :=
     procedure(AData: string)
@@ -450,7 +450,7 @@ begin
           LExcDesc := (LJSON.GetValue('description') as TJSONString).Value;
           LException := EApiRequestException.Create(LExcDesc, LExcCode);
           try
-            ExceptionManager.HaveApiExeption('TTelegramBot.ApiTest', LException)
+            ExceptionManager.HaveApiException('TTelegramBot.ApiTest', LException)
           finally
             LException.Free;
           end;
@@ -497,7 +497,7 @@ begin
   begin
     LException := Exception.Create('GetArrayFromMethod: unsupported interface for ' + TgClass.ClassName);
     try
-      ExceptionManager.HaveGlobalExeption('GetArrayFromMethod', LException);
+      ExceptionManager.HaveGlobalException('GetArrayFromMethod', LException);
     finally
       LException.Free;
     end;
