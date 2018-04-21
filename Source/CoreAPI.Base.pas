@@ -44,7 +44,7 @@ type
     function SetToken(const AToken: string): ItgRequestAPI;
     function SetMethod(const AMethod: string): ItgRequestAPI;
     function AddParameter(const AKey: string; AValue, ADefaultValue: TValue; ARequired: Boolean = False): ItgRequestAPI;
-    function ClearParameter: ItgRequestAPI;
+    function ClearParameters: ItgRequestAPI;
     function Execute: string; virtual; abstract;
     function ExecuteAsBool: Boolean;
     function ExecuteAndReadValue: string;
@@ -73,7 +73,7 @@ begin
   Result := Self;
 end;
 
-function TtgCoreApiBase.ClearParameter: ItgRequestAPI;
+function TtgCoreApiBase.ClearParameters: ItgRequestAPI;
 begin
   FParameters.Clear;
   Result := Self;
