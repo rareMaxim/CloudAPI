@@ -9,7 +9,8 @@ uses
   TelegAPI.Types.InlineQueryResults,
   TelegAPI.Types.ReplyMarkups,
   TelegAPI.Types.Impl,
-  TelegAPI.Exceptions;
+  TelegAPI.Exceptions,
+  CrossUrl.HttpClient;
 
 type
   ITelegramBot = interface
@@ -19,6 +20,8 @@ type
     procedure SetToken(const Value: string);
     function GetExceptionManager: ItgExceptionHandler;
     procedure SetExceptionManager(const Value: ItgExceptionHandler);
+    function GetHttpCore: IcuHttpClient;
+    procedure SetHttpCore(const Value: IcuHttpClient);
     // public
 {$REGION 'Getting updates'}
      /// <summary>
@@ -72,7 +75,8 @@ type
       const Offset: Int64 = 0; //
       const Limit: Int64 = 100; //
       const Timeout: Int64 = 0; //
-      const AllowedUpdates: TAllowedUpdates = UPDATES_ALLOWED_ALL): TArray<ItgUpdate>; overload;
+      const AllowedUpdates: TAllowedUpdates = UPDATES_ALLOWED_ALL): TArray<
+      ItgUpdate>; overload;
     function GetUpdates( //
       const JSON: string): TArray<ItgUpdate>; overload;
      /// <summary>
@@ -1558,7 +1562,8 @@ type
      /// <returns>
      /// Returns True on success.
      /// </returns>
-    function SetChatDescription(const ChatId: TValue; const Description: string): Boolean;
+    function SetChatDescription(const ChatId: TValue; const Description: string):
+      Boolean;
      /// <summary>
      /// Use this method to set a new profile photo for the chat. Photos can't
      /// be changed for private chats.
@@ -1781,7 +1786,8 @@ type
      /// Returns the uploaded <see cref="TelegAPi.Types|TtgFile">File</see> on
      /// success.
      /// </returns>
-    function uploadStickerFile(const UserId: Int64; const PngSticker: TtgFileToSend): ItgFile;
+    function uploadStickerFile(const UserId: Int64; const PngSticker:
+      TtgFileToSend): ItgFile;
      /// <summary>
      /// Use this method to create new sticker set owned by a user. The bot
      /// will be able to edit the created sticker set.
@@ -1852,7 +1858,8 @@ type
      /// <returns>
      /// Returns True on success.
      /// </returns>
-    function setStickerPositionInSet(const Sticker: string; const Position: Int64): Boolean;
+    function setStickerPositionInSet(const Sticker: string; const Position:
+      Int64): Boolean;
      /// <summary>
      /// Use this method to delete a sticker from a set created by the bot.
      /// </summary>
@@ -1875,7 +1882,8 @@ type
      /// CanSetStickerSet</see> optionally returned in <see cref="TelegAPI.Bot|TTelegramBot.GetChat(TValue)">
      /// getChat</see> requests to check if the bot can use this method.
      /// </remarks>
-    function setChatStickerSet(const ChatId: TValue; const StickerSetName: string): Boolean;
+    function setChatStickerSet(const ChatId: TValue; const StickerSetName:
+      string): Boolean;
      /// <summary>
      /// Use this method to delete a group sticker set from a supergroup.
      /// </summary>
@@ -1896,7 +1904,9 @@ type
       const ReplyToMessageId: Int64 = 0): TArray<ITgMessage>;
 {$ENDREGION}
     property Token: string read GetToken write SetToken;
-    property ExceptionManager: ItgExceptionHandler read GetExceptionManager write SetExceptionManager;
+    property ExceptionManager: ItgExceptionHandler read GetExceptionManager
+      write SetExceptionManager;
+    property HttpCore: IcuHttpClient read GetHttpCore write SetHttpCore;
   end;
 
 implementation

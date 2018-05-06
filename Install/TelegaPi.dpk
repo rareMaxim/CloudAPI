@@ -53,7 +53,6 @@ contains
   TelegAPI.Receiver.UI in '..\Source\TelegAPI.Receiver.UI.pas',
   TelegaPi.Ext.Sessions in '..\Source\TelegaPi.Ext.Sessions.pas',
   CoreAPI.Parameter in '..\Source\CoreAPI.Parameter.pas',
-  CoreAPI.Base in '..\Source\CoreAPI.Base.pas',
   CoreAPI in '..\Source\CoreAPI.pas',
   TelegAPI.UpdateParser in '..\Source\TelegAPI.UpdateParser.pas';
 

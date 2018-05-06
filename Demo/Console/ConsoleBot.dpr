@@ -4,13 +4,14 @@ program ConsoleBot;
 {$R *.res}
 
 uses
+  CrossUrl.SystemNet.HttpClient,
   TelegAPI.Bot,
   Rest.Json,
   TelegAPI.Receiver.Console,
   System.SysUtils,
   TelegAPI.Types,
   TelegAPI.Bot.Impl,
-  TelegaPi.Exceptions;
+  TelegAPI.Exceptions;
 
 procedure Main;
 var
@@ -19,7 +20,8 @@ var
   LExcp: TtgExceptionManagerConsole;
   LStop: string;
 begin
-  LBot := TTelegramBot.Create('YOUR_TOKEN');
+  LBot := TTelegramBot.Create('283107814:AAGOGxUCwTC2bOs2krUSuEtqZd2UnA8NZ2g');
+  LBot.HttpCore := TcuHttpClientSysNet.Create;
   LReceiver := TtgReceiverConsole.Create(LBot);
   try
     LExcp := LBot.ExceptionManager as TtgExceptionManagerConsole;
