@@ -53,6 +53,7 @@ type
     procedure AssignTo(Dest: TPersistent); override;
     constructor Create(AOwner: TComponent); overload; override;
     constructor Create(const AToken: string); overload;
+    constructor Create(const AToken: string; ACore: IcuHttpClient); overload;
     destructor Destroy; override;
 {$REGION 'Getting updates'}
     function GetUpdates( //
@@ -1360,6 +1361,12 @@ begin
 end;
 
 {$ENDREGION}
+
+constructor TTelegramBot.Create(const AToken: string; ACore: IcuHttpClient);
+begin
+  Self.Create(AToken);
+  HttpCore := ACore;
+end;
 
 end.
 

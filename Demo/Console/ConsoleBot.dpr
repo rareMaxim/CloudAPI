@@ -3,12 +3,20 @@ program ConsoleBot;
 {$APPTYPE CONSOLE}
 {$R *.res}
 
+{/$DEFINE  USE_INDY_CORE}
 uses
+{$IFDEF  USE_INDY_CORE}
+//Indy Http Core
+  CrossUrl.Indy.HttpClient,
+{$ELSE}
+// System.Net HTTP Core
   CrossUrl.SystemNet.HttpClient,
-  TelegAPI.Bot,
+{$ENDIF}
+
   Rest.Json,
-  TelegAPI.Receiver.Console,
   System.SysUtils,
+  TelegAPI.Receiver.Console,
+  TelegAPI.Bot,
   TelegAPI.Types,
   TelegAPI.Bot.Impl,
   TelegAPI.Exceptions;
@@ -20,8 +28,12 @@ var
   LExcp: TtgExceptionManagerConsole;
   LStop: string;
 begin
-  LBot := TTelegramBot.Create('283107814:AAGOGxUCwTC2bOs2krUSuEtqZd2UnA8NZ2g');
-  LBot.HttpCore := TcuHttpClientSysNet.Create;
+  LBot := TTelegramBot.Create('YOUR_TOKEN',
+                              {$IFDEF  USE_INDY_CORE}
+                              TcuHttpClientIndy.Create
+                              {$ELSE}
+                              TcuHttpClientSysNet.Create
+                              {$ENDIF});
   LReceiver := TtgReceiverConsole.Create(LBot);
   try
     LExcp := LBot.ExceptionManager as TtgExceptionManagerConsole;
