@@ -5,16 +5,16 @@
 interface
 
 uses
+  CoreAPI,
+  CoreAPI.Parameter,
+  CrossUrl.HttpClient,
   System.Rtti,
   System.Classes,
   System.TypInfo,
   System.SysUtils,
   System.JSON,
   System.Generics.Collections,
-  CrossUrl.HttpClient,
   TelegAPI.Base,
-  CoreAPI,
-  CoreAPI.Parameter,
   TelegAPI.Bot,
   TelegAPI.Types,
   TelegAPI.Types.Impl,

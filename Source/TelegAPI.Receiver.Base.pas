@@ -45,7 +45,8 @@ type
     property Bot: TTelegramBot read FBotDonor write FBotDonor;
     [Default(0)]
     property MessageOffset: Int64 read FMessageOffset write FMessageOffset;
-    property AllowedUpdates: TAllowedUpdates read FAllowedUpdates write FAllowedUpdates default UPDATES_ALLOWED_ALL;
+    property AllowedUpdates: TAllowedUpdates read FAllowedUpdates write
+      FAllowedUpdates default UPDATES_ALLOWED_ALL;
     [Default(1000)]
     property PollingInterval: Integer read FPollingInterval write FPollingInterval;
   end;
@@ -114,6 +115,7 @@ procedure TTgBotReceiverBase.SetIsActive(const AValue: Boolean);
 begin
   if FIsActive = AValue then
     Exit;
+  FIsActive := AValue;
   if AValue then
   begin
     FThread := TThread.CreateAnonymousThread(Go);
@@ -122,7 +124,6 @@ begin
   end
   else
     FreeAndNil(FThread);
-  FIsActive := AValue;
 end;
 
 procedure TTgBotReceiverBase.Start;

@@ -30,9 +30,9 @@ var
 begin
   LBot := TTelegramBot.Create('YOUR_TOKEN',
                               {$IFDEF  USE_INDY_CORE}
-                              TcuHttpClientIndy.Create
+                                TcuHttpClientIndy.Create(nil)
                               {$ELSE}
-                              TcuHttpClientSysNet.Create
+                                TcuHttpClientSysNet.Create(nil)
                               {$ENDIF});
   LReceiver := TtgReceiverConsole.Create(LBot);
   try

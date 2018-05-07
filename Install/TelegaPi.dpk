@@ -31,7 +31,8 @@ package TelegaPi;
 
 requires
   rtl,
-  RESTComponents;
+  RESTComponents,
+  CrossUrl;
 
 contains
   TelegAPI.Base in '..\Source\TelegAPI.Base.pas',

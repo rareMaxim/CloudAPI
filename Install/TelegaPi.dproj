@@ -53,11 +53,12 @@ $(PreBuildEvent)]]></PreBuildEvent>
         <SanitizedProjectName>TelegaPi</SanitizedProjectName>
         <VerInfo_Keys>CompanyName=Maxim Sysoev;FileDescription=$(MSBuildProjectName);FileVersion=3.5.1.10;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <VerInfo_Locale>1058</VerInfo_Locale>
+        <DCC_UnitSearchPath>../source/CrossUrl/Core;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
         <BT_BuildType>Debug</BT_BuildType>
         <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
-        <DCC_UsePackage>rtl;fmx;RESTComponents;IndySystem;IndyProtocols;IndyCore;$(DCC_UsePackage)</DCC_UsePackage>
+        <DCC_UsePackage>rtl;fmx;RESTComponents;IndySystem;IndyProtocols;IndyCore;CrossUrl.SystemNet;$(DCC_UsePackage)</DCC_UsePackage>
         <VerInfo_AutoIncVersion>true</VerInfo_AutoIncVersion>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Keys>CompanyName=Maxim Sysoev;FileDescription=$(MSBuildProjectName);FileVersion=3.5.1.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
@@ -98,6 +99,7 @@ $(PreBuildEvent)]]></PreBuildEvent>
         <DCCReference Include="TTelegramBot.dcr"/>
         <DCCReference Include="rtl.dcp"/>
         <DCCReference Include="RESTComponents.dcp"/>
+        <DCCReference Include="CrossUrl.dcp"/>
         <DCCReference Include="..\Source\TelegAPI.Base.pas"/>
         <DCCReference Include="..\Source\TelegAPI.Bot.Impl.pas"/>
         <DCCReference Include="..\Source\TelegAPI.Bot.pas"/>
@@ -139,7 +141,10 @@ $(PreBuildEvent)]]></PreBuildEvent>
                 <Source>
                     <Source Name="MainSource">TelegaPi.dpk</Source>
                 </Source>
-                <Excluded_Packages/>
+                <Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k250.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp250.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">
                 <DeployFile LocalName="$(BDS)\Redist\iossimulator\libPCRE.dylib" Class="DependencyModule">
