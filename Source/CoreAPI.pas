@@ -317,7 +317,6 @@ var
   PostData: IcuMultipartFormData;
 begin
   PostData := FHttp.CreateMultipartFormData;
-
   try
     FillFormData(PostData);
     Result := FHttp.Post(Url, PostData).ContentAsString;

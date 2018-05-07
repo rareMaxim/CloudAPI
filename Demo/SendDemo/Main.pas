@@ -3,26 +3,27 @@ unit Main;
 interface
 
 uses
-  Winapi.Windows,
-  Winapi.Messages,
+  System.Classes,
   System.SysUtils,
   System.Variants,
-  System.Classes,
-  Vcl.Graphics,
-  Vcl.Controls,
-  Vcl.Forms,
-  Vcl.Dialogs,
+  TelegaPi.Base,
+  TelegaPi.Bot.Impl,
   TelegaPi.Exceptions,
-  TelegAPI.Receiver.Base,
-  TelegAPI.Receiver.Service,
-  TelegAPI.Receiver.UI,
-  TelegAPI.Base,
-  TelegAPI.Bot.Impl,
-  Vcl.StdCtrls,
-  Vcl.ExtCtrls,
+  TelegaPi.Receiver.Base,
+  TelegaPi.Receiver.Service,
+  TelegaPi.Receiver.UI,
+  TelegaPi.Types,
+  TelegaPi.UpdateParser,
   Vcl.ComCtrls,
-  TelegAPi.Types,
-  Vcl.Samples.Spin, TelegAPI.UpdateParser;
+  Vcl.Controls,
+  Vcl.Dialogs,
+  Vcl.ExtCtrls,
+  Vcl.Forms,
+  Vcl.Graphics,
+  Vcl.Samples.Spin,
+  Vcl.StdCtrls,
+  Winapi.Messages,
+  Winapi.Windows;
 
 type
   TForm3 = class(TForm)
@@ -64,11 +65,15 @@ type
     procedure btn1Click(Sender: TObject);
     procedure btnSendMsgTextClick(Sender: TObject);
     procedure tgReceiverUI1Message(ASender: TObject; AMessage: ITgMessage);
-    procedure tgExceptionManagerUI1ApiException(ASender: TObject; const AMethod: string; AApiRequestException: EApiRequestException);
-    procedure tgExceptionManagerUI1GlobalException(ASender: TObject; const AMethod: string; AException: Exception);
+    procedure tgExceptionManagerUI1ApiException(ASender: TObject; const AMethod:
+      string; AApiRequestException: EApiRequestException);
+    procedure tgExceptionManagerUI1GlobalException(ASender: TObject; const
+      AMethod: string; AException: Exception);
     procedure btnSendPhotoFileClick(Sender: TObject);
     procedure btnSendPhotoClick(Sender: TObject);
     procedure TelegramBot1ReceiveRawData(ASender: TObject; const AData: string);
+    procedure FormDestroy(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
   public
@@ -100,6 +105,16 @@ begin
     edtSendPhotoFile.Text := OpenDialog1.FileName;
 end;
 
+procedure TForm3.FormCreate(Sender: TObject);
+begin
+  ReportMemoryLeaksOnShutdown := True;
+end;
+
+procedure TForm3.FormDestroy(Sender: TObject);
+begin
+  tgReceiverUI1.Stop;
+end;
+
 procedure TForm3.TelegramBot1ReceiveRawData(ASender: TObject; const AData: string);
 begin
   mmoOnUpdadtes.Lines.Add('------------');
@@ -125,21 +140,25 @@ begin
     edtChatID.Text, //
     TtgFileToSend.FromFile(edtSendPhotoFile.Text), //
     edtSendPhotoCaption.Text, //
-    TtgParseMode.default,//
+    TtgParseMode.default, //
     chkSendPhotoNotification.Checked, //
     seSendMsgReplyToMsgID.Value//
   );
 end;
 
-procedure TForm3.tgExceptionManagerUI1ApiException(ASender: TObject; const AMethod: string; AApiRequestException: EApiRequestException);
+procedure TForm3.tgExceptionManagerUI1ApiException(ASender: TObject; const
+  AMethod: string; AApiRequestException: EApiRequestException);
 begin
-  mmoExceptions.Lines.Add(Format('%S%S%S%S%S', [AMethod, slinebreak, AApiRequestException.ToString, slinebreak, '---------------------------------']));
+  mmoExceptions.Lines.Add(Format('%S%S%S%S%S', [AMethod, sLineBreak,
+    AApiRequestException.ToString, sLineBreak, '---------------------------------']));
   pgc1.ActivePage := tsExceptions;
 end;
 
-procedure TForm3.tgExceptionManagerUI1GlobalException(ASender: TObject; const AMethod: string; AException: Exception);
+procedure TForm3.tgExceptionManagerUI1GlobalException(ASender: TObject; const
+  AMethod: string; AException: Exception);
 begin
-  mmoExceptions.Lines.Add(Format('%S%S%S%S%S', [AMethod, slinebreak, AException.ToString, slinebreak, '---------------------------------']));
+  mmoExceptions.Lines.Add(Format('%S%S%S%S%S', [AMethod, sLineBreak, AException.ToString,
+    sLineBreak, '---------------------------------']));
   pgc1.ActivePage := tsExceptions;
 end;
 
