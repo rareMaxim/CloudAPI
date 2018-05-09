@@ -15,7 +15,8 @@ type
     function ReadToClass<T: class, constructor>(const AKey: string): T;
     function ReadToSimpleType<T>(const AKey: string): T;
     function ReadToDateTime(const AKey: string): TDateTime;
-    function ReadToArray<TI: IInterface>(TgClass: TBaseJsonClass; const AKey: string): TArray<TI>;
+    function ReadToArray<TI: IInterface>(TgClass: TBaseJsonClass; const AKey:
+      string): TArray<TI>;
   public
     class function FromJson(const AJson: string): TBaseJson;
     class function GetTgClass: TBaseJsonClass; virtual;// abstract;
@@ -43,13 +44,14 @@ var
 begin
   Result := '[';
   for I := Low(LArray) to High(LArray) do
-  begin
-    Result := Result + TJson.ObjectToJsonString(LArray[I]);
-    if I <> High(LArray) then
-      Result := Result + ',';
-  end;
+    if Assigned(LArray[I]) then
+    begin
+      Result := Result + TJson.ObjectToJsonString(LArray[I]);
+      if I <> High(LArray) then
+        Result := Result + ',';
+    end;
   Result := Result + ']';
-  Result := Result.Replace('"inline_keyboard":null', '', [rfReplaceAll]);// какашечка
+  Result := Result.Replace('"inline_keyboard":null', '', [rfReplaceAll]); // какашечка
 end;
 
 { TBaseJson }
@@ -62,7 +64,8 @@ begin
   FJSON := TJSONObject.ParseJSONValue(AJson) as TJSONObject;
 end;
 
-function TBaseJson.ReadToArray<TI>(TgClass: TBaseJsonClass; const AKey: string): TArray<TI>;
+function TBaseJson.ReadToArray<TI>(TgClass: TBaseJsonClass; const AKey: string):
+  TArray<TI>;
 var
   LJsonArray: TJSONArray;
   I: Integer;
@@ -73,7 +76,8 @@ begin
   GUID := GetTypeData(TypeInfo(TI))^.GUID;
     //check for TI interface support
   if TgClass.GetInterfaceEntry(GUID) = nil then
-    raise Exception.Create('GetArrayFromMethod: unsupported interface for ' + TgClass.ClassName);
+    raise Exception.Create('GetArrayFromMethod: unsupported interface for ' +
+      TgClass.ClassName);
     // stage 2: proceed data
   LJsonArray := FJSON.GetValue(AKey) as TJSONArray;
   if (not Assigned(LJsonArray)) or LJsonArray.Null then

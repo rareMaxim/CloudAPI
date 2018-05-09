@@ -216,7 +216,7 @@ type
      /// is returned.
      /// </returns>
     function SendMessage(//
-      const ChatId: TValue; //
+      const ChatId: TtgUserLink; //
       const Text: string; //
       const ParseMode: TtgParseMode = TtgParseMode.Default; //
       const DisableWebPagePreview: Boolean = False; //
@@ -246,7 +246,7 @@ type
      /// On success, the sent Message is returned.
      /// </returns>
     function ForwardMessage(//
-      const ChatId, FromChatId: TValue; //
+      const ChatId, FromChatId: TtgUserLink; //
       const MessageId: Int64; //
       const DisableNotification: Boolean = False): ITgMessage;
      /// <summary>
@@ -295,7 +295,7 @@ type
      /// End; </code>
      /// </example>
     function SendPhoto(//
-      const ChatId: TValue; //
+      const ChatId: TtgUserLink; //
       const Photo: TtgFileToSend; //
       const Caption: string = ''; //
       const ParseMode: TtgParseMode = TtgParseMode.Default; //
@@ -349,7 +349,7 @@ type
      /// sendVoice</see> method instead.
      /// </remarks>
     function SendAudio(//
-      const ChatId: TValue; //
+      const ChatId: TtgUserLink; //
       const Audio: TtgFileToSend; //
       const Caption: string = ''; //
       const ParseMode: TtgParseMode = TtgParseMode.Default; //
@@ -396,7 +396,7 @@ type
      /// this limit may be changed in the future.
      /// </remarks>
     function SendDocument(//
-      const ChatId: TValue; //
+      const ChatId: TtgUserLink; //
       const Document: TtgFileToSend; //
       const Caption: string = ''; //
       const ParseMode: TtgParseMode = TtgParseMode.Default; //
@@ -450,7 +450,7 @@ type
      /// limit may be changed in the future.
      /// </remarks>
     function SendVideo(//
-      const ChatId: TValue; //
+      const ChatId: TtgUserLink; //
       const Video: TtgFileToSend; //
       const Caption: string = ''; //
       const ParseMode: TtgParseMode = TtgParseMode.Default; //
@@ -501,7 +501,7 @@ type
      /// limit may be changed in the future.
      /// </remarks>
     function SendVoice(//
-      const ChatId: TValue; //
+      const ChatId: TtgUserLink; //
       const Voice: TtgFileToSend; //
       const Caption: string = ''; //
       const ParseMode: TtgParseMode = TtgParseMode.Default; //
@@ -551,7 +551,7 @@ type
      /// Use this method to send video messages.
      /// </remarks>
     function SendVideoNote(//
-      const ChatId: TValue; //
+      const ChatId: TtgUserLink; //
       const VideoNote: TtgFileToSend; //
       const Duration: Int64 = 0; //
       const Length: Int64 = 0; //
@@ -586,7 +586,7 @@ type
      /// is returned.
      /// </returns>
     function SendLocation(//
-      const ChatId: TValue; //
+      const ChatId: TtgUserLink; //
       const Location: TtgLocation; //
       const LivePeriod: Int64 = 0; //
       const DisableNotification: Boolean = False; //
@@ -628,7 +628,7 @@ type
      /// On success, the sent Message is returned.
      /// </returns>
     function SendVenue(//
-      const ChatId: TValue; //
+      const ChatId: TtgUserLink; //
       const Venue: TtgVenue; //
       const DisableNotification: Boolean = False; //
       const ReplyToMessageId: Int64 = 0; //
@@ -662,7 +662,7 @@ type
      /// </returns>
      /// <seealso href="https://core.telegram.org/bots/api#sendcontact" />
     function SendContact(//
-      const ChatId: TValue; //
+      const ChatId: TtgUserLink; //
       const Contact: TtgContact; //
       const DisableNotification: Boolean = False; //
       const ReplyToMessageId: Int64 = 0; //
@@ -690,7 +690,7 @@ type
      /// </remarks>
      /// <seealso href="https://core.telegram.org/bots/api#sendchataction" />
     function SendChatAction(//
-      const ChatId: TValue; //
+      const ChatId: TtgUserLink; //
       const Action: TtgSendChatAction): Boolean;
      /// <summary>
      /// Use this method to get a list of profile pictures for a user.
@@ -712,7 +712,7 @@ type
      /// </returns>
      /// <seealso href="https://core.telegram.org/bots/api#getuserprofilephotos" />
     function GetUserProfilePhotos(//
-      const ChatId: TValue; //
+      const ChatId: TtgUserLink; //
       const Offset: Int64; //
       const Limit: Int64 = 100): ItgUserProfilePhotos;
      /// <summary>
@@ -759,7 +759,7 @@ type
      /// </remarks>
      /// <seealso href="https://core.telegram.org/bots/api#kickchatmember" />
     function KickChatMember(//
-      const ChatId: TValue; //
+      const ChatId: TtgUserLink; //
       const UserId: Int64; //
       const UntilDate: TDateTime = 0): Boolean;
      /// <summary>
@@ -782,7 +782,7 @@ type
      /// </remarks>
      /// <seealso href="https://core.telegram.org/bots/api#unbanchatmember" />
     function UnbanChatMember(//
-      const ChatId: TValue; //
+      const ChatId: TtgUserLink; //
       const UserId: Int64): Boolean;
      /// <summary>
      /// Use this method for your bot to leave a group, supergroup or channel.
@@ -795,7 +795,7 @@ type
      /// Returns True on success.
      /// </returns>
      /// <seealso href="https://core.telegram.org/bots/api#leavechat" />
-    function LeaveChat(const ChatId: TValue): Boolean;
+    function LeaveChat(const ChatId: TtgUserLink): Boolean;
      /// <summary>
      /// Use this method to get up to date information about the chat (current
      /// name of the user for one-on-one conversations, current username of a
@@ -810,7 +810,7 @@ type
      /// success.
      /// </returns>
      /// <seealso href="https://core.telegram.org/bots/api#getchat" />
-    function GetChat(const ChatId: TValue): ItgChat;
+    function GetChat(const ChatId: TtgUserLink): ItgChat;
      /// <summary>
      /// Use this method to get a list of administrators in a chat
      /// </summary>
@@ -826,7 +826,7 @@ type
      /// will be returned.
      /// </returns>
      /// <seealso href="https://core.telegram.org/bots/api#getchatadministrators" />
-    function GetChatAdministrators(const ChatId: TValue): TArray<ItgChatMember>;
+    function GetChatAdministrators(const ChatId: TtgUserLink): TArray<ItgChatMember>;
      /// <summary>
      /// Use this method to get the number of members in a chat.
      /// </summary>
@@ -838,7 +838,7 @@ type
      /// Returns Int64 on success.
      /// </returns>
      /// <seealso href="https://core.telegram.org/bots/api#getchatmemberscount" />
-    function GetChatMembersCount(const ChatId: TValue): Int64;
+    function GetChatMembersCount(const ChatId: TtgUserLink): Int64;
      /// <summary>
      /// Use this method to get information about a member of a chat.
      /// </summary>
@@ -855,7 +855,7 @@ type
      /// </returns>
      /// <seealso href="https://core.telegram.org/bots/api#getchatmember" />
     function GetChatMember(//
-      const ChatId: TValue; //
+      const ChatId: TtgUserLink; //
       const UserId: Int64): ItgChatMember;
      /// <summary>
      /// Use this method to send answers to callback queries sent from inline
@@ -921,7 +921,7 @@ type
      /// </returns>
      /// <seealso href="https://core.telegram.org/bots/api#editmessagetext" />
     function EditMessageText(//
-      const ChatId: TValue; //
+      const ChatId: TtgUserLink; //
       const MessageId: Int64; //
       const Text: string; //
       const ParseMode: TtgParseMode = TtgParseMode.Default; //
@@ -962,7 +962,7 @@ type
      /// </returns>
      /// <seealso href="https://core.telegram.org/bots/api#editmessagereplymarkup" />
     function EditMessageCaption(//
-      const ChatId: TValue; //
+      const ChatId: TtgUserLink; //
       const MessageId: Int64; //
       const Caption: string; //
       const ParseMode: TtgParseMode = TtgParseMode.Default; //
@@ -1000,7 +1000,7 @@ type
      /// Message is returned, otherwise True is returned.
      /// </returns>
     function editMessageLiveLocation(//
-      const ChatId: TValue; //
+      const ChatId: TtgUserLink; //
       const MessageId: Int64; //
       const Location: TtgLocation; //
       ReplyMarkup: IReplyMarkup = nil): Boolean; overload;
@@ -1059,7 +1059,7 @@ type
      /// returned, otherwise True is returned.
      /// </returns>
     function stopMessageLiveLocation(//
-      const ChatId: TValue; //
+      const ChatId: TtgUserLink; //
       const MessageId: Int64; //
       ReplyMarkup: IReplyMarkup = nil): Boolean; overload;
      /// <summary>
@@ -1101,7 +1101,7 @@ type
      /// is returned, otherwise True is returned.
      /// </returns>
     function EditMessageReplyMarkup(//
-      const ChatId: TValue; //
+      const ChatId: TtgUserLink; //
       const MessageId: Int64; //
       ReplyMarkup: IReplyMarkup = nil): ITgMessage; overload;
      /// <summary>
@@ -1147,7 +1147,7 @@ type
      /// </remarks>
      /// <seealso href="https://core.telegram.org/bots/api#deletemessage" />
     function DeleteMessage(//
-      const ChatId: TValue; //
+      const ChatId: TtgUserLink; //
       const MessageId: Int64): Boolean;
      {$ENDREGION}
 {$REGION 'Inline mode'}
@@ -1507,7 +1507,7 @@ type
      /// administrator in the chat for this to work and must have the
      /// appropriate admin rights.
      /// </remarks>
-    function DeleteChatPhoto(const ChatId: TValue): Boolean;
+    function DeleteChatPhoto(const ChatId: TtgUserLink): Boolean;
      /// <summary>
      /// Use this method to export an invite link to a supergroup or a
      /// channel.
@@ -1523,7 +1523,7 @@ type
      /// The bot must be an administrator in the chat for this to work and
      /// must have the appropriate admin rights.
      /// </remarks>
-    function ExportChatInviteLink(const ChatId: TValue): string;
+    function ExportChatInviteLink(const ChatId: TtgUserLink): string;
      /// <summary>
      /// Use this method to pin a message in a supergroup. The bot must be an
      /// administrator in the chat for this to work and must have the
@@ -1544,7 +1544,7 @@ type
      /// Returns True on success.
      /// </returns>
     function PinChatMessage(//
-      const ChatId: TValue; //
+      const ChatId: TtgUserLink; //
       const MessageId: Int64; //
       const DisableNotification: Boolean = False): Boolean;
      /// <summary>
@@ -1562,7 +1562,7 @@ type
      /// <returns>
      /// Returns True on success.
      /// </returns>
-    function SetChatDescription(const ChatId: TValue; const Description: string):
+    function SetChatDescription(const ChatId: TtgUserLink; const Description: string):
       Boolean;
      /// <summary>
      /// Use this method to set a new profile photo for the chat. Photos can't
@@ -1582,7 +1582,7 @@ type
      /// The bot must be an administrator in the chat for this to work and
      /// must have the appropriate admin rights.
      /// </remarks>
-    function SetChatPhoto(const ChatId: TValue; const Photo: TtgFileToSend): Boolean;
+    function SetChatPhoto(const ChatId: TtgUserLink; const Photo: TtgFileToSend): Boolean;
      /// <summary>
      /// Use this method to change the title of a chat. Titles can't be
      /// changed for private chats. The bot must be an administrator in the
@@ -1602,7 +1602,7 @@ type
      /// Note: In regular groups (non-supergroups), this method will only work
      /// if the ‘All Members Are Admins’ setting is off in the target group.
      /// </remarks>
-    function SetChatTitle(const ChatId: TValue; const Title: string): Boolean;
+    function SetChatTitle(const ChatId: TtgUserLink; const Title: string): Boolean;
      /// <summary>
      /// Use this method to unpin a message in a supergroup chat. The bot must
      /// be an administrator in the chat for this to work and must have the
@@ -1615,7 +1615,7 @@ type
      /// <returns>
      /// Returns True on success.
      /// </returns>
-    function UnpinChatMessage(const ChatId: TValue): Boolean;
+    function UnpinChatMessage(const ChatId: TtgUserLink): Boolean;
 {$ENDREGION}
 {$REGION 'Manage users and admins'}
      /// <summary>
@@ -1656,7 +1656,7 @@ type
      /// Returns True on success.
      /// </returns>
     function RestrictChatMember(//
-      const ChatId: TValue; //
+      const ChatId: TtgUserLink; //
       const UserId: Int64; //
       const UntilDate: TDateTime = 0; //
       const CanSendMessages: Boolean = False; //
@@ -1711,7 +1711,7 @@ type
      /// Returns True on success.
      /// </returns>
     function PromoteChatMember(//
-      const ChatId: TValue; //
+      const ChatId: TtgUserLink; //
       const UserId: Int64; //
       const CanChangeInfo: Boolean = False; //
       const CanPostMessages: Boolean = False; //
@@ -1752,8 +1752,8 @@ type
      /// On success, the sent Message is returned.
      /// </returns>
     function SendSticker(//
-      const ChatId: TValue; //
-      const Sticker: TValue; //
+      const ChatId: TtgUserLink; //
+      const Sticker: TtgFileToSend; //
       const DisableNotification: Boolean = False; //
       const ReplyToMessageId: Int64 = 0; //
       ReplyMarkup: IReplyMarkup = nil): ITgMessage;
@@ -1829,7 +1829,7 @@ type
     function createNewStickerSet(//
       const UserId: Int64; //
       const Name, title: string; //
-      const PngSticker: TValue; //
+      const PngSticker: TtgFileToSend; //
       const Emojis: string; //
       const ContainsMasks: Boolean = False; //
       const MaskPosition: TtgMaskPosition = nil): Boolean;
@@ -1882,7 +1882,7 @@ type
      /// CanSetStickerSet</see> optionally returned in <see cref="TelegAPI.Bot|TTelegramBot.GetChat(TValue)">
      /// getChat</see> requests to check if the bot can use this method.
      /// </remarks>
-    function setChatStickerSet(const ChatId: TValue; const StickerSetName:
+    function setChatStickerSet(const ChatId: TtgUserLink; const StickerSetName:
       string): Boolean;
      /// <summary>
      /// Use this method to delete a group sticker set from a supergroup.
@@ -1896,9 +1896,9 @@ type
      /// CanSetStickerSet</see> optionally returned in <see cref="TelegAPI.Bot|TTelegramBot.GetChat(TValue)">
      /// getChat</see> requests to check if the bot can use this method.
      /// </remarks>
-    function deleteChatStickerSet(const ChatId: TValue): Boolean;
+    function deleteChatStickerSet(const ChatId: TtgUserLink): Boolean;
     function sendMediaGroup(//
-      const ChatId: TValue; //
+      const ChatId: TtgUserLink; //
       const AMedia: TArray<TtgInputMedia>; //
       const ADisableNotification: Boolean = False; //
       const ReplyToMessageId: Int64 = 0): TArray<ITgMessage>;
