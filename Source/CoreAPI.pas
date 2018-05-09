@@ -81,6 +81,7 @@ type
     FOnError: TProc<Exception>;
     FFormData: IcuMultipartFormData;
     FHttp: IcuHttpClient;
+    FIsEmpty: Boolean;
     function GetOnError: TProc<Exception>;
     procedure SetOnError(const Value: TProc<Exception>);
     function GetOnSend: TProc<string, string>;
@@ -119,6 +120,7 @@ type
     function AddRawFile(const AFieldName, AFilePath: string): ItgRequestAPI;
     function AddRawStream(const AFieldName: string; Data: TStream; const
       AFileName: string = ''): ItgRequestAPI;
+    function IsEmpty: Boolean;
     function ClearParameters: ItgRequestAPI;
     function Execute: string; virtual; abstract;
     function ExecuteAsBool: Boolean;
@@ -149,8 +151,6 @@ type
     destructor Destroy; override;
   end;
 
-
-
 implementation
 
 uses
@@ -162,13 +162,13 @@ uses
 
 { TtgCoreApiBase }
 
-
 function TtgCoreApiBase.AddParameter(const AKey, AValue, ADefaultValue: string;
   const ARequired: Boolean): ItgRequestAPI;
 begin
   if ARequired and (AValue.Equals(ADefaultValue) or AValue.isEmpty) then
     DoHaveException(ETelegramException.Create('Not assigned required data [TtgApiRequest.FillFormData]'));
-  FFormData.AddField(AKey, AValue);
+  AddRawField(AKey, AValue);
+  Result := self;
 end;
 
 function TtgCoreApiBase.AddParameter(const AKey: string; const AValue,
@@ -180,12 +180,14 @@ end;
 function TtgCoreApiBase.AddRawField(const AField, AValue: string): ItgRequestAPI;
 begin
   FFormData.AddField(AField, AValue);
+  FIsEmpty := False;
   Result := Self;
 end;
 
 function TtgCoreApiBase.AddRawFile(const AFieldName, AFilePath: string): ItgRequestAPI;
 begin
   FFormData.AddFile(AFieldName, AFilePath);
+  FIsEmpty := False;
   Result := Self;
 end;
 
@@ -193,18 +195,22 @@ function TtgCoreApiBase.AddRawStream(const AFieldName: string; Data: TStream;
   const AFileName: string): ItgRequestAPI;
 begin
   FFormData.AddStream(AFieldName, Data);
+  FIsEmpty := False;
   Result := Self;
 end;
 
 function TtgCoreApiBase.ClearParameters: ItgRequestAPI;
 begin
-  FFormData.Stream.Size:=0;
+  FFormData := nil;
+  FIsEmpty := True;
+  FFormData := httpCore.CreateMultipartFormData;
   Result := Self;
 end;
 
 constructor TtgCoreApiBase.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
+  FIsEmpty := True;
 end;
 
 destructor TtgCoreApiBase.Destroy;
@@ -270,11 +276,14 @@ begin
   Result := FGetOnSend;
 end;
 
-
-
 function TtgCoreApiBase.GetUrl: string;
 begin
   Result := SERVER + FToken + '/' + FMethod;
+end;
+
+function TtgCoreApiBase.IsEmpty: Boolean;
+begin
+  Result := FIsEmpty;
 end;
 
 procedure TtgCoreApiBase.SetDataExtractor(const Value: TFunc<string, string>);
@@ -308,8 +317,6 @@ procedure TtgCoreApiBase.SetOnSend(const Value: TProc<string, string>);
 begin
   FGetOnSend := Value;
 end;
-
-
 
 function TtgCoreApiBase.SetToken(const AToken: string): ItgRequestAPI;
 begin
@@ -376,13 +383,15 @@ end;
 
 function TtgCoreApi.Execute: string;
 begin
-  if FFormData.Stream.Size > FFormData.Stream.Position then
+  if IsEmpty then
+  begin
+    Result := DoGet;
+  end
+  else
   begin
     Result := DoPost;
     ClearParameters;
-  end
-  else
-    Result := DoGet;
+  end;
   if Result = '' then
     Exit;
   LastRequestIsOk := True;
@@ -391,8 +400,6 @@ begin
   if Assigned(DataExtractor) then
     Result := DataExtractor(Result);
 end;
-
-
 
 function TtgCoreApiBase.AddParameter(const AKey: string; const AValue,
   ADefaultValue: TDateTime; const ARequired: Boolean): ItgRequestAPI;
@@ -406,11 +413,11 @@ function TtgCoreApiBase.AddParameter(const AKey: string; const AValue,
 begin
   case AValue.Tag of
     TtgFileToSendTag.FromStream:
-      FFormData.AddStream(AKey, AValue.Content, AValue.Data);
+      AddRawStream(AKey, AValue.Content, AValue.Data);
     TtgFileToSendTag.FromFile:
-      FFormData.AddFile(AKey, AValue.Data);
+      AddRawFile(AKey, AValue.Data);
     TtgFileToSendTag.ID, TtgFileToSendTag.FromURL:
-      FFormData.AddField(AKey, AValue.Data);
+      AddRawField(AKey, AValue.Data);
   else
     raise Exception.Create('Cant convert TTgFileToSend: Unknown prototype tag');
   end;
