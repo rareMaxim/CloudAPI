@@ -628,27 +628,24 @@ function TTelegramBot.sendMediaGroup(const ChatId: TtgUserLink; const AMedia:
 var
   LRequest: ItgRequestAPI;
   LMedia: TtgInputMedia;
+  LTmpJson: string;
 begin
- // TBaseJson.UnSupported;
+  LTmpJson := TJsonUtils.ArrayToJString<TtgInputMedia>(AMedia);
   LRequest := FRequest.SetMethod('sendMediaGroup') //
     .AddParameter('chat_id', ChatId, 0, True) //
-    .AddParameter('media', TJsonUtils.ArrayToJString<TtgInputMedia>(AMedia),
-    '[]', True) //
+    .AddParameter('media', LTmpJson, '[]', True) //
     .AddParameter('disable_notification', ADisableNotification, False, False) //
     .AddParameter('reply_to_message_id', ReplyToMessageId, 0, False);
   for LMedia in AMedia do
   begin
     case LMedia.GetFileToSend.Tag of
       TtgFileToSendTag.FromFile:
-        LRequest.AddRawFile(LMedia.Media, LMedia.GetFileToSend.Data);
+        LRequest.AddRawFile(ExtractFileName(LMedia.GetFileToSend.Data), LMedia.GetFileToSend.Data);
       TtgFileToSendTag.FromStream:
-        LRequest.AddRawStream(LMedia.Media, LMedia.GetFileToSend.Content);
+        LRequest.AddRawStream(ExtractFileName(LMedia.GetFileToSend.Data), LMedia.GetFileToSend.Content);
     end;
-
   end;
-  Result := GetArrayFromMethod<ITgMessage>(TTgMessage, LRequest//
-    .Execute);
-
+  Result := GetArrayFromMethod<ITgMessage>(TTgMessage, LRequest.Execute);
 end;
 
 function TTelegramBot.SendPhoto(const ChatId: TtgUserLink; const Photo:
