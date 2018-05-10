@@ -403,26 +403,22 @@ type
     class function Empty: TtgFileToSend;
   end;
 
-  [JsonSerializeAttribute(TJsonMemberSerialization.&In)]
+  [JsonSerializeAttribute(TJsonMemberSerialization.&Public)]
   TtgInputMedia = class
   private
     FType: string;
     FMedia: string;
     FCaption: string;
     FParseMode: string;
-    [JsonIgnore]
+    [JSONMarshalled(False)]
     FFileToSend: TtgFileToSend;
   public
     function GetFileToSend: TtgFileToSend;
     constructor Create(AMedia: TtgFileToSend; const ACaption: string = ''); virtual;
     [JsonName('type')]
-    [JsonIn]
     property {}&Type: string read FType write FType;
-    [JsonIn]
     property Media: string read FMedia write FMedia;
-    [JsonIn]
     property Caption: string read FCaption write FCaption;
-    [JsonIn]
     [JsonName('parse_mode')]
     property ParseMode: string read FParseMode write FParseMode;
   end;
