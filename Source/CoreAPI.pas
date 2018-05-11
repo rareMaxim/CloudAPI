@@ -48,7 +48,7 @@ type
       Single; const ARequired: Boolean = False): ItgRequestAPI; overload;
       //
     function AddRawField(const AField, AValue: string): ItgRequestAPI;
-    function AddRawFile(const AFieldName, AFilePath: string): ItgRequestAPI;
+    function AddRawFile(const AFieldName, AFileName: string): ItgRequestAPI;
     function AddRawStream(const AFieldName: string; Data: TStream; const
       AFileName: string): ItgRequestAPI;
 
@@ -117,7 +117,7 @@ type
       Single; const ARequired: Boolean = False): ItgRequestAPI; overload;
       //
     function AddRawField(const AField, AValue: string): ItgRequestAPI;
-    function AddRawFile(const AFieldName, AFilePath: string): ItgRequestAPI;
+    function AddRawFile(const AFieldName, AFileName: string): ItgRequestAPI;
     function AddRawStream(const AFieldName: string; Data: TStream; const
       AFileName: string): ItgRequestAPI;
     function IsEmpty: Boolean;
@@ -184,9 +184,9 @@ begin
   Result := Self;
 end;
 
-function TtgCoreApiBase.AddRawFile(const AFieldName, AFilePath: string): ItgRequestAPI;
+function TtgCoreApiBase.AddRawFile(const AFieldName, AFileName: string): ItgRequestAPI;
 begin
-  FFormData.AddFile(AFieldName, AFilePath);
+  FFormData.AddFile(AFieldName, AFileName);
   FIsEmpty := False;
   Result := Self;
 end;
