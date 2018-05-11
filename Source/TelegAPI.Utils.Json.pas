@@ -12,15 +12,14 @@ type
   private
   protected
     FJSON: TJSONObject;
-    FJSONAsString: string;
     function ReadToClass<T: class, constructor>(const AKey: string): T;
     function ReadToSimpleType<T>(const AKey: string): T;
     function ReadToDateTime(const AKey: string): TDateTime;
-    function ReadToArray<TI: IInterface>(TgClass: TBaseJsonClass; const AKey: string): TArray<TI>;
+    function ReadToArray<TI: IInterface>(TgClass: TBaseJsonClass; const AKey:
+      string): TArray<TI>;
   public
     class function FromJson(const AJson: string): TBaseJson;
     class function GetTgClass: TBaseJsonClass; virtual;// abstract;
-
     class procedure UnSupported;
     constructor Create(const AJson: string); virtual;
     destructor Destroy; override;
@@ -45,13 +44,14 @@ var
 begin
   Result := '[';
   for I := Low(LArray) to High(LArray) do
-  begin
-    Result := Result + TJson.ObjectToJsonString(LArray[I]);
-    if I <> High(LArray) then
-      Result := Result + ',';
-  end;
+    if Assigned(LArray[I]) then
+    begin
+      Result := Result + TJson.ObjectToJsonString(LArray[I]);
+      if I <> High(LArray) then
+        Result := Result + ',';
+    end;
   Result := Result + ']';
-  Result := Result.Replace('"inline_keyboard":null', '', [rfReplaceAll]);// какашечка
+  Result := Result.Replace('"inline_keyboard":null', '', [rfReplaceAll]); // какашечка
 end;
 
 { TBaseJson }
@@ -62,10 +62,10 @@ begin
   if AJson.IsEmpty then
     Exit;
   FJSON := TJSONObject.ParseJSONValue(AJson) as TJSONObject;
-  FJSONAsString := FJSON.ToJSON;
 end;
 
-function TBaseJson.ReadToArray<TI>(TgClass: TBaseJsonClass; const AKey: string): TArray<TI>;
+function TBaseJson.ReadToArray<TI>(TgClass: TBaseJsonClass; const AKey: string):
+  TArray<TI>;
 var
   LJsonArray: TJSONArray;
   I: Integer;
@@ -76,7 +76,8 @@ begin
   GUID := GetTypeData(TypeInfo(TI))^.GUID;
     //check for TI interface support
   if TgClass.GetInterfaceEntry(GUID) = nil then
-    raise Exception.Create('GetArrayFromMethod: unsupported interface for ' + TgClass.ClassName);
+    raise Exception.Create('GetArrayFromMethod: unsupported interface for ' +
+      TgClass.ClassName);
     // stage 2: proceed data
   LJsonArray := FJSON.GetValue(AKey) as TJSONArray;
   if (not Assigned(LJsonArray)) or LJsonArray.Null then
@@ -84,7 +85,7 @@ begin
   SetLength(Result, LJsonArray.Count);
   for I := 0 to High(Result) do
   begin
-    TgClass.GetTgClass.Create(LJsonArray.Items[I].ToJSON).GetInterface(GUID, Result[I]);
+    TgClass.GetTgClass.Create(LJsonArray.Items[I].ToString).GetInterface(GUID, Result[I]);
   end;
 end;
 
@@ -97,7 +98,12 @@ begin
   LObj := FJSON.GetValue(AKey);
   if Assigned(LObj) and (not LObj.Null) then
   begin
+{$IFDEF USE_INDY}
+    // Директива не совсем подходит. Это в случае если используется старая версия ИДЕ
+    LValue := LObj.ToString;
+{$ELSE}
     LValue := LObj.ToJSON;
+{$ENDIF}
     Result := TBaseJsonClass(T).Create(LValue) as T;
   end
 end;

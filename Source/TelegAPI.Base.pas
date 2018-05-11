@@ -1,5 +1,7 @@
 ﻿unit TelegAPI.Base;
 
+{$I config.inc}
+
 interface
 
 uses
@@ -28,7 +30,7 @@ constructor TtgAbstractComponent.Create(AOwner: TComponent);
 begin
   inherited;
   FAutor := 'Maxim Sysoev';
-  FVersion := '3.5.1';
+  FVersion := '3.5.3';
 end;
 
 end.

@@ -1,4 +1,4 @@
-unit TelegAPi.CoreAPI.Parameter;
+﻿unit CoreAPI.Parameter;
 
 interface
 
@@ -32,7 +32,13 @@ end;
 
 function TtgApiParameter.IsDefaultValue: Boolean;
 begin
-  Result := Value.AsVariant = DefaultValue.AsVariant; // <-- DANGER
+  try
+    Result := False;
+    if Value.Kind = DefaultValue.Kind then
+      Result := Value.AsVariant = DefaultValue.AsVariant; // <-- DANGER
+  except
+    raise EProgrammerNotFound.Create('Несовместимые типы параметров');
+  end;
 end;
 
 function TtgApiParameter.Skip: Boolean;

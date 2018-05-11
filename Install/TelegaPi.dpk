@@ -32,7 +32,7 @@ package TelegaPi;
 requires
   rtl,
   RESTComponents,
-  fmx;
+  CrossUrl;
 
 contains
   TelegAPI.Base in '..\Source\TelegAPI.Base.pas',
@@ -51,11 +51,11 @@ contains
   TelegAPi.Types in '..\Source\TelegAPi.Types.pas',
   TelegaPi.Types.ReplyMarkups in '..\Source\TelegaPi.Types.ReplyMarkups.pas',
   TelegAPI.Utils.Json in '..\Source\TelegAPI.Utils.Json.pas',
-  TelegAPI.CoreAPI.ParameterConverter in '..\Source\TelegAPI.CoreAPI.ParameterConverter.pas',
   TelegAPI.Receiver.UI in '..\Source\TelegAPI.Receiver.UI.pas',
-  TelegaPi.Factory in '..\Source\TelegaPi.Factory.pas',
-  TelegAPi.CoreAPI.Request in '..\Source\TelegAPi.CoreAPI.Request.pas',
-  TelegAPi.CoreAPI.Parameter in '..\Source\TelegAPi.CoreAPI.Parameter.pas',
-  TelegaPi.Ext.Sessions in '..\Source\TelegaPi.Ext.Sessions.pas';
+  TelegaPi.Ext.Sessions in '..\Source\TelegaPi.Ext.Sessions.pas',
+  CoreAPI.Parameter in '..\Source\CoreAPI.Parameter.pas',
+  CoreAPI in '..\Source\CoreAPI.pas',
+  TelegAPI.UpdateParser in '..\Source\TelegAPI.UpdateParser.pas';
 
 end.
+

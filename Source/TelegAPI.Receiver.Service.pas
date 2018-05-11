@@ -26,7 +26,6 @@ type
 
   TtgOnPreCheckoutQuery = procedure(ASender: TObject; APreCheckoutQuery: ItgPreCheckoutQuery) of object;
 
-
   TtgReceiverService = class(TTgBotReceiverBase)
   private
     FOnUpdate: TtgOnUpdate;

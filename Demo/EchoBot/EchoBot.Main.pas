@@ -23,7 +23,7 @@ uses
   TelegAPI.Receiver.UI,
   TelegAPI.Bot.Impl,
   TelegAPI.Base,
-  TelegAPI.Receiver.Service;
+  TelegAPI.Receiver.Service, TelegAPI.UpdateParser;
 
 type
   TMain = class(TForm)

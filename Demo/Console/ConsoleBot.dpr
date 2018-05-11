@@ -1,26 +1,49 @@
-program ConsoleBot;
+﻿program ConsoleBot;
 
 {$APPTYPE CONSOLE}
 {$R *.res}
 
+{/$DEFINE  USE_INDY_CORE}
 uses
-  TelegAPI.Bot,
+{$IFDEF  USE_INDY_CORE}
+//Indy Http Core
+  CrossUrl.Indy.HttpClient,
+{$ELSE}
+// System.Net HTTP Core
+  CrossUrl.SystemNet.HttpClient,
+{$ENDIF}
+
   Rest.Json,
-  TelegAPI.Receiver.Console,
   System.SysUtils,
+  TelegAPI.Receiver.Console,
+  TelegAPI.Bot,
   TelegAPI.Types,
-  TelegaPi.Exceptions,
-  TelegaPi.Factory;
+  TelegAPI.Bot.Impl,
+  TelegAPI.Exceptions;
+
+procedure SMG(ABot: ITelegramBot; AMessage: ITgMessage);
+var
+  Test: TtgInputMediaPhoto;
+begin
+  Test := TtgInputMediaPhoto.Create(TtgFileToSend.FromFile('D:\Repositories\Мои проекты\ms301-TelegAPI\Install\pJNqeRflXYU.png'),
+    'Test');
+  ABot.sendMediaGroup(AMessage.Chat.ID, [Test, Test])
+end;
 
 procedure Main;
 var
   LBot: ITelegramBot;
-  LRecesiver: TtgReceiverConsole;
+  LReceiver: TtgReceiverConsole;
   LExcp: TtgExceptionManagerConsole;
   LStop: string;
 begin
-  LBot := TtgFactory.CreateTelegram('283107814:AAGOGxUCwTC2bOs2krUSuEtqZd2UnA8NZ2g');
-  LRecesiver := TtgReceiverConsole.Create(LBot);
+  LBot := TTelegramBot.Create('YOUR_TOKEN',
+                              {$IFDEF  USE_INDY_CORE}
+                                TcuHttpClientIndy.Create(nil)
+                              {$ELSE}
+                                TcuHttpClientSysNet.Create(nil)
+                              {$ENDIF});
+  LReceiver := TtgReceiverConsole.Create(LBot);
   try
     LExcp := LBot.ExceptionManager as TtgExceptionManagerConsole;
     LExcp.OnApiException :=
@@ -33,35 +56,35 @@ begin
       begin
         Writeln(AExp.ToString);
       end;
-    LRecesiver.OnStart :=
+    LReceiver.OnStart :=
       procedure
       begin
         Writeln('started');
       end;
-    LRecesiver.OnStop :=
+    LReceiver.OnStop :=
       procedure
       begin
         Writeln('stoped');
       end;
-
-    LRecesiver.OnMessage :=
+    LReceiver.OnMessage :=
       procedure(AMessage: ITgMessage)
       begin
         Writeln(AMessage.From.ID, ': ', AMessage.Text);
-        LBot.SendMessage(AMessage.From.ID, AMessage.Text);
+       // LBot.SendMessage(AMessage.From.ID, AMessage.Text);
+        SMG(LBot, AMessage);
       end;
     Writeln('Bot nick: ', LBot.GetMe.Username);
-    LRecesiver.IsActive := True;
+    LReceiver.IsActive := True;
     while LStop.ToLower.Trim <> 'exit' do
     begin
       Readln(LStop);
       if LStop.ToLower.Trim = 'stop' then
-        LRecesiver.IsActive := False
+        LReceiver.IsActive := False
       else if LStop.ToLower.Trim = 'start' then
-        LRecesiver.IsActive := True;
+        LReceiver.IsActive := True;
     end;
   finally
-    LRecesiver.Free;
+    LReceiver.Free;
   end;
 end;
 

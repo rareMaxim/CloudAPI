@@ -165,7 +165,7 @@ type
     procedure SetLatitude(const Value: Single);
     procedure SetLongitude(const Value: Single);
   public
-    constructor Create(ALongitude, ALatitude: Single); reintroduce; overload;
+    constructor Create(const ALongitude, ALatitude: Single); reintroduce; overload;
     constructor Create(const AJson: string); overload; override;
     property Longitude: Single read GetLongitude write SetLongitude;
     property Latitude: Single read GetLatitude write SetLatitude;
@@ -248,7 +248,8 @@ type
     function PinnedMessage: ITgMessage;
     function Invoice: ItgInvoice;
     function SuccessfulPayment: ItgSuccessfulPayment;
-    function &type: TtgMessageType;
+    function ConnectedWebsite: string;
+    function &Type: TtgMessageType;
     function IsCommand(const AValue: string): Boolean;
   end;
 
@@ -383,7 +384,7 @@ type
     function EditedChannelPost: ITgMessage;
     function ShippingQuery: ItgShippingQuery;
     function PreCheckoutQuery: ItgPreCheckoutQuery;
-    function &type: TtgUpdateType;
+    function &Type: TtgUpdateType;
   end;
 
   TtgWebhookInfo = class(TBaseJson, ItgWebhookInfo)
@@ -673,7 +674,7 @@ begin
     Exit(nil);
   SetLength(Result, LJsonArray.Count);
   for I := 0 to LJsonArray.Count - 1 do
-    Result[I] := TtgMessageEntity.Create(LJsonArray.Items[I].ToJson);
+    Result[I] := TtgMessageEntity.Create(LJsonArray.Items[I].ToString);
 end;
 
 function TTgMessage.Photo: TArray<ItgPhotoSize>;
@@ -711,7 +712,7 @@ begin
   Result := ReadToSimpleType<string>('text');
 end;
 
-function TTgMessage.&type: TtgMessageType;
+function TTgMessage.&Type: TtgMessageType;
 begin
   if Audio <> nil then
     Exit(TtgMessageType.AudioMessage);
@@ -770,6 +771,11 @@ end;
 function TTgMessage.Chat: ItgChat;
 begin
   Result := ReadToClass<TtgChat>('chat');
+end;
+
+function TTgMessage.ConnectedWebsite: string;
+begin
+  Result := ReadToSimpleType<string>('connected_website');
 end;
 
 function TTgMessage.Contact: ItgContact;
@@ -875,7 +881,7 @@ begin
   Result := ReadToClass<TtgShippingQuery>('shipping_query');
 end;
 
-function TtgUpdate.&type: TtgUpdateType;
+function TtgUpdate.&Type: TtgUpdateType;
 begin
   if CallbackQuery <> nil then
     Result := TtgUpdateType.CallbackQueryUpdate
@@ -901,7 +907,7 @@ end;
 
 { TtgLocation }
 
-constructor TtgLocation.Create(ALongitude, ALatitude: Single);
+constructor TtgLocation.Create(const ALongitude, ALatitude: Single);
 begin
   SetLongitude(ALongitude);
   SetLatitude(ALatitude);
@@ -1358,7 +1364,7 @@ begin
     Exit(nil);
   SetLength(Result, LJsonArray.Count);
   for I := 0 to LJsonArray.Count - 1 do
-    Result[I] := ReadToSimpleType<string>(LJsonArray.Items[I].ToJson);
+    Result[I] := ReadToSimpleType<string>(LJsonArray.Items[I].ToString);
 end;
 
 function TtgWebhookInfo.HasCustomCertificate: Boolean;
@@ -1769,25 +1775,37 @@ end;
 
 function TtgUserProfilePhotos.Photos: TArray<TArray<ItgPhotoSize>>;
 var
-  LArr1, LArr2: TJSONArray;
-  I: Integer;
-  j: Integer;
+  PhotoArr, SizeArr: TJSONArray;
+  PhotoIndex, ResultPhotoIndex: Integer;
+  SizeIndex: Integer;
   GUID: TGUID;
 begin
-  LArr1 := FJSON.GetValue('photos') as TJSONArray;
-  if (not Assigned(LArr1)) or LArr1.Null then
-    Exit(nil);
+  Result := nil;
+  PhotoArr := FJSON.GetValue('photos') as TJSONArray;
+  if (not Assigned(PhotoArr)) or PhotoArr.Null then
+    Exit;
   GUID := GetTypeData(TypeInfo(ItgPhotoSize))^.GUID;
-  SetLength(Result, LArr1.Count);
-  for I := 0 to High(Result) do
+  SetLength(Result, PhotoArr.Count);
+  //Some photos could be empty(?), so we should
+  //use separated counter instead of copy of the FOR-loop variable value.
+  ResultPhotoIndex := 0;
+  for PhotoIndex := 0 to High(Result) do
   begin
-    LArr2 := LArr1.Items[I] as TJSONArray;
-    if (not Assigned(LArr2)) or LArr2.Null then
-      Exit(nil);
-    SetLength(Result[I], LArr2.Count);
-    for j := 0 to High(Result[I]) do
-      GetTgClass.Create(LArr2.Items[j].ToJson).GetInterface(GUID, Result[I, j]);
+    //get array of photoSizes from photoArr[i]
+    SizeArr := PhotoArr.Items[PhotoIndex] as TJSONArray;
+    //check for empty photo
+    if (not Assigned(SizeArr)) or SizeArr.Null then
+      Continue;
+    //set length of photoSize array
+    SetLength(Result[ResultPhotoIndex], SizeArr.Count);
+    //fills the result[RealIndex] with array of sizes
+    for SizeIndex := 0 to High(Result[ResultPhotoIndex]) do
+      GetTgClass.Create(SizeArr.Items[SizeIndex].ToString).GetInterface(GUID, Result[ResultPhotoIndex, SizeIndex]);
+    //inc counter of processed photos
+    Inc(ResultPhotoIndex);
   end;
+  //Set real length of the result array. length = zero based index + 1;
+  SetLength(Result, ResultPhotoIndex + 1);
 end;
 
 function TtgUserProfilePhotos.TotalCount: Int64;

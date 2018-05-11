@@ -3,14 +3,14 @@
         <ProjectGuid>{02060116-BFE1-420A-8A27-FB5431EC033B}</ProjectGuid>
     </PropertyGroup>
     <ItemGroup>
-        <Projects Include="Install\TelegaPi.dproj">
+        <Projects Include="Install\DXBerlin\TelegaPi.dproj">
             <Dependencies/>
         </Projects>
         <Projects Include="Demo\EchoBot\EchoBot.dproj">
-            <Dependencies>Install\TelegaPi.dproj</Dependencies>
+            <Dependencies>Install\DXBerlin\TelegaPi.dproj</Dependencies>
         </Projects>
         <Projects Include="Demo\Console\ConsoleBot.dproj">
-            <Dependencies>Install\TelegaPi.dproj</Dependencies>
+            <Dependencies>Install\DXBerlin\TelegaPi.dproj</Dependencies>
         </Projects>
     </ItemGroup>
     <ProjectExtensions>
@@ -21,13 +21,13 @@
         </BorlandProject>
     </ProjectExtensions>
     <Target Name="TelegaPi">
-        <MSBuild Projects="Install\TelegaPi.dproj"/>
+        <MSBuild Projects="Install\DXBerlin\TelegaPi.dproj"/>
     </Target>
     <Target Name="TelegaPi:Clean">
-        <MSBuild Projects="Install\TelegaPi.dproj" Targets="Clean"/>
+        <MSBuild Projects="Install\DXBerlin\TelegaPi.dproj" Targets="Clean"/>
     </Target>
     <Target Name="TelegaPi:Make">
-        <MSBuild Projects="Install\TelegaPi.dproj" Targets="Make"/>
+        <MSBuild Projects="Install\DXBerlin\TelegaPi.dproj" Targets="Make"/>
     </Target>
     <Target Name="EchoBot" DependsOnTargets="TelegaPi">
         <MSBuild Projects="Demo\EchoBot\EchoBot.dproj"/>

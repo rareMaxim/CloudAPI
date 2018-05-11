@@ -5,9 +5,7 @@ interface
 uses
   TelegAPi.Bot.Impl,
   TelegAPi.Types,
-  TelegAPi.Types.Enums,
-  System.Classes,
-  System.Net.Mime;
+  TelegAPi.Types.Enums;
 
 type
   TTelegramBotHelper = class helper for TTelegramBot
@@ -26,26 +24,9 @@ type
     function ToString: string;
   end;
 
-  TtgTMultipartFormDataHelper = class helper for TMultipartFormData
-    /// <summary>
-    ///   Add a form data Stream
-    /// </summary>
-    /// <param name="AFieldName">
-    ///   Field Name
-    /// </param>
-    /// <param name="Data">
-    ///   Stream
-    /// </param>
-    /// <param name="AFileName">
-    ///   file name: "File.ext"
-    /// </param>
-    procedure AddStream(const AFieldName: string; Data: TStream; const AFileName: string = '');
-  end;
-
 implementation
 
 uses
-  System.IOUtils,
   System.SysUtils,
   System.Generics.Collections,
   System.RegularExpressions;
@@ -89,35 +70,6 @@ begin
     Result := '[' + Result.Join(',', LAllowed.ToArray) + ']';
   finally
     LAllowed.Free;
-  end;
-end;
-
-{ TtgTMultipartFormDataHelper }
-
-procedure TtgTMultipartFormDataHelper.AddStream(const AFieldName: string; Data: TStream; const AFileName: string);
-var
-  LFileStream: TFileStream;
-  LTmpDir: string;
-  LTmpFilename: string;
-begin
-  //get filename for tmp folder e.g. ..\AppData\local\temp\4F353A8AC6AB446D9F592A30B157291B
-  LTmpDir := IncludeTrailingPathDelimiter(TPath.GetTempPath) + TPath.GetGUIDFileName(false);
-  LTmpFilename := IncludeTrailingPathDelimiter(LTmpDir) + ExtractFileName(AFileName);
-  try
-    TDirectory.CreateDirectory(LTmpDir);
-    try
-      LFileStream := TFileStream.Create(LTmpFilename, fmCreate);
-      try
-        LFileStream.CopyFrom(Data, 0);
-      finally
-        LFileStream.Free;
-      end;
-      AddFile(AFieldName, LTmpFilename);
-    finally
-      TFile.Delete(LTmpFilename);
-    end;
-  finally
-    TDirectory.Delete(LTmpDir);
   end;
 end;
 
