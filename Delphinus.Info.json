@@ -12,7 +12,7 @@
 	"dependencies": [],
 	"author": "Maxim Sysoev",
 	"description": "Telegram Bot API for Delphi",
-	"version": "3.5.2",
+	"version": "3.5.3",
 	"first_version": "2.3.1",
 	"project_url": "https://github.com/ms301/TelegAPI",
 	"homepage_url": "https://t.me/telegaPiBotTest",

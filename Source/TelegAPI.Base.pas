@@ -30,12 +30,7 @@ constructor TtgAbstractComponent.Create(AOwner: TComponent);
 begin
   inherited;
   FAutor := 'Maxim Sysoev';
-  FVersion := '3.5.2';
-{$IFDEF USE_SYS_NET}
-  FVersion := FVersion + ' SysNet';
-{$ELSE}
-  FVersion := FVersion + ' InDy';
-{$ENDIF}
+  FVersion := '3.5.3';
 end;
 
 end.
