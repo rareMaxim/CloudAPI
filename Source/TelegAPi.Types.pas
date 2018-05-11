@@ -469,10 +469,8 @@ begin
   case AMedia.Tag of
     TtgFileToSendTag.ID, TtgFileToSendTag.FromURL:
       FMedia := ExtractFileName(AMedia.Data);
-    TtgFileToSendTag.FromFile:
+    TtgFileToSendTag.FromFile, TtgFileToSendTag.FromStream:
       FMedia := 'attach://' + ExtractFileName(AMedia.Data);
-    TtgFileToSendTag.FromStream, TtgFileToSendTag.ERROR:  { Testing}
-      ;
   end;
 end;
 

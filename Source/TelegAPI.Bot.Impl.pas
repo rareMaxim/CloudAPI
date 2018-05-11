@@ -642,7 +642,7 @@ begin
       TtgFileToSendTag.FromFile:
         LRequest.AddRawFile(ExtractFileName(LMedia.GetFileToSend.Data), LMedia.GetFileToSend.Data);
       TtgFileToSendTag.FromStream:
-        LRequest.AddRawStream(ExtractFileName(LMedia.GetFileToSend.Data), LMedia.GetFileToSend.Content);
+        LRequest.AddRawStream(LMedia.GetFileToSend.Data, LMedia.GetFileToSend.Content, LMedia.GetFileToSend.Data);
     end;
   end;
   Result := GetArrayFromMethod<ITgMessage>(TTgMessage, LRequest.Execute);

@@ -11,7 +11,7 @@ uses
   System.Generics.Collections,
   CoreAPI.Parameter,
   System.Classes,
-  TelegAPi.Types;
+  TelegAPI.Types;
 
 type
   ItgRequestAPI = interface
@@ -50,7 +50,7 @@ type
     function AddRawField(const AField, AValue: string): ItgRequestAPI;
     function AddRawFile(const AFieldName, AFilePath: string): ItgRequestAPI;
     function AddRawStream(const AFieldName: string; Data: TStream; const
-      AFileName: string = ''): ItgRequestAPI;
+      AFileName: string): ItgRequestAPI;
 
       //
     function ClearParameters: ItgRequestAPI;
@@ -119,7 +119,7 @@ type
     function AddRawField(const AField, AValue: string): ItgRequestAPI;
     function AddRawFile(const AFieldName, AFilePath: string): ItgRequestAPI;
     function AddRawStream(const AFieldName: string; Data: TStream; const
-      AFileName: string = ''): ItgRequestAPI;
+      AFileName: string): ItgRequestAPI;
     function IsEmpty: Boolean;
     function ClearParameters: ItgRequestAPI;
     function Execute: string; virtual; abstract;
@@ -194,7 +194,7 @@ end;
 function TtgCoreApiBase.AddRawStream(const AFieldName: string; Data: TStream;
   const AFileName: string): ItgRequestAPI;
 begin
-  FFormData.AddStream(AFieldName, Data);
+  FFormData.AddStream(AFieldName, Data, AFileName);
   FIsEmpty := False;
   Result := Self;
 end;
