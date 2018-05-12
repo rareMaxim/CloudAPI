@@ -407,7 +407,7 @@ uses
 
 function TtgAnimation.FileId: string;
 begin
-  Result := ReadToSimpleType<string>('data');
+  Result := ReadToSimpleType<string>('file_id');
 end;
 
 function TtgAnimation.FileName: string;
