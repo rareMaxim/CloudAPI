@@ -407,7 +407,7 @@ uses
 
 function TtgAnimation.FileId: string;
 begin
-  Result := ReadToSimpleType<string>('data');
+  Result := ReadToSimpleType<string>('file_id');
 end;
 
 function TtgAnimation.FileName: string;
@@ -1557,7 +1557,7 @@ end;
 
 function TtgGame.Description: string;
 begin
-  Result := ReadToSimpleType<string>('text');
+  Result := ReadToSimpleType<string>('description');
 end;
 
 function TtgGame.Photo: TArray<ItgPhotoSize>;

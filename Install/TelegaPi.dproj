@@ -2,7 +2,7 @@
     <PropertyGroup>
         <Base>True</Base>
         <AppType>Package</AppType>
-        <Config Condition="'$(Config)'==''">Debug</Config>
+        <Config Condition="'$(Config)'==''">Release</Config>
         <FrameworkType>FMX</FrameworkType>
         <MainSource>TelegaPi.dpk</MainSource>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
@@ -53,7 +53,7 @@ $(PreBuildEvent)]]></PreBuildEvent>
         <SanitizedProjectName>TelegaPi</SanitizedProjectName>
         <VerInfo_Keys>CompanyName=Maxim Sysoev;FileDescription=$(MSBuildProjectName);FileVersion=3.5.1.10;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <VerInfo_Locale>1058</VerInfo_Locale>
-        <DCC_UnitSearchPath>../source/CrossUrl/Core;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_UnitSearchPath>../source/CrossUrl/Core;../source/;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
         <BT_BuildType>Debug</BT_BuildType>
@@ -141,10 +141,7 @@ $(PreBuildEvent)]]></PreBuildEvent>
                 <Source>
                     <Source Name="MainSource">TelegaPi.dpk</Source>
                 </Source>
-                <Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k250.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp250.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
-                </Excluded_Packages>
+                <Excluded_Packages/>
             </Delphi.Personality>
             <Deployment Version="3">
                 <DeployFile LocalName="$(BDS)\Redist\iossimulator\libPCRE.dylib" Class="DependencyModule">
