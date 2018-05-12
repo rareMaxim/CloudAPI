@@ -1557,7 +1557,7 @@ end;
 
 function TtgGame.Description: string;
 begin
-  Result := ReadToSimpleType<string>('text');
+  Result := ReadToSimpleType<string>('description');
 end;
 
 function TtgGame.Photo: TArray<ItgPhotoSize>;
