@@ -35,7 +35,7 @@ type
     procedure DoOnStop; virtual; abstract;
   public
     constructor Create(AOwner: TComponent); overload; override;
-    constructor Create(ABot: ITelegramBot); overload;
+    constructor Create(ABot: ITelegramBot); reintroduce; overload;
     destructor Destroy; override;
     procedure Start;
     procedure Stop;

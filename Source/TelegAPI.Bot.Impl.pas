@@ -51,8 +51,8 @@ type
   public
     procedure AssignTo(Dest: TPersistent); override;
     constructor Create(AOwner: TComponent); overload; override;
-    constructor Create(const AToken: string); overload;
-    constructor Create(const AToken: string; ACore: IcuHttpClient); overload;
+    constructor Create(const AToken: string); reintroduce; overload;
+    constructor Create(const AToken: string; ACore: IcuHttpClient); reintroduce; overload;
     destructor Destroy; override;
 {$REGION 'Getting updates'}
     function GetUpdates( //
@@ -407,7 +407,7 @@ uses
 constructor TTelegramBot.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
-  FRequest := TtgCoreApi.Create();
+  FRequest := TtgCoreApi.Create(AOwner);
   FRequest.OnError :=
     procedure(E: Exception)
     begin
@@ -641,7 +641,8 @@ begin
       TtgFileToSendTag.FromFile:
         LRequest.AddRawFile(ExtractFileName(LMedia.GetFileToSend.Data), LMedia.GetFileToSend.Data);
       TtgFileToSendTag.FromStream:
-        LRequest.AddRawStream(LMedia.GetFileToSend.Data, LMedia.GetFileToSend.Content, LMedia.GetFileToSend.Data);
+        LRequest.AddRawStream(LMedia.GetFileToSend.Data, LMedia.GetFileToSend.Content,
+          LMedia.GetFileToSend.Data);
     end;
   end;
   Result := GetArrayFromMethod<ITgMessage>(TTgMessage, LRequest.Execute);

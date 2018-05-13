@@ -146,10 +146,7 @@ type
     function DoGet: string;
   public
     function Execute: string; override;
-    constructor Create;
-    destructor Destroy; override;
   end;
-
 implementation
 
 uses
@@ -322,7 +319,6 @@ begin
   FToken := AToken;
   Result := Self;
 end;
-
 function TtgCoreApiBase.StreamToString(Stream: TStream): string;
 var
   LStrings: TStringList;
@@ -339,15 +335,6 @@ end;
 
 { TtgCoreApiSysNet }
 
-constructor TtgCoreApi.Create;
-begin
-  inherited Create(nil);
-end;
-
-destructor TtgCoreApi.Destroy;
-begin
-  inherited;
-end;
 
 function TtgCoreApi.DoGet: string;
 begin
