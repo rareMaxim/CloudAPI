@@ -3,11 +3,10 @@
 interface
 
 uses
-  TelegAPi.Types.Enums,
-  System.Classes,
-  System.Rtti,
   REST.Json.Types,
-  System.JSON.Serializers;
+  System.Classes,
+  System.JSON.Serializers,
+  TelegAPi.Types.Enums;
 
 type
   ItgUser = interface

@@ -3,7 +3,6 @@
 interface
 
 uses
-  System.Rtti,
   TelegAPI.Types,
   TelegAPI.Types.Enums,
   TelegAPI.Types.InlineQueryResults,

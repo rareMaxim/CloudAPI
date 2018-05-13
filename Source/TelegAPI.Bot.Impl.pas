@@ -7,7 +7,6 @@ interface
 uses
   CoreAPI,
   CrossUrl.HttpClient,
-  System.Rtti,
   System.Classes,
   System.TypInfo,
   System.SysUtils,
@@ -407,7 +406,7 @@ uses
 constructor TTelegramBot.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
-  FRequest := TtgCoreApi.Create(AOwner);
+  FRequest := TtgCoreApi.Create(nil);
   FRequest.OnError :=
     procedure(E: Exception)
     begin

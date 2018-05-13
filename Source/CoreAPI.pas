@@ -3,13 +3,13 @@ unit CoreAPI;
 interface
 
 uses
-  TelegAPI.Base,
   CrossUrl.HttpClient,
   System.Rtti,
   System.TypInfo,
   System.SysUtils,
   System.Generics.Collections,
   System.Classes,
+  TelegAPI.Base,
   TelegAPI.Types;
 
 type
@@ -45,13 +45,13 @@ type
       Boolean; const ARequired: Boolean = False): ItgRequestAPI; overload;
     function AddParameter(const AKey: string; const AValue, ADefaultValue:
       Single; const ARequired: Boolean = False): ItgRequestAPI; overload;
-      //
+    //
     function AddRawField(const AField, AValue: string): ItgRequestAPI;
     function AddRawFile(const AFieldName, AFileName: string): ItgRequestAPI;
     function AddRawStream(const AFieldName: string; Data: TStream; const
       AFileName: string): ItgRequestAPI;
 
-      //
+    //
     function ClearParameters: ItgRequestAPI;
     function Execute: string;
     function ExecuteAsBool: Boolean;
@@ -114,7 +114,7 @@ type
       Boolean; const ARequired: Boolean = False): ItgRequestAPI; overload;
     function AddParameter(const AKey: string; const AValue, ADefaultValue:
       Single; const ARequired: Boolean = False): ItgRequestAPI; overload;
-      //
+    //
     function AddRawField(const AField, AValue: string): ItgRequestAPI;
     function AddRawFile(const AFieldName, AFileName: string): ItgRequestAPI;
     function AddRawStream(const AFieldName: string; Data: TStream; const
@@ -124,16 +124,15 @@ type
     function Execute: string; virtual; abstract;
     function ExecuteAsBool: Boolean;
     function ExecuteAndReadValue: string;
-    destructor Destroy; override;
     constructor Create(AOwner: TComponent); override;
 
-  // props
+    // props
     property LastRequestIsOk: Boolean read FLastRequestIsOk write FLastRequestIsOk;
     property DataExtractor: TFunc<string, string> read GetDataExtractor write
       SetDataExtractor;
     property Url: string read GetUrl;
     property HttpCore: IcuHttpClient read FHttp write SetHttp;
-  // events
+    // events
     property OnError: TProc<Exception> read GetOnError write SetOnError;
     property OnSend: TProc<string, string> read GetOnSend write SetOnSend;
     property OnReceive: TProc<string> read GetOnReceive write SetOnReceive;
@@ -147,24 +146,27 @@ type
   public
     function Execute: string; override;
   end;
+
 implementation
 
 uses
-  System.DateUtils,
-  System.JSON,
   REST.Json,
+  System.DateUtils,
+  System.Json,
   TelegAPI.Exceptions,
   TelegAPI.Types.ReplyMarkups;
 
 { TtgCoreApiBase }
+{$REGION 'TtgCoreApiBase.AddParameter'}
 
 function TtgCoreApiBase.AddParameter(const AKey, AValue, ADefaultValue: string;
   const ARequired: Boolean): ItgRequestAPI;
 begin
-  if ARequired and (AValue.Equals(ADefaultValue) or AValue.isEmpty) then
-    DoHaveException(ETelegramException.Create('Not assigned required data [TtgApiRequest.FillFormData]'));
-  AddRawField(AKey, AValue);
-  Result := self;
+  if ARequired and (AValue.Equals(ADefaultValue) or AValue.IsEmpty) then
+    DoHaveException(ETelegramException.Create('Not assigned required data'));
+  if AValue <> ADefaultValue then
+    AddRawField(AKey, AValue);
+  Result := Self;
 end;
 
 function TtgCoreApiBase.AddParameter(const AKey: string; const AValue,
@@ -172,6 +174,57 @@ function TtgCoreApiBase.AddParameter(const AKey: string; const AValue,
 begin
   Result := AddParameter(AKey, AValue.ToString, ADefaultValue.ToString, ARequired);
 end;
+
+function TtgCoreApiBase.AddParameter(const AKey: string; const AValue,
+  ADefaultValue: TDateTime; const ARequired: Boolean): ItgRequestAPI;
+begin
+  Result := AddParameter(AKey, DateTimeToUnix(AValue, False).ToString,
+    DateTimeToUnix(ADefaultValue, False).ToString, ARequired);
+end;
+
+function TtgCoreApiBase.AddParameter(const AKey: string; const AValue,
+  ADefaultValue: TtgFileToSend; const ARequired: Boolean): ItgRequestAPI;
+begin
+  case AValue.Tag of
+    TtgFileToSendTag.FromStream:
+      AddRawStream(AKey, AValue.Content, AValue.Data);
+    TtgFileToSendTag.FromFile:
+      AddRawFile(AKey, AValue.Data);
+    TtgFileToSendTag.ID, TtgFileToSendTag.FromURL:
+      AddRawField(AKey, AValue.Data);
+  else
+    raise Exception.Create('Cant convert TTgFileToSend: Unknown prototype tag');
+  end;
+end;
+
+function TtgCoreApiBase.AddParameter(const AKey: string; const AValue,
+  ADefaultValue: TtgUserLink; const ARequired: Boolean): ItgRequestAPI;
+begin
+  Result := AddParameter(AKey, AValue.ToString, ADefaultValue.ToString, ARequired);
+end;
+
+function TtgCoreApiBase.AddParameter(const AKey: string; const AValue,
+  ADefaultValue: TObject; const ARequired: Boolean): ItgRequestAPI;
+begin
+  Result := Self;
+  if ARequired and (AValue.Equals(ADefaultValue) or (not Assigned(AValue))) then
+    DoHaveException(ETelegramException.Create('Not assigned required data'));
+  if Assigned(AValue) then
+    Result := AddParameter(AKey, TJson.ObjectToJsonString(AValue), 'null', ARequired);
+end;
+
+function TtgCoreApiBase.AddParameter(const AKey: string; const AValue,
+  ADefaultValue, ARequired: Boolean): ItgRequestAPI;
+begin
+  Result := AddParameter(AKey, AValue.ToString, ADefaultValue.ToString, ARequired);
+end;
+
+function TtgCoreApiBase.AddParameter(const AKey: string; const AValue,
+  ADefaultValue: Single; const ARequired: Boolean): ItgRequestAPI;
+begin
+  Result := AddParameter(AKey, AValue.ToString, ADefaultValue.ToString, ARequired);
+end;
+{$ENDREGION}
 
 function TtgCoreApiBase.AddRawField(const AField, AValue: string): ItgRequestAPI;
 begin
@@ -199,7 +252,7 @@ function TtgCoreApiBase.ClearParameters: ItgRequestAPI;
 begin
   FFormData := nil;
   FIsEmpty := True;
-  FFormData := httpCore.CreateMultipartFormData;
+  FFormData := HttpCore.CreateMultipartFormData;
   Result := Self;
 end;
 
@@ -207,12 +260,6 @@ constructor TtgCoreApiBase.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
   FIsEmpty := True;
-end;
-
-destructor TtgCoreApiBase.Destroy;
-begin
-
-  inherited;
 end;
 
 procedure TtgCoreApiBase.DoHaveException(const AException: Exception);
@@ -319,6 +366,7 @@ begin
   FToken := AToken;
   Result := Self;
 end;
+
 function TtgCoreApiBase.StreamToString(Stream: TStream): string;
 var
   LStrings: TStringList;
@@ -334,7 +382,6 @@ begin
 end;
 
 { TtgCoreApiSysNet }
-
 
 function TtgCoreApi.DoGet: string;
 begin
@@ -385,53 +432,6 @@ begin
     OnReceive(Result);
   if Assigned(DataExtractor) then
     Result := DataExtractor(Result);
-end;
-
-function TtgCoreApiBase.AddParameter(const AKey: string; const AValue,
-  ADefaultValue: TDateTime; const ARequired: Boolean): ItgRequestAPI;
-begin
-  Result := AddParameter(AKey, DateTimeToUnix(AValue, False).ToString,
-    DateTimeToUnix(ADefaultValue, False).ToString, ARequired);
-end;
-
-function TtgCoreApiBase.AddParameter(const AKey: string; const AValue,
-  ADefaultValue: TtgFileToSend; const ARequired: Boolean): ItgRequestAPI;
-begin
-  case AValue.Tag of
-    TtgFileToSendTag.FromStream:
-      AddRawStream(AKey, AValue.Content, AValue.Data);
-    TtgFileToSendTag.FromFile:
-      AddRawFile(AKey, AValue.Data);
-    TtgFileToSendTag.ID, TtgFileToSendTag.FromURL:
-      AddRawField(AKey, AValue.Data);
-  else
-    raise Exception.Create('Cant convert TTgFileToSend: Unknown prototype tag');
-  end;
-end;
-
-function TtgCoreApiBase.AddParameter(const AKey: string; const AValue,
-  ADefaultValue: TtgUserLink; const ARequired: Boolean): ItgRequestAPI;
-begin
-  Result := AddParameter(AKey, AValue.ToString, ADefaultValue.ToString, ARequired);
-end;
-
-function TtgCoreApiBase.AddParameter(const AKey: string; const AValue,
-  ADefaultValue: TObject; const ARequired: Boolean): ItgRequestAPI;
-begin
-  Result := AddParameter(AKey, TJson.ObjectToJsonString(AValue), //
-    TJson.ObjectToJsonString(ADefaultValue), ARequired);
-end;
-
-function TtgCoreApiBase.AddParameter(const AKey: string; const AValue,
-  ADefaultValue, ARequired: Boolean): ItgRequestAPI;
-begin
-  Result := AddParameter(AKey, AValue.ToString, ADefaultValue.ToString, ARequired);
-end;
-
-function TtgCoreApiBase.AddParameter(const AKey: string; const AValue,
-  ADefaultValue: Single; const ARequired: Boolean): ItgRequestAPI;
-begin
-  Result := AddParameter(AKey, AValue.ToString, ADefaultValue.ToString, ARequired);
 end;
 
 end.

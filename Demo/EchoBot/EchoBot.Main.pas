@@ -23,7 +23,8 @@ uses
   TelegAPI.Receiver.UI,
   TelegAPI.Bot.Impl,
   TelegAPI.Base,
-  TelegAPI.Receiver.Service, TelegAPI.UpdateParser;
+  TelegAPI.Receiver.Service, TelegAPI.UpdateParser,
+  CrossUrl.SystemNet.HttpClient, CoreAPI;
 
 type
   TMain = class(TForm)
@@ -35,6 +36,7 @@ type
     tgBot: TTelegramBot;
     tgExceptionManagerUI1: TtgExceptionManagerUI;
     tgReceiverUI1: TtgReceiverUI;
+    cuHttpClientSysNet1: TcuHttpClientSysNet;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure swtchTokenSwitch(Sender: TObject);
     procedure tgExceptionManagerUI1GlobalException(ASender: TObject; const AMethod: string; AException: Exception);
