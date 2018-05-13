@@ -9,7 +9,6 @@ uses
   System.TypInfo,
   System.SysUtils,
   System.Generics.Collections,
-  CoreAPI.Parameter,
   System.Classes,
   TelegAPI.Types;
 

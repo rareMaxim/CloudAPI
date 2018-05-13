@@ -6,7 +6,6 @@ interface
 
 uses
   CoreAPI,
-  CoreAPI.Parameter,
   CrossUrl.HttpClient,
   System.Rtti,
   System.Classes,
