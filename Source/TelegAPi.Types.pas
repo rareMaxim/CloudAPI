@@ -5,7 +5,6 @@ interface
 uses
   REST.Json.Types,
   System.Classes,
-  System.JSON.Serializers,
   TelegAPi.Types.Enums;
 
 type
@@ -403,7 +402,6 @@ type
     function IsEmpty: Boolean;
   end;
 
-  [JsonSerializeAttribute(TJsonMemberSerialization.&Public)]
   TtgInputMedia = class
   private
     FType: string;
