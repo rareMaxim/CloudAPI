@@ -852,15 +852,15 @@ end;
 
 function TTelegramBot.GetChat(const ChatId: TtgUserLink): ItgChat;
 begin
-  Result := TtgChat.Create(FRequest.SetMethod('getChat').Execute);
+  Result := TtgChat.Create(FRequest.SetMethod('getChat').//
+    AddParameter('chat_id', ChatId, 0, True).Execute);
 end;
 
 function TTelegramBot.GetChatAdministrators(const ChatId: TtgUserLink): TArray<
   ItgChatMember>;
 begin
-  Result := GetArrayFromMethod<ItgChatMember>(TtgChatMember, FRequest.SetMethod('getChatAdministrators')
-    //
-    .AddParameter('chat_id', ChatId, 0, True).Execute);
+  Result := GetArrayFromMethod<ItgChatMember>(TtgChatMember, FRequest.SetMethod('getChatAdministrators').AddParameter
+    ('chat_id', ChatId, 0, True).Execute);
 end;
 
 function TTelegramBot.GetChatMember(const ChatId: TtgUserLink; const UserId:
