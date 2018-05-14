@@ -3,7 +3,7 @@ unit TelegaPi.Types.InputMessageContents;
 interface
 
 uses
-   REST.Json.Types;
+  REST.Json.Types;
 
 type
   /// <summary>
@@ -77,7 +77,8 @@ type
     /// </summary>
     [JSONName('disable_web_page_preview')]
     DisableWebPagePreview: Boolean;
-    constructor Create(const AMessageText, AParseMode: string; ADisableWebPagePreview: Boolean);
+    constructor Create(const AMessageText, AParseMode: string;
+      ADisableWebPagePreview: Boolean);
   end;
 
   /// <summary>
@@ -111,15 +112,18 @@ type
     /// </summary>
     [JSONName('foursquare_id')]
     FoursquareId: string;
-    constructor Create(ALatitude, ALongitude: Single; const ATitle, AAddress, AFoursquareId: string);
+    constructor Create(ALatitude, ALongitude: Single; const ATitle, AAddress,
+      AFoursquareId: string);
   end;
 
 implementation
 
 { TtgInputTextMessageContent }
 
-constructor TtgInputTextMessageContent.Create(const AMessageText, AParseMode: string; ADisableWebPagePreview: Boolean);
+constructor TtgInputTextMessageContent.Create(const AMessageText, AParseMode:
+  string; ADisableWebPagePreview: Boolean);
 begin
+  inherited Create;
   MessageText := AMessageText;
   ParseMode := AParseMode;
   DisableWebPagePreview := ADisableWebPagePreview;
@@ -127,8 +131,10 @@ end;
 
 { TtgInputContactMessageContent }
 
-constructor TtgInputContactMessageContent.Create(const APhoneNumber, AFirstName, ALastName: string);
+constructor TtgInputContactMessageContent.Create(const APhoneNumber, AFirstName,
+  ALastName: string);
 begin
+  inherited Create;
   PhoneNumber := APhoneNumber;
   FirstName := AFirstName;
   LastName := ALastName;
@@ -138,14 +144,17 @@ end;
 
 constructor TtgInputLocationMessageContent.Create(ALatitude, ALongitude: Single);
 begin
+  inherited Create;
   Latitude := ALatitude;
   Longitude := ALongitude;
 end;
 
 { TtgInputVenueMessageContent }
 
-constructor TtgInputVenueMessageContent.Create(ALatitude, ALongitude: Single; const ATitle, AAddress, AFoursquareId: string);
+constructor TtgInputVenueMessageContent.Create(ALatitude, ALongitude: Single;
+  const ATitle, AAddress, AFoursquareId: string);
 begin
+  inherited Create;
   Latitude := ALatitude;
   Longitude := ALongitude;
   Title := ATitle;

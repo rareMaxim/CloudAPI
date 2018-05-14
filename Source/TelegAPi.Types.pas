@@ -400,6 +400,7 @@ type
     class function FromStream(const AContent: TStream; const AFileName: string):
       TtgFileToSend;
     class function Empty: TtgFileToSend;
+    function IsEmpty: Boolean;
   end;
 
   [JsonSerializeAttribute(TJsonMemberSerialization.&Public)]
@@ -542,6 +543,11 @@ end;
 class function TtgFileToSend.FromURL(const AURL: string): TtgFileToSend;
 begin
   Result := TtgFileToSend.Create(TtgFileToSendTag.FromURL, AURL, nil);
+end;
+
+function TtgFileToSend.IsEmpty: Boolean;
+begin
+  Result := Data.IsEmpty and not Assigned(Content);
 end;
 
 { TtgUserLink }

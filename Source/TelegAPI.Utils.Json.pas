@@ -56,7 +56,7 @@ begin
 end;
 
 class function TJsonUtils.ObjectToJString(AObj: TObject): string;
-begin
+begin  // IF DELPHI_VERSION < TOKIO
   if Assigned(AObj) then
     Result := TJson.ObjectToJsonString(AObj)
   else
