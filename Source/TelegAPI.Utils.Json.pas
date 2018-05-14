@@ -27,6 +27,7 @@ type
 
   TJsonUtils = class
     class function ArrayToJString<T: class>(LArray: TArray<T>): string;
+    class function ObjectToJString(AObj: TObject): string;
   end;
 
 implementation
@@ -52,6 +53,14 @@ begin
     end;
   Result := Result + ']';
   Result := Result.Replace('"inline_keyboard":null', '', [rfReplaceAll]); // какашечка
+end;
+
+class function TJsonUtils.ObjectToJString(AObj: TObject): string;
+begin
+  if Assigned(AObj) then
+    Result := TJson.ObjectToJsonString(AObj)
+  else
+    Result := 'null';
 end;
 
 { TBaseJson }

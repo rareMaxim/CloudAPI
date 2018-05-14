@@ -154,6 +154,7 @@ uses
   System.DateUtils,
   System.Json,
   TelegAPI.Exceptions,
+  TelegAPI.Utils.Json,
   TelegAPI.Types.ReplyMarkups;
 
 { TtgCoreApiBase }
@@ -206,11 +207,8 @@ end;
 function TtgCoreApiBase.AddParameter(const AKey: string; const AValue,
   ADefaultValue: TObject; const ARequired: Boolean): ItgRequestAPI;
 begin
-  Result := Self;
-  if ARequired and (AValue.Equals(ADefaultValue) or (not Assigned(AValue))) then
-    DoHaveException(ETelegramException.Create('Not assigned required data'));
-  if Assigned(AValue) then
-    Result := AddParameter(AKey, TJson.ObjectToJsonString(AValue), 'null', ARequired);
+  Result := AddParameter(AKey, TJsonUtils.ObjectToJString(AValue),  //
+    TJsonUtils.ObjectToJString(ADefaultValue), ARequired);
 end;
 
 function TtgCoreApiBase.AddParameter(const AKey: string; const AValue,
