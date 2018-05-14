@@ -125,7 +125,6 @@ type
     function ExecuteAsBool: Boolean;
     function ExecuteAndReadValue: string;
     constructor Create(AOwner: TComponent); override;
-
     // props
     property LastRequestIsOk: Boolean read FLastRequestIsOk write FLastRequestIsOk;
     property DataExtractor: TFunc<string, string> read GetDataExtractor write
