@@ -84,9 +84,9 @@ $(PreBuildEvent)]]></PreBuildEvent>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
         <VerInfo_AutoIncVersion>true</VerInfo_AutoIncVersion>
-        <VerInfo_Build>31</VerInfo_Build>
+        <VerInfo_Build>32</VerInfo_Build>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <VerInfo_Keys>CompanyName=Maxim Sysoev;FileDescription=$(MSBuildProjectName);FileVersion=3.5.1.31;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=Maxim Sysoev;FileDescription=$(MSBuildProjectName);FileVersion=3.5.1.32;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <VerInfo_MajorVer>3</VerInfo_MajorVer>
         <VerInfo_MinorVer>5</VerInfo_MinorVer>
@@ -112,7 +112,7 @@ $(PreBuildEvent)]]></PreBuildEvent>
         <DCCReference Include="..\Source\TelegAPI.Base.pas"/>
         <DCCReference Include="..\Source\TelegAPI.Bot.Impl.pas"/>
         <DCCReference Include="..\Source\TelegAPI.Bot.pas"/>
-        <DCCReference Include="..\Source\TelegaPi.Exceptions.pas"/>
+        <DCCReference Include="..\Source\TelegaPi.Exceptions_.pas"/>
         <DCCReference Include="..\Source\TelegAPi.Helpers.pas"/>
         <DCCReference Include="..\Source\TelegAPI.Receiver.Base.pas"/>
         <DCCReference Include="..\Source\TelegAPI.Receiver.Console.pas"/>
@@ -129,6 +129,8 @@ $(PreBuildEvent)]]></PreBuildEvent>
         <DCCReference Include="..\Source\TelegaPi.Ext.Sessions.pas"/>
         <DCCReference Include="..\Source\CoreAPI.pas"/>
         <DCCReference Include="..\Source\TelegAPI.UpdateParser.pas"/>
+        <DCCReference Include="..\Source\TelegAPI.Logger.pas"/>
+        <DCCReference Include="..\Source\TelegAPI.Logger.Old.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -172,7 +174,7 @@ $(PreBuildEvent)]]></PreBuildEvent>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="..\..\..\..\..\Public\Documents\Embarcadero\Studio\19.0\Bpl\TelegaPi.bpl" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="C:\Users\Public\Documents\Embarcadero\Studio\19.0\Bpl\TelegaPi.bpl" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
                         <RemoteName>TelegaPi.bpl</RemoteName>
                         <Overwrite>true</Overwrite>

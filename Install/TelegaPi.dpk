@@ -10,21 +10,21 @@ package TelegaPi;
 {$EXTENDEDSYNTAX ON}
 {$IMPORTEDDATA ON}
 {$IOCHECKS ON}
-{$LOCALSYMBOLS OFF}
+{$LOCALSYMBOLS ON}
 {$LONGSTRINGS ON}
 {$OPENSTRINGS ON}
-{$OPTIMIZATION ON}
+{$OPTIMIZATION OFF}
 {$OVERFLOWCHECKS OFF}
 {$RANGECHECKS OFF}
-{$REFERENCEINFO OFF}
+{$REFERENCEINFO ON}
 {$SAFEDIVIDE OFF}
-{$STACKFRAMES OFF}
+{$STACKFRAMES ON}
 {$TYPEDADDRESS OFF}
 {$VARSTRINGCHECKS ON}
 {$WRITEABLECONST OFF}
 {$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
-{$DEFINE RELEASE}
+{$DEFINE DEBUG}
 {$ENDIF IMPLICITBUILDING}
 {$DESCRIPTION 'Telegram API for Delphi'}
 {$IMPLICITBUILD ON}
@@ -38,7 +38,7 @@ contains
   TelegAPI.Base in '..\Source\TelegAPI.Base.pas',
   TelegAPI.Bot.Impl in '..\Source\TelegAPI.Bot.Impl.pas',
   TelegAPI.Bot in '..\Source\TelegAPI.Bot.pas',
-  TelegaPi.Exceptions in '..\Source\TelegaPi.Exceptions.pas',
+  TelegaPi.Exceptions_ in '..\Source\TelegaPi.Exceptions_.pas',
   TelegAPi.Helpers in '..\Source\TelegAPi.Helpers.pas',
   TelegAPI.Receiver.Base in '..\Source\TelegAPI.Receiver.Base.pas',
   TelegAPI.Receiver.Console in '..\Source\TelegAPI.Receiver.Console.pas',
@@ -54,7 +54,9 @@ contains
   TelegAPI.Receiver.UI in '..\Source\TelegAPI.Receiver.UI.pas',
   TelegaPi.Ext.Sessions in '..\Source\TelegaPi.Ext.Sessions.pas',
   CoreAPI in '..\Source\CoreAPI.pas',
-  TelegAPI.UpdateParser in '..\Source\TelegAPI.UpdateParser.pas';
+  TelegAPI.UpdateParser in '..\Source\TelegAPI.UpdateParser.pas',
+  TelegAPI.Logger in '..\Source\TelegAPI.Logger.pas',
+  TelegAPI.Logger.Old in '..\Source\TelegAPI.Logger.Old.pas';
 
 end.
 

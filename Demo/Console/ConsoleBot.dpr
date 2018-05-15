@@ -19,7 +19,8 @@ uses
   TelegAPI.Bot,
   TelegAPI.Types,
   TelegAPI.Bot.Impl,
-  TelegAPI.Exceptions;
+  TelegAPI.Logger,
+  TelegAPI.Logger.Old;
 
 procedure SMG(ABot: ITelegramBot; AMessage: ITgMessage);
 var
@@ -44,17 +45,14 @@ begin
                                 TcuHttpClientSysNet.Create(nil)
                               {$ENDIF});
   LReceiver := TtgReceiverConsole.Create(LBot);
+  LBot.Logger := TtgExceptionManagerConsole.Create;
   try
-    LExcp := LBot.ExceptionManager as TtgExceptionManagerConsole;
-    LExcp.OnApiException :=
-      procedure(AMethod: string; AExp: EApiRequestException)
+    LExcp := LBot.Logger as TtgExceptionManagerConsole;
+    LExcp.OnLog :=
+      procedure(level: TLogLevel; msg: string; e: Exception)
       begin
-        Writeln(AExp.ToString);
-      end;
-    LExcp.OnGlobalException :=
-      procedure(AMethod: string; AExp: Exception)
-      begin
-        Writeln(AExp.ToString);
+        if level >= TLogLevel.Error then
+          Writeln('[' + e.ToString + '] ' + msg);
       end;
     LReceiver.OnStart :=
       procedure

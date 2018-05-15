@@ -14,16 +14,5 @@ type
 
 implementation
 
-uses
-  System.IOUtils,
-  System.SysUtils;
-
-function ConfigPath: string;
-const
-  CONFIG_NAME = 'config.json';
-begin
-  Result := ExtractFilePath(ParamStr(0)) + CONFIG_NAME;
-end;
-
 end.
 
