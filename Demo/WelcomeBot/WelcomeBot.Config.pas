@@ -12,15 +12,11 @@ type
     property Token: string read FToken write FToken;
   end;
 
-var
-  BOT_CONF: TwbConfig;
-
 implementation
 
 uses
   System.IOUtils,
-  System.SysUtils,
-  TelegAPI.Utils.Json;
+  System.SysUtils;
 
 function ConfigPath: string;
 const
@@ -29,12 +25,5 @@ begin
   Result := ExtractFilePath(ParamStr(0)) + CONFIG_NAME;
 end;
 
-initialization
-
-BOT_CONF := TJsonUtils.FileToObject<TwbConfig>(ConfigPath);
-
-finalization
-
-TJsonUtils.ObjectToFile(BOT_CONF, ConfigPath);
-
 end.
+

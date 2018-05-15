@@ -568,7 +568,7 @@ end;
 function TtgUserLink.ToString: string;
 begin
   if Username.IsEmpty then
-    Result := Self.ID.ToString
+    Result := ID.ToString
   else
     Result := Username;
 end;

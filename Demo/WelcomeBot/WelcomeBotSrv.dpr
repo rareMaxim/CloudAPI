@@ -1,4 +1,4 @@
-program WelcomeBot;
+program WelcomeBotSrv;
 
 uses
   Vcl.SvcMgr,
