@@ -114,14 +114,13 @@ $(PreBuildEvent)]]>
         <DCCReference Include="..\Source\TelegAPI.Base.pas"/>
         <DCCReference Include="..\Source\TelegAPI.Bot.Impl.pas"/>
         <DCCReference Include="..\Source\TelegAPI.Bot.pas"/>
-        <DCCReference Include="..\Source\TelegaPi.Exceptions_.pas"/>
         <DCCReference Include="..\Source\TelegAPi.Helpers.pas"/>
         <DCCReference Include="..\Source\TelegAPI.Receiver.Base.pas"/>
         <DCCReference Include="..\Source\TelegAPI.Receiver.Console.pas"/>
         <DCCReference Include="..\Source\TelegAPI.Receiver.Service.pas"/>
         <DCCReference Include="..\Source\TelegAPi.RegisterIDE.pas"/>
         <DCCReference Include="..\Source\TelegaPi.Types.Enums.pas"/>
-        <DCCReference Include="..\Source\TelegAPI.Types.Impl.pas"/>
+        <DCCReference Include="..\Source\TelegAPi.Types.Impl.pas"/>
         <DCCReference Include="..\Source\TelegaPi.Types.InlineQueryResults.pas"/>
         <DCCReference Include="..\Source\TelegaPi.Types.InputMessageContents.pas"/>
         <DCCReference Include="..\Source\TelegAPi.Types.pas"/>
