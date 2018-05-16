@@ -3,6 +3,7 @@ unit TelegAPI.Logger;
 interface
 
 uses
+  TelegAPI.Base,
   System.SysUtils;
 
 type
@@ -44,7 +45,8 @@ type
 {$ENDREGION}
   end;
 
-  TLogAbstract = class(TInterfacedObject, ILogger)
+  TLogAbstract = class(TtgAbstractComponent, ILogger)
+  public
 {$REGION 'Log'}
     procedure Log(level: TLogLevel; const msg: string; const e: Exception);
       overload; virtual; abstract;
@@ -83,7 +85,12 @@ type
 
   TLogEmpty = class(TLogAbstract)
   public
-    procedure Log(level: TLogLevel; const msg: string; const e: Exception); override;
+    procedure Log(level: TLogLevel; const msg: string; const e: Exception);
+      overload; override;
+    procedure Enter(const instance: TObject; const methodName: string); overload;
+      override;
+    procedure Leave(const instance: TObject; const methodName: string); overload;
+      override;
   end;
 
 implementation
@@ -148,22 +155,29 @@ end;
 procedure TLogAbstract.Error(const fmt: string; const args: array of const;
   const e: Exception);
 begin
-  Error(fmt, args, nil);
+  Error(string.Format(fmt, args), nil);
 end;
 {$ENDREGION}
 
-procedure TLogAbstract.Enter(const methodName: string);
-begin
-  Enter(nil, methodName);
-end;
 
-{$REGION 'Error'}
+{$REGION 'Fatal'}
 
 procedure TLogAbstract.Fatal(const fmt: string; const args: array of const;
   const e: Exception);
 begin
   Fatal(string.Format(fmt, args), nil);
 end;
+{$ENDREGION}
+
+{$REGION 'Leave'}
+
+procedure TLogAbstract.Enter(const methodName: string);
+begin
+  Enter(nil, methodName);
+end;
+{$ENDREGION}
+
+{$REGION 'Leave'}
 
 procedure TLogAbstract.Leave(const methodName: string);
 begin
@@ -172,6 +186,16 @@ end;
 {$ENDREGION}
 
 { TLogEmpty }
+
+procedure TLogEmpty.Enter(const instance: TObject; const methodName: string);
+begin
+
+end;
+
+procedure TLogEmpty.Leave(const instance: TObject; const methodName: string);
+begin
+
+end;
 
 procedure TLogEmpty.Log(level: TLogLevel; const msg: string; const e: Exception);
 begin

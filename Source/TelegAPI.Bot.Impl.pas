@@ -439,7 +439,7 @@ begin
         begin
           LExcCode := (LJSON.GetValue('error_code') as TJSONNumber).AsInt;
           LExcDesc := (LJSON.GetValue('description') as TJSONString).Value;
-          Logger.Error('%S - %S', [LExcCode, LExcDesc]);
+          Logger.Error('%d - %S', [LExcCode, LExcDesc]);
         end
         else
           Result := LJSON.GetValue('result').ToString;
@@ -512,7 +512,7 @@ end;
 function TTelegramBot.GetLog: ILogger;
 begin
   if FLog = nil then
-    FLog := TLogEmpty.Create;
+    FLog := TLogEmpty.Create(nil);
   Result := FLog;
 end;
 

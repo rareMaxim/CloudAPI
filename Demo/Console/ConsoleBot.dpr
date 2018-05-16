@@ -5,11 +5,9 @@
 
 {/$DEFINE  USE_INDY_CORE}
 uses
-{$IFDEF  USE_INDY_CORE}
-//Indy Http Core
+{$IFDEF  USE_INDY_CORE} //Indy Http Core
   CrossUrl.Indy.HttpClient,
-{$ELSE}
-// System.Net HTTP Core
+{$ELSE}                 // System.Net HTTP Core
   CrossUrl.SystemNet.HttpClient,
 {$ENDIF}
 
@@ -21,6 +19,9 @@ uses
   TelegAPI.Bot.Impl,
   TelegAPI.Logger,
   TelegAPI.Logger.Old;
+
+const
+  TOKEN = 'YOUR_TOKEN';
 
 procedure SMG(ABot: ITelegramBot; AMessage: ITgMessage);
 var
@@ -38,21 +39,25 @@ var
   LExcp: TtgExceptionManagerConsole;
   LStop: string;
 begin
-  LBot := TTelegramBot.Create('YOUR_TOKEN',
-                              {$IFDEF  USE_INDY_CORE}
-                                TcuHttpClientIndy.Create(nil)
-                              {$ELSE}
-                                TcuHttpClientSysNet.Create(nil)
-                              {$ENDIF});
+{$IFDEF  USE_INDY_CORE}
+  LBot := TTelegramBot.Create(TOKEN, TcuHttpClientIndy.Create(nil));
+{$ELSE}
+  LBot := TTelegramBot.Create(TOKEN, TcuHttpClientSysNet.Create(nil));
+{$ENDIF}
   LReceiver := TtgReceiverConsole.Create(LBot);
-  LBot.Logger := TtgExceptionManagerConsole.Create;
+  LBot.Logger := TtgExceptionManagerConsole.Create(nil);
   try
     LExcp := LBot.Logger as TtgExceptionManagerConsole;
     LExcp.OnLog :=
       procedure(level: TLogLevel; msg: string; e: Exception)
       begin
         if level >= TLogLevel.Error then
-          Writeln('[' + e.ToString + '] ' + msg);
+        begin
+          if Assigned(e) then
+            Writeln('[' + e.ToString + '] ' + msg)
+          else
+            Writeln(msg);
+        end;
       end;
     LReceiver.OnStart :=
       procedure
@@ -91,8 +96,8 @@ begin
     { TODO -oUser -cConsole Main : Insert code here }
     Main;
   except
-    on E: Exception do
-      Writeln(E.ClassName, ': ', E.message);
+    on e: Exception do
+      Writeln(e.ClassName, ': ', e.message);
   end;
 
 end.
