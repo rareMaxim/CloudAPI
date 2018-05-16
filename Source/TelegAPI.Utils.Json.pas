@@ -15,9 +15,10 @@ type
     function ReadToClass<T: class, constructor>(const AKey: string): T;
     function ReadToSimpleType<T>(const AKey: string): T;
     function ReadToDateTime(const AKey: string): TDateTime;
-    function ReadToArray<TI: IInterface>(TgClass: TBaseJsonClass;
-      const AKey: string): TArray<TI>;
+    function ReadToArray<TI: IInterface>(TgClass: TBaseJsonClass; const AKey:
+      string): TArray<TI>;
   public
+    function AsJson: string;
     class function FromJson(const AJson: string): TBaseJson;
     class function GetTgClass: TBaseJsonClass; virtual; // abstract;
     class procedure UnSupported;
@@ -28,8 +29,7 @@ type
   TJsonUtils = class
     class function ArrayToJString<T: class>(LArray: TArray<T>): string;
     class function ObjectToJString(AObj: TObject): string;
-    class function FileToObject<T: class, constructor>(const AFileName
-      : string): T;
+    class function FileToObject<T: class, constructor>(const AFileName: string): T;
     class procedure ObjectToFile(AObj: TObject; const AFileName: string);
   end;
 
@@ -90,6 +90,11 @@ end;
 
 { TBaseJson }
 
+function TBaseJson.AsJson: string;
+begin
+  Result := FJSON.ToJSON;
+end;
+
 constructor TBaseJson.Create(const AJson: string);
 begin
   inherited Create;
@@ -98,8 +103,8 @@ begin
   FJSON := TJSONObject.ParseJSONValue(AJson) as TJSONObject;
 end;
 
-function TBaseJson.ReadToArray<TI>(TgClass: TBaseJsonClass; const AKey: string)
-  : TArray<TI>;
+function TBaseJson.ReadToArray<TI>(TgClass: TBaseJsonClass; const AKey: string):
+  TArray<TI>;
 var
   LJsonArray: TJSONArray;
   I: Integer;
@@ -119,8 +124,7 @@ begin
   SetLength(Result, LJsonArray.Count);
   for I := 0 to High(Result) do
   begin
-    TgClass.GetTgClass.Create(LJsonArray.Items[I].ToString)
-      .GetInterface(GUID, Result[I]);
+    TgClass.GetTgClass.Create(LJsonArray.Items[I].ToString).GetInterface(GUID, Result[I]);
   end;
 end;
 
@@ -174,13 +178,13 @@ end;
 function TBaseJson.ReadToSimpleType<T>(const AKey: string): T;
 begin
   if (not Assigned(FJSON)) or (not FJSON.TryGetValue<T>(AKey, Result)) then
-    Result := Default (T);
+    Result := Default(T);
 end;
 
 class procedure TBaseJson.UnSupported;
 begin
-  raise Exception.Create
-    ('Telegram method not supported in TelegaPi Library. Sorry.');
+  raise Exception.Create('Telegram method not supported in TelegaPi Library. Sorry.');
 end;
 
 end.
+
