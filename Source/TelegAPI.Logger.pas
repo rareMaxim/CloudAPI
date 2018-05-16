@@ -133,6 +133,12 @@ procedure TLogAbstract.Fatal(const fmt: string; const args: array of const);
 begin
   Fatal(fmt, args, nil);
 end;
+
+procedure TLogAbstract.Fatal(const fmt: string; const args: array of const;
+  const e: Exception);
+begin
+  Fatal(string.Format(fmt, args), e);
+end;
 {$ENDREGION}
 
 {$REGION 'Error'}
@@ -155,19 +161,10 @@ end;
 procedure TLogAbstract.Error(const fmt: string; const args: array of const;
   const e: Exception);
 begin
-  Error(string.Format(fmt, args), nil);
+  Error(string.Format(fmt, args), e);
 end;
 {$ENDREGION}
 
-
-{$REGION 'Fatal'}
-
-procedure TLogAbstract.Fatal(const fmt: string; const args: array of const;
-  const e: Exception);
-begin
-  Fatal(string.Format(fmt, args), nil);
-end;
-{$ENDREGION}
 
 {$REGION 'Leave'}
 
@@ -189,12 +186,12 @@ end;
 
 procedure TLogEmpty.Enter(const instance: TObject; const methodName: string);
 begin
-
+  inherited;
 end;
 
 procedure TLogEmpty.Leave(const instance: TObject; const methodName: string);
 begin
-
+  inherited;
 end;
 
 procedure TLogEmpty.Log(level: TLogLevel; const msg: string; const e: Exception);

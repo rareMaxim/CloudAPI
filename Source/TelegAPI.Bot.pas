@@ -17,8 +17,8 @@ type
     // private
     function GetToken: string;
     procedure SetToken(const Value: string);
-    function GetLog: ILogger;
-    procedure SetLog(const Value: ILogger);
+    function GetLogger: ILogger;
+    procedure SetLogger(const Value: ILogger);
     function GetHttpCore: IcuHttpClient;
     procedure SetHttpCore(const Value: IcuHttpClient);
     // public
@@ -1906,7 +1906,7 @@ type
       const ReplyToMessageId: Int64 = 0): TArray<ITgMessage>;
 {$ENDREGION}
     property Token: string read GetToken write SetToken;
-    property Logger: ILogger read GetLog write SetLog;
+    property Logger: ILogger read GetLogger write SetLogger;
     property HttpCore: IcuHttpClient read GetHttpCore write SetHttpCore;
   end;
 

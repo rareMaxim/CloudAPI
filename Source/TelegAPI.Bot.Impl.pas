@@ -42,11 +42,12 @@ type
     // Returns response JSON from server as result of request
     function GetArrayFromMethod<TI: IInterface>(const TgClass: TBaseJsonClass;
       const AValue: string): TArray<TI>;
-    function GetLog: ILogger;
-    procedure SetLog(const Value: ILogger);
+    function GetLogger: ILogger;
+    procedure SetLogger(const Value: ILogger);
     function GetHttpCore: IcuHttpClient;
     procedure SetHttpCore(const Value: IcuHttpClient);
   protected
+    procedure DoInitApiCore;
   public
     procedure AssignTo(Dest: TPersistent); override;
     constructor Create(AOwner: TComponent); overload; override;
@@ -386,7 +387,7 @@ type
 {$REGION 'Property|Свойства'}
     property HttpCore: IcuHttpClient read GetHttpCore write SetHttpCore;
     property Token: string read GetToken write SetToken;
-    property Logger: ILogger read GetLog write SetLog;
+    property Logger: ILogger read GetLogger write SetLogger;
 {$ENDREGION}
 {$REGION 'События|Events'}
     property OnReceiveRawData: TtgOnReceiveRawData read FOnRawData write FOnRawData;
@@ -419,6 +420,32 @@ end;
 constructor TTelegramBot.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
+  DoInitApiCore;
+end;
+
+constructor TTelegramBot.Create(const AToken: string; ACore: IcuHttpClient);
+begin
+  inherited Create(nil);
+  DoInitApiCore;
+  Token := AToken;
+  HttpCore := ACore;
+end;
+
+constructor TTelegramBot.Create(const AToken: string);
+begin
+  inherited Create(nil);
+  DoInitApiCore;
+  SetToken(AToken);
+end;
+
+destructor TTelegramBot.Destroy;
+begin
+  FRequest.Free;
+  inherited;
+end;
+
+procedure TTelegramBot.DoInitApiCore;
+begin
   FRequest := TtgCoreApi.Create(nil);
   FRequest.OnError :=
     procedure(E: Exception)
@@ -461,25 +488,6 @@ begin
         LJSON.Free;
       end;
     end;
-end;
-
-constructor TTelegramBot.Create(const AToken: string; ACore: IcuHttpClient);
-begin
-  Self.Create(AToken);
-  HttpCore := ACore;
-end;
-
-constructor TTelegramBot.Create(const AToken: string);
-begin
-  Self.Create(nil);
-  SetToken(AToken);
-end;
-
-destructor TTelegramBot.Destroy;
-begin
-  FRequest.Free;
-  FRequest := nil;
-  inherited;
 end;
 
 function TTelegramBot.GetJSONArrayFromMethod(const AValue: string): TJSONArray;
@@ -529,14 +537,14 @@ begin
   FRequest.SetToken(Token)
 end;
 
-function TTelegramBot.GetLog: ILogger;
+function TTelegramBot.GetLogger: ILogger;
 begin
   if FLog = nil then
     FLog := TLogEmpty.Create(nil);
   Result := FLog;
 end;
 
-procedure TTelegramBot.SetLog(const Value: ILogger);
+procedure TTelegramBot.SetLogger(const Value: ILogger);
 begin
   FLog := Value;
 end;
