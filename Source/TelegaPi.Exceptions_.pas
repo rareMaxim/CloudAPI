@@ -1,4 +1,4 @@
-unit TelegaPi.Exceptions;
+unit TelegaPi.Exceptions_;
 
 interface
 

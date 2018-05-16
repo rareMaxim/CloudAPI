@@ -19,7 +19,7 @@ uses
   TelegAPI.Types.Enums,
   TelegAPI.Types.ReplyMarkups,
   TelegAPI.Types.InlineQueryResults,
-  TelegAPI.Exceptions,
+  TelegAPI.Logger,
   TelegAPI.Utils.JSON;
 
 type
@@ -32,8 +32,8 @@ type
     FToken: string;
     FRequest: TtgCoreApi;
     FOnRawData: TtgOnReceiveRawData;
-    FExceptionManager: ItgExceptionHandler;
-  //  FRequest: ItgRequestAPI;
+    FLog: ILogger;
+    // FRequest: ItgRequestAPI;
     FOnSendData: TtgOnSendData;
     function GetToken: string;
     procedure SetToken(const Value: string);
@@ -42,8 +42,8 @@ type
     // Returns response JSON from server as result of request
     function GetArrayFromMethod<TI: IInterface>(const TgClass: TBaseJsonClass;
       const AValue: string): TArray<TI>;
-    function GetExceptionManager: ItgExceptionHandler;
-    procedure SetExceptionManager(const Value: ItgExceptionHandler);
+    function GetLog: ILogger;
+    procedure SetLog(const Value: ILogger);
     function GetHttpCore: IcuHttpClient;
     procedure SetHttpCore(const Value: IcuHttpClient);
   protected
@@ -386,8 +386,7 @@ type
 {$REGION 'Property|Свойства'}
     property HttpCore: IcuHttpClient read GetHttpCore write SetHttpCore;
     property Token: string read GetToken write SetToken;
-    property ExceptionManager: ItgExceptionHandler read GetExceptionManager
-      write SetExceptionManager;
+    property Logger: ILogger read GetLog write SetLog;
 {$ENDREGION}
 {$REGION 'События|Events'}
     property OnReceiveRawData: TtgOnReceiveRawData read FOnRawData write FOnRawData;
@@ -410,7 +409,7 @@ begin
   FRequest.OnError :=
     procedure(E: Exception)
     begin
-      ExceptionManager.HaveGlobalException('RequestAPI', E)
+      Logger.Error('RequestAPI', E);
     end;
   FRequest.OnReceive :=
     procedure(AData: string)
@@ -419,16 +418,15 @@ begin
         OnReceiveRawData(Self, AData);
     end;
   FRequest.OnSend :=
-    procedure(AURL, AData: string)
+    procedure(AUrl, AData: string)
     begin
       if Assigned(OnSendData) then
-        OnSendData(Self, AURL, AData);
+        OnSendData(Self, AUrl, AData);
     end;
   FRequest.DataExtractor :=
     function(AInput: string): string
     var
       LJSON: TJSONObject;
-      LException: EApiRequestException;
       LExcCode: Integer;
       LExcDesc: string;
     begin
@@ -441,12 +439,7 @@ begin
         begin
           LExcCode := (LJSON.GetValue('error_code') as TJSONNumber).AsInt;
           LExcDesc := (LJSON.GetValue('description') as TJSONString).Value;
-          LException := EApiRequestException.Create(LExcDesc, LExcCode);
-          try
-            ExceptionManager.HaveApiException('TTelegramBot.ApiTest', LException)
-          finally
-            LException.Free;
-          end;
+          Logger.Error('%d - %S', [LExcCode, LExcDesc]);
         end
         else
           Result := LJSON.GetValue('result').ToString;
@@ -466,13 +459,14 @@ destructor TTelegramBot.Destroy;
 begin
   FRequest.Free;
   FRequest := nil;
-  FExceptionManager := nil;
   inherited;
 end;
 
 function TTelegramBot.GetJSONArrayFromMethod(const AValue: string): TJSONArray;
 begin
+  Logger.Enter(Self, 'GetJSONArrayFromMethod');
   Result := TJSONObject.ParseJSONValue(AValue) as TJSONArray;
+  Logger.Leave(Self, 'GetJSONArrayFromMethod');
 end;
 
 function TTelegramBot.GetArrayFromMethod<TI>(const TgClass: TBaseJsonClass;
@@ -483,19 +477,12 @@ var
   GUID: TGUID;
   LException: Exception;
 begin
-  // stage 1: type checking
-  // cache value fot further use
+  Logger.Enter(Self, 'GetArrayFromMethod');
   GUID := GetTypeData(TypeInfo(TI))^.GUID;
   // check for TI interface support
   if TgClass.GetInterfaceEntry(GUID) = nil then
   begin
-    LException := Exception.Create('GetArrayFromMethod: unsupported interface for '
-      + TgClass.ClassName);
-    try
-      ExceptionManager.HaveGlobalException('GetArrayFromMethod', LException);
-    finally
-      LException.Free;
-    end;
+    FLog.Fatal('GetArrayFromMethod: unsupported interface for ' + TgClass.ClassName);
   end;
   // stage 2: proceed data
   LJsonArr := GetJSONArrayFromMethod(AValue);
@@ -508,6 +495,7 @@ begin
   finally
     LJsonArr.Free;
   end;
+  Logger.Leave(Self, 'GetArrayFromMethod');
 end;
 
 function TTelegramBot.GetToken: string;
@@ -521,16 +509,16 @@ begin
   FRequest.SetToken(Token)
 end;
 
-function TTelegramBot.GetExceptionManager: ItgExceptionHandler;
+function TTelegramBot.GetLog: ILogger;
 begin
-  if FExceptionManager = nil then
-    FExceptionManager := TtgExceptionManagerConsole.Create(nil);
-  Result := FExceptionManager;
+  if FLog = nil then
+    FLog := TLogEmpty.Create(nil);
+  Result := FLog;
 end;
 
-procedure TTelegramBot.SetExceptionManager(const Value: ItgExceptionHandler);
+procedure TTelegramBot.SetLog(const Value: ILogger);
 begin
-  FExceptionManager := Value;
+  FLog := Value;
 end;
 
 {$ENDREGION}
@@ -540,17 +528,21 @@ function TTelegramBot.SetWebhook(const Url: string; const Certificate:
   TtgFileToSend; const MaxConnections: Int64; const AllowedUpdates:
   TAllowedUpdates): Boolean;
 begin
+  Logger.Enter(Self, 'SetWebhook');
   Result := FRequest.SetMethod('setWebhook') //
     .AddParameter('url', Url, '', True) //
     .AddParameter('certificate', Certificate, nil, False) //
     .AddParameter('max_connections', MaxConnections, 0, False) //
     .AddParameter('allowed_updates', AllowedUpdates.ToString, '[]', False) //
     .ExecuteAsBool;
+  Logger.Leave(Self, 'SetWebhook');
 end;
 
 function TTelegramBot.GetWebhookInfo: ItgWebhookInfo;
 begin
+  Logger.Enter(Self, 'GetWebhookInfo');
   Result := TtgWebhookInfo.Create(FRequest.SetMethod('getWebhookInfo').Execute);
+  Logger.Leave(Self, 'GetWebhookInfo');
 end;
 
 function TTelegramBot.GetUpdates(const Offset, Limit, Timeout: Int64; const
@@ -668,6 +660,7 @@ function TTelegramBot.SendMessage(const ChatId: TtgUserLink; const Text: string;
   DisableNotification: Boolean; const ReplyToMessageId: Int64; ReplyMarkup:
   IReplyMarkup): ITgMessage;
 begin
+  Logger.Enter(Self, 'SendMessage');
   Result := TTgMessage.Create(FRequest.SetMethod('sendMessage') //
     .AddParameter('chat_id', ChatId, 0, True) //
     .AddParameter('text', Text, '', True) //
@@ -677,6 +670,7 @@ begin
     .AddParameter('reply_to_message_id', ReplyToMessageId, 0, False) //
     .AddParameter('reply_markup', TInterfacedObject(ReplyMarkup), nil, False) //
     .Execute);
+  Logger.Leave(Self, 'SendMessage');
 end;
 
 function TTelegramBot.SendVenue(const ChatId: TtgUserLink; const Venue: TtgVenue;
@@ -874,16 +868,16 @@ end;
 
 function TTelegramBot.GetChatMembersCount(const ChatId: TtgUserLink): Int64;
 var
-  LJson: TJSONValue;
+  LJSON: TJSONValue;
 begin
-  LJson := TJSONObject.ParseJSONValue(FRequest.SetMethod('getChatMembersCount')
+  LJSON := TJSONObject.ParseJSONValue(FRequest.SetMethod('getChatMembersCount')
     //
     .AddParameter('chat_id', ChatId, 0, True).Execute);
   try
-    if not LJson.TryGetValue<Int64>(Result) then
+    if not LJSON.TryGetValue<Int64>(Result) then
       Result := 0;
   finally
-    LJson.Free;
+    LJSON.Free;
   end;
 end;
 
@@ -1288,7 +1282,8 @@ begin
     .AddParameter('Shipping_query_id', ShippingQueryId, 0, True) //
     .AddParameter('ok', True, False, False) //
     .AddParameter('Shipping_options', TJsonUtils.ArrayToJString<
-    TtgShippingOption>(ShippingOptions), '[]', True) //
+    TtgShippingOption>(ShippingOptions), '[]', True)
+  //
     .ExecuteAsBool;
 end;
 
@@ -1298,10 +1293,10 @@ begin
     Exit;
   (Dest as TTelegramBot).Token := Self.Token;
   (Dest as TTelegramBot).HttpCore := Self.HttpCore;
-  (Dest as TTelegramBot).FExceptionManager := Self.FExceptionManager;
+  (Dest as TTelegramBot).Logger := Self.Logger;
   (Dest as TTelegramBot).OnReceiveRawData := Self.OnReceiveRawData;
   (Dest as TTelegramBot).OnSendData := Self.OnSendData;
- // inherited AssignTo(Dest);
+  // inherited AssignTo(Dest);
 end;
 
 {$ENDREGION}

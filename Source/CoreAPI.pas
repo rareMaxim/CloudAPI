@@ -152,7 +152,6 @@ uses
   REST.Json,
   System.DateUtils,
   System.Json,
-  TelegAPI.Exceptions,
   TelegAPI.Utils.Json,
   TelegAPI.Types.ReplyMarkups;
 
@@ -163,7 +162,7 @@ function TtgCoreApiBase.AddParameter(const AKey, AValue, ADefaultValue: string;
   const ARequired: Boolean): ItgRequestAPI;
 begin
   if ARequired and (AValue.Equals(ADefaultValue) or AValue.IsEmpty) then
-    DoHaveException(ETelegramException.Create('Not assigned required data'));
+    DoHaveException(Exception.Create('Not assigned required data'));
   if AValue <> ADefaultValue then
     AddRawField(AKey, AValue);
   Result := Self;
@@ -186,7 +185,7 @@ function TtgCoreApiBase.AddParameter(const AKey: string; AValue,
   ADefaultValue: TtgFileToSend; const ARequired: Boolean): ItgRequestAPI;
 begin
   if ARequired and (AValue.Equals(ADefaultValue) or AValue.IsEmpty) then
-    DoHaveException(ETelegramException.Create('Not assigned required data'));
+    DoHaveException(Exception.Create('Not assigned required data'));
   Result := Self;
   case AValue.Tag of
     TtgFileToSendTag.FromStream:
