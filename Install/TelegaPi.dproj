@@ -133,6 +133,7 @@ $(PreBuildEvent)]]>
         <DCCReference Include="..\Source\TelegAPI.UpdateParser.pas"/>
         <DCCReference Include="..\Source\TelegAPI.Logger.pas"/>
         <DCCReference Include="..\Source\TelegAPI.Logger.Old.pas"/>
+        <DCCReference Include="..\Source\TelegaPi.Types.Passport.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

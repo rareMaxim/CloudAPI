@@ -56,7 +56,8 @@ contains
   CoreAPI in '..\Source\CoreAPI.pas',
   TelegAPI.UpdateParser in '..\Source\TelegAPI.UpdateParser.pas',
   TelegAPI.Logger in '..\Source\TelegAPI.Logger.pas',
-  TelegAPI.Logger.Old in '..\Source\TelegAPI.Logger.Old.pas';
+  TelegAPI.Logger.Old in '..\Source\TelegAPI.Logger.Old.pas',
+  TelegaPi.Types.Passport in '..\Source\TelegaPi.Types.Passport.pas';
 
 end.
 

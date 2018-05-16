@@ -355,6 +355,7 @@ type
     function EditedChannelPost: ITgMessage;
     function ShippingQuery: ItgShippingQuery;
     function PreCheckoutQuery: ItgPreCheckoutQuery;
+   // function PassportData:ItgPassportData;
     function &Type: TtgUpdateType;
   end;
 

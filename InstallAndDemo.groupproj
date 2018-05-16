@@ -12,12 +12,6 @@
         <Projects Include="Demo\Console\ConsoleBot.dproj">
             <Dependencies>Install\TelegaPi.dproj</Dependencies>
         </Projects>
-        <Projects Include="Demo\WelcomeBot\WelcomeBotSrv.dproj">
-            <Dependencies/>
-        </Projects>
-        <Projects Include="Demo\WelcomeBot\WelcomeBotVcl.dproj">
-            <Dependencies/>
-        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -53,32 +47,14 @@
     <Target Name="ConsoleBot:Make" DependsOnTargets="TelegaPi:Make">
         <MSBuild Projects="Demo\Console\ConsoleBot.dproj" Targets="Make"/>
     </Target>
-    <Target Name="WelcomeBotSrv">
-        <MSBuild Projects="Demo\WelcomeBot\WelcomeBotSrv.dproj"/>
-    </Target>
-    <Target Name="WelcomeBotSrv:Clean">
-        <MSBuild Projects="Demo\WelcomeBot\WelcomeBotSrv.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="WelcomeBotSrv:Make">
-        <MSBuild Projects="Demo\WelcomeBot\WelcomeBotSrv.dproj" Targets="Make"/>
-    </Target>
-    <Target Name="WelcomeBotVcl">
-        <MSBuild Projects="Demo\WelcomeBot\WelcomeBotVcl.dproj"/>
-    </Target>
-    <Target Name="WelcomeBotVcl:Clean">
-        <MSBuild Projects="Demo\WelcomeBot\WelcomeBotVcl.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="WelcomeBotVcl:Make">
-        <MSBuild Projects="Demo\WelcomeBot\WelcomeBotVcl.dproj" Targets="Make"/>
-    </Target>
     <Target Name="Build">
-        <CallTarget Targets="TelegaPi;EchoBot;ConsoleBot;WelcomeBotSrv;WelcomeBotVcl"/>
+        <CallTarget Targets="TelegaPi;EchoBot;ConsoleBot"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="TelegaPi:Clean;EchoBot:Clean;ConsoleBot:Clean;WelcomeBotSrv:Clean;WelcomeBotVcl:Clean"/>
+        <CallTarget Targets="TelegaPi:Clean;EchoBot:Clean;ConsoleBot:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="TelegaPi:Make;EchoBot:Make;ConsoleBot:Make;WelcomeBotSrv:Make;WelcomeBotVcl:Make"/>
+        <CallTarget Targets="TelegaPi:Make;EchoBot:Make;ConsoleBot:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>
