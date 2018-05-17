@@ -2,8 +2,9 @@ program WelcomeBotSrv;
 
 uses
   Vcl.SvcMgr,
-  WelcomeBot.Main in 'WelcomeBot.Main.pas' {WbMain: TService},
-  WelcomeBot.Config in 'WelcomeBot.Config.pas',
+  WelcomeBot.Main in 'WelcomeBot.Main.pas' {WbMainSrv: TService},
+  TelegaPi.Logger.Grijjy in 'TelegaPi.Logger.Grijjy.pas',
+  WelcomeBot.Core in 'WelcomeBot.Core.pas',
   WelcomeBot.Logger in 'WelcomeBot.Logger.pas';
 
 {$R *.RES}
@@ -25,6 +26,6 @@ begin
   //
   if not Application.DelayInitialize or Application.Installing then
     Application.Initialize;
-  Application.CreateForm(TWbMain, WbMain);
+  Application.CreateForm(TWbMainSrv, WbMainSrv);
   Application.Run;
 end.

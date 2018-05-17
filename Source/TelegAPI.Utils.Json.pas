@@ -12,6 +12,7 @@ type
   private
   protected
     FJSON: TJSONObject;
+    FJsonRaw: string; //for debbuger
     function ReadToClass<T: class, constructor>(const AKey: string): T;
     function ReadToSimpleType<T>(const AKey: string): T;
     function ReadToDateTime(const AKey: string): TDateTime;
@@ -67,7 +68,7 @@ begin
   Result := nil;
   if TFile.Exists(AFileName) then
   begin
-    LContent := TFile.ReadAllText(AFileName);
+    LContent := TFile.ReadAllText(AFileName, TEncoding.UTF8);
     Result := TJson.JsonToObject<T>(LContent);
   end;
 end;
@@ -77,7 +78,7 @@ var
   LContent: string;
 begin
   LContent := ObjectToJString(AObj);
-  TFile.WriteAllText(AFileName, LContent);
+  TFile.WriteAllText(AFileName, LContent, TEncoding.UTF8);
 end;
 
 class function TJsonUtils.ObjectToJString(AObj: TObject): string;
@@ -98,7 +99,8 @@ end;
 constructor TBaseJson.Create(const AJson: string);
 begin
   inherited Create;
-  if AJson.IsEmpty then
+  FJsonRaw := AJson;
+  if FJsonRaw.IsEmpty then
     Exit;
   FJSON := TJSONObject.ParseJSONValue(AJson) as TJSONObject;
 end;

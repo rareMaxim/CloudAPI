@@ -23,15 +23,6 @@ uses
 const
   TOKEN = 'YOUR_TOKEN';
 
-procedure SMG(ABot: ITelegramBot; AMessage: ITgMessage);
-var
-  Test: TtgInputMediaPhoto;
-begin
-  Test := TtgInputMediaPhoto.Create(TtgFileToSend.FromFile('D:\Repositories\Мои проекты\ms301-TelegAPI\Install\pJNqeRflXYU.png'),
-    'Test');
-  ABot.sendMediaGroup(AMessage.Chat.ID, [Test, Test])
-end;
-
 procedure Main;
 var
   LBot: ITelegramBot;
@@ -73,8 +64,7 @@ begin
       procedure(AMessage: ITgMessage)
       begin
         Writeln(AMessage.From.ID, ': ', AMessage.Text);
-       // LBot.SendMessage(AMessage.From.ID, AMessage.Text);
-        SMG(LBot, AMessage);
+        LBot.SendMessage(AMessage.From.ID, AMessage.Text);
       end;
     Writeln('Bot nick: ', LBot.GetMe.Username);
     LReceiver.IsActive := True;

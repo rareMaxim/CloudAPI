@@ -33,7 +33,6 @@ type
     FRequest: TtgCoreApi;
     FOnRawData: TtgOnReceiveRawData;
     FLog: ILogger;
-    // FRequest: ItgRequestAPI;
     FOnSendData: TtgOnSendData;
     function GetToken: string;
     procedure SetToken(const Value: string);
@@ -405,7 +404,6 @@ uses
 
 procedure TTelegramBot.AssignTo(Dest: TPersistent);
 begin
-  Logger.Enter(Self, 'AssignTo');
   if not (Assigned(Dest) or (Dest is TTelegramBot)) then
     Exit;
   (Dest as TTelegramBot).Token := Self.Token;
@@ -414,7 +412,6 @@ begin
   (Dest as TTelegramBot).OnReceiveRawData := Self.OnReceiveRawData;
   (Dest as TTelegramBot).OnSendData := Self.OnSendData;
   // inherited AssignTo(Dest);
-  Logger.Leave(Self, 'AssignTo');
 end;
 
 constructor TTelegramBot.Create(AOwner: TComponent);
@@ -440,7 +437,7 @@ end;
 
 destructor TTelegramBot.Destroy;
 begin
-  FRequest.Free;
+  FreeAndNil(FRequest);
   inherited;
 end;
 
@@ -492,9 +489,7 @@ end;
 
 function TTelegramBot.GetJSONArrayFromMethod(const AValue: string): TJSONArray;
 begin
-  Logger.Enter(Self, 'GetJSONArrayFromMethod');
   Result := TJSONObject.ParseJSONValue(AValue) as TJSONArray;
-  Logger.Leave(Self, 'GetJSONArrayFromMethod');
 end;
 
 function TTelegramBot.GetArrayFromMethod<TI>(const TgClass: TBaseJsonClass;
@@ -505,7 +500,6 @@ var
   GUID: TGUID;
   LException: Exception;
 begin
-  Logger.Enter(Self, 'GetArrayFromMethod');
   GUID := GetTypeData(TypeInfo(TI))^.GUID;
   // check for TI interface support
   if TgClass.GetInterfaceEntry(GUID) = nil then
@@ -523,7 +517,6 @@ begin
   finally
     LJsonArr.Free;
   end;
-  Logger.Leave(Self, 'GetArrayFromMethod');
 end;
 
 function TTelegramBot.GetToken: string;
@@ -539,6 +532,8 @@ end;
 
 function TTelegramBot.GetLogger: ILogger;
 begin
+  if csDestroying in ComponentState then
+    Exit(nil);
   if FLog = nil then
     FLog := TLogEmpty.Create(nil);
   Result := FLog;

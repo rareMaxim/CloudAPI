@@ -9,6 +9,11 @@ uses
 type
   TLogLevel = (Unknown, Trace, Debug, Text, Info, Warn, Error, Fatal);
 
+  TLogItem = record
+    Level: TLogLevel;
+    Message: string;
+
+  end;
 {$REGION 'ILogger'}
 
   ILogger = interface

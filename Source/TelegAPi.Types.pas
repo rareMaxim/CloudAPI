@@ -449,7 +449,7 @@ type
     Username: string;
     class function FromID(const AID: Int64): TtgUserLink; static;
     class function FromUserName(const AUsername: string): TtgUserLink; static;
-    class operator Implicit(AID: Integer): TtgUserLink;
+    class operator Implicit(AID: Int64): TtgUserLink;
     class operator Implicit(AUsername: string): TtgUserLink;
     function ToString: string;
   end;
@@ -574,7 +574,7 @@ begin
     Result := Username;
 end;
 
-class operator TtgUserLink.Implicit(AID: Integer): TtgUserLink;
+class operator TtgUserLink.Implicit(AID: Int64): TtgUserLink;
 begin
   Result := TtgUserLink.FromID(AID);
 end;

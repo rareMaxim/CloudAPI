@@ -1,6 +1,8 @@
-object WbMain: TWbMain
+object WbMainSrv: TWbMainSrv
   OldCreateOrder = False
-  DisplayName = 'Welcome Bot'
+  OnCreate = ServiceCreate
+  OnDestroy = ServiceDestroy
+  DisplayName = 'Welcome Bot Service'
   OnStart = ServiceStart
   OnStop = ServiceStop
   Height = 457
@@ -11,13 +13,8 @@ object WbMain: TWbMain
   end
   object TelegramBot1: TTelegramBot
     HttpCore = cuHttpClientSysNet1
-    ExceptionManager = tgExceptionManagerUI1
     Left = 136
     Top = 104
-  end
-  object tgExceptionManagerUI1: TtgExceptionManagerUI
-    Left = 48
-    Top = 168
   end
   object tgReceiverService1: TtgReceiverService
     Bot = TelegramBot1

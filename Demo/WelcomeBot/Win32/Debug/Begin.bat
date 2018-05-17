@@ -1,1 +1,1 @@
-WelcomeBot.exe /install
+WelcomeBotSrv.exe /install

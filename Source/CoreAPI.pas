@@ -39,8 +39,8 @@ type
       TtgFileToSend; const ARequired: Boolean = False): ItgRequestAPI; overload;
     function AddParameter(const AKey: string; const AValue, ADefaultValue:
       TtgUserLink; const ARequired: Boolean = False): ItgRequestAPI; overload;
-    function AddParameter(const AKey: string; AValue, ADefaultValue:
-      TObject; const ARequired: Boolean = False): ItgRequestAPI; overload;
+    function AddParameter(const AKey: string; AValue, ADefaultValue: TObject;
+      const ARequired: Boolean = False): ItgRequestAPI; overload;
     function AddParameter(const AKey: string; const AValue, ADefaultValue:
       Boolean; const ARequired: Boolean = False): ItgRequestAPI; overload;
     function AddParameter(const AKey: string; const AValue, ADefaultValue:
@@ -108,8 +108,8 @@ type
       TtgFileToSend; const ARequired: Boolean = False): ItgRequestAPI; overload;
     function AddParameter(const AKey: string; const AValue, ADefaultValue:
       TtgUserLink; const ARequired: Boolean = False): ItgRequestAPI; overload;
-    function AddParameter(const AKey: string; AValue, ADefaultValue:
-      TObject; const ARequired: Boolean = False): ItgRequestAPI; overload;
+    function AddParameter(const AKey: string; AValue, ADefaultValue: TObject;
+      const ARequired: Boolean = False): ItgRequestAPI; overload;
     function AddParameter(const AKey: string; const AValue, ADefaultValue:
       Boolean; const ARequired: Boolean = False): ItgRequestAPI; overload;
     function AddParameter(const AKey: string; const AValue, ADefaultValue:
@@ -181,8 +181,8 @@ begin
     DateTimeToUnix(ADefaultValue, False).ToString, ARequired);
 end;
 
-function TtgCoreApiBase.AddParameter(const AKey: string; AValue,
-  ADefaultValue: TtgFileToSend; const ARequired: Boolean): ItgRequestAPI;
+function TtgCoreApiBase.AddParameter(const AKey: string; AValue, ADefaultValue:
+  TtgFileToSend; const ARequired: Boolean): ItgRequestAPI;
 begin
   if ARequired and (AValue.Equals(ADefaultValue) or AValue.IsEmpty) then
     DoHaveException(Exception.Create('Not assigned required data'));
@@ -209,8 +209,8 @@ begin
   Result := AddParameter(AKey, AValue.ToString, ADefaultValue.ToString, ARequired);
 end;
 
-function TtgCoreApiBase.AddParameter(const AKey: string; AValue,
-  ADefaultValue: TObject; const ARequired: Boolean): ItgRequestAPI;
+function TtgCoreApiBase.AddParameter(const AKey: string; AValue, ADefaultValue:
+  TObject; const ARequired: Boolean): ItgRequestAPI;
 begin
   Result := AddParameter(AKey, TJsonUtils.ObjectToJString(AValue),  //
     TJsonUtils.ObjectToJString(ADefaultValue), ARequired);
@@ -340,7 +340,8 @@ end;
 procedure TtgCoreApiBase.SetHttpCore(const Value: IcuHttpClient);
 begin
   FHttpCore := Value;
-  FFormData := FHttpCore.CreateMultipartFormData;
+  if FHttpCore <> nil then
+    FFormData := FHttpCore.CreateMultipartFormData;
 end;
 
 function TtgCoreApiBase.SetMethod(const AMethod: string): ItgRequestAPI;
