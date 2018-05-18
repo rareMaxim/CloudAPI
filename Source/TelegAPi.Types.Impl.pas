@@ -1089,7 +1089,7 @@ end;
 
 function TtgPreCheckoutQuery.OrderInfo: ItgOrderInfo;
 begin
-  Result := ReadToClass<TtgOrderInfo>('from');
+  Result := ReadToClass<TtgOrderInfo>('order_info');
 end;
 
 function TtgPreCheckoutQuery.ShippingOptionId: string;
