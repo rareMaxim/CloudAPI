@@ -80,7 +80,7 @@ type
     FOnError: TProc<Exception>;
     FFormData: IcuMultipartFormData;
     FHttpCore: IcuHttpClient;
-    FIsEmpty: Boolean;
+    FHaveFields: Boolean;
     function GetOnError: TProc<Exception>;
     procedure SetOnError(const Value: TProc<Exception>);
     function GetOnSend: TProc<string, string>;
@@ -119,7 +119,7 @@ type
     function AddRawFile(const AFieldName, AFileName: string): ItgRequestAPI;
     function AddRawStream(const AFieldName: string; Data: TStream; const
       AFileName: string): ItgRequestAPI;
-    function IsEmpty: Boolean;
+    function HaveFields: Boolean;
     function ClearParameters: ItgRequestAPI;
     function Execute: string; virtual; abstract;
     function ExecuteAsBool: Boolean;
@@ -232,14 +232,14 @@ end;
 function TtgCoreApiBase.AddRawField(const AField, AValue: string): ItgRequestAPI;
 begin
   FFormData.AddField(AField, AValue);
-  FIsEmpty := False;
+  FHaveFields := True;
   Result := Self;
 end;
 
 function TtgCoreApiBase.AddRawFile(const AFieldName, AFileName: string): ItgRequestAPI;
 begin
   FFormData.AddFile(AFieldName, AFileName);
-  FIsEmpty := False;
+  FHaveFields := True;
   Result := Self;
 end;
 
@@ -247,14 +247,14 @@ function TtgCoreApiBase.AddRawStream(const AFieldName: string; Data: TStream;
   const AFileName: string): ItgRequestAPI;
 begin
   FFormData.AddStream(AFieldName, Data, AFileName);
-  FIsEmpty := False;
+  FHaveFields := True;
   Result := Self;
 end;
 
 function TtgCoreApiBase.ClearParameters: ItgRequestAPI;
 begin
   FFormData := nil;
-  FIsEmpty := True;
+  FHaveFields := False;
   FFormData := HttpCore.CreateMultipartFormData;
   Result := Self;
 end;
@@ -262,7 +262,7 @@ end;
 constructor TtgCoreApiBase.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
-  FIsEmpty := True;
+  FHaveFields := False;
 end;
 
 procedure TtgCoreApiBase.DoHaveException(const AException: Exception);
@@ -327,9 +327,9 @@ begin
   Result := SERVER + FToken + '/' + FMethod;
 end;
 
-function TtgCoreApiBase.IsEmpty: Boolean;
+function TtgCoreApiBase.HaveFields: Boolean;
 begin
-  Result := FIsEmpty;
+  Result := FHaveFields;
 end;
 
 procedure TtgCoreApiBase.SetDataExtractor(const Value: TFunc<string, string>);
@@ -420,14 +420,14 @@ end;
 
 function TtgCoreApi.Execute: string;
 begin
-  if IsEmpty then
-  begin
-    Result := DoGet;
-  end
-  else
+  if HaveFields then
   begin
     Result := DoPost;
     ClearParameters;
+  end
+  else
+  begin
+    Result := DoGet;
   end;
   if Result = '' then
     Exit;
