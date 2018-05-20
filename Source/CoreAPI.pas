@@ -74,7 +74,6 @@ type
     FGetOnSend: TProc<string, string>;
     FDataExtractor: TFunc<string, string>;
     FOnReceive: TProc<string>;
-    FLastRequestIsOk: Boolean;
     FToken: string;
     FMethod: string;
     FOnError: TProc<Exception>;
@@ -126,7 +125,6 @@ type
     function ExecuteAndReadValue: string;
     constructor Create(AOwner: TComponent); override;
     // props
-    property LastRequestIsOk: Boolean read FLastRequestIsOk write FLastRequestIsOk;
     property DataExtractor: TFunc<string, string> read GetDataExtractor write
       SetDataExtractor;
     property Url: string read GetUrl;
@@ -389,25 +387,26 @@ end;
 
 function TtgCoreApi.DoGet: string;
 begin
-  try
-    Result := FHttpCore.Get(Url).ContentAsString;
-    if Assigned(OnSend) then
-      OnSend(Url, '');
-  except
-    on E: Exception do
-    begin
-      Result := '';
-      DoHaveException(E);
-    end;
-  end;
+  Result := FHttpCore.Get(Url).ContentAsString;
 end;
 
 function TtgCoreApi.DoPost: string;
 begin
+  Result := FHttpCore.Post(Url, FFormData).ContentAsString;
+end;
+
+function TtgCoreApi.Execute: string;
+begin
+  if Assigned(OnSend) then
+    OnSend(Url, StreamToString(FFormData.Stream));
   try
-    Result := FHttpCore.Post(Url, FFormData).ContentAsString;
-    if Assigned(OnSend) then
-      OnSend(Url, StreamToString(FFormData.Stream));
+    if HaveFields then
+    begin
+      Result := DoPost;
+      ClearParameters;
+    end
+    else
+      Result := DoGet;
   except
     on E: Exception do
     begin
@@ -415,23 +414,8 @@ begin
       DoHaveException(E);
     end;
   end;
-
-end;
-
-function TtgCoreApi.Execute: string;
-begin
-  if HaveFields then
-  begin
-    Result := DoPost;
-    ClearParameters;
-  end
-  else
-  begin
-    Result := DoGet;
-  end;
   if Result = '' then
     Exit;
-  LastRequestIsOk := True;
   if Assigned(OnReceive) then
     OnReceive(Result);
   if Assigned(DataExtractor) then
