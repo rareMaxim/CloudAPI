@@ -25,7 +25,10 @@ type
     function GetDataExtractor: TFunc<string, string>;
     procedure SetDataExtractor(const Value: TFunc<string, string>);
     function GetFormData: IcuMultipartFormData;
+    function GetHttpCore: IcuHttpClient;
+    procedure SetHttpCore(const AHttpCore: IcuHttpClient);
     // public
+
     function SetToken(const AToken: string): ItgRequestAPI;
     function SetMethod(const AMethod: string): ItgRequestAPI;
     //
@@ -60,13 +63,14 @@ type
     property DataExtractor: TFunc<string, string> read GetDataExtractor write
       SetDataExtractor;
     property MultipartFormData: IcuMultipartFormData read GetFormData;
+    property HttpCore: IcuHttpClient read GetHttpCore write SetHttpCore;
     // events
     property OnError: TProc<Exception> read GetOnError write SetOnError;
     property OnSend: TProc<string, string> read GetOnSend write SetOnSend;
     property OnReceive: TProc<string> read GetOnReceive write SetOnReceive;
   end;
 
-  TtgCoreApiBase = class(TtgAbstractComponent, ItgRequestAPI)
+  TtgCoreApiBase = class(TInterfacedObject, ItgRequestAPI)
   protected
     const
       SERVER = 'https://api.telegram.org/bot';
@@ -91,6 +95,7 @@ type
     function GetUrl: string;
     function GetFormData: IcuMultipartFormData;
     procedure SetHttpCore(const Value: IcuHttpClient);
+    function GetHttpCore: IcuHttpClient;
   protected
     procedure DoHaveException(const AException: Exception);
     function StreamToString(Stream: TStream): string;
@@ -123,7 +128,7 @@ type
     function Execute: string; virtual; abstract;
     function ExecuteAsBool: Boolean;
     function ExecuteAndReadValue: string;
-    constructor Create(AOwner: TComponent); override;
+    constructor Create;
     // props
     property DataExtractor: TFunc<string, string> read GetDataExtractor write
       SetDataExtractor;
@@ -257,9 +262,8 @@ begin
   Result := Self;
 end;
 
-constructor TtgCoreApiBase.Create(AOwner: TComponent);
+constructor TtgCoreApiBase.Create;
 begin
-  inherited Create(AOwner);
   FHaveFields := False;
 end;
 
@@ -303,6 +307,11 @@ end;
 function TtgCoreApiBase.GetFormData: IcuMultipartFormData;
 begin
   Result := FFormData;
+end;
+
+function TtgCoreApiBase.GetHttpCore: IcuHttpClient;
+begin
+  Result := FHttpCore;
 end;
 
 function TtgCoreApiBase.GetOnError: TProc<Exception>;
