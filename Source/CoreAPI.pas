@@ -27,6 +27,8 @@ type
     function GetFormData: IcuMultipartFormData;
     function GetHttpCore: IcuHttpClient;
     procedure SetHttpCore(const AHttpCore: IcuHttpClient);
+    function GetUrlAPI: string;
+    procedure SetUrlAPI(const AValue: string);
     // public
 
     function SetToken(const AToken: string): ItgRequestAPI;
@@ -64,6 +66,7 @@ type
       SetDataExtractor;
     property MultipartFormData: IcuMultipartFormData read GetFormData;
     property HttpCore: IcuHttpClient read GetHttpCore write SetHttpCore;
+    property UrlAPI: string read GetUrlAPI write SetUrlAPI;
     // events
     property OnError: TProc<Exception> read GetOnError write SetOnError;
     property OnSend: TProc<string, string> read GetOnSend write SetOnSend;
@@ -71,9 +74,6 @@ type
   end;
 
   TtgCoreApiBase = class(TInterfacedObject, ItgRequestAPI)
-  protected
-    const
-      SERVER = 'https://api.telegram.org/bot';
   private
     FGetOnSend: TProc<string, string>;
     FDataExtractor: TFunc<string, string>;
@@ -84,6 +84,8 @@ type
     FFormData: IcuMultipartFormData;
     FHttpCore: IcuHttpClient;
     FHaveFields: Boolean;
+    FUrlAPI: string;
+  private
     function GetOnError: TProc<Exception>;
     procedure SetOnError(const Value: TProc<Exception>);
     function GetOnSend: TProc<string, string>;
@@ -96,6 +98,8 @@ type
     function GetFormData: IcuMultipartFormData;
     procedure SetHttpCore(const Value: IcuHttpClient);
     function GetHttpCore: IcuHttpClient;
+    function GetUrlAPI: string;
+    procedure SetUrlAPI(const AValue: string);
   protected
     procedure DoHaveException(const AException: Exception);
     function StreamToString(Stream: TStream): string;
@@ -134,6 +138,7 @@ type
       SetDataExtractor;
     property Url: string read GetUrl;
     property HttpCore: IcuHttpClient read FHttpCore write SetHttpCore;
+    property UrlAPI: string read GetUrlAPI write SetUrlAPI;
     // events
     property OnError: TProc<Exception> read GetOnError write SetOnError;
     property OnSend: TProc<string, string> read GetOnSend write SetOnSend;
@@ -331,7 +336,12 @@ end;
 
 function TtgCoreApiBase.GetUrl: string;
 begin
-  Result := SERVER + FToken + '/' + FMethod;
+  Result := GetUrlAPI + FToken + '/' + FMethod;
+end;
+
+function TtgCoreApiBase.GetUrlAPI: string;
+begin
+  Result := FUrlAPI;
 end;
 
 function TtgCoreApiBase.HaveFields: Boolean;
@@ -376,6 +386,11 @@ function TtgCoreApiBase.SetToken(const AToken: string): ItgRequestAPI;
 begin
   FToken := AToken;
   Result := Self;
+end;
+
+procedure TtgCoreApiBase.SetUrlAPI(const AValue: string);
+begin
+  FUrlAPI := AValue;
 end;
 
 function TtgCoreApiBase.StreamToString(Stream: TStream): string;

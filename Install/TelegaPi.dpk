@@ -44,7 +44,7 @@ contains
   TelegAPI.Receiver.Service in '..\Source\TelegAPI.Receiver.Service.pas',
   TelegAPi.RegisterIDE in '..\Source\TelegAPi.RegisterIDE.pas',
   TelegaPi.Types.Enums in '..\Source\TelegaPi.Types.Enums.pas',
-  TelegAPI.Types.Impl in '..\Source\TelegAPi.Types.Impl.pas',
+  TelegAPi.Types.Impl in '..\Source\TelegAPi.Types.Impl.pas',
   TelegaPi.Types.InlineQueryResults in '..\Source\TelegaPi.Types.InlineQueryResults.pas',
   TelegaPi.Types.InputMessageContents in '..\Source\TelegaPi.Types.InputMessageContents.pas',
   TelegAPi.Types in '..\Source\TelegAPi.Types.pas',
@@ -56,7 +56,10 @@ contains
   TelegAPI.UpdateParser in '..\Source\TelegAPI.UpdateParser.pas',
   TelegAPI.Logger in '..\Source\TelegAPI.Logger.pas',
   TelegAPI.Logger.Old in '..\Source\TelegAPI.Logger.Old.pas',
-  TelegaPi.Types.Passport in '..\Source\TelegaPi.Types.Passport.pas';
+  TelegaPi.Types.Passport in '..\Source\TelegaPi.Types.Passport.pas',
+  TelegraPh in '..\Source\TelegraPh.pas',
+  TelegraPh.Types in '..\Source\TelegraPh.Types.pas';
 
 end.
+
 

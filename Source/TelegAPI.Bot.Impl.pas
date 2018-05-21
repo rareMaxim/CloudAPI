@@ -38,9 +38,11 @@ type
     procedure SetLogger(const Value: ILogger);
     function GetHttpCore: IcuHttpClient;
     procedure SetHttpCore(const Value: IcuHttpClient);
-    function GetRequest: ItgRequestAPI;
+    function GetUrlAPI: string;
+    procedure SetUrlAPI(const Value: string);
   protected
-    procedure DoInitApiCore;
+    function GetRequest: ItgRequestAPI;
+    procedure DoInitApiCore; virtual;
     // Returns TJSONArray as method request result
     function GetJSONArrayFromMethod(const AValue: string): TJSONArray;
     // Returns response JSON from server as result of request
@@ -51,6 +53,7 @@ type
     {$REGION 'Property|Свойства'}
     property Logger: ILogger read GetLogger write SetLogger;
     property HttpCore: IcuHttpClient read GetHttpCore write SetHttpCore;
+    property UrlAPI: string read GetUrlAPI write SetUrlAPI;
     {$ENDREGION}
     {$REGION 'События|Events'}
     property OnReceiveRawData: TtgOnReceiveRawData read FOnRawData write FOnRawData;
@@ -64,6 +67,7 @@ type
     function GetToken: string;
     procedure SetToken(const Value: string);
   protected
+    procedure DoInitApiCore; override;
   public
     procedure AssignTo(Dest: TPersistent); override;
     constructor Create(AOwner: TComponent); overload; override;
@@ -443,6 +447,7 @@ begin
     begin
       if Assigned(OnSendData) then
         OnSendData(Self, AUrl, AData);
+      Writeln(AUrl, ' ', AData);
     end;
   GetRequest.DataExtractor :=
     function(AInput: string): string
@@ -522,6 +527,11 @@ begin
   Result := FRequest;
 end;
 
+function TTelegramBotBase.GetUrlAPI: string;
+begin
+  Result := GetRequest.UrlAPI;
+end;
+
 procedure TTelegramBotBase.SetHttpCore(const Value: IcuHttpClient);
 begin
   GetRequest.HttpCore := Value;
@@ -530,6 +540,11 @@ end;
 procedure TTelegramBotBase.SetLogger(const Value: ILogger);
 begin
   FLog := Value;
+end;
+
+procedure TTelegramBotBase.SetUrlAPI(const Value: string);
+begin
+  GetRequest.UrlAPI := Value;
 end;
 
 { TTelegramBot }
@@ -623,6 +638,14 @@ begin
   Logger.Enter(Self, 'DeleteWebhook');
   Result := GetRequest.SetMethod('deleteWebhook').ExecuteAsBool;
   Logger.Leave(Self, 'DeleteWebhook');
+end;
+
+procedure TTelegramBot.DoInitApiCore;
+const
+  SERVER = 'https://api.telegram.org/bot';
+begin
+  inherited;
+  GetRequest.UrlAPI := SERVER;
 end;
 
 {$ENDREGION}
