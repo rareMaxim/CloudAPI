@@ -5,6 +5,8 @@ Telega π - Library for working with Telegram Bot API in Delphi
 
 Version Bot API: *3.5.4*
 
+Installing and other info: see [wiki-page](https://github.com/ms301/TelegaPi/wiki)
+
 ## Support project
 
 You can help the project:
@@ -51,6 +53,8 @@ as well as many others who ask / suggest features / points bugs.
 Telega π - Библиотека для работы с Telegram Bot API в Delphi
 
 Версия Bot API: *3.5.4*
+
+Установка и другая информация: смотреть [wiki-страницу](https://github.com/ms301/TelegaPi/wiki)
 
 ## Помощь проекту
 
