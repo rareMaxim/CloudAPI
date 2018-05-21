@@ -447,7 +447,6 @@ begin
     begin
       if Assigned(OnSendData) then
         OnSendData(Self, AUrl, AData);
-      Writeln(AUrl, ' ', AData);
     end;
   GetRequest.DataExtractor :=
     function(AInput: string): string
