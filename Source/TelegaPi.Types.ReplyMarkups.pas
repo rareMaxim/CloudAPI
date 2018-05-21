@@ -34,7 +34,8 @@ type
     property Url: string read FURL write FURL;
     property CallbackData: string read FCallbackData write FCallbackData;
     property SwitchInlineQuery: string read FSwitchInlineQuery write FSwitchInlineQuery;
-    property SwitchInlineQueryCurrentChat: string read FSwitchInlineQueryCurrentChat write FSwitchInlineQueryCurrentChat;
+    property SwitchInlineQueryCurrentChat: string read
+      FSwitchInlineQueryCurrentChat write FSwitchInlineQueryCurrentChat;
     property CallbackGame: string read FCallbackGame write FCallbackGame;
     property Pay: Boolean read FPay write FPay;
   end;
@@ -46,7 +47,8 @@ type
     [JSONName('request_contact')]
     FRequestContact: Boolean;
   public
-    constructor Create(const AText: string; ARequestContact: Boolean = False; ARequestLocation: Boolean = False); overload;
+    constructor Create(const AText: string; ARequestContact: Boolean = False;
+      ARequestLocation: Boolean = False); overload;
     property RequestContact: Boolean read FRequestContact write FRequestContact;
     property RequestLocation: Boolean read FRequestLocation write FRequestLocation;
   end;
@@ -79,9 +81,11 @@ type
     procedure AddRow(AKeyboardRow: TArray<TtgInlineKeyboardButton>);
     constructor Create; overload;
     constructor Create(AInlineKeyboardRow: TArray<TtgInlineKeyboardButton>); overload;
-    constructor Create(AInlineKeyboard: TArray<TArray<TtgInlineKeyboardButton>>); overload;
+    constructor Create(AInlineKeyboard: TArray<TArray<TtgInlineKeyboardButton>>);
+      overload;
     destructor Destroy; override;
-    property Keyboard: TArray<TArray<TtgInlineKeyboardButton>> read FKeyboard write FKeyboard;
+    property Keyboard: TArray<TArray<TtgInlineKeyboardButton>> read FKeyboard
+      write FKeyboard;
   end;
 
   TtgReplyKeyboardMarkup = class(TtgReplyMarkup)
@@ -97,8 +101,10 @@ type
   public
     procedure AddRow(AKeyboardRow: TArray<TtgKeyboardButton>);
     constructor Create(AResizeKeyboard, AOneTimeKeyboard: Boolean); overload;
-    constructor Create(AKeyboardRow: TArray<TtgKeyboardButton>; AResizeKeyboard: Boolean = False; AOneTimeKeyboard: Boolean = False); overload;
-    constructor Create(AKeyboard: TArray<TArray<TtgKeyboardButton>>; AResizeKeyboard: Boolean = False; AOneTimeKeyboard: Boolean = False); overload;
+    constructor Create(AKeyboardRow: TArray<TtgKeyboardButton>; AResizeKeyboard:
+      Boolean = False; AOneTimeKeyboard: Boolean = False); overload;
+    constructor Create(AKeyboard: TArray<TArray<TtgKeyboardButton>>;
+      AResizeKeyboard: Boolean = False; AOneTimeKeyboard: Boolean = False); overload;
     destructor Destroy; override;
     property Keyboard: TArray<TArray<TtgKeyboardButton>> read FKeyboard write FKeyboard;
     property OneTimeKeyboard: Boolean read FOneTimeKeyboard write FOneTimeKeyboard;
@@ -131,14 +137,17 @@ begin
   Self.CallbackData := ACallbackData;
 end;
 
-constructor TtgKeyboardButton.Create(const AText: string; ARequestContact, ARequestLocation: Boolean);
+constructor TtgKeyboardButton.Create(const AText: string; ARequestContact,
+  ARequestLocation: Boolean);
 begin
+  inherited Create;
   Self.Text := AText;
   Self.RequestContact := ARequestContact;
   Self.RequestLocation := ARequestLocation;
 end;
 
-constructor TtgInlineKeyboardMarkup.Create(AInlineKeyboardRow: TArray<TtgInlineKeyboardButton>);
+constructor TtgInlineKeyboardMarkup.Create(AInlineKeyboardRow: TArray<
+  TtgInlineKeyboardButton>);
 begin
   inherited Create;
   AddRow(AInlineKeyboardRow);
@@ -150,7 +159,8 @@ begin
   FKeyboard[High(FKeyboard)] := AKeyboardRow;
 end;
 
-constructor TtgInlineKeyboardMarkup.Create(AInlineKeyboard: TArray<TArray<TtgInlineKeyboardButton>>);
+constructor TtgInlineKeyboardMarkup.Create(AInlineKeyboard: TArray<TArray<
+  TtgInlineKeyboardButton>>);
 var
   i: Integer;
 begin
@@ -174,7 +184,8 @@ begin
   inherited Create;
 end;
 
-constructor TtgReplyKeyboardMarkup.Create(AKeyboardRow: TArray<TtgKeyboardButton>; AResizeKeyboard, AOneTimeKeyboard: Boolean);
+constructor TtgReplyKeyboardMarkup.Create(AKeyboardRow: TArray<TtgKeyboardButton
+  >; AResizeKeyboard, AOneTimeKeyboard: Boolean);
 begin
   inherited Create;
   AddRow(AKeyboardRow);
@@ -188,7 +199,8 @@ begin
   FKeyboard[High(FKeyboard)] := AKeyboardRow;
 end;
 
-constructor TtgReplyKeyboardMarkup.Create(AKeyboard: TArray<TArray<TtgKeyboardButton>>; AResizeKeyboard, AOneTimeKeyboard: Boolean);
+constructor TtgReplyKeyboardMarkup.Create(AKeyboard: TArray<TArray<
+  TtgKeyboardButton>>; AResizeKeyboard, AOneTimeKeyboard: Boolean);
 begin
   inherited Create;
   Keyboard := AKeyboard;

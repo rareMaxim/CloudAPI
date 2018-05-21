@@ -63,14 +63,14 @@ object Main: TMain
     end
   end
   object tgBot: TTelegramBot
-    ExceptionManager = tgExceptionManagerUI1
-    Left = 104
-    Top = 168
+    HttpCore = cuHttpClientSysNet1
+    Logger = tgExceptionManagerUI1
+    Left = 152
+    Top = 120
   end
   object tgExceptionManagerUI1: TtgExceptionManagerUI
-    OnApiException = tgExceptionManagerUI1ApiException
-    OnGlobalException = tgExceptionManagerUI1GlobalException
-    Left = 216
+    OnLog = tgExceptionManagerUI1Log
+    Left = 200
     Top = 192
   end
   object tgReceiverUI1: TtgReceiverUI
@@ -85,5 +85,9 @@ object Main: TMain
     OnCallbackQuery = tgReceiverUI1CallbackQuery
     Left = 312
     Top = 112
+  end
+  object cuHttpClientSysNet1: TcuHttpClientSysNet
+    Left = 200
+    Top = 272
   end
 end

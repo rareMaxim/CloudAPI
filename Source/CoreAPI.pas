@@ -3,14 +3,13 @@ unit CoreAPI;
 interface
 
 uses
-  TelegAPI.Base,
   CrossUrl.HttpClient,
   System.Rtti,
   System.TypInfo,
   System.SysUtils,
   System.Generics.Collections,
-  CoreAPI.Parameter,
   System.Classes,
+  TelegAPI.Base,
   TelegAPI.Types;
 
 type
@@ -26,7 +25,12 @@ type
     function GetDataExtractor: TFunc<string, string>;
     procedure SetDataExtractor(const Value: TFunc<string, string>);
     function GetFormData: IcuMultipartFormData;
+    function GetHttpCore: IcuHttpClient;
+    procedure SetHttpCore(const AHttpCore: IcuHttpClient);
+    function GetUrlAPI: string;
+    procedure SetUrlAPI(const AValue: string);
     // public
+
     function SetToken(const AToken: string): ItgRequestAPI;
     function SetMethod(const AMethod: string): ItgRequestAPI;
     //
@@ -36,23 +40,23 @@ type
       Integer; const ARequired: Boolean = False): ItgRequestAPI; overload;
     function AddParameter(const AKey: string; const AValue, ADefaultValue:
       TDateTime; const ARequired: Boolean = False): ItgRequestAPI; overload;
-    function AddParameter(const AKey: string; const AValue, ADefaultValue:
+    function AddParameter(const AKey: string; AValue, ADefaultValue:
       TtgFileToSend; const ARequired: Boolean = False): ItgRequestAPI; overload;
     function AddParameter(const AKey: string; const AValue, ADefaultValue:
       TtgUserLink; const ARequired: Boolean = False): ItgRequestAPI; overload;
-    function AddParameter(const AKey: string; const AValue, ADefaultValue:
-      TObject; const ARequired: Boolean = False): ItgRequestAPI; overload;
+    function AddParameter(const AKey: string; AValue, ADefaultValue: TObject;
+      const ARequired: Boolean = False): ItgRequestAPI; overload;
     function AddParameter(const AKey: string; const AValue, ADefaultValue:
       Boolean; const ARequired: Boolean = False): ItgRequestAPI; overload;
     function AddParameter(const AKey: string; const AValue, ADefaultValue:
       Single; const ARequired: Boolean = False): ItgRequestAPI; overload;
-      //
+    //
     function AddRawField(const AField, AValue: string): ItgRequestAPI;
     function AddRawFile(const AFieldName, AFileName: string): ItgRequestAPI;
     function AddRawStream(const AFieldName: string; Data: TStream; const
       AFileName: string): ItgRequestAPI;
 
-      //
+    //
     function ClearParameters: ItgRequestAPI;
     function Execute: string;
     function ExecuteAsBool: Boolean;
@@ -61,27 +65,27 @@ type
     property DataExtractor: TFunc<string, string> read GetDataExtractor write
       SetDataExtractor;
     property MultipartFormData: IcuMultipartFormData read GetFormData;
+    property HttpCore: IcuHttpClient read GetHttpCore write SetHttpCore;
+    property UrlAPI: string read GetUrlAPI write SetUrlAPI;
     // events
     property OnError: TProc<Exception> read GetOnError write SetOnError;
     property OnSend: TProc<string, string> read GetOnSend write SetOnSend;
     property OnReceive: TProc<string> read GetOnReceive write SetOnReceive;
   end;
 
-  TtgCoreApiBase = class(TtgAbstractComponent, ItgRequestAPI)
-  protected
-    const
-      SERVER = 'https://api.telegram.org/bot';
+  TtgCoreApiBase = class(TInterfacedObject, ItgRequestAPI)
   private
     FGetOnSend: TProc<string, string>;
     FDataExtractor: TFunc<string, string>;
     FOnReceive: TProc<string>;
-    FLastRequestIsOk: Boolean;
     FToken: string;
     FMethod: string;
     FOnError: TProc<Exception>;
     FFormData: IcuMultipartFormData;
-    FHttp: IcuHttpClient;
-    FIsEmpty: Boolean;
+    FHttpCore: IcuHttpClient;
+    FHaveFields: Boolean;
+    FUrlAPI: string;
+  private
     function GetOnError: TProc<Exception>;
     procedure SetOnError(const Value: TProc<Exception>);
     function GetOnSend: TProc<string, string>;
@@ -92,7 +96,10 @@ type
     procedure SetDataExtractor(const Value: TFunc<string, string>);
     function GetUrl: string;
     function GetFormData: IcuMultipartFormData;
-    procedure SetHttp(const Value: IcuHttpClient);
+    procedure SetHttpCore(const Value: IcuHttpClient);
+    function GetHttpCore: IcuHttpClient;
+    function GetUrlAPI: string;
+    procedure SetUrlAPI(const AValue: string);
   protected
     procedure DoHaveException(const AException: Exception);
     function StreamToString(Stream: TStream): string;
@@ -105,36 +112,34 @@ type
       Integer; const ARequired: Boolean = False): ItgRequestAPI; overload;
     function AddParameter(const AKey: string; const AValue, ADefaultValue:
       TDateTime; const ARequired: Boolean = False): ItgRequestAPI; overload;
-    function AddParameter(const AKey: string; const AValue, ADefaultValue:
+    function AddParameter(const AKey: string; AValue, ADefaultValue:
       TtgFileToSend; const ARequired: Boolean = False): ItgRequestAPI; overload;
     function AddParameter(const AKey: string; const AValue, ADefaultValue:
       TtgUserLink; const ARequired: Boolean = False): ItgRequestAPI; overload;
-    function AddParameter(const AKey: string; const AValue, ADefaultValue:
-      TObject; const ARequired: Boolean = False): ItgRequestAPI; overload;
+    function AddParameter(const AKey: string; AValue, ADefaultValue: TObject;
+      const ARequired: Boolean = False): ItgRequestAPI; overload;
     function AddParameter(const AKey: string; const AValue, ADefaultValue:
       Boolean; const ARequired: Boolean = False): ItgRequestAPI; overload;
     function AddParameter(const AKey: string; const AValue, ADefaultValue:
       Single; const ARequired: Boolean = False): ItgRequestAPI; overload;
-      //
+    //
     function AddRawField(const AField, AValue: string): ItgRequestAPI;
     function AddRawFile(const AFieldName, AFileName: string): ItgRequestAPI;
     function AddRawStream(const AFieldName: string; Data: TStream; const
       AFileName: string): ItgRequestAPI;
-    function IsEmpty: Boolean;
+    function HaveFields: Boolean;
     function ClearParameters: ItgRequestAPI;
     function Execute: string; virtual; abstract;
     function ExecuteAsBool: Boolean;
     function ExecuteAndReadValue: string;
-    destructor Destroy; override;
-    constructor Create(AOwner: TComponent); override;
-
-  // props
-    property LastRequestIsOk: Boolean read FLastRequestIsOk write FLastRequestIsOk;
+    constructor Create;
+    // props
     property DataExtractor: TFunc<string, string> read GetDataExtractor write
       SetDataExtractor;
     property Url: string read GetUrl;
-    property HttpCore: IcuHttpClient read FHttp write SetHttp;
-  // events
+    property HttpCore: IcuHttpClient read FHttpCore write SetHttpCore;
+    property UrlAPI: string read GetUrlAPI write SetUrlAPI;
+    // events
     property OnError: TProc<Exception> read GetOnError write SetOnError;
     property OnSend: TProc<string, string> read GetOnSend write SetOnSend;
     property OnReceive: TProc<string> read GetOnReceive write SetOnReceive;
@@ -147,28 +152,28 @@ type
     function DoGet: string;
   public
     function Execute: string; override;
-    constructor Create;
-    destructor Destroy; override;
   end;
 
 implementation
 
 uses
-  System.DateUtils,
-  System.JSON,
   REST.Json,
-  TelegAPI.Exceptions,
+  System.DateUtils,
+  System.Json,
+  TelegAPI.Utils.Json,
   TelegAPI.Types.ReplyMarkups;
 
 { TtgCoreApiBase }
+{$REGION 'TtgCoreApiBase.AddParameter'}
 
 function TtgCoreApiBase.AddParameter(const AKey, AValue, ADefaultValue: string;
   const ARequired: Boolean): ItgRequestAPI;
 begin
-  if ARequired and (AValue.Equals(ADefaultValue) or AValue.isEmpty) then
-    DoHaveException(ETelegramException.Create('Not assigned required data [TtgApiRequest.FillFormData]'));
-  AddRawField(AKey, AValue);
-  Result := self;
+  if ARequired and (AValue.Equals(ADefaultValue) or AValue.IsEmpty) then
+    DoHaveException(Exception.Create('Not assigned required data'));
+  if AValue <> ADefaultValue then
+    AddRawField(AKey, AValue);
+  Result := Self;
 end;
 
 function TtgCoreApiBase.AddParameter(const AKey: string; const AValue,
@@ -177,17 +182,72 @@ begin
   Result := AddParameter(AKey, AValue.ToString, ADefaultValue.ToString, ARequired);
 end;
 
+function TtgCoreApiBase.AddParameter(const AKey: string; const AValue,
+  ADefaultValue: TDateTime; const ARequired: Boolean): ItgRequestAPI;
+begin
+  Result := AddParameter(AKey, DateTimeToUnix(AValue, False).ToString,
+    DateTimeToUnix(ADefaultValue, False).ToString, ARequired);
+end;
+
+function TtgCoreApiBase.AddParameter(const AKey: string; AValue, ADefaultValue:
+  TtgFileToSend; const ARequired: Boolean): ItgRequestAPI;
+begin
+  if ARequired and (AValue.Equals(ADefaultValue) or AValue.IsEmpty) then
+    DoHaveException(Exception.Create('Not assigned required data'));
+  Result := Self;
+  case AValue.Tag of
+    TtgFileToSendTag.FromStream:
+      AddRawStream(AKey, AValue.Content, AValue.Data);
+    TtgFileToSendTag.FromFile:
+      AddRawFile(AKey, AValue.Data);
+    TtgFileToSendTag.ID, TtgFileToSendTag.FromURL:
+      Result := AddParameter(AKey, AValue.Data, '', ARequired);
+  else
+    raise Exception.Create('Cant convert TTgFileToSend: Unknown prototype tag');
+  end;
+  if Assigned(AValue) then
+    FreeAndNil(AValue);
+  if Assigned(ADefaultValue) then
+    FreeAndNil(ADefaultValue);
+end;
+
+function TtgCoreApiBase.AddParameter(const AKey: string; const AValue,
+  ADefaultValue: TtgUserLink; const ARequired: Boolean): ItgRequestAPI;
+begin
+  Result := AddParameter(AKey, AValue.ToString, ADefaultValue.ToString, ARequired);
+end;
+
+function TtgCoreApiBase.AddParameter(const AKey: string; AValue, ADefaultValue:
+  TObject; const ARequired: Boolean): ItgRequestAPI;
+begin
+  Result := AddParameter(AKey, TJsonUtils.ObjectToJString(AValue),  //
+    TJsonUtils.ObjectToJString(ADefaultValue), ARequired);
+end;
+
+function TtgCoreApiBase.AddParameter(const AKey: string; const AValue,
+  ADefaultValue, ARequired: Boolean): ItgRequestAPI;
+begin
+  Result := AddParameter(AKey, AValue.ToString, ADefaultValue.ToString, ARequired);
+end;
+
+function TtgCoreApiBase.AddParameter(const AKey: string; const AValue,
+  ADefaultValue: Single; const ARequired: Boolean): ItgRequestAPI;
+begin
+  Result := AddParameter(AKey, AValue.ToString, ADefaultValue.ToString, ARequired);
+end;
+{$ENDREGION}
+
 function TtgCoreApiBase.AddRawField(const AField, AValue: string): ItgRequestAPI;
 begin
   FFormData.AddField(AField, AValue);
-  FIsEmpty := False;
+  FHaveFields := True;
   Result := Self;
 end;
 
 function TtgCoreApiBase.AddRawFile(const AFieldName, AFileName: string): ItgRequestAPI;
 begin
   FFormData.AddFile(AFieldName, AFileName);
-  FIsEmpty := False;
+  FHaveFields := True;
   Result := Self;
 end;
 
@@ -195,28 +255,21 @@ function TtgCoreApiBase.AddRawStream(const AFieldName: string; Data: TStream;
   const AFileName: string): ItgRequestAPI;
 begin
   FFormData.AddStream(AFieldName, Data, AFileName);
-  FIsEmpty := False;
+  FHaveFields := True;
   Result := Self;
 end;
 
 function TtgCoreApiBase.ClearParameters: ItgRequestAPI;
 begin
   FFormData := nil;
-  FIsEmpty := True;
-  FFormData := httpCore.CreateMultipartFormData;
+  FHaveFields := False;
+  FFormData := HttpCore.CreateMultipartFormData;
   Result := Self;
 end;
 
-constructor TtgCoreApiBase.Create(AOwner: TComponent);
+constructor TtgCoreApiBase.Create;
 begin
-  inherited Create(AOwner);
-  FIsEmpty := True;
-end;
-
-destructor TtgCoreApiBase.Destroy;
-begin
-
-  inherited;
+  FHaveFields := False;
 end;
 
 procedure TtgCoreApiBase.DoHaveException(const AException: Exception);
@@ -261,6 +314,11 @@ begin
   Result := FFormData;
 end;
 
+function TtgCoreApiBase.GetHttpCore: IcuHttpClient;
+begin
+  Result := FHttpCore;
+end;
+
 function TtgCoreApiBase.GetOnError: TProc<Exception>;
 begin
   Result := FOnError;
@@ -278,12 +336,17 @@ end;
 
 function TtgCoreApiBase.GetUrl: string;
 begin
-  Result := SERVER + FToken + '/' + FMethod;
+  Result := GetUrlAPI + FToken + '/' + FMethod;
 end;
 
-function TtgCoreApiBase.IsEmpty: Boolean;
+function TtgCoreApiBase.GetUrlAPI: string;
 begin
-  Result := FIsEmpty;
+  Result := FUrlAPI;
+end;
+
+function TtgCoreApiBase.HaveFields: Boolean;
+begin
+  Result := FHaveFields;
 end;
 
 procedure TtgCoreApiBase.SetDataExtractor(const Value: TFunc<string, string>);
@@ -291,10 +354,11 @@ begin
   FDataExtractor := Value;
 end;
 
-procedure TtgCoreApiBase.SetHttp(const Value: IcuHttpClient);
+procedure TtgCoreApiBase.SetHttpCore(const Value: IcuHttpClient);
 begin
-  FHttp := Value;
-  FFormData := FHttp.CreateMultipartFormData;
+  FHttpCore := Value;
+  if FHttpCore <> nil then
+    FFormData := FHttpCore.CreateMultipartFormData;
 end;
 
 function TtgCoreApiBase.SetMethod(const AMethod: string): ItgRequestAPI;
@@ -324,6 +388,11 @@ begin
   Result := Self;
 end;
 
+procedure TtgCoreApiBase.SetUrlAPI(const AValue: string);
+begin
+  FUrlAPI := AValue;
+end;
+
 function TtgCoreApiBase.StreamToString(Stream: TStream): string;
 var
   LStrings: TStringList;
@@ -340,37 +409,28 @@ end;
 
 { TtgCoreApiSysNet }
 
-constructor TtgCoreApi.Create;
-begin
-  inherited Create(nil);
-end;
-
-destructor TtgCoreApi.Destroy;
-begin
-  inherited;
-end;
-
 function TtgCoreApi.DoGet: string;
 begin
-  try
-    Result := FHttp.Get(Url).ContentAsString;
-    if Assigned(OnSend) then
-      OnSend(Url, '');
-  except
-    on E: Exception do
-    begin
-      Result := '';
-      DoHaveException(E);
-    end;
-  end;
+  Result := FHttpCore.Get(Url).ContentAsString;
 end;
 
 function TtgCoreApi.DoPost: string;
 begin
+  Result := FHttpCore.Post(Url, FFormData).ContentAsString;
+end;
+
+function TtgCoreApi.Execute: string;
+begin
+  if Assigned(OnSend) then
+    OnSend(Url, StreamToString(FFormData.Stream));
   try
-    Result := FHttp.Post(Url, FFormData).ContentAsString;
-    if Assigned(OnSend) then
-      OnSend(Url, StreamToString(FFormData.Stream));
+    if HaveFields then
+    begin
+      Result := DoPost;
+      ClearParameters;
+    end
+    else
+      Result := DoGet;
   except
     on E: Exception do
     begin
@@ -378,74 +438,12 @@ begin
       DoHaveException(E);
     end;
   end;
-
-end;
-
-function TtgCoreApi.Execute: string;
-begin
-  if IsEmpty then
-  begin
-    Result := DoGet;
-  end
-  else
-  begin
-    Result := DoPost;
-    ClearParameters;
-  end;
   if Result = '' then
     Exit;
-  LastRequestIsOk := True;
   if Assigned(OnReceive) then
     OnReceive(Result);
   if Assigned(DataExtractor) then
     Result := DataExtractor(Result);
-end;
-
-function TtgCoreApiBase.AddParameter(const AKey: string; const AValue,
-  ADefaultValue: TDateTime; const ARequired: Boolean): ItgRequestAPI;
-begin
-  Result := AddParameter(AKey, DateTimeToUnix(AValue, False).ToString,
-    DateTimeToUnix(ADefaultValue, False).ToString, ARequired);
-end;
-
-function TtgCoreApiBase.AddParameter(const AKey: string; const AValue,
-  ADefaultValue: TtgFileToSend; const ARequired: Boolean): ItgRequestAPI;
-begin
-  case AValue.Tag of
-    TtgFileToSendTag.FromStream:
-      AddRawStream(AKey, AValue.Content, AValue.Data);
-    TtgFileToSendTag.FromFile:
-      AddRawFile(AKey, AValue.Data);
-    TtgFileToSendTag.ID, TtgFileToSendTag.FromURL:
-      AddRawField(AKey, AValue.Data);
-  else
-    raise Exception.Create('Cant convert TTgFileToSend: Unknown prototype tag');
-  end;
-end;
-
-function TtgCoreApiBase.AddParameter(const AKey: string; const AValue,
-  ADefaultValue: TtgUserLink; const ARequired: Boolean): ItgRequestAPI;
-begin
-  Result := AddParameter(AKey, AValue.ToString, ADefaultValue.ToString, ARequired);
-end;
-
-function TtgCoreApiBase.AddParameter(const AKey: string; const AValue,
-  ADefaultValue: TObject; const ARequired: Boolean): ItgRequestAPI;
-begin
-  Result := AddParameter(AKey, TJson.ObjectToJsonString(AValue), //
-    TJson.ObjectToJsonString(ADefaultValue), ARequired);
-end;
-
-function TtgCoreApiBase.AddParameter(const AKey: string; const AValue,
-  ADefaultValue, ARequired: Boolean): ItgRequestAPI;
-begin
-  Result := AddParameter(AKey, AValue.ToString, ADefaultValue.ToString, ARequired);
-end;
-
-function TtgCoreApiBase.AddParameter(const AKey: string; const AValue,
-  ADefaultValue: Single; const ARequired: Boolean): ItgRequestAPI;
-begin
-  Result := AddParameter(AKey, AValue.ToString, ADefaultValue.ToString, ARequired);
 end;
 
 end.

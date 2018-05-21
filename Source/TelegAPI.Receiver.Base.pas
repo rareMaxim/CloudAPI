@@ -12,13 +12,7 @@ uses
   TelegAPI.Types.Enums;
 
 type
-  ITgBotReceiverBase = interface
-    ['{98A444BC-D8E3-4542-B75F-3A7AACFCAE74}']
-    procedure Start;
-    procedure Stop;
-  end;
-
-  TTgBotReceiverBase = class(TTgBotUpdateParser, ITgBotReceiverBase)
+  TTgBotReceiverBase = class(TTgBotUpdateParser)
   private
     FBotDonor: TTelegramBot;
     FAllowedUpdates: TAllowedUpdates;
@@ -35,7 +29,7 @@ type
     procedure DoOnStop; virtual; abstract;
   public
     constructor Create(AOwner: TComponent); overload; override;
-    constructor Create(ABot: ITelegramBot); overload;
+    constructor Create(ABot: ITelegramBot); reintroduce; overload;
     destructor Destroy; override;
     procedure Start;
     procedure Stop;
@@ -107,7 +101,7 @@ begin
     Result := LBot.GetUpdates(MessageOffset, 100, 0, AllowedUpdates);
   except
     on E: Exception do
-      Bot.ExceptionManager.HaveGlobalException('TTgBotReceiverBase.ReadUpdates', E)
+      Bot.Logger.Fatal('TTgBotReceiverBase.ReadUpdates', E)
   end;
 end;
 

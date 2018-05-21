@@ -38,14 +38,13 @@ contains
   TelegAPI.Base in '..\Source\TelegAPI.Base.pas',
   TelegAPI.Bot.Impl in '..\Source\TelegAPI.Bot.Impl.pas',
   TelegAPI.Bot in '..\Source\TelegAPI.Bot.pas',
-  TelegaPi.Exceptions in '..\Source\TelegaPi.Exceptions.pas',
   TelegAPi.Helpers in '..\Source\TelegAPi.Helpers.pas',
   TelegAPI.Receiver.Base in '..\Source\TelegAPI.Receiver.Base.pas',
   TelegAPI.Receiver.Console in '..\Source\TelegAPI.Receiver.Console.pas',
   TelegAPI.Receiver.Service in '..\Source\TelegAPI.Receiver.Service.pas',
   TelegAPi.RegisterIDE in '..\Source\TelegAPi.RegisterIDE.pas',
   TelegaPi.Types.Enums in '..\Source\TelegaPi.Types.Enums.pas',
-  TelegAPI.Types.Impl in '..\Source\TelegAPI.Types.Impl.pas',
+  TelegAPi.Types.Impl in '..\Source\TelegAPi.Types.Impl.pas',
   TelegaPi.Types.InlineQueryResults in '..\Source\TelegaPi.Types.InlineQueryResults.pas',
   TelegaPi.Types.InputMessageContents in '..\Source\TelegaPi.Types.InputMessageContents.pas',
   TelegAPi.Types in '..\Source\TelegAPi.Types.pas',
@@ -53,9 +52,14 @@ contains
   TelegAPI.Utils.Json in '..\Source\TelegAPI.Utils.Json.pas',
   TelegAPI.Receiver.UI in '..\Source\TelegAPI.Receiver.UI.pas',
   TelegaPi.Ext.Sessions in '..\Source\TelegaPi.Ext.Sessions.pas',
-  CoreAPI.Parameter in '..\Source\CoreAPI.Parameter.pas',
   CoreAPI in '..\Source\CoreAPI.pas',
-  TelegAPI.UpdateParser in '..\Source\TelegAPI.UpdateParser.pas';
+  TelegAPI.UpdateParser in '..\Source\TelegAPI.UpdateParser.pas',
+  TelegAPI.Logger in '..\Source\TelegAPI.Logger.pas',
+  TelegAPI.Logger.Old in '..\Source\TelegAPI.Logger.Old.pas',
+  TelegaPi.Types.Passport in '..\Source\TelegaPi.Types.Passport.pas',
+  TelegraPh in '..\Source\TelegraPh.pas',
+  TelegraPh.Types in '..\Source\TelegraPh.Types.pas';
 
 end.
+
 

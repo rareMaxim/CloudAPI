@@ -3,11 +3,9 @@
 interface
 
 uses
-  TelegAPi.Types.Enums,
-  System.Classes,
-  System.Rtti,
   REST.Json.Types,
-  System.JSON.Serializers;
+  System.Classes,
+  TelegAPi.Types.Enums;
 
 type
   ItgUser = interface
@@ -357,6 +355,7 @@ type
     function EditedChannelPost: ITgMessage;
     function ShippingQuery: ItgShippingQuery;
     function PreCheckoutQuery: ItgPreCheckoutQuery;
+   // function PassportData:ItgPassportData;
     function &Type: TtgUpdateType;
   end;
 
@@ -401,9 +400,9 @@ type
     class function FromStream(const AContent: TStream; const AFileName: string):
       TtgFileToSend;
     class function Empty: TtgFileToSend;
+    function IsEmpty: Boolean;
   end;
 
-  [JsonSerializeAttribute(TJsonMemberSerialization.&Public)]
   TtgInputMedia = class
   private
     FType: string;
@@ -450,7 +449,7 @@ type
     Username: string;
     class function FromID(const AID: Int64): TtgUserLink; static;
     class function FromUserName(const AUsername: string): TtgUserLink; static;
-    class operator Implicit(AID: Integer): TtgUserLink;
+    class operator Implicit(AID: Int64): TtgUserLink;
     class operator Implicit(AUsername: string): TtgUserLink;
     function ToString: string;
   end;
@@ -545,6 +544,11 @@ begin
   Result := TtgFileToSend.Create(TtgFileToSendTag.FromURL, AURL, nil);
 end;
 
+function TtgFileToSend.IsEmpty: Boolean;
+begin
+  Result := Data.IsEmpty and not Assigned(Content);
+end;
+
 { TtgUserLink }
 
 class function TtgUserLink.FromID(const AID: Int64): TtgUserLink;
@@ -565,12 +569,12 @@ end;
 function TtgUserLink.ToString: string;
 begin
   if Username.IsEmpty then
-    Result := Self.ID.ToString
+    Result := ID.ToString
   else
     Result := Username;
 end;
 
-class operator TtgUserLink.Implicit(AID: Integer): TtgUserLink;
+class operator TtgUserLink.Implicit(AID: Int64): TtgUserLink;
 begin
   Result := TtgUserLink.FromID(AID);
 end;

@@ -12,7 +12,6 @@ uses
   FMX.Dialogs,
   FMX.Memo,
   TelegAPI.Types,
-  TelegAPI.Exceptions,
   FMX.Edit,
   FMX.StdCtrls,
   FMX.Controls,
@@ -23,7 +22,12 @@ uses
   TelegAPI.Receiver.UI,
   TelegAPI.Bot.Impl,
   TelegAPI.Base,
-  TelegAPI.Receiver.Service, TelegAPI.UpdateParser;
+  TelegAPI.Receiver.Service,
+  TelegAPI.UpdateParser,
+  CrossUrl.SystemNet.HttpClient,
+  CoreAPI,
+  TelegAPI.Logger,
+  TelegAPI.Logger.Old;
 
 type
   TMain = class(TForm)
@@ -35,15 +39,18 @@ type
     tgBot: TTelegramBot;
     tgExceptionManagerUI1: TtgExceptionManagerUI;
     tgReceiverUI1: TtgReceiverUI;
+    cuHttpClientSysNet1: TcuHttpClientSysNet;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure swtchTokenSwitch(Sender: TObject);
-    procedure tgExceptionManagerUI1GlobalException(ASender: TObject; const AMethod: string; AException: Exception);
-    procedure tgExceptionManagerUI1ApiException(ASender: TObject; const AMethod: string; AApiRequestException: EApiRequestException);
-    procedure tgReceiverUI1CallbackQuery(ASender: TObject; ACallbackQuery: ItgCallbackQuery);
+    procedure tgReceiverUI1CallbackQuery(ASender: TObject; ACallbackQuery:
+      ItgCallbackQuery);
     procedure tgReceiverUI1Message(ASender: TObject; AMessage: ITgMessage);
-    procedure tgReceiverUI1ChosenInlineResult(ASender: TObject; AChosenInlineResult: ItgChosenInlineResult);
+    procedure tgReceiverUI1ChosenInlineResult(ASender: TObject;
+      AChosenInlineResult: ItgChosenInlineResult);
     procedure tgReceiverUI1InlineQuery(ASender: TObject; AInlineQuery: ItgInlineQuery);
     procedure tgReceiverUI1Start(Sender: TObject);
+    procedure tgExceptionManagerUI1Log(ASender: TObject; const Level: TLogLevel;
+      const Msg: string; E: Exception);
   private
     { Private declarations }
     procedure WriteLine(const AValue: string);
@@ -82,7 +89,8 @@ end;
 
 procedure TMain.ParseContactMessage(Msg: ITgMessage);
 begin
-  WriteLine('Contact: ' + Msg.Contact.LastName + ' ' + Msg.Contact.FirstName + ' ' + Msg.Contact.PhoneNumber);
+  WriteLine('Contact: ' + Msg.Contact.LastName + ' ' + Msg.Contact.FirstName +
+    ' ' + Msg.Contact.PhoneNumber);
 end;
 
 procedure TMain.ParseLocationMessage(Msg: ITgMessage);
@@ -132,7 +140,8 @@ begin
       '/keyboard - send custom keyboard' + #13#10 + //
       '/photo    - send a photo' + #13#10 + //
       '/request  - request location or contact';
-    tgBot.SendMessage(Msg.Chat.Id, usage, TtgParseMode.default, False, False, 0, TtgReplyKeyboardRemove.Create);
+    tgBot.SendMessage(Msg.Chat.Id, usage, TtgParseMode.default, False, False, 0,
+      TtgReplyKeyboardRemove.Create);
   end;
 end;
 
@@ -143,7 +152,8 @@ begin
   kb := TtgReplyKeyboardMarkup.Create([[
     { } TtgKeyboardButton.Create('Location', False, True),
     { } TtgKeyboardButton.Create('Contact', True, False)]]);
-  tgBot.SendMessage(Msg.Chat.Id, 'Who or Where are you?', TtgParseMode.default, False, False, 0, kb);
+  tgBot.SendMessage(Msg.Chat.Id, 'Who or Where are you?', TtgParseMode.default,
+    False, False, 0, kb);
 end;
 
 procedure TMain.swtchTokenSwitch(Sender: TObject);
@@ -174,11 +184,14 @@ begin
   tgBot.SendChatAction(Msg.Chat.Id, TtgSendChatAction.Typing);
   keyboard := TtgInlineKeyboardMarkup.Create([
     { first row }
-    [TtgInlineKeyboardButton.Create('1.1', '1'), TtgInlineKeyboardButton.Create('1.2', '2')],
+    [TtgInlineKeyboardButton.Create('1.1', '1'), TtgInlineKeyboardButton.Create('1.2',
+    '2')],
     { second row }
-    [TtgInlineKeyboardButton.Create('2.1', '3'), TtgInlineKeyboardButton.Create('2.2', '4')]]);
+    [TtgInlineKeyboardButton.Create('2.1', '3'), TtgInlineKeyboardButton.Create('2.2',
+    '4')]]);
   Sleep(500); // simulate longer running task
-  tgBot.SendMessage(Msg.Chat.Id, 'Choose', TtgParseMode.default, False, False, 0, keyboard);
+  tgBot.SendMessage(Msg.Chat.Id, 'Choose', TtgParseMode.default, False, False, 0,
+    keyboard);
 end;
 
 procedure TMain.SendKeyboard(Msg: ITgMessage);
@@ -192,9 +205,11 @@ begin
     AddRow([TtgKeyboardButton.Create('1.1'), TtgKeyboardButton.Create('1.2')]);
     { second row }
     AddRow([TtgKeyboardButton.Create('2.1'), TtgKeyboardButton.Create('2.2')]);
-    AddRow([TtgKeyboardButton.Create('Contact', True, False), TtgKeyboardButton.Create('Location', False, True)]);
+    AddRow([TtgKeyboardButton.Create('Contact', True, False), TtgKeyboardButton.Create
+      ('Location', False, True)]);
   end;
-  tgBot.SendMessage(Msg.Chat.Id, 'Choose', TtgParseMode.default, False, False, 0, keyboard);
+  tgBot.SendMessage(Msg.Chat.Id, 'Choose', TtgParseMode.default, False, False, 0,
+    keyboard);
 end;
 
 procedure TMain.SendQuest(Msg: ITgMessage);
@@ -206,25 +221,30 @@ begin
     [TtgKeyboardButton.Create('1.1'), TtgKeyboardButton.Create('1.2')],
     { second row }
     [TtgKeyboardButton.Create('2.1'), TtgKeyboardButton.Create('2.2')]], False);
-  tgBot.SendMessage(Msg.Chat.Id, 'Выбери:', TtgParseMode.default, False, False, 0, keyboard);
+  tgBot.SendMessage(Msg.Chat.Id, 'Выбери:', TtgParseMode.default, False, False,
+    0, keyboard);
 end;
 
-procedure TMain.tgExceptionManagerUI1ApiException(ASender: TObject; const AMethod: string; AApiRequestException: EApiRequestException);
+procedure TMain.tgExceptionManagerUI1Log(ASender: TObject; const Level:
+  TLogLevel; const Msg: string; E: Exception);
 begin
-  WriteLine(AMethod + '@' + AApiRequestException.ToString);
+  if Level >= TLogLevel.Error then
+  begin
+    if Assigned(E) then
+      WriteLine('[' + E.ToString + '] ' + Msg)
+    else
+      WriteLine(Msg);
+  end;
 end;
 
-procedure TMain.tgExceptionManagerUI1GlobalException(ASender: TObject; const AMethod: string; AException: Exception);
-begin
-  WriteLine(AMethod + '@' + AException.ToString);
-end;
-
-procedure TMain.tgReceiverUI1CallbackQuery(ASender: TObject; ACallbackQuery: ItgCallbackQuery);
+procedure TMain.tgReceiverUI1CallbackQuery(ASender: TObject; ACallbackQuery:
+  ItgCallbackQuery);
 begin
   tgBot.AnswerCallbackQuery(ACallbackQuery.Id, 'Received ' + ACallbackQuery.Data);
 end;
 
-procedure TMain.tgReceiverUI1ChosenInlineResult(ASender: TObject; AChosenInlineResult: ItgChosenInlineResult);
+procedure TMain.tgReceiverUI1ChosenInlineResult(ASender: TObject;
+  AChosenInlineResult: ItgChosenInlineResult);
 begin
   WriteLine('Received choosen inline result: ' + AChosenInlineResult.ResultId);
 end;
@@ -241,7 +261,8 @@ begin
     Latitude := 40.7058316; // displayed result
     Longitude := -74.2581888;
     Title := 'New York';
-    InputMessageContent := TtgInputLocationMessageContent.Create(Latitude, Longitude);  // message if result is selected
+    InputMessageContent := TtgInputLocationMessageContent.Create(Latitude,
+      Longitude);  // message if result is selected
   end;
   with TtgInlineQueryResultLocation(results[1]) do
   begin
@@ -249,7 +270,8 @@ begin
     Latitude := 50.4021367; // displayed result
     Longitude := 30.2525032;
     Title := 'Киев';
-    InputMessageContent := TtgInputLocationMessageContent.Create(Latitude, Longitude); // message if result is selected
+    InputMessageContent := TtgInputLocationMessageContent.Create(Latitude,
+      Longitude); // message if result is selected
   end;
   tgBot.AnswerInlineQuery(AInlineQuery.Id, results, 0, True);
 end;

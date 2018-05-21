@@ -1,0 +1,1 @@
+WelcomeBotSrv.exe /install

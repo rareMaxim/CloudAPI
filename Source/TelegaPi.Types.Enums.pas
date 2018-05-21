@@ -78,8 +78,7 @@ type
     /// <summary>
     ///   Normal member of the <see cref="Chat" />
     /// </summary>
-    Member,
-    Restricted,
+    Member, Restricted,
 
     /// <summary>
     ///   A <see cref="User" /> who left the <see cref="Chat" />
@@ -138,7 +137,10 @@ type
   ///   The type of a Message
   /// </summary>
 
-  TtgMessageType = (UnknownMessage = 0, TextMessage, PhotoMessage, AudioMessage, VideoMessage, VideoNoteMessage, VoiceMessage, DocumentMessage, StickerMessage, GameMessage, LocationMessage, ContactMessage, ServiceMessage, VenueMessage);
+  TtgMessageType = (UnknownMessage = 0, TextMessage, PhotoMessage, AudioMessage,
+    VideoMessage, VideoNoteMessage, VoiceMessage, DocumentMessage,
+    StickerMessage, GameMessage, LocationMessage, ContactMessage, ServiceMessage,
+    VenueMessage);
   /// <summary>
   ///   Text parsing mode
   /// </summary>
@@ -314,10 +316,17 @@ type
     mouth,
     /// <summary>
     ///   The chin
-    /// </summary>
     chin);
 
-  TAllowedUpdate = (message, Edited_message, Channel_post, Edited_channel_post, Inline_query, Chosen_inline_result, Callback_query);
+  TtgGender = (Male, Female);
+
+  TtgPassportAvaibleData = (PersonalDetails, Passport, InternalPassport,
+    DriverLicense, IdentityCard, IdDocument, IdSelfie, Address, UtilityBill,
+    BankStatement, RentalAgreement, PassportRegistration, TemporaryRegistration,
+    AdressDocument, PhoneNumber, Email);
+
+  TAllowedUpdate = (message, Edited_message, Channel_post, Edited_channel_post,
+    Inline_query, Chosen_inline_result, Callback_query);
 
   TAllowedUpdates = set of TAllowedUpdate;
 
