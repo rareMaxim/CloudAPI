@@ -1,4 +1,5 @@
 ﻿unit TelegAPI.Utils.Json;
+{$I jedi\jedi.inc}
 
 interface
 
@@ -116,11 +117,15 @@ begin
 end;
 
 class function TJsonUtils.ObjectToJString(AObj: TObject): string;
-begin // IF DELPHI_VERSION < TOKIO
+begin
+{$IF Defined(DELPHIX_TOKYO_UP)}
+  Result := TJson.ObjectToJsonString(AObj);
+{$ELSE}
   if Assigned(AObj) then
     Result := TJson.ObjectToJsonString(AObj)
   else
     Result := 'null';
+{$ENDIF}
 end;
 
 { TBaseJson }
@@ -173,11 +178,10 @@ begin
   LObj := FJSON.GetValue(AKey);
   if Assigned(LObj) and (not LObj.Null) then
   begin
-{$IFDEF USE_INDY}
-    // Директива не совсем подходит. Это в случае если используется старая версия ИДЕ
-    LValue := LObj.ToString;
-{$ELSE}
+{$IFDEF DELPHIXE7_UP}
     LValue := LObj.ToJSON;
+{$ELSE}
+    LValue := LObj.ToString;
 {$ENDIF}
     Result := TBaseJsonClass(T).Create(LValue) as T;
   end

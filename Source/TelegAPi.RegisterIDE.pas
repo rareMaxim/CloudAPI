@@ -18,8 +18,7 @@ uses
   TelegAPi.Receiver.UI,
   TelegAPi.Logger.Old,
   TelegAPi.Bot.Impl,
-  TelegAPi.Receiver.Service,
-  TelegraPh;
+  TelegAPi.Receiver.Service;
 
 {$IFDEF REG_IN_LOAD}
 {$ENDIF}
@@ -29,8 +28,8 @@ begin
 {$IFDEF REG_IN_LOAD}
   RegisterWithSplashScreen;
 {$ENDIF}
-  RegisterComponents('Telegram', [TTelegramBot, TTelegraPh,
-    TtgExceptionManagerUI, TtgReceiverService, TtgReceiverUI]);
+  RegisterComponents('Telegram', [TTelegramBot, TtgExceptionManagerUI,
+    TtgReceiverService, TtgReceiverUI]);
 end;
 
 end.
