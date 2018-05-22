@@ -413,7 +413,8 @@ type
     FFileToSend: TtgFileToSend;
   public
     function GetFileToSend: TtgFileToSend;
-    constructor Create(AMedia: TtgFileToSend; const ACaption: string = ''); virtual;
+    constructor Create(AMedia: TtgFileToSend; const ACaption: string = ''; const
+      AParseMode: TtgParseMode = TtgParseMode.default); virtual;
     [JsonName('type')]
     property {}&Type: string read FType write FType;
     property Media: string read FMedia write FMedia;
@@ -424,7 +425,8 @@ type
 
   TtgInputMediaPhoto = class(TtgInputMedia)
   public
-    constructor Create(AMedia: TtgFileToSend; const ACaption: string = ''); override;
+    constructor Create(AMedia: TtgFileToSend; const ACaption: string = ''; const
+      AParseMode: TtgParseMode = TtgParseMode.default); override;
   end;
 
   TtgInputMediaVideo = class(TtgInputMedia)
@@ -434,9 +436,10 @@ type
     FDuration: Integer;
     FSupportsStreaming: Boolean;
   public
-    constructor Create(AMedia: TtgFileToSend; const ACaption: string = '';
-      AWidth: Integer = 0; AHeight: Integer = 0; ADuration: Integer = 0;
-      ASupportsStreaming: Boolean = True); reintroduce;
+    constructor Create(AMedia: TtgFileToSend; const ACaption: string = ''; const
+      AParseMode: TtgParseMode = TtgParseMode.default; AWidth: Integer = 0;
+      AHeight: Integer = 0; ADuration: Integer = 0; ASupportsStreaming: Boolean
+      = True); reintroduce;
     property Width: Integer read FWidth write FWidth;
     property Height: Integer read FHeight write FHeight;
     property Duration: Integer read FDuration write FDuration;
@@ -457,13 +460,16 @@ type
 implementation
 
 uses
+  TelegAPi.Helpers,
   System.SysUtils;
 
 { TtgInputMedia }
 
-constructor TtgInputMedia.Create(AMedia: TtgFileToSend; const ACaption: string);
+constructor TtgInputMedia.Create(AMedia: TtgFileToSend; const ACaption: string;
+  const AParseMode: TtgParseMode);
 begin
   FCaption := ACaption;
+  FParseMode := AParseMode.ToString;
   FFileToSend := AMedia;
   case AMedia.Tag of
     TtgFileToSendTag.ID, TtgFileToSendTag.FromURL:
@@ -480,16 +486,18 @@ end;
 
 { TtgInputMediaPhoto }
 
-constructor TtgInputMediaPhoto.Create(AMedia: TtgFileToSend; const ACaption: string);
+constructor TtgInputMediaPhoto.Create(AMedia: TtgFileToSend; const ACaption:
+  string; const AParseMode: TtgParseMode);
 begin
-  inherited Create(AMedia, ACaption);
+  inherited Create(AMedia, ACaption, AParseMode);
   FType := 'photo';
 end;
 
 { TtgInputMediaVideo }
 
 constructor TtgInputMediaVideo.Create(AMedia: TtgFileToSend; const ACaption:
-  string; AWidth, AHeight, ADuration: Integer; ASupportsStreaming: Boolean);
+  string; const AParseMode: TtgParseMode; AWidth, AHeight, ADuration: Integer;
+  ASupportsStreaming: Boolean);
 begin
   inherited Create(AMedia, ACaption);
   FType := 'video';
