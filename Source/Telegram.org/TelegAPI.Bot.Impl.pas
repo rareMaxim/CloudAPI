@@ -1,7 +1,5 @@
 ﻿unit TelegAPI.Bot.Impl;
 
-{$I config.inc}
-
 interface
 
 uses
