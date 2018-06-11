@@ -66,7 +66,7 @@ $(PreBuildEvent)]]>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
         <BT_BuildType>Debug</BT_BuildType>
         <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
-        <DCC_UsePackage>rtl;fmx;RESTComponents;IndySystem;IndyProtocols;IndyCore;$(DCC_UsePackage)</DCC_UsePackage>
+        <DCC_UsePackage>rtl;fmx;RESTComponents;IndySystem;IndyProtocols;IndyCore;CrossUrl;$(DCC_UsePackage)</DCC_UsePackage>
         <VerInfo_AutoIncVersion>true</VerInfo_AutoIncVersion>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Keys>CompanyName=Maxim Sysoev;FileDescription=$(MSBuildProjectName);FileVersion=3.5.1.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
@@ -110,6 +110,7 @@ $(PreBuildEvent)]]>
         <DCCReference Include="TTelegramBot.dcr"/>
         <DCCReference Include="rtl.dcp"/>
         <DCCReference Include="RESTComponents.dcp"/>
+        <DCCReference Include="CloudApiCore.dcp"/>
         <DCCReference Include="..\Source\Telegram.org\TelegAPI.ApiRequest.pas"/>
         <DCCReference Include="..\Source\Telegram.org\TelegAPI.Bot.Impl.pas"/>
         <DCCReference Include="..\Source\Telegram.org\TelegAPI.Bot.pas"/>

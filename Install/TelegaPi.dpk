@@ -31,7 +31,8 @@ package TelegaPi;
 
 requires
   rtl,
-  RESTComponents;
+  RESTComponents,
+  CloudApiCore;
 
 contains
   TelegAPI.ApiRequest in '..\Source\Telegram.org\TelegAPI.ApiRequest.pas',

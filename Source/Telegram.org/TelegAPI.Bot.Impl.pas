@@ -4,8 +4,8 @@ interface
 
 uses
   CloudAPI.Request,
+  CloudAPI.BaseComponent,
   TelegAPI.ApiRequest,
-  CloudAPI.Logger,
   System.Classes,
   System.TypInfo,
   System.SysUtils,
@@ -20,38 +20,7 @@ uses
   CloudAPI.Utils.Json;
 
 type
-  TtgOnReceiveRawData = procedure(ASender: TObject; const AData: string) of object;
-
-  TtgOnSendData = procedure(ASender: TObject; const AUrl, AData: string) of object;
-
-  TTelegramBotBase = class(TComponent)
-  strict private
-    FLog: ILogger;
-    FRequest: ItgApiRequest;
-    FOnRawData: TtgOnReceiveRawData;
-    FOnSendData: TtgOnSendData;
-  private
-    function GetLogger: ILogger;
-    procedure SetLogger(const Value: ILogger);
-    function GetUrlAPI: string;
-    procedure SetUrlAPI(const Value: string);
-  protected
-    function GetRequest: ItgApiRequest;
-    procedure SetRequest(const Value: ItgApiRequest);
-    procedure DoInitApiCore; virtual;
-  public
-    constructor Create(AOwner: TComponent); override;
-    {$REGION 'Property|Свойства'}
-    property Logger: ILogger read GetLogger write SetLogger;
-    property Domain: string read GetUrlAPI write SetUrlAPI;
-    {$ENDREGION}
-    {$REGION 'События|Events'}
-    property OnReceiveRawData: TtgOnReceiveRawData read FOnRawData write FOnRawData;
-    property OnSendData: TtgOnSendData read FOnSendData write FOnSendData;
-    {$ENDREGION}
-  end;
-
-  TTelegramBot = class(TTelegramBotBase, ITelegramBot)
+  TTelegramBot = class(TCloudApiBaseComponent, ITelegramBot)
   private
     FToken: string;
     function GetToken: string;
@@ -404,22 +373,35 @@ uses
   REST.JSON,
   TelegAPI.Helpers;
 
-  { TTelegramBotBase }
+{ TTelegramBot }
+{$REGION 'Core'}
 
-constructor TTelegramBotBase.Create(AOwner: TComponent);
+procedure TTelegramBot.AssignTo(Dest: TPersistent);
 begin
-  inherited Create(AOwner);
-  DoInitApiCore;
+  if not (Assigned(Dest) or (Dest is TTelegramBot)) then
+    Exit;
+  (Dest as TTelegramBot).Token := Self.Token;
+  (Dest as TTelegramBot).Logger := Self.Logger;
+  (Dest as TTelegramBot).OnReceiveRawData := Self.OnReceiveRawData;
+  (Dest as TTelegramBot).OnSendData := Self.OnSendData;
+  // inherited AssignTo(Dest);
 end;
 
-procedure TTelegramBotBase.DoInitApiCore;
+constructor TTelegramBot.Create(AOwner: TComponent);
 begin
-  FRequest := TtgApiRequest.Create;
-  GetRequest.OnError :=
-    procedure(E: Exception)
-    begin
-      Logger.Error('RequestAPI', E);
-    end;
+  inherited Create(AOwner);
+end;
+
+constructor TTelegramBot.Create(const AToken: string);
+begin
+  inherited Create(nil);
+  SetToken(AToken);
+end;
+
+procedure TTelegramBot.DoInitApiCore;
+begin
+  inherited;
+  Domain := 'https://api.telegram.org/bot';
   GetRequest.OnDataReceiveAsString :=
     function(AData: string): string
     var
@@ -446,71 +428,6 @@ begin
         LJSON.Free;
       end;
     end;
-  GetRequest.OnDataSend :=
-    procedure(AUrl, AData, AHeaders: string)
-    begin
-      if Assigned(OnSendData) then
-        OnSendData(Self, AUrl, AData);
-    end;
-end;
-
-function TTelegramBotBase.GetLogger: ILogger;
-begin
-  if csDestroying in ComponentState then
-    Exit(nil);
-  if FLog = nil then
-    FLog := TLogEmpty.Create(nil);
-  Result := FLog;
-end;
-
-function TTelegramBotBase.GetRequest: ItgApiRequest;
-begin
-  Result := FRequest;
-end;
-
-function TTelegramBotBase.GetUrlAPI: string;
-begin
-  Result := GetRequest.Domain;
-end;
-
-procedure TTelegramBotBase.SetLogger(const Value: ILogger);
-begin
-  FLog := Value;
-end;
-
-procedure TTelegramBotBase.SetRequest(const Value: ItgApiRequest);
-begin
-  FRequest := Value;
-end;
-
-procedure TTelegramBotBase.SetUrlAPI(const Value: string);
-begin
-  GetRequest.Domain := Value;
-end;
-
-{ TTelegramBot }
-{$REGION 'Core'}
-
-procedure TTelegramBot.AssignTo(Dest: TPersistent);
-begin
-  if not (Assigned(Dest) or (Dest is TTelegramBot)) then
-    Exit;
-  (Dest as TTelegramBot).Token := Self.Token;
-  (Dest as TTelegramBot).Logger := Self.Logger;
-  (Dest as TTelegramBot).OnReceiveRawData := Self.OnReceiveRawData;
-  (Dest as TTelegramBot).OnSendData := Self.OnSendData;
-  // inherited AssignTo(Dest);
-end;
-
-constructor TTelegramBot.Create(AOwner: TComponent);
-begin
-  inherited Create(AOwner);
-end;
-
-constructor TTelegramBot.Create(const AToken: string);
-begin
-  inherited Create(nil);
-  SetToken(AToken);
 end;
 
 function TTelegramBot.GetToken: string;
@@ -573,14 +490,6 @@ begin
   Logger.Enter(Self, 'DeleteWebhook');
   Result := GetRequest.SetMethod('deleteWebhook').ExecuteAsBool;
   Logger.Leave(Self, 'DeleteWebhook');
-end;
-
-procedure TTelegramBot.DoInitApiCore;
-const
-  SERVER = 'https://api.telegram.org/bot';
-begin
-  inherited;
-  Domain := SERVER;
 end;
 
 {$ENDREGION}
