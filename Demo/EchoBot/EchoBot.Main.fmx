@@ -62,19 +62,12 @@ object Main: TMain
       OnSwitch = swtchTokenSwitch
     end
   end
-  object tgBot: TTelegramBot
-    HttpCore = cuHttpClientSysNet1
-    Logger = tgExceptionManagerUI1
-    Left = 152
-    Top = 120
-  end
   object tgExceptionManagerUI1: TtgExceptionManagerUI
     OnLog = tgExceptionManagerUI1Log
     Left = 200
     Top = 192
   end
   object tgReceiverUI1: TtgReceiverUI
-    Bot = tgBot
     OnStart = tgReceiverUI1Start
     OnMessage = tgReceiverUI1Message
     OnInlineQuery = tgReceiverUI1InlineQuery
@@ -85,9 +78,5 @@ object Main: TMain
     OnCallbackQuery = tgReceiverUI1CallbackQuery
     Left = 312
     Top = 112
-  end
-  object cuHttpClientSysNet1: TcuHttpClientSysNet
-    Left = 200
-    Top = 272
   end
 end

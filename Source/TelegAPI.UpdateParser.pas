@@ -5,13 +5,12 @@ interface
 uses
   System.Classes,
   System.SysUtils,
-  TelegAPI.Base,
   TelegAPI.Bot,
   TelegAPI.Types,
   TelegAPI.Types.Enums;
 
 type
-  TTgBotUpdateParser = class(TtgAbstractComponent)
+  TTgBotUpdateParser = class(TComponent)
   private
   protected
     procedure EventParser(AUpdates: TArray<ItgUpdate>); virtual;

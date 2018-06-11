@@ -397,8 +397,7 @@ type
     class function FromFile(const AFileName: string): TtgFileToSend;
     class function FromID(const AID: string): TtgFileToSend;
     class function FromURL(const AURL: string): TtgFileToSend;
-    class function FromStream(const AContent: TStream; const AFileName: string):
-      TtgFileToSend;
+    class function FromStream(const AContent: TStream; const AFileName: string): TtgFileToSend;
     class function Empty: TtgFileToSend;
     function IsEmpty: Boolean;
   end;
@@ -438,8 +437,7 @@ type
   public
     constructor Create(AMedia: TtgFileToSend; const ACaption: string = ''; const
       AParseMode: TtgParseMode = TtgParseMode.default; AWidth: Integer = 0;
-      AHeight: Integer = 0; ADuration: Integer = 0; ASupportsStreaming: Boolean
-      = True); reintroduce;
+      AHeight: Integer = 0; ADuration: Integer = 0; ASupportsStreaming: Boolean = True); reintroduce;
     property Width: Integer read FWidth write FWidth;
     property Height: Integer read FHeight write FHeight;
     property Duration: Integer read FDuration write FDuration;
@@ -451,6 +449,7 @@ type
     ID: Int64;
     Username: string;
     class function FromID(const AID: Int64): TtgUserLink; static;
+    class function Empty: TtgUserLink; static;
     class function FromUserName(const AUsername: string): TtgUserLink; static;
     class operator Implicit(AID: Int64): TtgUserLink;
     class operator Implicit(AUsername: string): TtgUserLink;
@@ -465,8 +464,7 @@ uses
 
 { TtgInputMedia }
 
-constructor TtgInputMedia.Create(AMedia: TtgFileToSend; const ACaption: string;
-  const AParseMode: TtgParseMode);
+constructor TtgInputMedia.Create(AMedia: TtgFileToSend; const ACaption: string; const AParseMode: TtgParseMode);
 begin
   FCaption := ACaption;
   FParseMode := AParseMode.ToString;
@@ -486,8 +484,7 @@ end;
 
 { TtgInputMediaPhoto }
 
-constructor TtgInputMediaPhoto.Create(AMedia: TtgFileToSend; const ACaption:
-  string; const AParseMode: TtgParseMode);
+constructor TtgInputMediaPhoto.Create(AMedia: TtgFileToSend; const ACaption: string; const AParseMode: TtgParseMode);
 begin
   inherited Create(AMedia, ACaption, AParseMode);
   FType := 'photo';
@@ -496,10 +493,9 @@ end;
 { TtgInputMediaVideo }
 
 constructor TtgInputMediaVideo.Create(AMedia: TtgFileToSend; const ACaption:
-  string; const AParseMode: TtgParseMode; AWidth, AHeight, ADuration: Integer;
-  ASupportsStreaming: Boolean);
+  string; const AParseMode: TtgParseMode; AWidth, AHeight, ADuration: Integer; ASupportsStreaming: Boolean);
 begin
-  inherited Create(AMedia, ACaption);
+  inherited Create(AMedia, ACaption, AParseMode);
   FType := 'video';
   FWidth := AWidth;
   FHeight := AHeight;
@@ -509,8 +505,7 @@ end;
 
 { TtgFileToSend }
 
-constructor TtgFileToSend.Create(const ATag: TtgFileToSendTag; const AData:
-  string; AContent: TStream);
+constructor TtgFileToSend.Create(const ATag: TtgFileToSendTag; const AData: string; AContent: TStream);
 begin
   Tag := ATag;
   Data := AData;
@@ -534,8 +529,7 @@ begin
   Result := TtgFileToSend.Create(TtgFileToSendTag.ID, AID, nil);
 end;
 
-class function TtgFileToSend.FromStream(const AContent: TStream; const AFileName:
-  string): TtgFileToSend;
+class function TtgFileToSend.FromStream(const AContent: TStream; const AFileName: string): TtgFileToSend;
 begin
     // I guess, in most cases, AFilename param should contain a non-empty string.
     // It is odd to receive a file with filename and
@@ -559,6 +553,12 @@ end;
 
 { TtgUserLink }
 
+class function TtgUserLink.Empty: TtgUserLink;
+begin
+  Result.ID := 0;
+  Result.Username := '';
+end;
+
 class function TtgUserLink.FromID(const AID: Int64): TtgUserLink;
 begin
   Result.ID := AID;
@@ -577,7 +577,12 @@ end;
 function TtgUserLink.ToString: string;
 begin
   if Username.IsEmpty then
-    Result := ID.ToString
+  begin
+    if ID = 0 then
+      Result := ''
+    else
+      Result := ID.ToString
+  end
   else
     Result := Username;
 end;

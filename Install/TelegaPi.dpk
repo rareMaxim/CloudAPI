@@ -31,11 +31,9 @@ package TelegaPi;
 
 requires
   rtl,
-  RESTComponents,
-  CrossUrl;
+  RESTComponents;
 
 contains
-  TelegAPI.Base in '..\Source\TelegAPI.Base.pas',
   TelegAPI.Bot.Impl in '..\Source\TelegAPI.Bot.Impl.pas',
   TelegAPI.Bot in '..\Source\TelegAPI.Bot.pas',
   TelegAPi.Helpers in '..\Source\TelegAPi.Helpers.pas',
@@ -49,14 +47,12 @@ contains
   TelegaPi.Types.InputMessageContents in '..\Source\TelegaPi.Types.InputMessageContents.pas',
   TelegAPi.Types in '..\Source\TelegAPi.Types.pas',
   TelegaPi.Types.ReplyMarkups in '..\Source\TelegaPi.Types.ReplyMarkups.pas',
-  TelegAPI.Utils.Json in '..\Source\TelegAPI.Utils.Json.pas',
   TelegAPI.Receiver.UI in '..\Source\TelegAPI.Receiver.UI.pas',
   TelegaPi.Ext.Sessions in '..\Source\TelegaPi.Ext.Sessions.pas',
-  CoreAPI in '..\Source\CoreAPI.pas',
   TelegAPI.UpdateParser in '..\Source\TelegAPI.UpdateParser.pas',
-  TelegAPI.Logger in '..\Source\TelegAPI.Logger.pas',
   TelegAPI.Logger.Old in '..\Source\TelegAPI.Logger.Old.pas',
-  TelegaPi.Types.Passport in '..\Source\TelegaPi.Types.Passport.pas';
+  TelegaPi.Types.Passport in '..\Source\TelegaPi.Types.Passport.pas',
+  TelegAPI.ApiRequest in '..\Source\TelegAPI.ApiRequest.pas';
 
 end.
 

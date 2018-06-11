@@ -8,8 +8,8 @@ uses
   TelegAPI.Types.InlineQueryResults,
   TelegAPI.Types.ReplyMarkups,
   TelegAPI.Types.Impl,
-  TelegAPI.Logger,
-  CrossUrl.HttpClient;
+  CloudAPI.Logger,
+  CloudAPI.Request;
 
 type
   ITelegramBot = interface
@@ -17,10 +17,6 @@ type
     // private
     function GetToken: string;
     procedure SetToken(const Value: string);
-    function GetLogger: ILogger;
-    procedure SetLogger(const Value: ILogger);
-    function GetHttpCore: IcuHttpClient;
-    procedure SetHttpCore(const Value: IcuHttpClient);
     // public
 {$REGION 'Getting updates'}
     /// <summary>
@@ -74,8 +70,8 @@ type
       const Offset: Int64 = 0; //
       const Limit: Int64 = 100; //
       const Timeout: Int64 = 0; //
-      const AllowedUpdates: TAllowedUpdates = UPDATES_ALLOWED_ALL)
-      : TArray<ItgUpdate>; overload;
+      const AllowedUpdates: TAllowedUpdates = UPDATES_ALLOWED_ALL): TArray<
+      ItgUpdate>; overload;
     function GetUpdates( //
       const JSON: string): TArray<ItgUpdate>; overload;
     /// <summary>
@@ -825,8 +821,7 @@ type
     /// will be returned.
     /// </returns>
     /// <seealso href="https://core.telegram.org/bots/api#getchatadministrators" />
-    function GetChatAdministrators(const ChatId: TtgUserLink)
-      : TArray<ItgChatMember>;
+    function GetChatAdministrators(const ChatId: TtgUserLink): TArray<ItgChatMember>;
     /// <summary>
     /// Use this method to get the number of members in a chat.
     /// </summary>
@@ -1562,8 +1557,8 @@ type
     /// <returns>
     /// Returns True on success.
     /// </returns>
-    function SetChatDescription(const ChatId: TtgUserLink;
-      const Description: string): Boolean;
+    function SetChatDescription(const ChatId: TtgUserLink; const Description:
+      string): Boolean;
     /// <summary>
     /// Use this method to set a new profile photo for the chat. Photos can't
     /// be changed for private chats.
@@ -1582,8 +1577,8 @@ type
     /// The bot must be an administrator in the chat for this to work and
     /// must have the appropriate admin rights.
     /// </remarks>
-    function SetChatPhoto(const ChatId: TtgUserLink;
-      const Photo: TtgFileToSend): Boolean;
+    function SetChatPhoto(const ChatId: TtgUserLink; const Photo: TtgFileToSend):
+      Boolean;
     /// <summary>
     /// Use this method to change the title of a chat. Titles can't be
     /// changed for private chats. The bot must be an administrator in the
@@ -1603,8 +1598,7 @@ type
     /// Note: In regular groups (non-supergroups), this method will only work
     /// if the ‘All Members Are Admins’ setting is off in the target group.
     /// </remarks>
-    function SetChatTitle(const ChatId: TtgUserLink;
-      const title: string): Boolean;
+    function SetChatTitle(const ChatId: TtgUserLink; const title: string): Boolean;
     /// <summary>
     /// Use this method to unpin a message in a supergroup chat. The bot must
     /// be an administrator in the chat for this to work and must have the
@@ -1788,8 +1782,8 @@ type
     /// Returns the uploaded <see cref="TelegAPi.Types|TtgFile">File</see> on
     /// success.
     /// </returns>
-    function uploadStickerFile(const UserId: Int64;
-      const PngSticker: TtgFileToSend): ItgFile;
+    function uploadStickerFile(const UserId: Int64; const PngSticker:
+      TtgFileToSend): ItgFile;
     /// <summary>
     /// Use this method to create new sticker set owned by a user. The bot
     /// will be able to edit the created sticker set.
@@ -1860,8 +1854,8 @@ type
     /// <returns>
     /// Returns True on success.
     /// </returns>
-    function setStickerPositionInSet(const Sticker: string;
-      const Position: Int64): Boolean;
+    function setStickerPositionInSet(const Sticker: string; const Position:
+      Int64): Boolean;
     /// <summary>
     /// Use this method to delete a sticker from a set created by the bot.
     /// </summary>
@@ -1884,8 +1878,8 @@ type
     /// CanSetStickerSet</see> optionally returned in <see cref="TelegAPI.Bot|TTelegramBot.GetChat(TValue)">
     /// getChat</see> requests to check if the bot can use this method.
     /// </remarks>
-    function setChatStickerSet(const ChatId: TtgUserLink;
-      const StickerSetName: string): Boolean;
+    function setChatStickerSet(const ChatId: TtgUserLink; const StickerSetName:
+      string): Boolean;
     /// <summary>
     /// Use this method to delete a group sticker set from a supergroup.
     /// </summary>
@@ -1906,10 +1900,9 @@ type
       const ReplyToMessageId: Int64 = 0): TArray<ITgMessage>;
 {$ENDREGION}
     property Token: string read GetToken write SetToken;
-    property Logger: ILogger read GetLogger write SetLogger;
-    property HttpCore: IcuHttpClient read GetHttpCore write SetHttpCore;
   end;
 
 implementation
 
 end.
+

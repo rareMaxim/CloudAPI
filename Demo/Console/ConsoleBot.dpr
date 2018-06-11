@@ -3,21 +3,13 @@
 {$APPTYPE CONSOLE}
 {$R *.res}
 
-{/$DEFINE  USE_INDY_CORE}
 uses
-{$IFDEF  USE_INDY_CORE} //Indy Http Core
-  CrossUrl.Indy.HttpClient,
-{$ELSE}                 // System.Net HTTP Core
-  CrossUrl.SystemNet.HttpClient,
-{$ENDIF}
-
-  Rest.Json,
+  CloudAPI.Logger,
   System.SysUtils,
   TelegAPI.Receiver.Console,
   TelegAPI.Bot,
   TelegAPI.Types,
   TelegAPI.Bot.Impl,
-  TelegAPI.Logger,
   TelegAPI.Logger.Old;
 
 const
@@ -30,15 +22,11 @@ var
   LExcp: TtgExceptionManagerConsole;
   LStop: string;
 begin
-{$IFDEF  USE_INDY_CORE}
-  LBot := TTelegramBot.Create(TOKEN, TcuHttpClientIndy.Create(nil));
-{$ELSE}
-  LBot := TTelegramBot.Create(TOKEN, TcuHttpClientSysNet.Create(nil));
-{$ENDIF}
+  LBot := TTelegramBot.Create(TOKEN);
   LReceiver := TtgReceiverConsole.Create(LBot);
-  LBot.Logger := TtgExceptionManagerConsole.Create(nil);
+  (LBot as TTelegramBot).Logger := TtgExceptionManagerConsole.Create(nil);
   try
-    LExcp := LBot.Logger as TtgExceptionManagerConsole;
+    LExcp := (LBot as TTelegramBot).Logger as TtgExceptionManagerConsole;
     LExcp.OnLog :=
       procedure(level: TLogLevel; msg: string; e: Exception)
       begin

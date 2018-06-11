@@ -3,7 +3,7 @@ unit TelegAPI.Logger.Old;
 interface
 
 uses
-  TelegAPI.Logger,
+  CloudAPI.Logger,
   System.SysUtils;
 
 type

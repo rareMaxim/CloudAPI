@@ -27,7 +27,7 @@ uses
   CrossUrl.SystemNet.HttpClient,
   CoreAPI,
   TelegAPI.Logger,
-  TelegAPI.Logger.Old;
+  TelegAPI.Logger.Old, CloudAPI.Logger;
 
 type
   TMain = class(TForm)
@@ -36,10 +36,8 @@ type
     lblToken: TLabel;
     edtToken: TEdit;
     swtchToken: TSwitch;
-    tgBot: TTelegramBot;
     tgExceptionManagerUI1: TtgExceptionManagerUI;
     tgReceiverUI1: TtgReceiverUI;
-    cuHttpClientSysNet1: TcuHttpClientSysNet;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure swtchTokenSwitch(Sender: TObject);
     procedure tgReceiverUI1CallbackQuery(ASender: TObject; ACallbackQuery:

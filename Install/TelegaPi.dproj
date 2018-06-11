@@ -86,9 +86,9 @@ $(PreBuildEvent)]]>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
         <VerInfo_AutoIncVersion>true</VerInfo_AutoIncVersion>
-        <VerInfo_Build>39</VerInfo_Build>
+        <VerInfo_Build>45</VerInfo_Build>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <VerInfo_Keys>CompanyName=Maxim Sysoev;FileDescription=$(MSBuildProjectName);FileVersion=3.5.1.39;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=Maxim Sysoev;FileDescription=$(MSBuildProjectName);FileVersion=3.5.1.45;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <VerInfo_MajorVer>3</VerInfo_MajorVer>
         <VerInfo_MinorVer>5</VerInfo_MinorVer>
@@ -110,8 +110,6 @@ $(PreBuildEvent)]]>
         <DCCReference Include="TTelegramBot.dcr"/>
         <DCCReference Include="rtl.dcp"/>
         <DCCReference Include="RESTComponents.dcp"/>
-        <DCCReference Include="CrossUrl.dcp"/>
-        <DCCReference Include="..\Source\TelegAPI.Base.pas"/>
         <DCCReference Include="..\Source\TelegAPI.Bot.Impl.pas"/>
         <DCCReference Include="..\Source\TelegAPI.Bot.pas"/>
         <DCCReference Include="..\Source\TelegAPi.Helpers.pas"/>
@@ -125,14 +123,12 @@ $(PreBuildEvent)]]>
         <DCCReference Include="..\Source\TelegaPi.Types.InputMessageContents.pas"/>
         <DCCReference Include="..\Source\TelegAPi.Types.pas"/>
         <DCCReference Include="..\Source\TelegaPi.Types.ReplyMarkups.pas"/>
-        <DCCReference Include="..\Source\TelegAPI.Utils.Json.pas"/>
         <DCCReference Include="..\Source\TelegAPI.Receiver.UI.pas"/>
         <DCCReference Include="..\Source\TelegaPi.Ext.Sessions.pas"/>
-        <DCCReference Include="..\Source\CoreAPI.pas"/>
         <DCCReference Include="..\Source\TelegAPI.UpdateParser.pas"/>
-        <DCCReference Include="..\Source\TelegAPI.Logger.pas"/>
         <DCCReference Include="..\Source\TelegAPI.Logger.Old.pas"/>
         <DCCReference Include="..\Source\TelegaPi.Types.Passport.pas"/>
+        <DCCReference Include="..\Source\TelegAPI.ApiRequest.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
