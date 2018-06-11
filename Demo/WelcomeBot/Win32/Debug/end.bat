@@ -1,1 +1,0 @@
-WelcomeBotSrv.exe /uninstall

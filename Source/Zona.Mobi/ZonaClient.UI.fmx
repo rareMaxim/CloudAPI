@@ -1,0 +1,124 @@
+object Form2: TForm2
+  Left = 277
+  Top = 85
+  Caption = 'Form2'
+  ClientHeight = 447
+  ClientWidth = 453
+  Position = Designed
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  Left = 277
+  Top = 85
+  DesignerMasterStyle = 3
+  object lyt1: TLayout
+    Align = Client
+    Size.Width = 453.000000000000000000
+    Size.Height = 399.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 1
+  end
+  object ToolBar1: TToolBar
+    Size.Width = 453.000000000000000000
+    Size.Height = 48.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 2
+    object btnMenu: TButton
+      Align = Left
+      Size.Width = 48.000000000000000000
+      Size.Height = 48.000000000000000000
+      Size.PlatformDefault = False
+      StyleLookup = 'drawertoolbuttonbordered'
+      TabOrder = 0
+      Text = 'btnMenu'
+    end
+    object btnBack: TButton
+      Align = Left
+      Size.Width = 48.000000000000000000
+      Size.Height = 48.000000000000000000
+      Size.PlatformDefault = False
+      StyleLookup = 'priortoolbutton'
+      TabOrder = 1
+      Text = 'btnBack'
+      Visible = False
+      OnClick = btnBackClick
+    end
+    object edtSearch: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      Align = VertCenter
+      TabOrder = 2
+      Position.X = 53.000000000000000000
+      Position.Y = 8.000000000000000000
+      Margins.Left = 5.000000000000000000
+      Margins.Top = 5.000000000000000000
+      Margins.Right = 5.000000000000000000
+      Margins.Bottom = 5.000000000000000000
+      Size.Width = 395.000000000000000000
+      Size.Height = 32.000000000000000000
+      Size.PlatformDefault = False
+      object SearchEditButton1: TSearchEditButton
+        CanFocus = False
+        Cursor = crArrow
+        Size.Width = 32.000000000000000000
+        Size.Height = 32.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 0
+        OnClick = SearchEditButton1Click
+      end
+    end
+  end
+  object MultiView1: TMultiView
+    TargetControl = lyt1
+    MasterButton = btnMenu
+    Mode = Drawer
+    NavigationPaneOptions.CollapsedWidth = 145.000000000000000000
+    Size.Width = 250.000000000000000000
+    Size.Height = 407.000000000000000000
+    Size.PlatformDefault = False
+    Visible = False
+    TabOrder = 0
+    object ListBox1: TListBox
+      Align = Client
+      Size.Width = 250.000000000000000000
+      Size.Height = 407.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 0
+      DisableFocusEffect = True
+      ItemHeight = 40.000000000000000000
+      DefaultItemStyles.ItemStyle = 'listboxitemnodetail'
+      DefaultItemStyles.GroupHeaderStyle = ''
+      DefaultItemStyles.GroupFooterStyle = ''
+      OnItemClick = ListBox1ItemClick
+      Viewport.Width = 250.000000000000000000
+      Viewport.Height = 407.000000000000000000
+      object lbiSerial: TListBoxItem
+        Size.Width = 250.000000000000000000
+        Size.Height = 40.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 0
+        Text = #1057#1077#1088#1080#1072#1083#1099
+        OnClick = lbiSerialClick
+      end
+      object lbiMovie: TListBoxItem
+        Position.Y = 40.000000000000000000
+        Size.Width = 250.000000000000000000
+        Size.Height = 40.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 1
+        Text = #1060#1080#1083#1100#1084#1099
+        OnClick = lbiMovieClick
+      end
+      object lbiFilter: TListBoxItem
+        Selectable = False
+        Position.Y = 80.000000000000000000
+        Size.Width = 250.000000000000000000
+        Size.Height = 40.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 2
+        Text = #1060#1080#1083#1100#1090#1088
+      end
+    end
+  end
+end

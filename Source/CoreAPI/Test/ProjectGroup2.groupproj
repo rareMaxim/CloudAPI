@@ -1,0 +1,48 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{590A39E0-B985-49AA-8FE2-2969DF6A0476}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="Test.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="..\..\..\InvisionCommunity\InvComTest.dproj">
+            <Dependencies>Test.dproj</Dependencies>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="Test">
+        <MSBuild Projects="Test.dproj"/>
+    </Target>
+    <Target Name="Test:Clean">
+        <MSBuild Projects="Test.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Test:Make">
+        <MSBuild Projects="Test.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="InvComTest" DependsOnTargets="Test">
+        <MSBuild Projects="..\..\..\InvisionCommunity\InvComTest.dproj"/>
+    </Target>
+    <Target Name="InvComTest:Clean" DependsOnTargets="Test:Clean">
+        <MSBuild Projects="..\..\..\InvisionCommunity\InvComTest.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="InvComTest:Make" DependsOnTargets="Test:Make">
+        <MSBuild Projects="..\..\..\InvisionCommunity\InvComTest.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="Test;InvComTest"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="Test:Clean;InvComTest:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="Test:Make;InvComTest:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>
