@@ -130,7 +130,7 @@ type
     /// </remarks>
     function SetWebhook( //
       const Url: string; //
-      const Certificate: TtgFileToSend = nil; //
+      const Certificate: TFileToSend = nil; //
       const MaxConnections: Int64 = 40; //
       const AllowedUpdates: TAllowedUpdates = UPDATES_ALLOWED_ALL): Boolean;
     /// <summary>
@@ -291,7 +291,7 @@ type
     /// </example>
     function SendPhoto( //
       const ChatId: TtgUserLink; //
-      const Photo: TtgFileToSend; //
+      const Photo: TFileToSend; //
       const Caption: string = ''; //
       const ParseMode: TtgParseMode = TtgParseMode.Default; //
       const DisableNotification: Boolean = False; //
@@ -345,7 +345,7 @@ type
     /// </remarks>
     function SendAudio( //
       const ChatId: TtgUserLink; //
-      const Audio: TtgFileToSend; //
+      const Audio: TFileToSend; //
       const Caption: string = ''; //
       const ParseMode: TtgParseMode = TtgParseMode.Default; //
       const Duration: Int64 = 0; //
@@ -392,7 +392,7 @@ type
     /// </remarks>
     function SendDocument( //
       const ChatId: TtgUserLink; //
-      const Document: TtgFileToSend; //
+      const Document: TFileToSend; //
       const Caption: string = ''; //
       const ParseMode: TtgParseMode = TtgParseMode.Default; //
       const DisableNotification: Boolean = False; //
@@ -446,7 +446,7 @@ type
     /// </remarks>
     function SendVideo( //
       const ChatId: TtgUserLink; //
-      const Video: TtgFileToSend; //
+      const Video: TFileToSend; //
       const Caption: string = ''; //
       const ParseMode: TtgParseMode = TtgParseMode.Default; //
       const SupportsStreaming: Boolean = True; //
@@ -497,7 +497,7 @@ type
     /// </remarks>
     function SendVoice( //
       const ChatId: TtgUserLink; //
-      const Voice: TtgFileToSend; //
+      const Voice: TFileToSend; //
       const Caption: string = ''; //
       const ParseMode: TtgParseMode = TtgParseMode.Default; //
       const Duration: Int64 = 0; //
@@ -547,7 +547,7 @@ type
     /// </remarks>
     function SendVideoNote( //
       const ChatId: TtgUserLink; //
-      const VideoNote: TtgFileToSend; //
+      const VideoNote: TFileToSend; //
       const Duration: Int64 = 0; //
       const Length: Int64 = 0; //
       const DisableNotification: Boolean = False; //
@@ -1577,7 +1577,7 @@ type
     /// The bot must be an administrator in the chat for this to work and
     /// must have the appropriate admin rights.
     /// </remarks>
-    function SetChatPhoto(const ChatId: TtgUserLink; const Photo: TtgFileToSend):
+    function SetChatPhoto(const ChatId: TtgUserLink; const Photo: TFileToSend):
       Boolean;
     /// <summary>
     /// Use this method to change the title of a chat. Titles can't be
@@ -1749,7 +1749,7 @@ type
     /// </returns>
     function SendSticker( //
       const ChatId: TtgUserLink; //
-      const Sticker: TtgFileToSend; //
+      const Sticker: TFileToSend; //
       const DisableNotification: Boolean = False; //
       const ReplyToMessageId: Int64 = 0; //
       ReplyMarkup: IReplyMarkup = nil): ITgMessage;
@@ -1783,7 +1783,7 @@ type
     /// success.
     /// </returns>
     function uploadStickerFile(const UserId: Int64; const PngSticker:
-      TtgFileToSend): ItgFile;
+      TFileToSend): ItgFile;
     /// <summary>
     /// Use this method to create new sticker set owned by a user. The bot
     /// will be able to edit the created sticker set.
@@ -1825,7 +1825,7 @@ type
     function createNewStickerSet( //
       const UserId: Int64; //
       const Name, title: string; //
-      const PngSticker: TtgFileToSend; //
+      const PngSticker: TFileToSend; //
       const Emojis: string; //
       const ContainsMasks: Boolean = False; //
       const MaskPosition: TtgMaskPosition = nil): Boolean;
@@ -1838,7 +1838,7 @@ type
     function addStickerToSet( //
       const UserId: Int64; //
       const Name: string; //
-      const PngSticker: TtgFileToSend; //
+      const PngSticker: TFileToSend; //
       const Emojis: string; //
       const MaskPosition: TtgMaskPosition = nil): Boolean;
     /// <summary>

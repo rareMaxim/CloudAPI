@@ -3,6 +3,7 @@
 interface
 
 uses
+  CloudAPI.Utils.Json,
   System.TypInfo,
   System.Net.Mime,
   System.Net.HttpClient,
@@ -14,6 +15,24 @@ uses
 type
 {$SCOPEDENUMS ON}
   TStoreFormat = (InFormData, InStringList, InUrl, InHeader, Auto);
+
+  TFileToSendTag = (ERROR = 254, ID = 0, FromURL = 1, FromFile = 2, FromStream = 3);
+{$SCOPEDENUMS OFF}
+
+  TFileToSend = class
+  public
+    Data: string;
+    Content: TStream;
+    Tag: TFileToSendTag;
+    constructor Create(const ATag: TFileToSendTag = TFileToSendTag.ERROR;
+      const AData: string = ''; AContent: TStream = nil);
+    class function FromFile(const AFileName: string): TFileToSend;
+    class function FromID(const AID: string): TFileToSend;
+    class function FromURL(const AURL: string): TFileToSend;
+    class function FromStream(const AContent: TStream; const AFileName: string): TFileToSend;
+    class function Empty: TFileToSend;
+    function IsEmpty: Boolean;
+  end;
 
   IApiRequest = interface
     ['{AF1F11B6-28DB-49EF-AD29-04634D35B15F}']
@@ -40,6 +59,8 @@ type
     procedure SetOnDataReceiveAsString(const Value: TFunc<string, string>);
     function GetStoreAutoFormat: TStoreFormat;
     procedure SetStoreAutoFormat(const Value: TStoreFormat);
+    function GetOnStaticFill: TProc;
+    procedure SetOnStaticFill(const Value: TProc);
   //public
     {$REGION 'Add Parameter'}
     function AddParameter(const AKey: string; const AValue, ADefaultValue:
@@ -52,6 +73,8 @@ type
       Single; const ARequired: Boolean; const AStoreFormat: TStoreFormat = TStoreFormat.Auto): IApiRequest; overload;
     function AddParameter(const AKey: string; const AValue, ADefaultValue:
       Boolean; const ARequired: Boolean; const AStoreFormat: TStoreFormat = TStoreFormat.Auto): IApiRequest; overload;
+    function AddParameter(const AKey: string; AValue, ADefaultValue: TFileToSend;
+      const ARequired: Boolean; const AStoreFormat: TStoreFormat): IApiRequest; overload;
     {$ENDREGION}
     function ClearParams: IApiRequest;
     function Execute: IHTTPResponse;
@@ -71,6 +94,7 @@ type
     property OnError: TProc<Exception> read GetOnError write SetOnError;
     property OnDataSend: TProc<string, string, string> read GetOnDataSend write SetOnDataSend;
     property OnDataReceiveAsString: TFunc<string, string> read GetOnDataReceiveAsString write SetOnDataReceiveAsString;
+    property OnStaticFill: TProc read GetOnStaticFill write SetOnStaticFill;
   end;
 
   TApiRequest = class(TInterfacedObject, IApiRequest)
@@ -87,6 +111,7 @@ type
     FOnDataSend: TProc<string, string, string>;
     FOnDataReceiveAsString: TFunc<string, string>;
     FStoreAutoFormat: TStoreFormat;
+    FOnStaticFill: TProc;
   private
     function GetDomain: string;
     procedure SetDomain(const AValue: string);
@@ -110,10 +135,13 @@ type
     procedure SetOnDataReceiveAsString(const Value: TFunc<string, string>);
     function GetStoreAutoFormat: TStoreFormat;
     procedure SetStoreAutoFormat(const Value: TStoreFormat);
+    function GetOnStaticFill: TProc;
+    procedure SetOnStaticFill(const Value: TProc);
   protected
   {$IFDEF TESTINSIGHT}
   public
   {$ENDIF}
+    procedure DoStaticFill;
     function HeadersToString(AHeaders: TArray<TNetHeader>): string;
     function FormDataToString(AFormData: TMultipartFormData): string;
     procedure DoHaveException(E: Exception);
@@ -133,6 +161,8 @@ type
       const ARequired: Boolean; const AStoreFormat: TStoreFormat = TStoreFormat.Auto): IApiRequest; overload;
     function AddParameter(const AKey: string; const AValue, ADefaultValue:
       TObject; const ARequired: Boolean; const AStoreFormat: TStoreFormat = TStoreFormat.Auto): IApiRequest; overload;
+    function AddParameter(const AKey: string; AValue, ADefaultValue: TFileToSend;
+      const ARequired: Boolean; const AStoreFormat: TStoreFormat): IApiRequest; overload;
     {$ENDREGION}
     function ClearParams: IApiRequest;
     function Execute: IHTTPResponse;
@@ -154,6 +184,13 @@ type
     {Url, Body, Header}
     property OnDataSend: TProc<string, string, string> read GetOnDataSend write SetOnDataSend;
     property OnDataReceiveAsString: TFunc<string, string> read GetOnDataReceiveAsString write SetOnDataReceiveAsString;
+    property OnStaticFill: TProc read GetOnStaticFill write SetOnStaticFill;
+  end;
+
+  ECloudApiException = class(Exception)
+  public
+    constructor Create(const Msg, ACode: string); reintroduce; overload;
+    constructor Create(const Msg: string; const ACode: Integer); reintroduce; overload;
   end;
 
   TMultipartFormDataHelper = class helper for TMultipartFormData
@@ -175,12 +212,59 @@ type
 implementation
 
 uses
-  System.IOUtils,
-  CloudAPI.Utils.Json;
+  System.IOUtils;
 
 const
   ERR_TWICE_POST_STORE = 'Попытка использовать разные хранилища для Post запроса';
   ERR_CANT_SETUP_STORE_AUTO = 'Нельзя использовать это значение, попробуйте другое';
+  { TtgFileToSend }
+
+constructor TFileToSend.Create(const ATag: TFileToSendTag; const AData: string; AContent: TStream);
+begin
+  Tag := ATag;
+  Data := AData;
+  Content := AContent;
+end;
+
+class function TFileToSend.Empty: TFileToSend;
+begin
+  Result := TFileToSend.Create();
+end;
+
+class function TFileToSend.FromFile(const AFileName: string): TFileToSend;
+begin
+  if not FileExists(AFileName) then
+    raise EFileNotFoundException.CreateFmt('File %S not found!', [AFileName]);
+  Result := TFileToSend.Create(TFileToSendTag.FromFile, AFileName, nil);
+end;
+
+class function TFileToSend.FromID(const AID: string): TFileToSend;
+begin
+  Result := TFileToSend.Create(TFileToSendTag.ID, AID, nil);
+end;
+
+class function TFileToSend.FromStream(const AContent: TStream; const AFileName: string): TFileToSend;
+begin
+    // I guess, in most cases, AFilename param should contain a non-empty string.
+    // It is odd to receive a file with filename and
+    // extension which both are not connected with its content.
+  if AFileName.IsEmpty then
+    raise Exception.Create('TtgFileToSend: Filename is empty!');
+  if not Assigned(AContent) then
+    raise EStreamError.Create('Stream not assigned!');
+  Result := TFileToSend.Create(TFileToSendTag.FromStream, AFileName, AContent);
+end;
+
+class function TFileToSend.FromURL(const AURL: string): TFileToSend;
+begin
+  Result := TFileToSend.Create(TFileToSendTag.FromURL, AURL, nil);
+end;
+
+function TFileToSend.IsEmpty: Boolean;
+begin
+  Result := Data.IsEmpty and not Assigned(Content);
+end;
+
 { TApiRequest }
 
 function TApiRequest.RaiseArgument(const AValue, ADefaultValue: string; const ARequired: Boolean): Boolean;
@@ -220,6 +304,7 @@ begin
   FStoreInStringList.Clear;
   FStoreInUrl.Clear;
   FStoreInHeader.Clear;
+  DoStaticFill;
   Result := Self;
 end;
 
@@ -232,6 +317,7 @@ begin
   FHttpClient := THTTPClient.Create;
   FHttpClient.AllowCookies := True;
   FStoreAutoFormat := TStoreFormat.InFormData;
+  DoStaticFill;
 end;
 
 destructor TApiRequest.Destroy;
@@ -250,6 +336,13 @@ begin
     OnError(E)
   else
     raise E;
+  FreeAndNil(E);
+end;
+
+procedure TApiRequest.DoStaticFill;
+begin
+  if Assigned(OnStaticFill) then
+    OnStaticFill();
 end;
 
 procedure TApiRequest.DoStoreParam(const AKey, AValue, ADefaultValue: string;
@@ -268,6 +361,8 @@ begin
       FStoreInUrl.AddPair(AKey, AValue);
     TStoreFormat.InHeader:
       FStoreInHeader.Add(TNetHeader.Create(AKey, AValue));
+    TStoreFormat.Auto:
+      DoStoreParam(AKey, AValue, ADefaultValue, ARequired, GetStoreAutoFormat);
   else
     raise ENotImplemented.Create('Unknown StoreFormat');
   end;
@@ -278,6 +373,7 @@ var
   LFullUrl: string;
   LPostRunned: Boolean; //Отправлено из TMultipartFormData
 begin
+  DoStaticFill;
   Result := nil;
   LPostRunned := False;
   try
@@ -308,9 +404,15 @@ begin
       Result := FHttpClient.Get(LFullUrl, nil, FStoreInHeader.ToArray);
     end;
     ClearParams;
+
   except
     on E: Exception do
       DoHaveException(E);
+  end;
+  if Result.StatusCode <> 200 then
+  begin
+    DoHaveException(ECloudApiException.Create(Result.StatusText, Result.StatusCode));
+    Exit;
   end;
 end;
 
@@ -406,6 +508,11 @@ begin
   Result := FOnError;
 end;
 
+function TApiRequest.GetOnStaticFill: TProc;
+begin
+  Result := FOnStaticFill;
+end;
+
 function TApiRequest.GetStoreAutoFormat: TStoreFormat;
 begin
   Result := FStoreAutoFormat;
@@ -478,6 +585,11 @@ begin
   FOnError := AValue;
 end;
 
+procedure TApiRequest.SetOnStaticFill(const Value: TProc);
+begin
+  FOnStaticFill := Value;
+end;
+
 procedure TApiRequest.SetStoreAutoFormat(const Value: TStoreFormat);
 begin
   if Value = TStoreFormat.Auto then
@@ -537,6 +649,44 @@ begin
   finally
     TDirectory.Delete(LTmpDir);
   end;
+end;
+
+function TApiRequest.AddParameter(const AKey: string; AValue, ADefaultValue:
+  TFileToSend; const ARequired: Boolean; const AStoreFormat: TStoreFormat): IApiRequest;
+begin
+  if ARequired and (AValue.Equals(ADefaultValue) or AValue.IsEmpty) then
+  begin
+    DoHaveException(Exception.Create('Not assigned required data'));
+    Exit;
+  end;
+  Result := Self;
+  case AValue.Tag of
+    TFileToSendTag.FromStream:
+      StoreMultipartForm.AddStream(AKey, AValue.Content, AValue.Data);
+    TFileToSendTag.FromFile:
+      StoreMultipartForm.AddFile(AKey, AValue.Data);
+    TFileToSendTag.ID, TFileToSendTag.FromURL:
+      AddParameter(AKey, AValue.Data, '', ARequired, AStoreFormat);
+  else
+    DoHaveException(Exception.Create('Cant convert TTgFileToSend: Unknown prototype tag'));
+    Exit;
+  end;
+  if Assigned(AValue) then
+    FreeAndNil(AValue);
+  if Assigned(ADefaultValue) then
+    FreeAndNil(ADefaultValue);
+end;
+
+{ ECloudApiException }
+
+constructor ECloudApiException.Create(const Msg, ACode: string);
+begin
+  inherited Create(ACode + ': ' + Msg);
+end;
+
+constructor ECloudApiException.Create(const Msg: string; const ACode: Integer);
+begin
+  Create(Msg, ACode.ToString);
 end;
 
 end.

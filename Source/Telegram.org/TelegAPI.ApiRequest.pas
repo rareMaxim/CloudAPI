@@ -10,13 +10,13 @@ type
   ItgApiRequest = interface(IApiRequest)
     ['{0C6EFEE6-67B5-426F-92B0-24925838A618}']
     function AddParameter(const AKey: string; AValue, ADefaultValue:
-      TtgFileToSend; const ARequired: Boolean; const AStoreFormat: TStoreFormat): ItgApiRequest; overload;
+      TFileToSend; const ARequired: Boolean; const AStoreFormat: TStoreFormat): ItgApiRequest; overload;
   end;
 
   TtgApiRequest = class(TApiRequest, ItgApiRequest)
   public
     function AddParameter(const AKey: string; AValue, ADefaultValue:
-      TtgFileToSend; const ARequired: Boolean; const AStoreFormat: TStoreFormat): ItgApiRequest; overload;
+      TFileToSend; const ARequired: Boolean; const AStoreFormat: TStoreFormat): ItgApiRequest; overload;
   end;
 
 implementation
@@ -27,7 +27,7 @@ uses
 { TtgApiRequest }
 
 function TtgApiRequest.AddParameter(const AKey: string; AValue, ADefaultValue:
-  TtgFileToSend; const ARequired: Boolean; const AStoreFormat: TStoreFormat): ItgApiRequest;
+  TFileToSend; const ARequired: Boolean; const AStoreFormat: TStoreFormat): ItgApiRequest;
 begin
   if ARequired and (AValue.Equals(ADefaultValue) or AValue.IsEmpty) then
   begin

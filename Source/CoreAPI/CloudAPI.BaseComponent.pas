@@ -58,7 +58,10 @@ begin
   GetRequest.OnError :=
     procedure(E: Exception)
     begin
-      Logger.Error('RequestAPI', E);
+      if Assigned(Logger) then
+        Logger.Error('RequestAPI', E)
+      else
+        raise E;
     end;
   GetRequest.OnDataReceiveAsString :=
     function(AData: string): string
@@ -77,8 +80,6 @@ end;
 
 function TCloudApiBaseComponent.GetLogger: ILogger;
 begin
-  if FLog = nil then
-    FLog := TLogEmpty.Create(nil);
   Result := FLog;
 end;
 
