@@ -71,6 +71,4 @@ __recovery/
 
 # my list ignored
 Demo/token.inc
-Demo/freelance/
-Install/TTelegramBot.dcr
-Demo/EchoBot/Android/
+Samples/RadioRecord.ru/Win32/
