@@ -30,11 +30,12 @@ package TelegraPhAPI;
 requires
   rtl,
   RESTComponents,
-  CloudApiCore;
+  CrossUrl,
+  TelegaPi;
 
 contains
-  TelegraPh in '..\Source\Telegra.ph\TelegraPh.pas',
-  TelegraPh.Register in '..\Source\Telegra.ph\TelegraPh.Register.pas',
-  TelegraPh.Types in '..\Source\Telegra.ph\TelegraPh.Types.pas';
+  TelegraPh in 'TelegraPh.pas',
+  TelegraPh.Types in 'TelegraPh.Types.pas',
+  TelegraPh.Register in 'TelegraPh.Register.pas';
 
 end.

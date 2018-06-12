@@ -17,36 +17,36 @@ type
 
   ILogger = interface
     ['{0FAACA17-5BE8-4676-BD21-C010208C48D5}']
-{$REGION 'Log'}
+    {$REGION 'Log'}
     procedure Log(level: TLogLevel; const msg: string); overload;
     procedure Log(level: TLogLevel; const msg: string; const e: Exception); overload;
     procedure Log(level: TLogLevel; const fmt: string; const args: array of
       const); overload;
     procedure Log(level: TLogLevel; const fmt: string; const args: array of
       const; const e: Exception); overload;
-{$ENDREGION}
-{$REGION 'Fatal'}
+    {$ENDREGION}
+    {$REGION 'Fatal'}
     procedure Fatal(const msg: string); overload;
     procedure Fatal(const msg: string; const e: Exception); overload;
     procedure Fatal(const fmt: string; const args: array of const); overload;
     procedure Fatal(const fmt: string; const args: array of const; const e:
       Exception); overload;
-{$ENDREGION}
-{$REGION 'Error'}
+    {$ENDREGION}
+    {$REGION 'Error'}
     procedure Error(const msg: string); overload;
     procedure Error(const msg: string; const e: Exception); overload;
     procedure Error(const fmt: string; const args: array of const); overload;
     procedure Error(const fmt: string; const args: array of const; const e:
       Exception); overload;
-{$ENDREGION}
-{$REGION 'Enter'}
+    {$ENDREGION}
+    {$REGION 'Enter'}
     procedure Enter(const methodName: string); overload;
     procedure Enter(const instance: TObject; const methodName: string); overload;
-{$ENDREGION}
-{$REGION 'Leave'}
+    {$ENDREGION}
+    {$REGION 'Leave'}
     procedure Leave(const methodName: string); overload;
     procedure Leave(const instance: TObject; const methodName: string); overload;
-{$ENDREGION}
+    {$ENDREGION}
   end;
 
   TLogAbstract = class(TComponent, ILogger)
