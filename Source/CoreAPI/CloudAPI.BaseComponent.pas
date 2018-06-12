@@ -21,8 +21,8 @@ type
   private
     function GetLogger: ILogger;
     procedure SetLogger(const Value: ILogger);
-    function GetUrlAPI: string;
-    procedure SetUrlAPI(const Value: string);
+    function GetDomain: string;
+    procedure SetDomain(const Value: string);
   protected
     function GetRequest: IApiRequest;
     procedure SetRequest(const Value: IApiRequest);
@@ -31,7 +31,7 @@ type
     constructor Create(AOwner: TComponent); override;
     {$REGION 'Property|Свойства'}
     property Logger: ILogger read GetLogger write SetLogger;
-    property Domain: string read GetUrlAPI write SetUrlAPI;
+    property Domain: string read GetDomain write SetDomain;
     {$ENDREGION}
     {$REGION 'События|Events'}
     property OnReceiveRawData: TOnReceiveRawData read FOnRawData write FOnRawData;
@@ -49,18 +49,7 @@ constructor TCloudApiBaseComponent.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
   DoInitApiCore;
-  GetRequest.OnDataReceiveAsString :=
-    function(AData: string): string
-    begin
-      if Assigned(OnReceiveRawData) then
-        OnReceiveRawData(Self, AData);
-    end;
-  GetRequest.OnDataSend :=
-    procedure(AUrl, AData, AHeaders: string)
-    begin
-      if Assigned(OnSendData) then
-        OnSendData(Self, AUrl, AData);
-    end;
+
 end;
 
 procedure TCloudApiBaseComponent.DoInitApiCore;
@@ -70,6 +59,19 @@ begin
     procedure(E: Exception)
     begin
       Logger.Error('RequestAPI', E);
+    end;
+  GetRequest.OnDataReceiveAsString :=
+    function(AData: string): string
+    begin
+      if Assigned(OnReceiveRawData) then
+        OnReceiveRawData(Self, AData);
+      result := AData;
+    end;
+  GetRequest.OnDataSend :=
+    procedure(AUrl, AData, AHeaders: string)
+    begin
+      if Assigned(OnSendData) then
+        OnSendData(Self, AUrl, AData);
     end;
 end;
 
@@ -85,7 +87,7 @@ begin
   Result := FRequest;
 end;
 
-function TCloudApiBaseComponent.GetUrlAPI: string;
+function TCloudApiBaseComponent.GetDomain: string;
 begin
   Result := GetRequest.Domain;
 end;
@@ -100,7 +102,7 @@ begin
   FRequest := Value;
 end;
 
-procedure TCloudApiBaseComponent.SetUrlAPI(const Value: string);
+procedure TCloudApiBaseComponent.SetDomain(const Value: string);
 begin
   GetRequest.Domain := Value;
 end;

@@ -12,6 +12,9 @@
         <Projects Include="Install\TelegraPhAPI.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="Install\radiorecord.ru.dproj">
+            <Dependencies>Install\CloudApiCore.dproj</Dependencies>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -47,14 +50,23 @@
     <Target Name="TelegraPhAPI:Make">
         <MSBuild Projects="Install\TelegraPhAPI.dproj" Targets="Make"/>
     </Target>
+    <Target Name="radiorecord_ru" DependsOnTargets="CloudApiCore">
+        <MSBuild Projects="Install\radiorecord.ru.dproj"/>
+    </Target>
+    <Target Name="radiorecord_ru:Clean" DependsOnTargets="CloudApiCore:Clean">
+        <MSBuild Projects="Install\radiorecord.ru.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="radiorecord_ru:Make" DependsOnTargets="CloudApiCore:Make">
+        <MSBuild Projects="Install\radiorecord.ru.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="CloudApiCore;TelegaPi;TelegraPhAPI"/>
+        <CallTarget Targets="CloudApiCore;TelegaPi;TelegraPhAPI;radiorecord_ru"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="CloudApiCore:Clean;TelegaPi:Clean;TelegraPhAPI:Clean"/>
+        <CallTarget Targets="CloudApiCore:Clean;TelegaPi:Clean;TelegraPhAPI:Clean;radiorecord_ru:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="CloudApiCore:Make;TelegaPi:Make;TelegraPhAPI:Make"/>
+        <CallTarget Targets="CloudApiCore:Make;TelegaPi:Make;TelegraPhAPI:Make;radiorecord_ru:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

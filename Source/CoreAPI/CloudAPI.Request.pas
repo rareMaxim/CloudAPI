@@ -220,6 +220,7 @@ begin
   FStoreInStringList.Clear;
   FStoreInUrl.Clear;
   FStoreInHeader.Clear;
+  Result := Self;
 end;
 
 constructor TApiRequest.Create;
@@ -277,6 +278,7 @@ var
   LFullUrl: string;
   LPostRunned: Boolean; //Отправлено из TMultipartFormData
 begin
+  Result := nil;
   LPostRunned := False;
   try
     LFullUrl := string.Join('/', [Domain, MethodUrl]) + '?' + string.Join('&', FStoreInUrl.ToStringArray);
@@ -433,6 +435,7 @@ function TApiRequest.HeadersToString(AHeaders: TArray<TNetHeader>): string;
 var
   LHeader: TNameValuePair;
 begin
+  Result := '';
   for LHeader in AHeaders do
   begin
     Result := Result + LHeader.Name + '=' + LHeader.Value + #13#10;
