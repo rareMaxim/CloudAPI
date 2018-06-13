@@ -24,8 +24,8 @@ type
     Data: string;
     Content: TStream;
     Tag: TFileToSendTag;
-    constructor Create(const ATag: TFileToSendTag = TFileToSendTag.ERROR;
-      const AData: string = ''; AContent: TStream = nil);
+    constructor Create(const ATag: TFileToSendTag = TFileToSendTag.ERROR; const
+      AData: string = ''; AContent: TStream = nil);
     class function FromFile(const AFileName: string): TFileToSend;
     class function FromID(const AID: string): TFileToSend;
     class function FromURL(const AURL: string): TFileToSend;
@@ -432,12 +432,13 @@ function TApiRequest.ExecuteAsBool: Boolean;
 var
   LJson: TBaseJson;
 begin
-  LJson := TBaseJson.Create(ExecuteAsString);
-  try
-    Result := LJson.AsBoolean;
-  finally
-    LJson.Free;
-  end;
+  Result := ExecuteAsString = 'true';
+//  LJson := TBaseJson.Create(ExecuteAsString);
+//  try
+//    Result := LJson.AsBoolean;
+//  finally
+//    LJson.Free;
+//  end;
 end;
 
 function TApiRequest.ExecuteAsBytes: TArray<Byte>;

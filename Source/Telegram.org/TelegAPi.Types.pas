@@ -3,6 +3,7 @@
 interface
 
 uses
+  CloudAPI.Request,
   REST.Json.Types,
   System.Classes,
   TelegAPi.Types.Enums;
@@ -382,25 +383,6 @@ type
     function MaxConnections: Int64;
     function AllowedUpdates: TArray<string>;
   end;
-  {$SCOPEDENUMS ON}
-
-  TtgFileToSendTag = (ERROR = 254, ID = 0, FromURL = 1, FromFile = 2, FromStream = 3);
-{$SCOPEDENUMS OFF}
-
-  TtgFileToSend = class
-  public
-    Data: string;
-    Content: TStream;
-    Tag: TtgFileToSendTag;
-    constructor Create(const ATag: TtgFileToSendTag = TtgFileToSendTag.ERROR;
-      const AData: string = ''; AContent: TStream = nil);
-    class function FromFile(const AFileName: string): TtgFileToSend;
-    class function FromID(const AID: string): TtgFileToSend;
-    class function FromURL(const AURL: string): TtgFileToSend;
-    class function FromStream(const AContent: TStream; const AFileName: string): TtgFileToSend;
-    class function Empty: TtgFileToSend;
-    function IsEmpty: Boolean;
-  end;
 
   TtgInputMedia = class
   private
@@ -409,10 +391,10 @@ type
     FCaption: string;
     FParseMode: string;
     [JSONMarshalled(False)]
-    FFileToSend: TtgFileToSend;
+    FFileToSend: TFileToSend;
   public
-    function GetFileToSend: TtgFileToSend;
-    constructor Create(AMedia: TtgFileToSend; const ACaption: string = ''; const
+    function GetFileToSend: TFileToSend;
+    constructor Create(AMedia: TFileToSend; const ACaption: string = ''; const
       AParseMode: TtgParseMode = TtgParseMode.default); virtual;
     [JsonName('type')]
     property {}&Type: string read FType write FType;
@@ -424,7 +406,7 @@ type
 
   TtgInputMediaPhoto = class(TtgInputMedia)
   public
-    constructor Create(AMedia: TtgFileToSend; const ACaption: string = ''; const
+    constructor Create(AMedia: TFileToSend; const ACaption: string = ''; const
       AParseMode: TtgParseMode = TtgParseMode.default); override;
   end;
 
@@ -435,7 +417,7 @@ type
     FDuration: Integer;
     FSupportsStreaming: Boolean;
   public
-    constructor Create(AMedia: TtgFileToSend; const ACaption: string = ''; const
+    constructor Create(AMedia: TFileToSend; const ACaption: string = ''; const
       AParseMode: TtgParseMode = TtgParseMode.default; AWidth: Integer = 0;
       AHeight: Integer = 0; ADuration: Integer = 0; ASupportsStreaming: Boolean = True); reintroduce;
     property Width: Integer read FWidth write FWidth;
@@ -464,27 +446,27 @@ uses
 
 { TtgInputMedia }
 
-constructor TtgInputMedia.Create(AMedia: TtgFileToSend; const ACaption: string; const AParseMode: TtgParseMode);
+constructor TtgInputMedia.Create(AMedia: TFileToSend; const ACaption: string; const AParseMode: TtgParseMode);
 begin
   FCaption := ACaption;
   FParseMode := AParseMode.ToString;
   FFileToSend := AMedia;
   case AMedia.Tag of
-    TtgFileToSendTag.ID, TtgFileToSendTag.FromURL:
+    TFileToSendTag.ID, TFileToSendTag.FromURL:
       FMedia := ExtractFileName(AMedia.Data);
-    TtgFileToSendTag.FromFile, TtgFileToSendTag.FromStream:
+    TFileToSendTag.FromFile, TFileToSendTag.FromStream:
       FMedia := 'attach://' + ExtractFileName(AMedia.Data);
   end;
 end;
 
-function TtgInputMedia.GetFileToSend: TtgFileToSend;
+function TtgInputMedia.GetFileToSend: TFileToSend;
 begin
   Result := FFileToSend;
 end;
 
 { TtgInputMediaPhoto }
 
-constructor TtgInputMediaPhoto.Create(AMedia: TtgFileToSend; const ACaption: string; const AParseMode: TtgParseMode);
+constructor TtgInputMediaPhoto.Create(AMedia: TFileToSend; const ACaption: string; const AParseMode: TtgParseMode);
 begin
   inherited Create(AMedia, ACaption, AParseMode);
   FType := 'photo';
@@ -492,7 +474,7 @@ end;
 
 { TtgInputMediaVideo }
 
-constructor TtgInputMediaVideo.Create(AMedia: TtgFileToSend; const ACaption:
+constructor TtgInputMediaVideo.Create(AMedia: TFileToSend; const ACaption:
   string; const AParseMode: TtgParseMode; AWidth, AHeight, ADuration: Integer; ASupportsStreaming: Boolean);
 begin
   inherited Create(AMedia, ACaption, AParseMode);
@@ -502,55 +484,6 @@ begin
   FDuration := ADuration;
   Self.FSupportsStreaming := ASupportsStreaming;
 end;
-
-{ TtgFileToSend }
-
-constructor TtgFileToSend.Create(const ATag: TtgFileToSendTag; const AData: string; AContent: TStream);
-begin
-  Tag := ATag;
-  Data := AData;
-  Content := AContent;
-end;
-
-class function TtgFileToSend.Empty: TtgFileToSend;
-begin
-  Result := TtgFileToSend.Create();
-end;
-
-class function TtgFileToSend.FromFile(const AFileName: string): TtgFileToSend;
-begin
-  if not FileExists(AFileName) then
-    raise EFileNotFoundException.CreateFmt('File %S not found!', [AFileName]);
-  Result := TtgFileToSend.Create(TtgFileToSendTag.FromFile, AFileName, nil);
-end;
-
-class function TtgFileToSend.FromID(const AID: string): TtgFileToSend;
-begin
-  Result := TtgFileToSend.Create(TtgFileToSendTag.ID, AID, nil);
-end;
-
-class function TtgFileToSend.FromStream(const AContent: TStream; const AFileName: string): TtgFileToSend;
-begin
-    // I guess, in most cases, AFilename param should contain a non-empty string.
-    // It is odd to receive a file with filename and
-    // extension which both are not connected with its content.
-  if AFileName.IsEmpty then
-    raise Exception.Create('TtgFileToSend: Filename is empty!');
-  if not Assigned(AContent) then
-    raise EStreamError.Create('Stream not assigned!');
-  Result := TtgFileToSend.Create(TtgFileToSendTag.FromStream, AFileName, AContent);
-end;
-
-class function TtgFileToSend.FromURL(const AURL: string): TtgFileToSend;
-begin
-  Result := TtgFileToSend.Create(TtgFileToSendTag.FromURL, AURL, nil);
-end;
-
-function TtgFileToSend.IsEmpty: Boolean;
-begin
-  Result := Data.IsEmpty and not Assigned(Content);
-end;
-
 { TtgUserLink }
 
 class function TtgUserLink.Empty: TtgUserLink;

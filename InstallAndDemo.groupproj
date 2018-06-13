@@ -6,9 +6,6 @@
         <Projects Include="Install\TelegaPi.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="Demo\Console\ConsoleBot.dproj">
-            <Dependencies/>
-        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -26,23 +23,14 @@
     <Target Name="TelegaPi:Make">
         <MSBuild Projects="Install\TelegaPi.dproj" Targets="Make"/>
     </Target>
-    <Target Name="ConsoleBot">
-        <MSBuild Projects="Demo\Console\ConsoleBot.dproj"/>
-    </Target>
-    <Target Name="ConsoleBot:Clean">
-        <MSBuild Projects="Demo\Console\ConsoleBot.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="ConsoleBot:Make">
-        <MSBuild Projects="Demo\Console\ConsoleBot.dproj" Targets="Make"/>
-    </Target>
     <Target Name="Build">
-        <CallTarget Targets="TelegaPi;ConsoleBot"/>
+        <CallTarget Targets="TelegaPi"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="TelegaPi:Clean;ConsoleBot:Clean"/>
+        <CallTarget Targets="TelegaPi:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="TelegaPi:Make;ConsoleBot:Make"/>
+        <CallTarget Targets="TelegaPi:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

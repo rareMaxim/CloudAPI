@@ -5,7 +5,6 @@ interface
 uses
   CloudAPI.Request,
   CloudAPI.BaseComponent,
-  TelegAPI.ApiRequest,
   System.Classes,
   System.TypInfo,
   System.SysUtils,
@@ -41,7 +40,7 @@ type
       const JSON: string): TArray<ItgUpdate>; overload;
     function SetWebhook( //
       const Url: string; //
-      const Certificate: TtgFileToSend = nil; //
+      const Certificate: TFileToSend = nil; //
       const MaxConnections: Int64 = 40; //
       const AllowedUpdates: TAllowedUpdates = UPDATES_ALLOWED_ALL): Boolean;
     function DeleteWebhook: Boolean;
@@ -63,7 +62,7 @@ type
       const DisableNotification: Boolean = False): ITgMessage;
     function SendPhoto( //
       const ChatId: TtgUserLink; //
-      const Photo: TtgFileToSend; //
+      const Photo: TFileToSend; //
       const Caption: string = ''; //
       const ParseMode: TtgParseMode = TtgParseMode.Default; //
       const DisableNotification: Boolean = False; //
@@ -71,7 +70,7 @@ type
       ReplyMarkup: IReplyMarkup = nil): ITgMessage;
     function SendAudio( //
       const ChatId: TtgUserLink; //
-      const Audio: TtgFileToSend; //
+      const Audio: TFileToSend; //
       const Caption: string = ''; //
       const ParseMode: TtgParseMode = TtgParseMode.Default; //
       const Duration: Int64 = 0; //
@@ -81,7 +80,7 @@ type
       ReplyMarkup: IReplyMarkup = nil): ITgMessage;
     function SendDocument( //
       const ChatId: TtgUserLink; //
-      const Document: TtgFileToSend; //
+      const Document: TFileToSend; //
       const Caption: string = ''; //
       const ParseMode: TtgParseMode = TtgParseMode.Default; //
       const DisableNotification: Boolean = False; //
@@ -89,7 +88,7 @@ type
       ReplyMarkup: IReplyMarkup = nil): ITgMessage;
     function SendVideo( //
       const ChatId: TtgUserLink; //
-      const Video: TtgFileToSend; //
+      const Video: TFileToSend; //
       const Caption: string = ''; //
       const ParseMode: TtgParseMode = TtgParseMode.Default; //
       const SupportsStreaming: Boolean = True; //
@@ -101,7 +100,7 @@ type
       ReplyMarkup: IReplyMarkup = nil): ITgMessage;
     function SendVoice( //
       const ChatId: TtgUserLink; //
-      const Voice: TtgFileToSend; //
+      const Voice: TFileToSend; //
       const Caption: string = ''; //
       const ParseMode: TtgParseMode = TtgParseMode.Default; //
       const Duration: Int64 = 0; //
@@ -110,7 +109,7 @@ type
       ReplyMarkup: IReplyMarkup = nil): ITgMessage;
     function SendVideoNote( //
       const ChatId: TtgUserLink; //
-      const VideoNote: TtgFileToSend; //
+      const VideoNote: TFileToSend; //
       const Duration: Int64 = 0; //
       const Length: Int64 = 0; //
       const DisableNotification: Boolean = False; //
@@ -297,7 +296,7 @@ type
       const MessageId: Int64; //
       const DisableNotification: Boolean = False): Boolean;
     function SetChatDescription(const ChatId: TtgUserLink; const Description: string): Boolean;
-    function SetChatPhoto(const ChatId: TtgUserLink; const Photo: TtgFileToSend): Boolean;
+    function SetChatPhoto(const ChatId: TtgUserLink; const Photo: TFileToSend): Boolean;
     function SetChatTitle(const ChatId: TtgUserLink; const Title: string): Boolean;
     function UnpinChatMessage(const ChatId: TtgUserLink): Boolean;
     {$ENDREGION}
@@ -325,23 +324,23 @@ type
     {$REGION 'Strickers'}
     function SendSticker( //
       const ChatId: TtgUserLink; //
-      const Sticker: TtgFileToSend; //
+      const Sticker: TFileToSend; //
       const DisableNotification: Boolean = False; //
       const ReplyToMessageId: Int64 = 0; //
       ReplyMarkup: IReplyMarkup = nil): ITgMessage;
     function getStickerSet(const Name: string): TtgStickerSet;
-    function uploadStickerFile(const UserId: Int64; const PngSticker: TtgFileToSend): ItgFile;
+    function uploadStickerFile(const UserId: Int64; const PngSticker: TFileToSend): ItgFile;
     function createNewStickerSet( //
       const UserId: Int64; //
       const Name, Title: string; //
-      const PngSticker: TtgFileToSend; //
+      const PngSticker: TFileToSend; //
       const Emojis: string; //
       const ContainsMasks: Boolean = False; //
       const MaskPosition: TtgMaskPosition = nil): Boolean;
     function addStickerToSet( //
       const UserId: Int64; //
       const Name: string; //
-      const PngSticker: TtgFileToSend; //
+      const PngSticker: TFileToSend; //
       const Emojis: string; //
       const MaskPosition: TtgMaskPosition = nil): Boolean;
     function setStickerPositionInSet(const Sticker: string; const Position: Int64): Boolean;
@@ -445,10 +444,10 @@ end;
 {$REGION 'Getting updates'}
 
 function TTelegramBot.SetWebhook(const Url: string; const Certificate:
-  TtgFileToSend; const MaxConnections: Int64; const AllowedUpdates: TAllowedUpdates): Boolean;
+  TFileToSend; const MaxConnections: Int64; const AllowedUpdates: TAllowedUpdates): Boolean;
 begin
   Logger.Enter(Self, 'SetWebhook');
-  with (GetRequest as ItgApiRequest) do
+  with (GetRequest) do
   begin
     SetMethod('setWebhook');
     AddParameter('url', Url, '', True, TStoreFormat.InFormData);
@@ -499,7 +498,7 @@ function TTelegramBot.stopMessageLiveLocation(const ChatId: TtgUserLink; const
   MessageId: Int64; ReplyMarkup: IReplyMarkup): Boolean;
 begin
   Logger.Enter(Self, 'stopMessageLiveLocation');
-  with (GetRequest as ItgApiRequest) do
+  with (GetRequest) do
   begin
     SetMethod('stopMessageLiveLocation');
     AddParameter('chat_id', ChatId.ToString, '', True, TStoreFormat.InFormData);
@@ -513,7 +512,7 @@ end;
 function TTelegramBot.stopMessageLiveLocation(const InlineMessageId: string; ReplyMarkup: IReplyMarkup): Boolean;
 begin
   Logger.Enter(Self, 'stopMessageLiveLocation');
-  with (GetRequest as ItgApiRequest) do
+  with (GetRequest) do
   begin
     SetMethod('stopMessageLiveLocation');
     AddParameter('inline_message_id', InlineMessageId, '', True, TStoreFormat.InFormData);
@@ -526,7 +525,7 @@ end;
 function TTelegramBot.UnbanChatMember(const ChatId: TtgUserLink; const UserId: Int64): Boolean;
 begin
   Logger.Enter(Self, 'UnbanChatMember');
-  with (GetRequest as ItgApiRequest) do
+  with (GetRequest) do
   begin
     SetMethod('unbanChatMember');
     AddParameter('chat_id', ChatId.ToString, '', True, TStoreFormat.InUrl);
@@ -556,7 +555,7 @@ end;
 function TTelegramBot.sendMediaGroup(const ChatId: TtgUserLink; const AMedia:
   TArray<TtgInputMedia>; const ADisableNotification: Boolean; const ReplyToMessageId: Int64): TArray<ITgMessage>;
 var
-  LRequest: ItgApiRequest;
+  LRequest: IApiRequest;
   LMedia: TtgInputMedia;
   LTmpJson: string;
 begin
@@ -566,13 +565,13 @@ begin
     .AddParameter('chat_id', ChatId.ToString, '', True, TStoreFormat.InFormData) //
     .AddParameter('media', LTmpJson, '[]', True, TStoreFormat.InFormData) //
     .AddParameter('disable_notification', ADisableNotification, False, False, TStoreFormat.InFormData) //
-    .AddParameter('reply_to_message_id', ReplyToMessageId, 0, False, TStoreFormat.InFormData) as ItgApiRequest);
+    .AddParameter('reply_to_message_id', ReplyToMessageId, 0, False, TStoreFormat.InFormData));
   for LMedia in AMedia do
   begin
     case LMedia.GetFileToSend.Tag of
-      TtgFileToSendTag.FromFile:
+      TFileToSendTag.FromFile:
         LRequest.StoreMultipartForm.AddFile(ExtractFileName(LMedia.GetFileToSend.Data), LMedia.GetFileToSend.Data);
-      TtgFileToSendTag.FromStream:
+      TFileToSendTag.FromStream:
         LRequest.StoreMultipartForm.AddStream(LMedia.GetFileToSend.Data, LMedia.GetFileToSend.Content,
           LMedia.GetFileToSend.Data);
     end;
@@ -582,7 +581,7 @@ begin
 end;
 
 function TTelegramBot.SendPhoto(const ChatId: TtgUserLink; const Photo:
-  TtgFileToSend; const Caption: string; const ParseMode: TtgParseMode; const
+  TFileToSend; const Caption: string; const ParseMode: TtgParseMode; const
   DisableNotification: Boolean; const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
 begin
   Logger.Enter(Self, 'SendPhoto');
@@ -634,7 +633,7 @@ begin
 end;
 
 function TTelegramBot.SendVideo(const ChatId: TtgUserLink; const Video:
-  TtgFileToSend; const Caption: string; const ParseMode: TtgParseMode; const
+  TFileToSend; const Caption: string; const ParseMode: TtgParseMode; const
   SupportsStreaming: Boolean; const Duration, Width, Height: Int64; const
   DisableNotification: Boolean; const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
 begin
@@ -656,8 +655,8 @@ begin
 end;
 
 function TTelegramBot.SendVideoNote(const ChatId: TtgUserLink; const VideoNote:
-  TtgFileToSend; const Duration, Length: Int64; const DisableNotification:
-  Boolean; const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
+  TFileToSend; const Duration, Length: Int64; const DisableNotification: Boolean;
+  const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
 begin
   Logger.Enter(Self, 'SendVideoNote');
   Result := TTgMessage.Create(GetRequest.SetMethod('sendVideoNote') //
@@ -673,7 +672,7 @@ begin
 end;
 
 function TTelegramBot.SendVoice(const ChatId: TtgUserLink; const Voice:
-  TtgFileToSend; const Caption: string; const ParseMode: TtgParseMode; const
+  TFileToSend; const Caption: string; const ParseMode: TtgParseMode; const
   Duration: Int64; const DisableNotification: Boolean; const ReplyToMessageId:
   Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
 begin
@@ -692,12 +691,12 @@ begin
 end;
 
 function TTelegramBot.SendAudio(const ChatId: TtgUserLink; const Audio:
-  TtgFileToSend; const Caption: string; const ParseMode: TtgParseMode; const
+  TFileToSend; const Caption: string; const ParseMode: TtgParseMode; const
   Duration: Int64; const Performer: string; const DisableNotification: Boolean;
   const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
 begin
   Logger.Enter(Self, 'SendAudio');
-  with GetRequest as ItgApiRequest do
+  with GetRequest do
   begin
     SetMethod('sendAudio');
     AddParameter('chat_id', ChatId.ToString, '', True, TStoreFormat.InFormData);
@@ -728,7 +727,7 @@ function TTelegramBot.SendContact(const ChatId: TtgUserLink; const Contact:
   TtgContact; const DisableNotification: Boolean; const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
 begin
   Logger.Enter(Self, 'SendContact');
-  with GetRequest as ItgApiRequest do
+  with GetRequest do
   begin
     SetMethod('sendContact');
     AddParameter('chat_id', ChatId.ToString, '', True, TStoreFormat.InFormData);
@@ -744,11 +743,11 @@ begin
 end;
 
 function TTelegramBot.SendDocument(const ChatId: TtgUserLink; const Document:
-  TtgFileToSend; const Caption: string; const ParseMode: TtgParseMode; const
+  TFileToSend; const Caption: string; const ParseMode: TtgParseMode; const
   DisableNotification: Boolean; const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
 begin
   Logger.Enter(Self, 'SendDocument');
-  with GetRequest as ItgApiRequest do
+  with GetRequest do
   begin
     SetMethod('sendDocument');
     AddParameter('chat_id', ChatId.ToString, '', True, TStoreFormat.InFormData);
@@ -872,11 +871,11 @@ begin
   Logger.Enter(Self, 'AnswerCallbackQuery');
   Result := GetRequest.SetMethod('answerCallbackQuery') //
     .AddParameter('callback_query_id', CallbackQueryId, '', True, TStoreFormat.InUrl) //
-    .AddParameter('text', Text, '', True, TStoreFormat.InUrl) //
+    .AddParameter('text', Text, '', False, TStoreFormat.InUrl) //
     .AddParameter('show_alert', ShowAlert, False, False, TStoreFormat.InUrl) //
     .AddParameter('url', Url, '', False, TStoreFormat.InUrl) //
     .AddParameter('cache_time', CacheTime, 0, False, TStoreFormat.InUrl) //
-    .ExecuteAsBool;
+    .ExecuteAsString='true';
   Logger.Leave(Self, 'AnswerCallbackQuery');
 end;
 {$ENDREGION}
@@ -1046,7 +1045,7 @@ begin
   Logger.Leave(Self, 'SetChatDescription');
 end;
 
-function TTelegramBot.SetChatPhoto(const ChatId: TtgUserLink; const Photo: TtgFileToSend): Boolean;
+function TTelegramBot.SetChatPhoto(const ChatId: TtgUserLink; const Photo: TFileToSend): Boolean;
 begin
   Logger.Enter(Self, 'SetChatPhoto');
   Result := GetRequest.SetMethod('setChatDescription') //
@@ -1127,7 +1126,7 @@ end;
 {$REGION 'Stickers'}
 
 function TTelegramBot.addStickerToSet(const UserId: Int64; const Name: string;
-  const PngSticker: TtgFileToSend; const Emojis: string; const MaskPosition: TtgMaskPosition): Boolean;
+  const PngSticker: TFileToSend; const Emojis: string; const MaskPosition: TtgMaskPosition): Boolean;
 begin
   Logger.Enter(Self, 'addStickerToSet');
   Result := GetRequest.SetMethod('addStickerToSet') //
@@ -1141,7 +1140,7 @@ begin
 end;
 
 function TTelegramBot.createNewStickerSet(const UserId: Int64; const Name, Title:
-  string; const PngSticker: TtgFileToSend; const Emojis: string; const
+  string; const PngSticker: TFileToSend; const Emojis: string; const
   ContainsMasks: Boolean; const MaskPosition: TtgMaskPosition): Boolean;
 begin
   Logger.Enter(Self, 'createNewStickerSet');
@@ -1175,8 +1174,8 @@ begin
 end;
 
 function TTelegramBot.SendSticker(const ChatId: TtgUserLink; const Sticker:
-  TtgFileToSend; const DisableNotification: Boolean; const ReplyToMessageId:
-  Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
+  TFileToSend; const DisableNotification: Boolean; const ReplyToMessageId: Int64;
+  ReplyMarkup: IReplyMarkup): ITgMessage;
 begin
   Logger.Enter(Self, 'SendSticker');
   Result := TTgMessage.Create(GetRequest.SetMethod('sendSticker') //
@@ -1199,7 +1198,7 @@ begin
   Logger.Leave(Self, 'setStickerPositionInSet');
 end;
 
-function TTelegramBot.uploadStickerFile(const UserId: Int64; const PngSticker: TtgFileToSend): ItgFile;
+function TTelegramBot.uploadStickerFile(const UserId: Int64; const PngSticker: TFileToSend): ItgFile;
 begin
   Logger.Enter(Self, 'uploadStickerFile');
   Result := TtgFile.Create(GetRequest.SetMethod('uploadStickerFile') //

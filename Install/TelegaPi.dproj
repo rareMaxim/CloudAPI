@@ -111,7 +111,6 @@ $(PreBuildEvent)]]>
         <DCCReference Include="rtl.dcp"/>
         <DCCReference Include="RESTComponents.dcp"/>
         <DCCReference Include="CloudApiCore.dcp"/>
-        <DCCReference Include="..\Source\Telegram.org\TelegAPI.ApiRequest.pas"/>
         <DCCReference Include="..\Source\Telegram.org\TelegAPI.Bot.Impl.pas"/>
         <DCCReference Include="..\Source\Telegram.org\TelegAPI.Bot.pas"/>
         <DCCReference Include="..\Source\Telegram.org\TelegaPi.Ext.Sessions.pas"/>
