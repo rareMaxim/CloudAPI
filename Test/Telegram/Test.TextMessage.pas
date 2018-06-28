@@ -9,8 +9,8 @@ uses
   DUnitX.TestFramework;
 
 type
-  [TestFixture]
-  TMyTestObject = class(TObject)
+  //[TestFixture]
+  TTestTextMessage = class(TObject)
   strict private
     FBot: ITelegramBot;
   public
@@ -40,7 +40,7 @@ uses
   System.Generics.Collections,
   System.SysUtils;
 
-procedure TMyTestObject.SendTextMessageToChanel;
+procedure TTestTextMessage.SendTextMessageToChanel;
 var
   text: string;
   LMessage: ITgMessage;
@@ -51,13 +51,13 @@ begin
   Assert.AreEqual(TtgMessageType.Text, LMessage.&Type);
 end;
 
-procedure TMyTestObject.Setup;
+procedure TTestTextMessage.Setup;
 begin
   FBot := TTelegramBot.Create(TestConfig.Token);
 
 end;
 
-procedure TMyTestObject.Should_Parse_Message_Entities_Into_Values;
+procedure TTestTextMessage.Should_Parse_Message_Entities_Into_Values;
 var
   LEntityData: TDictionary<string, TtgMessageEntityType>;
   LMessage: ITgMessage;
@@ -83,12 +83,12 @@ begin
   end;
 end;
 
-procedure TMyTestObject.TearDown;
+procedure TTestTextMessage.TearDown;
 begin
   FBot := nil;
 end;
 
-procedure TMyTestObject.ForwardMessage;
+procedure TTestTextMessage.ForwardMessage;
 const
   text: string = 'Hello world!';
 var
@@ -103,7 +103,7 @@ begin
   Assert.AreNotEqual(Default(TDateTime), LMessage2.ForwardDate);
 end;
 
-procedure TMyTestObject.Parse_Html_Entities;
+procedure TTestTextMessage.Parse_Html_Entities;
 var
   LEntityData: TDictionary<TtgMessageEntityType, string>;
   LMessage: ITgMessage;
@@ -140,7 +140,7 @@ begin
   end;
 end;
 
-procedure TMyTestObject.Parse_MarkDown_Entities;
+procedure TTestTextMessage.Parse_MarkDown_Entities;
 var
   LEntityData: TDictionary<TtgMessageEntityType, string>;
   LMessage: ITgMessage;
@@ -175,7 +175,7 @@ begin
   end;
 end;
 
-procedure TMyTestObject.SendTextMessage;
+procedure TTestTextMessage.SendTextMessage;
 const
   text: string = 'Hello world!';
 var
@@ -187,7 +187,7 @@ begin
 end;
 
 initialization
-  TDUnitX.RegisterTestFixture(TMyTestObject);
+  TDUnitX.RegisterTestFixture(TTestTextMessage);
 
 end.
 

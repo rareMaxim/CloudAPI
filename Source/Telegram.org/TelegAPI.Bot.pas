@@ -1577,8 +1577,7 @@ type
     /// The bot must be an administrator in the chat for this to work and
     /// must have the appropriate admin rights.
     /// </remarks>
-    function SetChatPhoto(const ChatId: TtgUserLink; const Photo: TFileToSend):
-      Boolean;
+    function SetChatPhoto(const ChatId: TtgUserLink; const Photo: TFileToSend): Boolean;
     /// <summary>
     /// Use this method to change the title of a chat. Titles can't be
     /// changed for private chats. The bot must be an administrator in the

@@ -16,7 +16,7 @@ uses
   TelegAPI.Types.Enums,
   TelegAPI.Types.ReplyMarkups,
   TelegAPI.Types.InlineQueryResults,
-  CloudAPI.Utils.Json;
+  CloudAPI.Utils.JSON;
 
 type
   TTelegramBot = class(TCloudApiBaseComponent, ITelegramBot)
@@ -30,7 +30,7 @@ type
     procedure AssignTo(Dest: TPersistent); override;
     constructor Create(AOwner: TComponent); overload; override;
     constructor Create(const AToken: string); reintroduce; overload;
-    {$REGION 'Getting updates'}
+{$REGION 'Getting updates'}
     function GetUpdates( //
       const Offset: Int64 = 0; //
       const Limit: Int64 = 100; //
@@ -45,8 +45,8 @@ type
       const AllowedUpdates: TAllowedUpdates = UPDATES_ALLOWED_ALL): Boolean;
     function DeleteWebhook: Boolean;
     function GetWebhookInfo: ItgWebhookInfo;
-    {$ENDREGION}
-    {$REGION 'Basic methods'}
+{$ENDREGION}
+{$REGION 'Basic methods'}
     function GetMe: ItgUser;
     function SendMessage( //
       const ChatId: TtgUserLink; //
@@ -162,8 +162,8 @@ type
       const ShowAlert: Boolean = False; //
       const Url: string = ''; //
       const CacheTime: Int64 = 0): Boolean;
-    {$ENDREGION}
-    {$REGION 'Updating messages'}
+{$ENDREGION}
+{$REGION 'Updating messages'}
     function EditMessageText( //
       const ChatId: TtgUserLink; //
       const MessageId: Int64; //
@@ -214,8 +214,8 @@ type
     function DeleteMessage( //
       const ChatId: TtgUserLink; //
       const MessageId: Int64): Boolean;
-    {$ENDREGION}
-    {$REGION 'Inline mode'}
+{$ENDREGION}
+{$REGION 'Inline mode'}
     function AnswerInlineQuery( //
       const InlineQueryId: string; //
       const Results: TArray<TtgInlineQueryResult>; //
@@ -224,8 +224,8 @@ type
       const NextOffset: string = ''; //
       const SwitchPmText: string = ''; //
       const SwitchPmParameter: string = ''): Boolean;
-    {$ENDREGION}
-    {$REGION 'Payments'}
+{$ENDREGION}
+{$REGION 'Payments'}
     function SendInvoice( //
       const ChatId: Int64; //
       const Title: string; //
@@ -259,8 +259,8 @@ type
     function AnswerPreCheckoutQueryBad( //
       const PreCheckoutQueryId: string; //
       const ErrorMessage: string): Boolean;
-    {$ENDREGION}
-    {$REGION 'Games'}
+{$ENDREGION}
+{$REGION 'Games'}
     function SendGame( //
       const ChatId: Int64; //
       const GameShortName: string; //
@@ -287,8 +287,8 @@ type
       const UserId: Int64; //
       const ChatId: Int64 = 0; //
       const MessageId: Int64 = 0): TArray<ItgGameHighScore>; overload;
-    {$ENDREGION}
-    {$REGION 'Manage groups and channels'}
+{$ENDREGION}
+{$REGION 'Manage groups and channels'}
     function DeleteChatPhoto(const ChatId: TtgUserLink): Boolean;
     function ExportChatInviteLink(const ChatId: TtgUserLink): string;
     function PinChatMessage( //
@@ -299,8 +299,8 @@ type
     function SetChatPhoto(const ChatId: TtgUserLink; const Photo: TFileToSend): Boolean;
     function SetChatTitle(const ChatId: TtgUserLink; const Title: string): Boolean;
     function UnpinChatMessage(const ChatId: TtgUserLink): Boolean;
-    {$ENDREGION}
-    {$REGION 'Manage users and admins'}
+{$ENDREGION}
+{$REGION 'Manage users and admins'}
     function RestrictChatMember( //
       const ChatId: TtgUserLink; //
       const UserId: Int64; //
@@ -320,8 +320,8 @@ type
       const CanRestrictMembers: Boolean = False; //
       const CanPinMessages: Boolean = False; //
       const CanPromoteMembers: Boolean = False): Boolean;
-    {$ENDREGION}
-    {$REGION 'Strickers'}
+{$ENDREGION}
+{$REGION 'Strickers'}
     function SendSticker( //
       const ChatId: TtgUserLink; //
       const Sticker: TFileToSend; //
@@ -353,24 +353,25 @@ type
       const ADisableNotification: Boolean = False; //
       const ReplyToMessageId: Int64 = 0): TArray<ITgMessage>;
 
-    {$ENDREGION}
+{$ENDREGION}
   published
-    {$REGION 'Property|Свойства'}
+{$REGION 'Property|Свойства'}
     property Logger;
     property Domain;
     property Token: string read GetToken write SetToken;
-    {$ENDREGION}
-    {$REGION 'События|Events'}
+{$ENDREGION}
+{$REGION 'События|Events'}
     property OnReceiveRawData;
     property OnSendData;
-    {$ENDREGION}
+{$ENDREGION}
   end;
 
 implementation
 
 uses
   REST.JSON,
-  TelegAPI.Helpers;
+  TelegAPI.Helpers,
+  TelegAPI.Logger.Old;
 
 { TTelegramBot }
 {$REGION 'Core'}
@@ -401,6 +402,8 @@ procedure TTelegramBot.DoInitApiCore;
 begin
   inherited;
   Domain := 'https://api.telegram.org/bot';
+  Logger := nil;
+  Logger := TtgExceptionManagerConsole.Create(Self);
   GetRequest.OnDataReceiveAsString :=
     function(AData: string): string
     var
@@ -541,10 +544,12 @@ function TTelegramBot.SendLocation(const ChatId: TtgUserLink; const Location:
 begin
   Logger.Enter(Self, 'SendLocation');
   Result := TTgMessage.Create(GetRequest.SetMethod('unbanChatMember') //
-    .AddParameter('chat_id', ChatId.ToString, '', True, TStoreFormat.InFormData) //
+    .AddParameter('chat_id', ChatId.ToString, '', True, TStoreFormat.InFormData)
+    //
     .AddParameter('latitude', Location.Latitude, 0.0, True, TStoreFormat.InFormData) //
     .AddParameter('longitude', Location.Longitude, 0.0, True, TStoreFormat.InFormData) //
-    .AddParameter('live_period', LivePeriod, 0, False, TStoreFormat.InFormData) //
+    .AddParameter('live_period', LivePeriod, 0, False, TStoreFormat.InFormData)
+    //
     .AddParameter('disable_notification', DisableNotification, False, False, TStoreFormat.InFormData) //
     .AddParameter('reply_to_message_id', ReplyToMessageId, 0, False, TStoreFormat.InFormData) //
     .AddParameter('reply_markup', TInterfacedObject(ReplyMarkup), nil, False, TStoreFormat.InFormData) //
@@ -562,7 +567,8 @@ begin
   Logger.Enter(Self, 'sendMediaGroup');
   LTmpJson := TJsonUtils.ArrayToJString<TtgInputMedia>(AMedia);
   LRequest := (GetRequest.SetMethod('sendMediaGroup') //
-    .AddParameter('chat_id', ChatId.ToString, '', True, TStoreFormat.InFormData) //
+    .AddParameter('chat_id', ChatId.ToString, '', True, TStoreFormat.InFormData)
+    //
     .AddParameter('media', LTmpJson, '[]', True, TStoreFormat.InFormData) //
     .AddParameter('disable_notification', ADisableNotification, False, False, TStoreFormat.InFormData) //
     .AddParameter('reply_to_message_id', ReplyToMessageId, 0, False, TStoreFormat.InFormData));
@@ -586,7 +592,8 @@ function TTelegramBot.SendPhoto(const ChatId: TtgUserLink; const Photo:
 begin
   Logger.Enter(Self, 'SendPhoto');
   Result := TTgMessage.Create(GetRequest.SetMethod('sendPhoto') //
-    .AddParameter('chat_id', ChatId.ToString, '', True, TStoreFormat.InFormData) //
+    .AddParameter('chat_id', ChatId.ToString, '', True, TStoreFormat.InFormData)
+    //
     .AddParameter('photo', Photo, nil, True, TStoreFormat.InFormData) //
     .AddParameter('caption', Caption, '', False, TStoreFormat.InFormData) //
     .AddParameter('parse_mode', ParseMode.ToString, '', False, TStoreFormat.InFormData) //
@@ -603,7 +610,8 @@ function TTelegramBot.SendMessage(const ChatId: TtgUserLink; const Text: string;
 begin
   Logger.Enter(Self, 'SendMessage');
   Result := TTgMessage.Create(GetRequest.SetMethod('sendMessage') //
-    .AddParameter('chat_id', ChatId.ToString, '', True, TStoreFormat.InFormData) //
+    .AddParameter('chat_id', ChatId.ToString, '', True, TStoreFormat.InFormData)
+    //
     .AddParameter('text', Text, '', True, TStoreFormat.InFormData) //
     .AddParameter('parse_mode', ParseMode.ToString, '', False, TStoreFormat.InFormData) //
     .AddParameter('disable_web_page_preview', DisableWebPagePreview, False, False, TStoreFormat.InFormData) //
@@ -619,12 +627,14 @@ function TTelegramBot.SendVenue(const ChatId: TtgUserLink; const Venue: TtgVenue
 begin
   Logger.Enter(Self, 'SendVenue');
   Result := TTgMessage.Create(GetRequest.SetMethod('sendVenue') //
-    .AddParameter('chat_id', ChatId.ToString, '', True, TStoreFormat.InFormData) //
-    .AddParameter('latitude', Venue.Location.Latitude, 0, True, TStoreFormat.InFormData)      //
-    .AddParameter('longitude', Venue.Location.Longitude, 0, True, TStoreFormat.InFormData)    //
+    .AddParameter('chat_id', ChatId.ToString, '', True, TStoreFormat.InFormData)
+    //
+    .AddParameter('latitude', Venue.Location.Latitude, 0, True, TStoreFormat.InFormData) //
+    .AddParameter('longitude', Venue.Location.Longitude, 0, True, TStoreFormat.InFormData) //
     .AddParameter('title', Venue.Title, '', True, TStoreFormat.InFormData) //
-    .AddParameter('address', Venue.Address, '', True, TStoreFormat.InFormData) //
-    .AddParameter('foursquare_id', Venue.FoursquareId, '', False, TStoreFormat.InFormData)       //
+    .AddParameter('address', Venue.Address, '', True, TStoreFormat.InFormData)
+    //
+    .AddParameter('foursquare_id', Venue.FoursquareId, '', False, TStoreFormat.InFormData) //
     .AddParameter('disable_notification', DisableNotification, False, False, TStoreFormat.InFormData) //
     .AddParameter('reply_to_message_id', ReplyToMessageId, 0, False, TStoreFormat.InFormData) //
     .AddParameter('reply_markup', TInterfacedObject(ReplyMarkup), nil, False, TStoreFormat.InFormData) //
@@ -639,7 +649,8 @@ function TTelegramBot.SendVideo(const ChatId: TtgUserLink; const Video:
 begin
   Logger.Enter(Self, 'SendVideo');
   Result := TTgMessage.Create(GetRequest.SetMethod('sendVideo') //
-    .AddParameter('chat_id', ChatId.ToString, '', True, TStoreFormat.InFormData) //
+    .AddParameter('chat_id', ChatId.ToString, '', True, TStoreFormat.InFormData)
+    //
     .AddParameter('video', Video, nil, True, TStoreFormat.InFormData) //
     .AddParameter('duration', Duration, 0, False, TStoreFormat.InFormData) //
     .AddParameter('width', Width, 0, False, TStoreFormat.InFormData) //
@@ -660,8 +671,10 @@ function TTelegramBot.SendVideoNote(const ChatId: TtgUserLink; const VideoNote:
 begin
   Logger.Enter(Self, 'SendVideoNote');
   Result := TTgMessage.Create(GetRequest.SetMethod('sendVideoNote') //
-    .AddParameter('chat_id', ChatId.ToString, '', True, TStoreFormat.InFormData) //
-    .AddParameter('video_note', VideoNote, nil, True, TStoreFormat.InFormData) //
+    .AddParameter('chat_id', ChatId.ToString, '', True, TStoreFormat.InFormData)
+    //
+    .AddParameter('video_note', VideoNote, nil, True, TStoreFormat.InFormData)
+    //
     .AddParameter('duration', Duration, 0, False, TStoreFormat.InFormData) //
     .AddParameter('length', Length, 0, False, TStoreFormat.InFormData) //
     .AddParameter('disable_notification', DisableNotification, False, False, TStoreFormat.InFormData) //
@@ -678,7 +691,8 @@ function TTelegramBot.SendVoice(const ChatId: TtgUserLink; const Voice:
 begin
   Logger.Enter(Self, 'SendVoice');
   Result := TTgMessage.Create(GetRequest.SetMethod('sendVoice') //
-    .AddParameter('chat_id', ChatId.ToString, '', True, TStoreFormat.InFormData) //
+    .AddParameter('chat_id', ChatId.ToString, '', True, TStoreFormat.InFormData)
+    //
     .AddParameter('voice', Voice, nil, True, TStoreFormat.InFormData) //
     .AddParameter('duration', Duration, 0, False, TStoreFormat.InFormData) //
     .AddParameter('caption', Caption, '', False, TStoreFormat.InFormData) //
@@ -767,8 +781,10 @@ function TTelegramBot.KickChatMember(const ChatId: TtgUserLink; const UserId:
 begin
   Logger.Enter(Self, 'KickChatMember');
   Result := GetRequest.SetMethod('kickChatMember') //
-    .AddParameter('chat_id', ChatId.ToString, '', True, TStoreFormat.InFormData) //
-    .AddParameter('user_id', UserId.ToString, '', True, TStoreFormat.InFormData) //
+    .AddParameter('chat_id', ChatId.ToString, '', True, TStoreFormat.InFormData)
+  //
+    .AddParameter('user_id', UserId.ToString, '', True, TStoreFormat.InFormData)
+  //
     .AddParameter('until_date', UntilDate, 0, False, TStoreFormat.InFormData) //
     .ExecuteAsBool;
   Logger.Leave(Self, 'KickChatMember');
@@ -826,7 +842,7 @@ function TTelegramBot.GetChatAdministrators(const ChatId: TtgUserLink): TArray<I
 begin
   Logger.Enter(Self, 'GetChatAdministrators');
   Result := TBaseJson.AsArray<ItgChatMember>(TtgChatMember, //
-    GetRequest.SetMethod('getChatAdministrators')//
+    GetRequest.SetMethod('getChatAdministrators') //
     .AddParameter('chat_id', ChatId.ToString, '', True, TStoreFormat.InUrl).ExecuteAsString);
   Logger.Leave(Self, 'GetChatAdministrators');
 end;
@@ -875,7 +891,7 @@ begin
     .AddParameter('show_alert', ShowAlert, False, False, TStoreFormat.InUrl) //
     .AddParameter('url', Url, '', False, TStoreFormat.InUrl) //
     .AddParameter('cache_time', CacheTime, 0, False, TStoreFormat.InUrl) //
-    .ExecuteAsString='true';
+    .ExecuteAsString = 'true';
   Logger.Leave(Self, 'AnswerCallbackQuery');
 end;
 {$ENDREGION}
@@ -901,7 +917,8 @@ function TTelegramBot.EditMessageText(const ChatId: TtgUserLink; const MessageId
 begin
   Logger.Enter(Self, 'EditMessageText');
   Result := TTgMessage.Create(GetRequest.SetMethod('editMessageText') //
-    .AddParameter('chat_id', ChatId.ToString, '', True, TStoreFormat.InFormData) //
+    .AddParameter('chat_id', ChatId.ToString, '', True, TStoreFormat.InFormData)
+    //
     .AddParameter('message_id', MessageId, 0, True, TStoreFormat.InFormData) //
     .AddParameter('text', Text, '', True, TStoreFormat.InFormData) //
     .AddParameter('parse_mode', ParseMode.ToString, '', False, TStoreFormat.InFormData) //
@@ -926,7 +943,8 @@ function TTelegramBot.EditMessageCaption(const ChatId: TtgUserLink; const
 begin
   Logger.Enter(Self, 'EditMessageCaption');
   Result := GetRequest.SetMethod('editMessageText') //
-    .AddParameter('chat_id', ChatId.ToString, '', True, TStoreFormat.InFormData) //
+    .AddParameter('chat_id', ChatId.ToString, '', True, TStoreFormat.InFormData)
+  //
     .AddParameter('message_id', MessageId, 0, True, TStoreFormat.InFormData) //
     .AddParameter('caption', Caption, '', True, TStoreFormat.InFormData) //
     .AddParameter('parse_mode', ParseMode.ToString, '', False, TStoreFormat.InFormData) //
@@ -953,7 +971,8 @@ function TTelegramBot.editMessageLiveLocation(const ChatId: TtgUserLink; const
 begin
   Logger.Enter(Self, 'editMessageLiveLocation');
   Result := GetRequest.SetMethod('editMessageLiveLocation') //
-    .AddParameter('chat_id', ChatId.ToString, '', True, TStoreFormat.InFormData) //
+    .AddParameter('chat_id', ChatId.ToString, '', True, TStoreFormat.InFormData)
+  //
     .AddParameter('message_id', MessageId, 0, True, TStoreFormat.InFormData) //
     .AddParameter('latitude', Location.Latitude, 0, False, TStoreFormat.InFormData) //
     .AddParameter('longitude', Location.Longitude, 0, False, TStoreFormat.InFormData) //
@@ -980,7 +999,8 @@ function TTelegramBot.EditMessageReplyMarkup(const ChatId: TtgUserLink; const
 begin
   Logger.Enter(Self, 'EditMessageReplyMarkup');
   Result := TTgMessage.Create(GetRequest.SetMethod('editMessageReplyMarkup') //
-    .AddParameter('chat_id', ChatId.ToString, '', True, TStoreFormat.InFormData) //
+    .AddParameter('chat_id', ChatId.ToString, '', True, TStoreFormat.InFormData)
+    //
     .AddParameter('message_id', MessageId, 0, True, TStoreFormat.InFormData) //
     .AddParameter('reply_markup', TInterfacedObject(ReplyMarkup), nil, False, TStoreFormat.InFormData) //
     .ExecuteAsString);
@@ -1049,7 +1069,8 @@ function TTelegramBot.SetChatPhoto(const ChatId: TtgUserLink; const Photo: TFile
 begin
   Logger.Enter(Self, 'SetChatPhoto');
   Result := GetRequest.SetMethod('setChatDescription') //
-    .AddParameter('chat_id', ChatId.ToString, '', True, TStoreFormat.InFormData) //
+    .AddParameter('chat_id', ChatId.ToString, '', True, TStoreFormat.InFormData)
+  //
     .AddParameter('photo', Photo, nil, True, TStoreFormat.InFormData) //
     .ExecuteAsBool;
   Logger.Leave(Self, 'SetChatPhoto');
@@ -1116,8 +1137,8 @@ begin
     .AddParameter('user_id', UserId, 0, True, TStoreFormat.InUrl) //
     .AddParameter('until_date', UntilDate, 0, False, TStoreFormat.InUrl) //
     .AddParameter('can_send_messages', CanSendMessages, False, False, TStoreFormat.InUrl) //
-    .AddParameter('can_send_media_messages', CanSendMediaMessages, False, False, TStoreFormat.InUrl)   //
-    .AddParameter('can_send_other_messages', CanSendOtherMessages, False, False, TStoreFormat.InUrl)   //
+    .AddParameter('can_send_media_messages', CanSendMediaMessages, False, False, TStoreFormat.InUrl) //
+    .AddParameter('can_send_other_messages', CanSendOtherMessages, False, False, TStoreFormat.InUrl) //
     .AddParameter('can_add_web_page_previews', CanAddWebPagePreviews, False, False, TStoreFormat.InUrl) //
     .ExecuteAsBool;
   Logger.Leave(Self, 'RestrictChatMember');
@@ -1134,7 +1155,8 @@ begin
     .AddParameter('name', Name, '', False, TStoreFormat.InUrl) //
     .AddParameter('png_sticker', PngSticker, nil, False, TStoreFormat.InUrl) //
     .AddParameter('emojis', Emojis, '', False, TStoreFormat.InUrl) //
-    .AddParameter('mask_position', MaskPosition, nil, False, TStoreFormat.InUrl) //
+    .AddParameter('mask_position', MaskPosition, nil, False, TStoreFormat.InUrl)
+  //
     .ExecuteAsBool;
   Logger.Leave(Self, 'addStickerToSet');
 end;
@@ -1179,7 +1201,8 @@ function TTelegramBot.SendSticker(const ChatId: TtgUserLink; const Sticker:
 begin
   Logger.Enter(Self, 'SendSticker');
   Result := TTgMessage.Create(GetRequest.SetMethod('sendSticker') //
-    .AddParameter('chat_id', ChatId.ToString, '', True, TStoreFormat.InFormData) //
+    .AddParameter('chat_id', ChatId.ToString, '', True, TStoreFormat.InFormData)
+    //
     .AddParameter('sticker', Sticker, nil, True, TStoreFormat.InFormData) //
     .AddParameter('disable_notification', DisableNotification, False, False, TStoreFormat.InFormData) //
     .AddParameter('reply_to_message_id', ReplyToMessageId, 0, False, TStoreFormat.InFormData) //
@@ -1203,7 +1226,8 @@ begin
   Logger.Enter(Self, 'uploadStickerFile');
   Result := TtgFile.Create(GetRequest.SetMethod('uploadStickerFile') //
     .AddParameter('user_id', UserId, 0, True, TStoreFormat.InFormData) //
-    .AddParameter('png_sticker', PngSticker, nil, True, TStoreFormat.InFormData) //
+    .AddParameter('png_sticker', PngSticker, nil, True, TStoreFormat.InFormData)
+    //
     .ExecuteAsString);
   Logger.Leave(Self, 'uploadStickerFile');
 end;
@@ -1221,7 +1245,8 @@ begin
     '[]', True, TStoreFormat.InFormData) //
     .AddParameter('cache_time', CacheTime, 0, False, TStoreFormat.InFormData) //
     .AddParameter('is_personal', IsPersonal, False, False, TStoreFormat.InFormData) //
-    .AddParameter('next_offset', NextOffset, '', False, TStoreFormat.InFormData) //
+    .AddParameter('next_offset', NextOffset, '', False, TStoreFormat.InFormData)
+  //
     .AddParameter('switch_pm_text', SwitchPmText, '', False, TStoreFormat.InFormData) //
     .AddParameter('switch_pm_parameter', SwitchPmParameter, '', False, TStoreFormat.InFormData) //
     .ExecuteAsBool;
@@ -1244,7 +1269,8 @@ begin
   Result := TTgMessage.Create(GetRequest.SetMethod('sendInvoice') //
     .AddParameter('chat_id', ChatId, 0, True, TStoreFormat.InFormData) //
     .AddParameter('title', Title, '', True, TStoreFormat.InFormData) //
-    .AddParameter('description', Description, '', True, TStoreFormat.InFormData) //
+    .AddParameter('description', Description, '', True, TStoreFormat.InFormData)
+    //
     .AddParameter('payload', Payload, '', True, TStoreFormat.InFormData) //
     .AddParameter('provider_token', ProviderToken, '', True, TStoreFormat.InFormData) //
     .AddParameter('start_parameter', StartParameter, '', True, TStoreFormat.InFormData) //
@@ -1253,9 +1279,11 @@ begin
     .AddParameter('provider_data', ProviderData, '', False, TStoreFormat.InFormData) //
     .AddParameter('photo_url', PhotoUrl, '', False, TStoreFormat.InFormData) //
     .AddParameter('photo_size', PhotoSize, 0, False, TStoreFormat.InFormData) //
-    .AddParameter('photo_width', PhotoWidth, 0, False, TStoreFormat.InFormData) //
+    .AddParameter('photo_width', PhotoWidth, 0, False, TStoreFormat.InFormData)
+    //
     .AddParameter('photo_height', PhotoHeight, 0, False, TStoreFormat.InFormData) //
-    .AddParameter('need_name', NeedName, False, False, TStoreFormat.InFormData) //
+    .AddParameter('need_name', NeedName, False, False, TStoreFormat.InFormData)
+    //
     .AddParameter('need_phone_number', NeedPhoneNumber, False, False, TStoreFormat.InFormData) //
     .AddParameter('need_email', NeedEmail, False, False, TStoreFormat.InFormData) //
     .AddParameter('need_shipping_address', NeedShippingAddress, False, False, TStoreFormat.InFormData) //
@@ -1307,13 +1335,12 @@ begin
     .AddParameter('Shipping_query_id', ShippingQueryId, '', True, TStoreFormat.InFormData) //
     .AddParameter('ok', True, False, False, TStoreFormat.InFormData) //
     .AddParameter('Shipping_options', TJsonUtils.ArrayToJString<
-    TtgShippingOption>(ShippingOptions), '[]', True, TStoreFormat.InFormData)    //
+    TtgShippingOption>(ShippingOptions), '[]', True, TStoreFormat.InFormData) //
     .ExecuteAsBool;
   Logger.Leave(Self, 'AnswerShippingQueryGood');
 end;
 
 {$ENDREGION}
-
 {$REGION 'Games'}
 
 function TTelegramBot.GetGameHighScores(const UserId: Int64; const InlineMessageId: string): TArray<ItgGameHighScore>;

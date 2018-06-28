@@ -49,7 +49,6 @@ constructor TCloudApiBaseComponent.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
   DoInitApiCore;
-  Logger := TLogEmpty.Create(Self);
 end;
 
 procedure TCloudApiBaseComponent.DoInitApiCore;

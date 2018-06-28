@@ -2,7 +2,7 @@
     <PropertyGroup>
         <Base>True</Base>
         <AppType>Package</AppType>
-        <Config Condition="'$(Config)'==''">Release</Config>
+        <Config Condition="'$(Config)'==''">Debug</Config>
         <FrameworkType>None</FrameworkType>
         <MainSource>CloudApiCore.dpk</MainSource>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
@@ -130,7 +130,7 @@
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">
-                <DeployFile LocalName="C:\Users\Public\Documents\Embarcadero\Studio\19.0\Bpl\CloudApiCore.bpl" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="..\..\..\..\..\..\Public\Documents\Embarcadero\Studio\19.0\Bpl\CloudApiCore.bpl" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
                         <RemoteName>CloudApiCore.bpl</RemoteName>
                         <Overwrite>true</Overwrite>

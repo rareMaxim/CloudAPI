@@ -11,14 +11,17 @@ uses
   DUnitX.Loggers.Console,
   DUnitX.Loggers.Xml.NUnit,
   DUnitX.TestFramework,
+  Test.GettingUpdates in 'Test.GettingUpdates.pas',
+  Test.Config in 'Test.Config.pas',
   Test.TextMessage in 'Test.TextMessage.pas',
-  Test.Config in 'Test.Config.pas';
+  Test.SendVideo in 'Test.SendVideo.pas';
 
 var
-  runner : ITestRunner;
-  results : IRunResults;
-  logger : ITestLogger;
-  nunitLogger : ITestLogger;
+  runner: ITestRunner;
+  results: IRunResults;
+  logger: ITestLogger;
+  nunitLogger: ITestLogger;
+
 begin
 {$IFDEF TESTINSIGHT}
   TestInsight.DUnitX.RunRegisteredTests;
@@ -58,3 +61,4 @@ begin
       System.Writeln(E.ClassName, ': ', E.Message);
   end;
 end.
+

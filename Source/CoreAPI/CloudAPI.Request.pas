@@ -36,7 +36,7 @@ type
 
   IApiRequest = interface
     ['{AF1F11B6-28DB-49EF-AD29-04634D35B15F}']
-  //private
+    // private
     function GetDomain: string;
     procedure SetDomain(const AValue: string);
     function GetMethodUrl: string;
@@ -61,7 +61,7 @@ type
     procedure SetStoreAutoFormat(const Value: TStoreFormat);
     function GetOnStaticFill: TProc;
     procedure SetOnStaticFill(const Value: TProc);
-  //public
+    // public
     {$REGION 'Add Parameter'}
     function AddParameter(const AKey: string; const AValue, ADefaultValue:
       string; const ARequired: Boolean; const AStoreFormat: TStoreFormat = TStoreFormat.Auto): IApiRequest; overload;
@@ -98,7 +98,6 @@ type
   end;
 
   TApiRequest = class(TInterfacedObject, IApiRequest)
- //   var     Converter: TDictionary<PTypeInfo, TProc<IApiRequest>>;
   strict private
     FMethod: string;
     FDomain: string;
@@ -181,30 +180,38 @@ type
     property StoreUrl: TStringList read GetStoreUrl write SetStoreUrl;
     property StoreHeaders: TList<TNetHeader> read GetStoreHeaders write SetStoreHeaders;
     property OnError: TProc<Exception> read GetOnError write SetOnError;
-    {Url, Body, Header}
+    { Url, Body, Header }
     property OnDataSend: TProc<string, string, string> read GetOnDataSend write SetOnDataSend;
     property OnDataReceiveAsString: TFunc<string, string> read GetOnDataReceiveAsString write SetOnDataReceiveAsString;
     property OnStaticFill: TProc read GetOnStaticFill write SetOnStaticFill;
   end;
 
   ECloudApiException = class(Exception)
+  private
+    FCode: string;
+    FDescription: string;
+    FRequest: IApiRequest;
   public
-    constructor Create(const Msg, ACode: string); reintroduce; overload;
-    constructor Create(const Msg: string; const ACode: Integer); reintroduce; overload;
+    constructor Create(const ACode, ADescription: string; ARequest: IApiRequest = nil); reintroduce; overload;
+    constructor Create(const ACode: Integer; const ADescription: string;
+      ARequest: IApiRequest = nil); reintroduce; overload;
+    property Code: string read FCode write FCode;
+    property Description: string read FDescription write FDescription;
+    property Request: IApiRequest read FRequest write FRequest;
   end;
 
   TMultipartFormDataHelper = class helper for TMultipartFormData
     /// <summary>
-    ///   Add a form data Stream
+    /// Add a form data Stream
     /// </summary>
     /// <param name="AFieldName">
-    ///   Field Name
+    /// Field Name
     /// </param>
     /// <param name="Data">
-    ///   Stream
+    /// Stream
     /// </param>
     /// <param name="AFileName">
-    ///   file name: "File.ext"
+    /// file name: "File.ext"
     /// </param>
     procedure AddStream(const AFieldName: string; Data: TStream; const AFileName: string);
   end;
@@ -246,9 +253,9 @@ end;
 
 class function TFileToSend.FromStream(const AContent: TStream; const AFileName: string): TFileToSend;
 begin
-    // I guess, in most cases, AFilename param should contain a non-empty string.
-    // It is odd to receive a file with filename and
-    // extension which both are not connected with its content.
+  // I guess, in most cases, AFilename param should contain a non-empty string.
+  // It is odd to receive a file with filename and
+  // extension which both are not connected with its content.
   if AFileName.IsEmpty then
     raise Exception.Create('TtgFileToSend: Filename is empty!');
   if not Assigned(AContent) then
@@ -282,7 +289,7 @@ end;
 function TApiRequest.AddParameter(const AKey: string; const AValue,
   ADefaultValue: TObject; const ARequired: Boolean; const AStoreFormat: TStoreFormat): IApiRequest;
 begin
-  Result := AddParameter(AKey, TJsonUtils.ObjectToJString(AValue),  //
+  Result := AddParameter(AKey, TJsonUtils.ObjectToJString(AValue), //
     TJsonUtils.ObjectToJString(ADefaultValue), ARequired, AStoreFormat);
 end;
 
@@ -373,14 +380,14 @@ end;
 function TApiRequest.Execute: IHTTPResponse;
 var
   LFullUrl: string;
-  LPostRunned: Boolean; //Отправлено из TMultipartFormData
+  LPostRunned: Boolean; // Отправлено из TMultipartFormData
 begin
   DoStaticFill;
   Result := nil;
   LPostRunned := False;
   try
     LFullUrl := string.Join('/', [Domain, MethodUrl]) + '?' + string.Join('&', FStoreInUrl.ToStringArray);
-    if FStoreInFormData.Stream.Size > 44{wtf} then
+    if FStoreInFormData.Stream.Size > 44 { wtf } then
     begin
       if Assigned(OnDataSend) then
         OnDataSend(LFullUrl, FormDataToString(FStoreInFormData), HeadersToString(FStoreInHeader.ToArray));
@@ -406,14 +413,13 @@ begin
       Result := FHttpClient.Get(LFullUrl, nil, FStoreInHeader.ToArray);
     end;
     ClearParams;
-
   except
     on E: Exception do
       DoHaveException(E);
   end;
   if Result.StatusCode <> 200 then
   begin
-    DoHaveException(ECloudApiException.Create(Result.StatusText, Result.StatusCode));
+    DoHaveException(ECloudApiException.Create(Result.StatusCode, Result.StatusText, self));
     Exit;
   end;
 end;
@@ -435,12 +441,12 @@ var
   LJson: TBaseJson;
 begin
   Result := ExecuteAsString = 'true';
-//  LJson := TBaseJson.Create(ExecuteAsString);
-//  try
-//    Result := LJson.AsBoolean;
-//  finally
-//    LJson.Free;
-//  end;
+  // LJson := TBaseJson.Create(ExecuteAsString);
+  // try
+  // Result := LJson.AsBoolean;
+  // finally
+  // LJson.Free;
+  // end;
 end;
 
 function TApiRequest.ExecuteAsBytes: TArray<Byte>;
@@ -636,7 +642,7 @@ var
   LTmpDir: string;
   LTmpFilename: string;
 begin
-  //get filename for tmp folder e.g. ..\AppData\local\temp\4F353A8AC6AB446D9F592A30B157291B
+  // get filename for tmp folder e.g. ..\AppData\local\temp\4F353A8AC6AB446D9F592A30B157291B
   LTmpDir := IncludeTrailingPathDelimiter(TPath.GetTempPath) + TPath.GetGUIDFileName(False);
   LTmpFilename := IncludeTrailingPathDelimiter(LTmpDir) + ExtractFileName(AFileName);
   try
@@ -685,14 +691,17 @@ end;
 
 { ECloudApiException }
 
-constructor ECloudApiException.Create(const Msg, ACode: string);
+constructor ECloudApiException.Create(const ACode, ADescription: string; ARequest: IApiRequest);
 begin
-  inherited Create(ACode + ': ' + Msg);
+  FCode := ACode;
+  FDescription := ADescription;
+  FRequest := ARequest;
+  inherited Create(FCode + ': ' + Description);
 end;
 
-constructor ECloudApiException.Create(const Msg: string; const ACode: Integer);
+constructor ECloudApiException.Create(const ACode: Integer; const ADescription: string; ARequest: IApiRequest);
 begin
-  Create(Msg, ACode.ToString);
+  Create(ACode.ToString, ADescription, ARequest);
 end;
 
 end.
