@@ -19,18 +19,23 @@ type
   TFileToSendTag = (ERROR = 254, ID = 0, FromURL = 1, FromFile = 2, FromStream = 3);
 {$SCOPEDENUMS OFF}
 
-  TFileToSend = class
+  TFileToSend = record
   public
     Data: string;
     Content: TStream;
     Tag: TFileToSendTag;
-    constructor Create(const ATag: TFileToSendTag = TFileToSendTag.ERROR; const
-      AData: string = ''; AContent: TStream = nil);
-    class function FromFile(const AFileName: string): TFileToSend;
-    class function FromID(const AID: string): TFileToSend;
-    class function FromURL(const AURL: string): TFileToSend;
-    class function FromStream(const AContent: TStream; const AFileName: string): TFileToSend;
-    class function Empty: TFileToSend;
+    {$REGION 'operator overload'}
+    class operator Equal(a, b: TFileToSend): Boolean;
+    class operator Implicit(AValue: string): TFileToSend;
+    class operator Implicit(AValue: TStream): TFileToSend;
+        {$ENDREGION}
+    class function Create(const ATag: TFileToSendTag = TFileToSendTag.ERROR;
+      const AData: string = ''; AContent: TStream = nil): TFileToSend; static;
+    class function FromFile(const AFileName: string): TFileToSend; static;
+    class function FromID(const AID: string): TFileToSend; static;
+    class function FromURL(const AURL: string): TFileToSend; static;
+    class function FromStream(const AContent: TStream; const AFileName: string): TFileToSend; static;
+    class function Empty: TFileToSend; static;
     function IsEmpty: Boolean;
   end;
 
@@ -227,16 +232,21 @@ const
   ERR_SOME_VALUE = 'В данном методе указаное значение не может быть таким, как и значение по умолчанию';
   { TtgFileToSend }
 
-constructor TFileToSend.Create(const ATag: TFileToSendTag; const AData: string; AContent: TStream);
+class function TFileToSend.Create(const ATag: TFileToSendTag; const AData: string; AContent: TStream): TFileToSend;
 begin
-  Tag := ATag;
-  Data := AData;
-  Content := AContent;
+  Result.Tag := ATag;
+  Result.Data := AData;
+  Result.Content := AContent;
 end;
 
 class function TFileToSend.Empty: TFileToSend;
 begin
   Result := TFileToSend.Create();
+end;
+
+class operator TFileToSend.Equal(a, b: TFileToSend): Boolean;
+begin
+  Result := (a.Data = b.Data) and (a.Tag = b.Tag) and (a.Content = b.Content);
 end;
 
 class function TFileToSend.FromFile(const AFileName: string): TFileToSend;
@@ -266,6 +276,23 @@ end;
 class function TFileToSend.FromURL(const AURL: string): TFileToSend;
 begin
   Result := TFileToSend.Create(TFileToSendTag.FromURL, AURL, nil);
+end;
+
+class operator TFileToSend.Implicit(AValue: string): TFileToSend;
+begin
+  Result.Data := AValue;
+  if FileExists(AValue) then
+    Result.Tag := TFileToSendTag.FromFile
+  else if AValue.contains('://') then
+    Result.Tag := TFileToSendTag.FromURL
+  else
+    Result.Tag := TFileToSendTag.ID;
+end;
+
+class operator TFileToSend.Implicit(AValue: TStream): TFileToSend;
+begin
+  Result.Content := AValue;
+  Result.Tag := TFileToSendTag.FromStream;
 end;
 
 function TFileToSend.IsEmpty: Boolean;
@@ -419,7 +446,7 @@ begin
   end;
   if Result.StatusCode <> 200 then
   begin
-    DoHaveException(ECloudApiException.Create(Result.StatusCode, Result.StatusText, self));
+    DoHaveException(ECloudApiException.Create(Result.StatusCode, Result.StatusText, Self));
     Exit;
   end;
 end;
@@ -666,7 +693,7 @@ end;
 function TApiRequest.AddParameter(const AKey: string; AValue, ADefaultValue:
   TFileToSend; const ARequired: Boolean; const AStoreFormat: TStoreFormat): IApiRequest;
 begin
-  if ARequired and (AValue.Equals(ADefaultValue) or AValue.IsEmpty) then
+  if ARequired and ((AValue = ADefaultValue) or AValue.IsEmpty) then
   begin
     DoHaveException(Exception.Create('Not assigned required data'));
     Exit;
@@ -683,10 +710,8 @@ begin
     DoHaveException(Exception.Create('Cant convert TTgFileToSend: Unknown prototype tag'));
     Exit;
   end;
-  if Assigned(AValue) then
-    FreeAndNil(AValue);
-  if Assigned(ADefaultValue) then
-    FreeAndNil(ADefaultValue);
+  if Assigned(AValue.Content) then
+    FreeAndNil(AValue.Content);
 end;
 
 { ECloudApiException }

@@ -40,7 +40,7 @@ type
       const JSON: string): TArray<ItgUpdate>; overload;
     function SetWebhook( //
       const Url: string; //
-      const Certificate: TFileToSend = nil; //
+      const Certificate: TFileToSend; //
       const MaxConnections: Int64 = 40; //
       const AllowedUpdates: TAllowedUpdates = UPDATES_ALLOWED_ALL): Boolean;
     function DeleteWebhook: Boolean;
@@ -454,7 +454,7 @@ begin
   begin
     SetMethod('setWebhook');
     AddParameter('url', Url, '', True, TStoreFormat.InFormData);
-    AddParameter('certificate', Certificate, nil, False, TStoreFormat.InFormData);
+    AddParameter('certificate', Certificate, TFileToSend.Empty, False, TStoreFormat.InFormData);
     AddParameter('max_connections', MaxConnections, 0, False, TStoreFormat.InFormData);
     AddParameter('allowed_updates', AllowedUpdates.ToString, '[]', False, TStoreFormat.InFormData);
     Result := ExecuteAsBool;
@@ -594,7 +594,7 @@ begin
   Result := TTgMessage.Create(GetRequest.SetMethod('sendPhoto') //
     .AddParameter('chat_id', ChatId.ToString, '', True, TStoreFormat.InFormData)
     //
-    .AddParameter('photo', Photo, nil, True, TStoreFormat.InFormData) //
+    .AddParameter('photo', Photo, TFileToSend.Empty, True, TStoreFormat.InFormData) //
     .AddParameter('caption', Caption, '', False, TStoreFormat.InFormData) //
     .AddParameter('parse_mode', ParseMode.ToString, '', False, TStoreFormat.InFormData) //
     .AddParameter('disable_notification', DisableNotification, False, False, TStoreFormat.InFormData) //
@@ -652,7 +652,7 @@ begin
   Result := TTgMessage.Create(GetRequest.SetMethod('sendVideo') //
     .AddParameter('chat_id', ChatId.ToString, '', True, TStoreFormat.InFormData)
     //
-    .AddParameter('video', Video, nil, True, TStoreFormat.InFormData) //
+    .AddParameter('video', Video, TFileToSend.Empty, True, TStoreFormat.InFormData) //
     .AddParameter('duration', Duration, 0, False, TStoreFormat.InFormData) //
     .AddParameter('width', Width, 0, False, TStoreFormat.InFormData) //
     .AddParameter('height', Height, 0, False, TStoreFormat.InFormData) //
@@ -672,10 +672,8 @@ function TTelegramBot.SendVideoNote(const ChatId: TtgUserLink; const VideoNote:
 begin
   Logger.Enter(Self, 'SendVideoNote');
   Result := TTgMessage.Create(GetRequest.SetMethod('sendVideoNote') //
-    .AddParameter('chat_id', ChatId.ToString, '', True, TStoreFormat.InFormData)
-    //
-    .AddParameter('video_note', VideoNote, nil, True, TStoreFormat.InFormData)
-    //
+    .AddParameter('chat_id', ChatId.ToString, '', True, TStoreFormat.InFormData)//
+    .AddParameter('video_note', VideoNote, TFileToSend.Empty, True, TStoreFormat.InFormData)//
     .AddParameter('duration', Duration, 0, False, TStoreFormat.InFormData) //
     .AddParameter('length', Length, 0, False, TStoreFormat.InFormData) //
     .AddParameter('disable_notification', DisableNotification, False, False, TStoreFormat.InFormData) //
@@ -692,9 +690,8 @@ function TTelegramBot.SendVoice(const ChatId: TtgUserLink; const Voice:
 begin
   Logger.Enter(Self, 'SendVoice');
   Result := TTgMessage.Create(GetRequest.SetMethod('sendVoice') //
-    .AddParameter('chat_id', ChatId.ToString, '', True, TStoreFormat.InFormData)
-    //
-    .AddParameter('voice', Voice, nil, True, TStoreFormat.InFormData) //
+    .AddParameter('chat_id', ChatId.ToString, '', True, TStoreFormat.InFormData)  //
+    .AddParameter('voice', Voice, TFileToSend.Empty, True, TStoreFormat.InFormData) //
     .AddParameter('duration', Duration, 0, False, TStoreFormat.InFormData) //
     .AddParameter('caption', Caption, '', False, TStoreFormat.InFormData) //
     .AddParameter('parse_mode', ParseMode.ToString, '', False, TStoreFormat.InFormData) //
@@ -715,7 +712,7 @@ begin
   begin
     SetMethod('sendAudio');
     AddParameter('chat_id', ChatId.ToString, '', True, TStoreFormat.InFormData);
-    AddParameter('audio', Audio, nil, True, TStoreFormat.InFormData);
+    AddParameter('audio', Audio, TFileToSend.Empty, True, TStoreFormat.InFormData);
     AddParameter('duration', Duration, 0, False, TStoreFormat.InFormData);
     AddParameter('performer', Performer, '', False, TStoreFormat.InFormData);
     AddParameter('caption', Caption, '', False, TStoreFormat.InFormData);
@@ -766,7 +763,7 @@ begin
   begin
     SetMethod('sendDocument');
     AddParameter('chat_id', ChatId.ToString, '', True, TStoreFormat.InFormData);
-    AddParameter('document', Document, nil, True, TStoreFormat.InFormData);
+    AddParameter('document', Document, TFileToSend.Empty, True, TStoreFormat.InFormData);
     AddParameter('caption', Caption, '', False, TStoreFormat.InFormData);
     AddParameter('parse_mode', ParseMode.ToString, '', False, TStoreFormat.InFormData);
     AddParameter('disable_notification', DisableNotification, False, False, TStoreFormat.InFormData);
@@ -782,10 +779,8 @@ function TTelegramBot.KickChatMember(const ChatId: TtgUserLink; const UserId:
 begin
   Logger.Enter(Self, 'KickChatMember');
   Result := GetRequest.SetMethod('kickChatMember') //
-    .AddParameter('chat_id', ChatId.ToString, '', True, TStoreFormat.InFormData)
-  //
-    .AddParameter('user_id', UserId.ToString, '', True, TStoreFormat.InFormData)
-  //
+    .AddParameter('chat_id', ChatId.ToString, '', True, TStoreFormat.InFormData) //
+    .AddParameter('user_id', UserId.ToString, '', True, TStoreFormat.InFormData) //
     .AddParameter('until_date', UntilDate, 0, False, TStoreFormat.InFormData) //
     .ExecuteAsBool;
   Logger.Leave(Self, 'KickChatMember');
@@ -1070,9 +1065,8 @@ function TTelegramBot.SetChatPhoto(const ChatId: TtgUserLink; const Photo: TFile
 begin
   Logger.Enter(Self, 'SetChatPhoto');
   Result := GetRequest.SetMethod('setChatDescription') //
-    .AddParameter('chat_id', ChatId.ToString, '', True, TStoreFormat.InFormData)
-  //
-    .AddParameter('photo', Photo, nil, True, TStoreFormat.InFormData) //
+    .AddParameter('chat_id', ChatId.ToString, '', True, TStoreFormat.InFormData)   //
+    .AddParameter('photo', Photo, TFileToSend.Empty, True, TStoreFormat.InFormData) //
     .ExecuteAsBool;
   Logger.Leave(Self, 'SetChatPhoto');
 end;
@@ -1154,7 +1148,7 @@ begin
   Result := GetRequest.SetMethod('addStickerToSet') //
     .AddParameter('user_id', UserId, 0, True, TStoreFormat.InUrl) //
     .AddParameter('name', Name, '', False, TStoreFormat.InUrl) //
-    .AddParameter('png_sticker', PngSticker, nil, False, TStoreFormat.InUrl) //
+    .AddParameter('png_sticker', PngSticker, TFileToSend.Empty, False, TStoreFormat.InUrl) //
     .AddParameter('emojis', Emojis, '', False, TStoreFormat.InUrl) //
     .AddParameter('mask_position', MaskPosition, nil, False, TStoreFormat.InUrl)
   //
@@ -1171,7 +1165,7 @@ begin
     .AddParameter('user_id', UserId, 0, True, TStoreFormat.InFormData) //
     .AddParameter('name', Name, '', False, TStoreFormat.InFormData) //
     .AddParameter('title', Title, '', False, TStoreFormat.InFormData) //
-    .AddParameter('png_sticker', PngSticker, nil, False, TStoreFormat.InFormData) //
+    .AddParameter('png_sticker', PngSticker, TFileToSend.Empty, False, TStoreFormat.InFormData) //
     .AddParameter('emojis', Emojis, '', False, TStoreFormat.InFormData) //
     .AddParameter('contains_masks', ContainsMasks, False, False, TStoreFormat.InFormData) //
     .AddParameter('mask_position', MaskPosition, nil, False, TStoreFormat.InFormData) //
@@ -1202,9 +1196,8 @@ function TTelegramBot.SendSticker(const ChatId: TtgUserLink; const Sticker:
 begin
   Logger.Enter(Self, 'SendSticker');
   Result := TTgMessage.Create(GetRequest.SetMethod('sendSticker') //
-    .AddParameter('chat_id', ChatId.ToString, '', True, TStoreFormat.InFormData)
-    //
-    .AddParameter('sticker', Sticker, nil, True, TStoreFormat.InFormData) //
+    .AddParameter('chat_id', ChatId.ToString, '', True, TStoreFormat.InFormData)    //
+    .AddParameter('sticker', Sticker, TFileToSend.Empty, True, TStoreFormat.InFormData) //
     .AddParameter('disable_notification', DisableNotification, False, False, TStoreFormat.InFormData) //
     .AddParameter('reply_to_message_id', ReplyToMessageId, 0, False, TStoreFormat.InFormData) //
     .AddParameter('reply_markup', TInterfacedObject(ReplyMarkup), nil, False, TStoreFormat.InFormData) //
@@ -1227,8 +1220,7 @@ begin
   Logger.Enter(Self, 'uploadStickerFile');
   Result := TtgFile.Create(GetRequest.SetMethod('uploadStickerFile') //
     .AddParameter('user_id', UserId, 0, True, TStoreFormat.InFormData) //
-    .AddParameter('png_sticker', PngSticker, nil, True, TStoreFormat.InFormData)
-    //
+    .AddParameter('png_sticker', PngSticker, TFileToSend.Empty, True, TStoreFormat.InFormData)     //
     .ExecuteAsString);
   Logger.Leave(Self, 'uploadStickerFile');
 end;

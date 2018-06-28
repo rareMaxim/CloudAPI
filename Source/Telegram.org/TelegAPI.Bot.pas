@@ -130,7 +130,7 @@ type
     /// </remarks>
     function SetWebhook( //
       const Url: string; //
-      const Certificate: TFileToSend = nil; //
+      const Certificate: TFileToSend; //
       const MaxConnections: Int64 = 40; //
       const AllowedUpdates: TAllowedUpdates = UPDATES_ALLOWED_ALL): Boolean;
     /// <summary>

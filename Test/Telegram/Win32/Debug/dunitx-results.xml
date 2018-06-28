@@ -1,13 +1,36 @@
 ﻿<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
-<test-results name="C:\Users\Зайченок\Desktop\Максим\Git\cloudapi\Test\Telegram\Win32\Debug\TelegaTest.exe" total="1" errors="0" failures="0" ignored="0" inconclusive="0" not-run="0" skipped="0" invalid="0" date="2018-06-29" time="19.376">
+<test-results name="C:\Users\Зайченок\Desktop\Максим\Git\cloudapi\Test\Telegram\Win32\Debug\TelegaTest.exe" total="12" errors="0" failures="0" ignored="0" inconclusive="0" not-run="0" skipped="0" invalid="0" date="2018-06-29" time="61.674">
   <culture-info current-culture="en" current-uiculture="en" />
-  <test-suite type="Assembly" name="TelegaTest.exe" executed="true" result="Success" success="True" time="19.376" asserts="0">
+  <test-suite type="Assembly" name="TelegaTest.exe" executed="true" result="Success" success="True" time="61.674" asserts="0">
     <results>
-        <test-suite type="Namespace" name="Test" executed="true" result="Success" success="True" time="19.376" asserts="0" >
+        <test-suite type="Namespace" name="Test" executed="true" result="Success" success="True" time="109.561" asserts="0" >
           <results>
-              <test-suite type="Fixture" name="TSendingVenueMessageTests" executed="True" result="Success" success="True" time="19.376" >
+              <test-suite type="Fixture" name="TGettingUpdatesTests" executed="True" result="Success" success="True" time="61.674" >
                 <results>
-                  <test-case name="Send_Venue" executed="True" result="Success" success="True" time="19.342" asserts="0" />
+                  <test-case name="TestApiToken" executed="True" result="Success" success="True" time="0.709" asserts="0" />
+                  <test-case name="ApiTokenBad" executed="True" result="Success" success="True" time="1.845" asserts="0" />
+                  <test-case name="GetBotUser" executed="True" result="Success" success="True" time="19.472" asserts="0" />
+                </results>
+              </test-suite>
+              <test-suite type="Fixture" name="TTestSendVideo" executed="True" result="Success" success="True" time="39.609" >
+                <results>
+                  <test-case name="SendVideo" executed="True" result="Success" success="True" time="26.737" asserts="0" />
+                  <test-case name="SendVideoNote" executed="True" result="Success" success="True" time="5.562" asserts="0" />
+                </results>
+              </test-suite>
+              <test-suite type="Fixture" name="TSendingVenueMessageTests" executed="True" result="Success" success="True" time="7.309" >
+                <results>
+                  <test-case name="Send_Venue" executed="True" result="Success" success="True" time="6.338" asserts="0" />
+                </results>
+              </test-suite>
+              <test-suite type="Fixture" name="TTestTextMessage" executed="True" result="Success" success="True" time="0.970" >
+                <results>
+                  <test-case name="SendTextMessage" executed="True" result="Success" success="True" time="0.109" asserts="0" />
+                  <test-case name="SendTextMessageToChanel" executed="True" result="Success" success="True" time="0.116" asserts="0" />
+                  <test-case name="ForwardMessage" executed="True" result="Success" success="True" time="0.213" asserts="0" />
+                  <test-case name="Parse_MarkDown_Entities" executed="True" result="Success" success="True" time="0.193" asserts="0" />
+                  <test-case name="Parse_Html_Entities" executed="True" result="Success" success="True" time="0.145" asserts="0" />
+                  <test-case name="Should_Parse_Message_Entities_Into_Values" executed="True" result="Success" success="True" time="0.190" asserts="0" />
                 </results>
               </test-suite>
           </results>

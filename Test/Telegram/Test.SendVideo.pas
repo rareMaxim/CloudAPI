@@ -64,7 +64,7 @@ var
 begin
   LMessage := FBot.SendVideoNote(//
     TestConfig.UserId, //
-    TFileToSend.FromFile(TTestConst.Video.GoldenRatio), //
+    TTestConst.Video.GoldenRatio, //
     duration, widthAndHeight);
   Assert.AreEqual(TtgMessageType.VideoNote, LMessage.&Type);
   Assert.AreEqual(duration, LMessage.VideoNote.Duration);

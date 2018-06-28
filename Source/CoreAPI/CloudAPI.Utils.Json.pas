@@ -26,7 +26,7 @@ type
     function ToPairs<TI: IInterface>(TgClass: TBaseJsonClass; const AKey: string): TArray<TPair<string, TI>>; overload;
     function ToPairsAsArray<TI: IInterface>(TgClass: TBaseJsonClass; const AKey: string): TArray<TI>;
     procedure Write(const AKey, AValue: string); overload;
-    procedure Write(const AKey:string; AValue: TJSONValue); overload;
+    procedure Write(const AKey: string; AValue: TJSONValue); overload;
     procedure SetJson(const AJson: string);
     function AsJson: string;
     function AsBoolean: Boolean;
@@ -36,7 +36,7 @@ type
     class function FromJson(const AJson: string): TBaseJson;
     class function GetTgClass: TBaseJsonClass; virtual; // abstract;
     class procedure UnSupported;
-    constructor Create(const AJson: string); virtual;
+    constructor Create(const AJson: string = '{}'); virtual;
     destructor Destroy; override;
   end;
 
@@ -344,8 +344,6 @@ class procedure TBaseJson.UnSupported;
 begin
   raise Exception.Create('Telegram method not supported in TelegaPi Library. Sorry.');
 end;
-
-
 
 procedure TBaseJson.Write(const AKey: string; AValue: TJSONValue);
 var
