@@ -11,8 +11,8 @@ uses
   DUnitX.Loggers.Console,
   DUnitX.Loggers.Xml.NUnit,
   DUnitX.TestFramework,
-  Test.Utils in 'Test.Utils.pas',
-  Test.Bot in 'Test.Bot.pas';
+  Test.TextMessage in 'Test.TextMessage.pas',
+  Test.Config in 'Test.Config.pas';
 
 var
   runner : ITestRunner;

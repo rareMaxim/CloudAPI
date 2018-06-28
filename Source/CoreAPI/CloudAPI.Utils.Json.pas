@@ -1,4 +1,4 @@
-unit CloudAPI.Utils.Json;
+п»їunit CloudAPI.Utils.Json;
 {/$I jedi\jedi.inc}
 
 interface
@@ -109,7 +109,6 @@ begin
         Result := Result + ',';
     end;
   Result := Result + ']';
-  // какашечка
 end;
 
 class function TJsonUtils.FileToObject<T>(const AFileName: string): T;
@@ -146,8 +145,13 @@ end;
 
 { TBaseJson }
 function TBaseJson.ToArray<TI>(TgClass: TBaseJsonClass; const AKey: string): TArray<TI>;
+var
+  LTmpArray: TJSONArray;
 begin
-  Result := TBaseJson.AsArray<TI>(TgClass, (FJSON.GetValue(AKey) as TJSONArray).ToJSON);
+  Result := nil;
+  LTmpArray := FJSON.GetValue(AKey) as TJSONArray;
+  if Assigned(LTmpArray) then
+    Result := TBaseJson.AsArray<TI>(TgClass, LTmpArray.ToJSON);
 end;
 
 class function TBaseJson.AsArray<TI>(const TgClass: TBaseJsonClass; const AValue: string): TArray<TI>;

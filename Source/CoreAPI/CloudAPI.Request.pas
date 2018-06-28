@@ -217,6 +217,7 @@ uses
 const
   ERR_TWICE_POST_STORE = 'Попытка использовать разные хранилища для Post запроса';
   ERR_CANT_SETUP_STORE_AUTO = 'Нельзя использовать это значение, попробуйте другое';
+  ERR_SOME_VALUE = 'В данном методе указаное значение не может быть таким, как и значение по умолчанию';
   { TtgFileToSend }
 
 constructor TFileToSend.Create(const ATag: TFileToSendTag; const AData: string; AContent: TStream);
@@ -288,7 +289,8 @@ end;
 function TApiRequest.AddParameter(const AKey: string; const AValue,
   ADefaultValue, ARequired: Boolean; const AStoreFormat: TStoreFormat): IApiRequest;
 begin
-  Result := AddParameter(AKey, AValue.ToString, ADefaultValue.ToString, ARequired, AStoreFormat);
+  Result := AddParameter(AKey, AValue.ToString(TUseBoolStrs.True), ADefaultValue.ToString
+    (TUseBoolStrs.True), ARequired, AStoreFormat);
 end;
 
 function TApiRequest.AddParameter(const AKey: string; const AValue,
@@ -349,7 +351,7 @@ procedure TApiRequest.DoStoreParam(const AKey, AValue, ADefaultValue: string;
   const ARequired: Boolean; const AStoreFormat: TStoreFormat);
 begin
   if RaiseArgument(AValue, ADefaultValue, ARequired) then
-    raise EArgumentException.Create('AValue = ADefaultValue');
+    raise EArgumentException.Create(ERR_SOME_VALUE);
   if not NeedAdd(AValue, ADefaultValue, ARequired) then
     Exit;
   case AStoreFormat of
@@ -381,7 +383,7 @@ begin
     if FStoreInFormData.Stream.Size > 44{wtf} then
     begin
       if Assigned(OnDataSend) then
-        OnDataSend(LFullUrl, '', HeadersToString(FStoreInHeader.ToArray));
+        OnDataSend(LFullUrl, FormDataToString(FStoreInFormData), HeadersToString(FStoreInHeader.ToArray));
       Result := FHttpClient.Post(LFullUrl, FStoreInFormData, nil, FStoreInHeader.ToArray);
       LPostRunned := True;
     end;
@@ -392,7 +394,7 @@ begin
       else
       begin
         if Assigned(OnDataSend) then
-          OnDataSend(LFullUrl, FormDataToString(FStoreInFormData), HeadersToString(FStoreInHeader.ToArray));
+          OnDataSend(LFullUrl, FStoreInStringList.ToString, HeadersToString(FStoreInHeader.ToArray));
         Result := FHttpClient.Post(LFullUrl, FStoreInStringList, nil, nil, FStoreInHeader.ToArray);
         LPostRunned := True;
       end;
@@ -461,12 +463,15 @@ end;
 function TApiRequest.FormDataToString(AFormData: TMultipartFormData): string;
 var
   LStrList: TStringList;
+  LPos: Int64;
 begin
   LStrList := TStringList.Create;
   try
-  //  AFormData.Stream.Position := 0;
+    LPos := AFormData.Stream.Position;
+    AFormData.Stream.Position := 0;
     LStrList.LoadFromStream(AFormData.Stream);
     Result := LStrList.Text;
+    AFormData.Stream.Position := LPos;
   finally
     LStrList.Free;
   end;

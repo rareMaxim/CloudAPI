@@ -28,7 +28,7 @@ begin
 {$IFDEF REG_IN_LOAD}
   RegisterWithSplashScreen;
 {$ENDIF}
-  RegisterComponents('Telegram', [TTelegramBot, TtgExceptionManagerUI,
+  RegisterComponents('Telegram', [TTelegramBot, {TtgExceptionManagerUI,}
     TtgReceiverService, TtgReceiverUI]);
 end;
 

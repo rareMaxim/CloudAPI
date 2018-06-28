@@ -584,7 +584,7 @@ begin
   if Self.Entities = nil then
     Exit;
   for LEnt in Self.Entities do
-    if (LEnt.TypeMessage = TtgMessageEntityType.bot_command) then
+    if (LEnt.TypeMessage = TtgMessageEntityType.BotCommand) then
       if Text.Substring(LEnt.Offset, LEnt.Length).StartsWith(AValue, True) then
         Exit(True);
 end;
@@ -715,36 +715,36 @@ end;
 function TTgMessage.&Type: TtgMessageType;
 begin
   if Audio <> nil then
-    Exit(TtgMessageType.AudioMessage);
+    Exit(TtgMessageType.Audio);
   if Contact <> nil then
-    Exit(TtgMessageType.ContactMessage);
+    Exit(TtgMessageType.Contact);
   if Document <> nil then
-    Exit(TtgMessageType.DocumentMessage);
+    Exit(TtgMessageType.Document);
   if Game <> nil then
-    Exit(TtgMessageType.GameMessage);
+    Exit(TtgMessageType.Game);
   if (Location <> nil) then
-    Exit(TtgMessageType.LocationMessage);
+    Exit(TtgMessageType.Location);
   if (NewChatMember <> nil) or (LeftChatMember <> nil) or ((NewChatPhoto <> nil)
     and (Length(NewChatPhoto) > 0)) or ((NewChatMembers <> nil) and (Length(NewChatMembers)
     > 0)) or (not NewChatTitle.IsEmpty) or DeleteChatPhoto or GroupChatCreated
     or SupergroupChatCreated or ChannelChatCreated or (MigrateToChatId <> 0) or
     (MigrateFromChatId <> 0) or (PinnedMessage <> nil) then
-    Exit(TtgMessageType.ServiceMessage);
+    Exit(TtgMessageType.Service);
   if (Photo <> nil) and (Length(Photo) > 0) then
-    Exit(TtgMessageType.PhotoMessage);
+    Exit(TtgMessageType.Photo);
   if (Sticker <> nil) then
-    Exit(TtgMessageType.StickerMessage);
+    Exit(TtgMessageType.Sticker);
   if (Venue <> nil) then
-    Exit(TtgMessageType.VenueMessage);
+    Exit(TtgMessageType.Venue);
   if (Video <> nil) then
-    Exit(TtgMessageType.VideoMessage);
+    Exit(TtgMessageType.Video);
   if (VideoNote <> nil) then
-    Exit(TtgMessageType.VideoNoteMessage);
+    Exit(TtgMessageType.VideoNote);
   if (Voice <> nil) then
-    Exit(TtgMessageType.VoiceMessage);
+    Exit(TtgMessageType.Voice);
   if not Text.IsEmpty then
-    Exit(TtgMessageType.TextMessage);
-  Result := TtgMessageType.UnknownMessage;
+    Exit(TtgMessageType.Text);
+  Result := TtgMessageType.Unknown;
 end;
 
 function TTgMessage.Audio: ItgAudio;
@@ -1418,27 +1418,30 @@ var
   LValue: string;
 begin
   LValue := ToSimpleType<string>('type');
-  Result := TtgMessageEntityType.N_A;
   if LValue = 'mention' then
-    Result := TtgMessageEntityType.mention
+    Result := TtgMessageEntityType.Mention
   else if LValue = 'hashtag' then
-    Result := TtgMessageEntityType.hashtag
+    Result := TtgMessageEntityType.Hashtag
   else if LValue = 'bot_command' then
-    Result := TtgMessageEntityType.bot_command
+    Result := TtgMessageEntityType.BotCommand
   else if LValue = 'url' then
     Result := TtgMessageEntityType.Url
   else if LValue = 'bold' then
-    Result := TtgMessageEntityType.bold
+    Result := TtgMessageEntityType.Bold
   else if LValue = 'italic' then
-    Result := TtgMessageEntityType.italic
+    Result := TtgMessageEntityType.Italic
   else if LValue = 'code' then
-    Result := TtgMessageEntityType.code
+    Result := TtgMessageEntityType.Code
   else if LValue = 'pre' then
-    Result := TtgMessageEntityType.pre
+    Result := TtgMessageEntityType.Pre
   else if LValue = 'text_link' then
-    Result := TtgMessageEntityType.text_link
+    Result := TtgMessageEntityType.TextLink
   else if LValue = 'text_mention' then
-    Result := TtgMessageEntityType.text_mention
+    Result := TtgMessageEntityType.TextMention
+  else if LValue = 'email' then
+    Result := TtgMessageEntityType.Email
+  else
+    raise Exception.CreateFmt('Cant parse Entity: %S', [LValue]);
 end;
 
 function TtgMessageEntity.Url: string;

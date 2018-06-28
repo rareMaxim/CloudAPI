@@ -517,7 +517,11 @@ begin
       Result := ID.ToString
   end
   else
+  begin
+    if not Username.StartsWith('@') then
+      Username := '@' + Username;
     Result := Username;
+  end;
 end;
 
 class operator TtgUserLink.Implicit(AID: Int64): TtgUserLink;
