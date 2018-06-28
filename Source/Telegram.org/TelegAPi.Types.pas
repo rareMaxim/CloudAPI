@@ -173,10 +173,19 @@ type
 
   ItgVenue = interface
     ['{26E74395-EAA1-4668-BB6A-A2B8F61DE6BF}']
-    function Location: ItgLocation;
-    function Title: string;
-    function Address: string;
-    function FoursquareId: string;
+    function GetLocation: ItgLocation;
+    procedure SetLocation(const AValue: ItgLocation);
+    function GetTitle: string;
+    procedure SetTitle(const AValue: string);
+    function GetAddress: string;
+    procedure SetAddress(const AValue: string);
+    function GetFoursquareId: string;
+    procedure SetFoursquareId(const AValue: string);
+  //
+    property Location: ItgLocation read GetLocation write SetLocation;
+    property Title: string read GetTitle write SetTitle;
+    property Address: string read GetAddress write SetAddress;
+    property FoursquareId: string read GetFoursquareId write SetFoursquareId;
   end;
 
   ItgAnimation = interface

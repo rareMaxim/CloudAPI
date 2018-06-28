@@ -115,13 +115,11 @@ begin
    // LEntityData.Add(TtgMessageEntityType.Bold, '<strong>strong</strong>');
     LEntityData.Add(TtgMessageEntityType.italic, '<i>italic</i>');
    // LEntityData.Add(TtgMessageEntityType.italic, '<em>&lt;em&gt;</em>');
-    LEntityData.Add(TtgMessageEntityType.TextLink,
-      '<a href="https://telegram.org/">inline url to Telegram.org</a>');
+    LEntityData.Add(TtgMessageEntityType.TextLink, '<a href="https://telegram.org/">inline url to Telegram.org</a>');
     LEntityData.Add(TtgMessageEntityType.TextMention, string.Format('<a href="tg://user?id=%d">UserMention</a>',
       [TestConfig.UserId]));
     LEntityData.Add(TtgMessageEntityType.code, 'inline <code>begin end.</code>');
-    LEntityData.Add(TtgMessageEntityType.pre,
-      '<pre>pre-formatted fixed-width code block</pre>');
+    LEntityData.Add(TtgMessageEntityType.pre, '<pre>pre-formatted fixed-width code block</pre>');
     LMessage := FBot.SendMessage(//
       TestConfig.UserId, //
       string.Join(#13#10, LEntityData.Values.ToArray), //
@@ -150,13 +148,11 @@ begin
   try
     LEntityData.Add(TtgMessageEntityType.Bold, '*bold*');
     LEntityData.Add(TtgMessageEntityType.italic, '_italic_');
-    LEntityData.Add(TtgMessageEntityType.TextLink,
-      '[inline url to Telegram.org](https://telegram.org/)');
+    LEntityData.Add(TtgMessageEntityType.TextLink, '[inline url to Telegram.org](https://telegram.org/)');
     LEntityData.Add(TtgMessageEntityType.TextMention, string.Format('[UserMention](tg://user?id=%d)',
       [TestConfig.UserId]));
     LEntityData.Add(TtgMessageEntityType.code, 'inline `begin end.`');
-    LEntityData.Add(TtgMessageEntityType.pre,
-      '```pre-formatted fixed-width code block```');
+    LEntityData.Add(TtgMessageEntityType.pre, '```pre-formatted fixed-width code block```');
     LMessage := FBot.SendMessage(//
       TestConfig.UserId, //
       string.Join(#13#10, LEntityData.Values.ToArray), //

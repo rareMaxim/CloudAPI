@@ -626,19 +626,20 @@ function TTelegramBot.SendVenue(const ChatId: TtgUserLink; const Venue: TtgVenue
   const DisableNotification: Boolean; const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
 begin
   Logger.Enter(Self, 'SendVenue');
-  Result := TTgMessage.Create(GetRequest.SetMethod('sendVenue') //
-    .AddParameter('chat_id', ChatId.ToString, '', True, TStoreFormat.InFormData)
-    //
-    .AddParameter('latitude', Venue.Location.Latitude, 0, True, TStoreFormat.InFormData) //
-    .AddParameter('longitude', Venue.Location.Longitude, 0, True, TStoreFormat.InFormData) //
-    .AddParameter('title', Venue.Title, '', True, TStoreFormat.InFormData) //
-    .AddParameter('address', Venue.Address, '', True, TStoreFormat.InFormData)
-    //
-    .AddParameter('foursquare_id', Venue.FoursquareId, '', False, TStoreFormat.InFormData) //
-    .AddParameter('disable_notification', DisableNotification, False, False, TStoreFormat.InFormData) //
-    .AddParameter('reply_to_message_id', ReplyToMessageId, 0, False, TStoreFormat.InFormData) //
-    .AddParameter('reply_markup', TInterfacedObject(ReplyMarkup), nil, False, TStoreFormat.InFormData) //
-    .ExecuteAsString);
+  with GetRequest do
+  begin
+    SetMethod('sendVenue');
+    AddParameter('chat_id', ChatId.ToString, '', True, TStoreFormat.InFormData);
+    AddParameter('latitude', Venue.Location.Latitude, 0, True, TStoreFormat.InFormData);
+    AddParameter('longitude', Venue.Location.Longitude, 0, True, TStoreFormat.InFormData);
+    AddParameter('title', Venue.Title, '', True, TStoreFormat.InFormData);
+    AddParameter('address', Venue.Address, '', True, TStoreFormat.InFormData);
+    AddParameter('foursquare_id', Venue.FoursquareId, '', False, TStoreFormat.InFormData);
+    AddParameter('disable_notification', DisableNotification, False, False, TStoreFormat.InFormData);
+    AddParameter('reply_to_message_id', ReplyToMessageId, 0, False, TStoreFormat.InFormData);
+    AddParameter('reply_markup', TInterfacedObject(ReplyMarkup), nil, False, TStoreFormat.InFormData);
+    Result := TTgMessage.Create(ExecuteAsString);
+  end;
   Logger.Leave(Self, 'SendVenue');
 end;
 

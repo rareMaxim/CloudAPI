@@ -1,1 +1,17 @@
-﻿
+﻿<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<test-results name="C:\Users\Зайченок\Desktop\Максим\Git\cloudapi\Test\Telegram\Win32\Debug\TelegaTest.exe" total="1" errors="0" failures="0" ignored="0" inconclusive="0" not-run="0" skipped="0" invalid="0" date="2018-06-29" time="19.376">
+  <culture-info current-culture="en" current-uiculture="en" />
+  <test-suite type="Assembly" name="TelegaTest.exe" executed="true" result="Success" success="True" time="19.376" asserts="0">
+    <results>
+        <test-suite type="Namespace" name="Test" executed="true" result="Success" success="True" time="19.376" asserts="0" >
+          <results>
+              <test-suite type="Fixture" name="TSendingVenueMessageTests" executed="True" result="Success" success="True" time="19.376" >
+                <results>
+                  <test-case name="Send_Venue" executed="True" result="Success" success="True" time="19.342" asserts="0" />
+                </results>
+              </test-suite>
+          </results>
+        </test-suite>
+    </results>
+  </test-suite>
+</test-results>

@@ -14,7 +14,8 @@ uses
   Test.GettingUpdates in 'Test.GettingUpdates.pas',
   Test.Config in 'Test.Config.pas',
   Test.TextMessage in 'Test.TextMessage.pas',
-  Test.SendVideo in 'Test.SendVideo.pas';
+  Test.SendVideo in 'Test.SendVideo.pas',
+  Test.SendingVenueMessage in 'Test.SendingVenueMessage.pas';
 
 var
   runner: ITestRunner;

@@ -172,11 +172,20 @@ type
   end;
 
   TtgVenue = class(TBaseJson, ItgVenue)
+  private
+    function GetLocation: ItgLocation;
+    procedure SetLocation(const AValue: ItgLocation);
+    function GetTitle: string;
+    procedure SetTitle(const AValue: string);
+    function GetAddress: string;
+    procedure SetAddress(const AValue: string);
+    function GetFoursquareId: string;
+    procedure SetFoursquareId(const AValue: string);
   public
-    function Location: ItgLocation;
-    function Title: string;
-    function Address: string;
-    function FoursquareId: string;
+    property Location: ItgLocation read GetLocation write SetLocation;
+    property Title: string read GetTitle write SetTitle;
+    property Address: string read GetAddress write SetAddress;
+    property FoursquareId: string read GetFoursquareId write SetFoursquareId;
   end;
 
   TtgAnimation = class(TBaseJson, ItgAnimation)
@@ -913,6 +922,7 @@ end;
 
 constructor TtgLocation.Create(const ALongitude, ALatitude: Single);
 begin
+  inherited Create('{}');
   SetLongitude(ALongitude);
   SetLatitude(ALatitude);
 end;
@@ -934,12 +944,12 @@ end;
 
 procedure TtgLocation.SetLatitude(const Value: Single);
 begin
-  GetJson.AddPair('latitude', TJSONNumber.Create(Value));
+  Write('latitude', TJSONNumber.Create(Value));
 end;
 
 procedure TtgLocation.SetLongitude(const Value: Single);
 begin
-  GetJson.AddPair('longitude', TJSONNumber.Create(Value));
+  Write('longitude', TJSONNumber.Create(Value));
 end;
 
 { TtgStickerSet }
@@ -1665,24 +1675,44 @@ end;
 
 { TtgVenue }
 
-function TtgVenue.Address: string;
+function TtgVenue.GetAddress: string;
 begin
   Result := ToSimpleType<string>('address');
 end;
 
-function TtgVenue.FoursquareId: string;
+function TtgVenue.GetFoursquareId: string;
 begin
   Result := ToSimpleType<string>('foursquare_id');
 end;
 
-function TtgVenue.Location: ItgLocation;
+function TtgVenue.GetLocation: ItgLocation;
 begin
   Result := ToClass<TtgLocation>('location');
 end;
 
-function TtgVenue.Title: string;
+function TtgVenue.GetTitle: string;
 begin
   Result := ToSimpleType<string>('title');
+end;
+
+procedure TtgVenue.SetAddress(const AValue: string);
+begin
+  Write('address', AValue);
+end;
+
+procedure TtgVenue.SetFoursquareId(const AValue: string);
+begin
+  Write('foursquare_id', AValue);
+end;
+
+procedure TtgVenue.SetLocation(const AValue: ItgLocation);
+begin
+  Write('location',  (AValue as TtgLocation).GetJson);
+end;
+
+procedure TtgVenue.SetTitle(const AValue: string);
+begin
+  Write('title', AValue);
 end;
 
 { TtgVideoNote }

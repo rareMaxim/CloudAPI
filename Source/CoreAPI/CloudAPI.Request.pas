@@ -437,8 +437,8 @@ begin
 end;
 
 function TApiRequest.ExecuteAsBool: Boolean;
-var
-  LJson: TBaseJson;
+//var
+//  LJson: TBaseJson;
 begin
   Result := ExecuteAsString = 'true';
   // LJson := TBaseJson.Create(ExecuteAsString);

@@ -25,7 +25,8 @@ type
     function ToPairs(const AKey: string): TArray<TPair<string, string>>; overload;
     function ToPairs<TI: IInterface>(TgClass: TBaseJsonClass; const AKey: string): TArray<TPair<string, TI>>; overload;
     function ToPairsAsArray<TI: IInterface>(TgClass: TBaseJsonClass; const AKey: string): TArray<TI>;
-    procedure Write(const AKey, AValue: string);
+    procedure Write(const AKey, AValue: string); overload;
+    procedure Write(const AKey:string; AValue: TJSONValue); overload;
     procedure SetJson(const AJson: string);
     function AsJson: string;
     function AsBoolean: Boolean;
@@ -344,14 +345,26 @@ begin
   raise Exception.Create('Telegram method not supported in TelegaPi Library. Sorry.');
 end;
 
-procedure TBaseJson.Write(const AKey, AValue: string);
+
+
+procedure TBaseJson.Write(const AKey: string; AValue: TJSONValue);
 var
-  JoX: TJSONPair;
+  i: Integer;
 begin
-  JoX := FJSON.GetValue<TJSONPair>(AKey);
-  if Assigned(JoX.JsonValue) then
-    JoX.JsonValue.Free;
-  JoX.JsonValue := TJSONString.Create(AValue);
+  for i := 0 to FJSON.Count - 1 do
+    if FJSON.Pairs[i].JsonString.Value = AKey then
+    begin
+      FJSON.Pairs[i].JsonValue := AValue;
+      FJsonRaw := FJSON.ToJSON;
+      Exit;
+    end;
+  FJSON.AddPair(AKey, AValue);
+  FJsonRaw := FJSON.ToJSON;
+end;
+
+procedure TBaseJson.Write(const AKey, AValue: string);
+begin
+  Write(AKey, TJSONString.Create(AValue));
 end;
 
 end.
