@@ -18,7 +18,8 @@ uses
   Test.SendVideo in 'Test.SendVideo.pas',
   Test.TextMessage in 'Test.TextMessage.pas',
   Tests.SendingDocumentMessage in 'Tests.SendingDocumentMessage.pas',
-  SendingContactMessageTests in 'SendingContactMessageTests.pas';
+  SendingContactMessageTests in 'SendingContactMessageTests.pas',
+  SendingAudioMessageTests in 'SendingAudioMessageTests.pas';
 
 var
   runner: ITestRunner;

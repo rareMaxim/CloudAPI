@@ -18,6 +18,9 @@ type
   public
     type
       Audio = class
+        class function AudioDir: string;
+        class function CantinaRagMp3: string;
+        class function TestOgg: string;
       end;
 
       Video = class
@@ -116,6 +119,23 @@ end;
 class function TTestConst.Documents.Hamlet: string;
 begin
   Result := TTestConst.Documents.DocumentDir + 'hamlet.pdf';
+end;
+
+{ TTestConst.Audio }
+
+class function TTestConst.Audio.AudioDir: string;
+begin
+  Result := TTestConst.Files + 'Audio\';
+end;
+
+class function TTestConst.Audio.CantinaRagMp3: string;
+begin
+  Result := TTestConst.Audio.AudioDir + 'Jackson F Smith - Cantina Rag.mp3';
+end;
+
+class function TTestConst.Audio.TestOgg: string;
+begin
+  Result := TTestConst.Audio.AudioDir + 'Test.ogg';
 end;
 
 initialization

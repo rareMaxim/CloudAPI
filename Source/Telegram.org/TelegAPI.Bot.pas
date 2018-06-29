@@ -350,6 +350,7 @@ type
       const ParseMode: TtgParseMode = TtgParseMode.Default; //
       const Duration: Int64 = 0; //
       const Performer: string = ''; //
+      const Title:string = '';//
       const DisableNotification: Boolean = False; //
       const ReplyToMessageId: Int64 = 0; //
       ReplyMarkup: IReplyMarkup = nil): ITgMessage;

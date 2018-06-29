@@ -75,6 +75,7 @@ type
       const ParseMode: TtgParseMode = TtgParseMode.Default; //
       const Duration: Int64 = 0; //
       const Performer: string = ''; //
+      const Title: string = ''; //
       const DisableNotification: Boolean = False; //
       const ReplyToMessageId: Int64 = 0; //
       ReplyMarkup: IReplyMarkup = nil): ITgMessage;
@@ -708,23 +709,24 @@ end;
 
 function TTelegramBot.SendAudio(const ChatId: TtgUserLink; const Audio:
   TFileToSend; const Caption: string; const ParseMode: TtgParseMode; const
-  Duration: Int64; const Performer: string; const DisableNotification: Boolean;
-  const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
+  Duration: Int64; const Performer, Title: string; const DisableNotification:
+  Boolean; const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
 begin
   Logger.Enter(Self, 'SendAudio');
   with GetRequest do
   begin
     SetMethod('sendAudio');
-    AddParameter('chat_id', ChatId.ToString, '', True, TStoreFormat.InFormData);
+    AddParameter('chat_id', ChatId.ToString, '', True, TStoreFormat.InUrl);
     AddParameter('audio', Audio, TFileToSend.Empty, True, TStoreFormat.InFormData);
-    AddParameter('duration', Duration, 0, False, TStoreFormat.InFormData);
-    AddParameter('performer', Performer, '', False, TStoreFormat.InFormData);
-    AddParameter('caption', Caption, '', False, TStoreFormat.InFormData);
-    AddParameter('parse_mode', ParseMode.ToString, '', False, TStoreFormat.InFormData);
-    AddParameter('disable_notification', DisableNotification, False, False, TStoreFormat.InFormData);
-    AddParameter('reply_to_message_id', ReplyToMessageId, 0, False, TStoreFormat.InFormData);
-    AddParameter('reply_markup', TInterfacedObject(ReplyMarkup), nil, False, TStoreFormat.InFormData);
-    Result := TTgMessage.Create(ExecuteAsString)
+    AddParameter('caption', Caption, '', False, TStoreFormat.InUrl);
+    AddParameter('parse_mode', ParseMode.ToString, '', False, TStoreFormat.InUrl);
+    AddParameter('duration', Duration, 0, False, TStoreFormat.InUrl);
+    AddParameter('performer', Performer, '', False, TStoreFormat.InUrl);
+    AddParameter('title', Title, '', False, TStoreFormat.InUrl);
+    AddParameter('disable_notification', DisableNotification, False, False, TStoreFormat.InUrl);
+    AddParameter('reply_to_message_id', ReplyToMessageId, 0, False, TStoreFormat.InUrl);
+    AddParameter('reply_markup', TInterfacedObject(ReplyMarkup), nil, False, TStoreFormat.InUrl);
+    Result := TTgMessage.Create(ExecuteAsString);
   end;
   Logger.Leave(Self, 'SendAudio');
 end;
