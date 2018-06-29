@@ -153,10 +153,20 @@ type
 
   ItgContact = interface
     ['{57113A43-41E0-4846-9CBA-A355400E3938}']
-    function PhoneNumber: string;
-    function FirstName: string;
-    function LastName: string;
-    function UserId: Int64;
+    // private
+    function GetPhoneNumber: string;
+    procedure SetPhoneNumber(const AValue: string);
+    function GetFirstName: string;
+    procedure SetFirstName(const AValue: string);
+    function GetLastName: string;
+    procedure SetLastName(const AValue: string);
+    function GetUserId: Int64;
+    procedure SetUserId(const AValue: Int64);
+    // public
+    property PhoneNumber: string read GetPhoneNumber write SetPhoneNumber;
+    property FirstName: string read GetFirstName write SetFirstName;
+    property LastName: string read GetLastName write SetLastName;
+    property UserId: Int64 read GetUserId write SetUserId;
   end;
 
   ItgLocation = interface

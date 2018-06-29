@@ -4,25 +4,26 @@ interface
 
 uses
   CloudAPI.Logger,
+  CloudAPI.Exception,
   System.SysUtils;
 
 type
   TtgExceptionManagerConsole = class(TLogEmpty)
   private
-    FOnLog: TProc<TLogLevel, string, Exception>;
+    FOnLog: TProc<TLogLevel, string, ECloudApiException>;
   public
-    procedure Log(level: TLogLevel; const msg: string; const e: Exception); override;
-    property OnLog: TProc<TLogLevel, string, Exception> read FOnLog write FOnLog;
+    procedure Log(level: TLogLevel; const msg: string; const e: ECloudApiException); override;
+    property OnLog: TProc<TLogLevel, string, ECloudApiException> read FOnLog write FOnLog;
   end;
 
   TtgOnLog = procedure(ASender: TObject; const Level: TLogLevel; const Msg:
-    string; E: Exception) of object;
+    string; E: ECloudApiException) of object;
 
   TtgExceptionManagerUI = class(TLogEmpty)
   private
     FOnLog: TtgOnLog;
   public
-    procedure Log(level: TLogLevel; const msg: string; const e: Exception); override;
+    procedure Log(level: TLogLevel; const msg: string; const e: ECloudApiException); override;
   published
     property OnLog: TtgOnLog read FOnLog write FOnLog;
   end;
@@ -32,7 +33,7 @@ implementation
 { TtgExceptionManagerConsole }
 
 procedure TtgExceptionManagerConsole.Log(level: TLogLevel; const msg: string;
-  const e: Exception);
+  const e: ECloudApiException);
 begin
   inherited;
   if Assigned(OnLog) then
@@ -44,7 +45,7 @@ end;
 { TtgExceptionManagerUI }
 
 procedure TtgExceptionManagerUI.Log(level: TLogLevel; const msg: string; const e:
-  Exception);
+  ECloudApiException);
 begin
   inherited;
   if Assigned(OnLog) then

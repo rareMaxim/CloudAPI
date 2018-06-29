@@ -190,20 +190,6 @@ type
     property OnStaticFill: TProc read GetOnStaticFill write SetOnStaticFill;
   end;
 
-  ECloudApiException = class(Exception)
-  private
-    FCode: string;
-    FDescription: string;
-    FRequest: IApiRequest;
-  public
-    constructor Create(const ACode, ADescription: string; ARequest: IApiRequest = nil); reintroduce; overload;
-    constructor Create(const ACode: Integer; const ADescription: string;
-      ARequest: IApiRequest = nil); reintroduce; overload;
-    property Code: string read FCode write FCode;
-    property Description: string read FDescription write FDescription;
-    property Request: IApiRequest read FRequest write FRequest;
-  end;
-
   TMultipartFormDataHelper = class helper for TMultipartFormData
     /// <summary>
     /// Add a form data Stream
@@ -223,7 +209,8 @@ type
 implementation
 
 uses
-  System.IOUtils;
+  System.IOUtils,
+  CloudAPI.Exception;
 
 const
   ERR_TWICE_POST_STORE = 'Попытка использовать разные хранилища для Post запроса';
@@ -444,7 +431,6 @@ begin
         OnDataSend(LFullUrl, '', HeadersToString(FStoreInHeader.ToArray));
       Result := FHttpClient.Get(LFullUrl, nil, FStoreInHeader.ToArray);
     end;
-    ClearParams;
   except
     on E: Exception do
       DoHaveException(E);
@@ -454,6 +440,7 @@ begin
     DoHaveException(ECloudApiException.Create(Result.StatusCode, Result.StatusText, Self));
     Exit;
   end;
+  ClearParams;
 end;
 
 function TApiRequest.ExecuteAndReadValue: string;
@@ -462,7 +449,7 @@ var
 begin
   LJson := TBaseJson.Create(ExecuteAsString);
   try
-    Result := LJson.asString;
+    Result := LJson.AsString;
   finally
     LJson.Free;
   end;
@@ -717,21 +704,6 @@ begin
   end;
   if Assigned(AValue.Content) then
     FreeAndNil(AValue.Content);
-end;
-
-{ ECloudApiException }
-
-constructor ECloudApiException.Create(const ACode, ADescription: string; ARequest: IApiRequest);
-begin
-  FCode := ACode;
-  FDescription := ADescription;
-  FRequest := ARequest;
-  inherited Create(FCode + ': ' + Description);
-end;
-
-constructor ECloudApiException.Create(const ACode: Integer; const ADescription: string; ARequest: IApiRequest);
-begin
-  Create(ACode.ToString, ADescription, ARequest);
 end;
 
 end.

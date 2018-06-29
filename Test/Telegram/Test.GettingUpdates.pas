@@ -32,7 +32,7 @@ implementation
 uses
   Test.Config,
   System.SysUtils,
-  CloudAPI.Request;
+  CloudAPI.Exception;
 
 procedure TGettingUpdatesTests.TestApiToken;
 var

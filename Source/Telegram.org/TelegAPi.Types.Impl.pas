@@ -151,11 +151,21 @@ type
   end;
 
   TtgContact = class(TBaseJson, ItgContact)
+  private
+    function GetPhoneNumber: string;
+    procedure SetPhoneNumber(const AValue: string);
+    function GetFirstName: string;
+    procedure SetFirstName(const AValue: string);
+    function GetLastName: string;
+    procedure SetLastName(const AValue: string);
+    function GetUserId: Int64;
+    procedure SetUserId(const AValue: Int64);
   public
-    function PhoneNumber: string;
-    function FirstName: string;
-    function LastName: string;
-    function UserId: Int64;
+    constructor Create(const AFirstName, ALastName, APhoneNumber: string);
+    property PhoneNumber: string read GetPhoneNumber write SetPhoneNumber;
+    property FirstName: string read GetFirstName write SetFirstName;
+    property LastName: string read GetLastName write SetLastName;
+    property UserId: Int64 read GetUserId write SetUserId;
   end;
 
   TtgLocation = class(TBaseJson, ItgLocation)
@@ -1653,24 +1663,52 @@ end;
 
 { TtgContact }
 
-function TtgContact.FirstName: string;
+constructor TtgContact.Create(const AFirstName, ALastName, APhoneNumber: string);
+begin
+  inherited Create();
+  FirstName := AFirstName;
+  LastName := ALastName;
+  PhoneNumber := APhoneNumber;
+end;
+
+function TtgContact.GetFirstName: string;
 begin
   Result := ToSimpleType<string>('first_name');
 end;
 
-function TtgContact.LastName: string;
+function TtgContact.GetLastName: string;
 begin
   Result := ToSimpleType<string>('last_name');
 end;
 
-function TtgContact.PhoneNumber: string;
+function TtgContact.GetPhoneNumber: string;
 begin
   Result := ToSimpleType<string>('phone_number');
 end;
 
-function TtgContact.UserId: Int64;
+function TtgContact.GetUserId: Int64;
 begin
   Result := ToSimpleType<Int64>('user_id');
+end;
+
+procedure TtgContact.SetFirstName(const AValue: string);
+begin
+  Write('first_name', AValue);
+end;
+
+procedure TtgContact.SetLastName(const AValue: string);
+begin
+  Write('last_name', AValue);
+end;
+
+procedure TtgContact.SetPhoneNumber(const AValue: string);
+begin
+  Write('phone_number', AValue);
+end;
+
+procedure TtgContact.SetUserId(const AValue: Int64);
+begin
+  Write('user_id', TJSONNumber.Create(AValue));
 end;
 
 { TtgVenue }
@@ -1707,7 +1745,7 @@ end;
 
 procedure TtgVenue.SetLocation(const AValue: ItgLocation);
 begin
-  Write('location',  (AValue as TtgLocation).GetJson);
+  Write('location', (AValue as TtgLocation).GetJson);
 end;
 
 procedure TtgVenue.SetTitle(const AValue: string);

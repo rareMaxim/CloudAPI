@@ -42,7 +42,7 @@ type
 implementation
 
 uses
-  System.SysUtils;
+  System.SysUtils, CloudAPI.Exception;
 { TTelegramBotBase }
 
 constructor TCloudApiBaseComponent.Create(AOwner: TComponent);
@@ -58,9 +58,9 @@ begin
     procedure(E: Exception)
     begin
       if Assigned(Logger) then
-        Logger.Error('RequestAPI', E)
+        Logger.Error('RequestAPI', E as ECloudApiException)
       else
-        raise E;
+        raise E as ECloudApiException;
     end;
   GetRequest.OnDataReceiveAsString :=
     function(AData: string): string

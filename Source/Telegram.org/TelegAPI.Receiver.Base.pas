@@ -47,6 +47,9 @@ type
 
 implementation
 
+uses
+  CloudAPI.Exception;
+
 
 { TTgBotReceiverBase }
 
@@ -100,7 +103,7 @@ begin
     FBotDonor.AssignTo(LBot);
     Result := LBot.GetUpdates(MessageOffset, 100, 0, AllowedUpdates);
   except
-    on E: Exception do
+    on E: ECloudApiException do
       Bot.Logger.Fatal('TTgBotReceiverBase.ReadUpdates', E)
   end;
 end;

@@ -11,12 +11,14 @@ uses
   DUnitX.Loggers.Console,
   DUnitX.Loggers.Xml.NUnit,
   DUnitX.TestFramework,
-  Test.GettingUpdates in 'Test.GettingUpdates.pas',
+  SendingPhotoMessageTests in 'SendingPhotoMessageTests.pas',
   Test.Config in 'Test.Config.pas',
-  Test.TextMessage in 'Test.TextMessage.pas',
-  Test.SendVideo in 'Test.SendVideo.pas',
+  Test.GettingUpdates in 'Test.GettingUpdates.pas',
   Test.SendingVenueMessage in 'Test.SendingVenueMessage.pas',
-  SendingPhotoMessageTests in 'SendingPhotoMessageTests.pas';
+  Test.SendVideo in 'Test.SendVideo.pas',
+  Test.TextMessage in 'Test.TextMessage.pas',
+  Tests.SendingDocumentMessage in 'Tests.SendingDocumentMessage.pas',
+  SendingContactMessageTests in 'SendingContactMessageTests.pas';
 
 var
   runner: ITestRunner;

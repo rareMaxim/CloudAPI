@@ -4,7 +4,8 @@ interface
 
 uses
   System.Classes,
-  System.SysUtils;
+  System.SysUtils,
+  CloudAPI.Exception;
 
 type
   TLogLevel = (Unknown, Trace, Debug, Text, Info, Warn, Error, Fatal);
@@ -19,25 +20,21 @@ type
     ['{0FAACA17-5BE8-4676-BD21-C010208C48D5}']
     {$REGION 'Log'}
     procedure Log(level: TLogLevel; const msg: string); overload;
-    procedure Log(level: TLogLevel; const msg: string; const e: Exception); overload;
-    procedure Log(level: TLogLevel; const fmt: string; const args: array of
-      const); overload;
-    procedure Log(level: TLogLevel; const fmt: string; const args: array of
-      const; const e: Exception); overload;
+    procedure Log(level: TLogLevel; const msg: string; const e:ECloudApiException); overload;
+    procedure Log(level: TLogLevel; const fmt: string; const args: array of const); overload;
+    procedure Log(level: TLogLevel; const fmt: string; const args: array of const; const e:ECloudApiException); overload;
     {$ENDREGION}
     {$REGION 'Fatal'}
     procedure Fatal(const msg: string); overload;
-    procedure Fatal(const msg: string; const e: Exception); overload;
+    procedure Fatal(const msg: string; const e:ECloudApiException); overload;
     procedure Fatal(const fmt: string; const args: array of const); overload;
-    procedure Fatal(const fmt: string; const args: array of const; const e:
-      Exception); overload;
+    procedure Fatal(const fmt: string; const args: array of const; const e:ECloudApiException); overload;
     {$ENDREGION}
     {$REGION 'Error'}
     procedure Error(const msg: string); overload;
-    procedure Error(const msg: string; const e: Exception); overload;
+    procedure Error(const msg: string; const e:ECloudApiException); overload;
     procedure Error(const fmt: string; const args: array of const); overload;
-    procedure Error(const fmt: string; const args: array of const; const e:
-      Exception); overload;
+    procedure Error(const fmt: string; const args: array of const; const e:ECloudApiException); overload;
     {$ENDREGION}
     {$REGION 'Enter'}
     procedure Enter(const methodName: string); overload;
@@ -52,49 +49,40 @@ type
   TLogAbstract = class(TComponent, ILogger)
   public
 {$REGION 'Log'}
-    procedure Log(level: TLogLevel; const msg: string; const e: Exception);
-      overload; virtual; abstract;
+    procedure Log(level: TLogLevel; const msg: string; const e: ECloudApiException); overload; virtual; abstract;
     procedure Log(level: TLogLevel; const msg: string); overload;
+    procedure Log(level: TLogLevel; const fmt: string; const args: array of const); overload;
     procedure Log(level: TLogLevel; const fmt: string; const args: array of
-      const); overload;
-    procedure Log(level: TLogLevel; const fmt: string; const args: array of
-      const; const e: Exception); overload;
+      const; const e: ECloudApiException); overload;
 {$ENDREGION}
 {$REGION 'Fatal'}
     procedure Fatal(const msg: string); overload;
-    procedure Fatal(const msg: string; const e: Exception); overload;
+    procedure Fatal(const msg: string; const e:ECloudApiException); overload;
     procedure Fatal(const fmt: string; const args: array of const); overload;
-    procedure Fatal(const fmt: string; const args: array of const; const e:
-      Exception); overload;
+    procedure Fatal(const fmt: string; const args: array of const; const e:ECloudApiException); overload;
 {$ENDREGION}
 {$REGION 'Error'}
     procedure Error(const msg: string); overload;
-    procedure Error(const msg: string; const e: Exception); overload;
+    procedure Error(const msg: string; const e:ECloudApiException); overload;
     procedure Error(const fmt: string; const args: array of const); overload;
-    procedure Error(const fmt: string; const args: array of const; const e:
-      Exception); overload;
+    procedure Error(const fmt: string; const args: array of const; const e:ECloudApiException); overload;
 {$ENDREGION}
 
 {$REGION 'Enter'}
     procedure Enter(const methodName: string); overload;
-    procedure Enter(const instance: TObject; const methodName: string); overload;
-      virtual; abstract;
+    procedure Enter(const instance: TObject; const methodName: string); overload; virtual; abstract;
 {$ENDREGION}
 {$REGION 'Leave'}
     procedure Leave(const methodName: string); overload;
-    procedure Leave(const instance: TObject; const methodName: string); overload;
-      virtual; abstract;
+    procedure Leave(const instance: TObject; const methodName: string); overload; virtual; abstract;
 {$ENDREGION}
   end;
 
   TLogEmpty = class(TLogAbstract)
   public
-    procedure Log(level: TLogLevel; const msg: string; const e: Exception);
-      overload; override;
-    procedure Enter(const instance: TObject; const methodName: string); overload;
-      override;
-    procedure Leave(const instance: TObject; const methodName: string); overload;
-      override;
+    procedure Log(level: TLogLevel; const msg: string; const e: ECloudApiException); overload; override;
+    procedure Enter(const instance: TObject; const methodName: string); overload; override;
+    procedure Leave(const instance: TObject; const methodName: string); overload; override;
   end;
 
 implementation
@@ -103,14 +91,12 @@ implementation
 { TLogAbstract }
 {$REGION 'Log'}
 
-procedure TLogAbstract.Log(level: TLogLevel; const fmt: string; const args:
-  array of const; const e: Exception);
+procedure TLogAbstract.Log(level: TLogLevel; const fmt: string; const args: array of const; const e:ECloudApiException);
 begin
   Log(level, string.Format(fmt, args), e);
 end;
 
-procedure TLogAbstract.Log(level: TLogLevel; const fmt: string; const args:
-  array of const);
+procedure TLogAbstract.Log(level: TLogLevel; const fmt: string; const args: array of const);
 begin
   Log(level, fmt, args, nil);
 end;
@@ -128,7 +114,7 @@ begin
   Fatal(msg, nil);
 end;
 
-procedure TLogAbstract.Fatal(const msg: string; const e: Exception);
+procedure TLogAbstract.Fatal(const msg: string; const e:ECloudApiException);
 begin
   Log(TLogLevel.Fatal, msg, e);
 end;
@@ -138,8 +124,7 @@ begin
   Fatal(fmt, args, nil);
 end;
 
-procedure TLogAbstract.Fatal(const fmt: string; const args: array of const;
-  const e: Exception);
+procedure TLogAbstract.Fatal(const fmt: string; const args: array of const; const e:ECloudApiException);
 begin
   Fatal(string.Format(fmt, args), e);
 end;
@@ -152,7 +137,7 @@ begin
   Error(msg, nil);
 end;
 
-procedure TLogAbstract.Error(const msg: string; const e: Exception);
+procedure TLogAbstract.Error(const msg: string; const e:ECloudApiException);
 begin
   Log(TLogLevel.Error, msg, e);
 end;
@@ -162,8 +147,7 @@ begin
   Error(fmt, args, nil);
 end;
 
-procedure TLogAbstract.Error(const fmt: string; const args: array of const;
-  const e: Exception);
+procedure TLogAbstract.Error(const fmt: string; const args: array of const; const e:ECloudApiException);
 begin
   Error(string.Format(fmt, args), e);
 end;
@@ -198,7 +182,7 @@ begin
   inherited;
 end;
 
-procedure TLogEmpty.Log(level: TLogLevel; const msg: string; const e: Exception);
+procedure TLogEmpty.Log(level: TLogLevel; const msg: string; const e:ECloudApiException);
 begin
   inherited;
 // nothing

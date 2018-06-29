@@ -31,6 +31,11 @@ type
         class function Bot: string;
         class function Logo: string;
       end;
+
+      Documents = class
+        class function DocumentDir: string;
+        class function Hamlet: string;
+      end;
   public
     class function TestPath: string;
     class function Files: string;
@@ -99,6 +104,18 @@ end;
 class function TTestConst.Photos.PhotoDir: string;
 begin
   Result := TTestConst.Files + 'Photo\';
+end;
+
+{ TTestConst.Documents }
+
+class function TTestConst.Documents.DocumentDir: string;
+begin
+  Result := TTestConst.Files + 'Document\';
+end;
+
+class function TTestConst.Documents.Hamlet: string;
+begin
+  Result := TTestConst.Documents.DocumentDir + 'hamlet.pdf';
 end;
 
 initialization
