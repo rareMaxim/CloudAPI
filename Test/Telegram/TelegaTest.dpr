@@ -15,7 +15,8 @@ uses
   Test.Config in 'Test.Config.pas',
   Test.TextMessage in 'Test.TextMessage.pas',
   Test.SendVideo in 'Test.SendVideo.pas',
-  Test.SendingVenueMessage in 'Test.SendingVenueMessage.pas';
+  Test.SendingVenueMessage in 'Test.SendingVenueMessage.pas',
+  SendingPhotoMessageTests in 'SendingPhotoMessageTests.pas';
 
 var
   runner: ITestRunner;

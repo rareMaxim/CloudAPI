@@ -74,6 +74,7 @@ end;
 
 procedure TGettingUpdatesTests.TearDown;
 begin
+  (FBot as TTelegramBot).Free;
   FBot := nil;
 end;
 

@@ -23,7 +23,13 @@ type
       Video = class
         class function VideoDir: string;
         class function MoonLanding: string;
-        class function GoldenRatio:string;
+        class function GoldenRatio: string;
+      end;
+
+      Photos = class
+        class function PhotoDir: string;
+        class function Bot: string;
+        class function Logo: string;
       end;
   public
     class function TestPath: string;
@@ -65,7 +71,7 @@ end;
 
 class function TTestConst.Video.GoldenRatio: string;
 begin
-   Result := VideoDir + 'golden-ratio-240px.mp4';
+  Result := VideoDir + 'golden-ratio-240px.mp4';
 end;
 
 class function TTestConst.Video.MoonLanding: string;
@@ -76,6 +82,23 @@ end;
 class function TTestConst.Video.VideoDir: string;
 begin
   Result := TTestConst.Files + 'Video\';
+end;
+
+{ TTestConst.Photos }
+
+class function TTestConst.Photos.Bot: string;
+begin
+  Result := TTestConst.Photos.PhotoDir + 'bot.gif';
+end;
+
+class function TTestConst.Photos.Logo: string;
+begin
+  Result := TTestConst.Photos.PhotoDir + 'logo.png';
+end;
+
+class function TTestConst.Photos.PhotoDir: string;
+begin
+  Result := TTestConst.Files + 'Photo\';
 end;
 
 initialization

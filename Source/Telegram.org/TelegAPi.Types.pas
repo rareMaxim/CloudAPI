@@ -162,13 +162,13 @@ type
   ItgLocation = interface
     ['{6FE14ED9-0C53-4C24-8033-390A5F31B414}']
     //
-    function GetLongitude: Single;
-    function GetLatitude: Single;
-    procedure SetLatitude(const Value: Single);
-    procedure SetLongitude(const Value: Single);
+    function GetLongitude: Double;
+    function GetLatitude: Double;
+    procedure SetLatitude(const Value: Double);
+    procedure SetLongitude(const Value: Double);
     //
-    property Longitude: Single read GetLongitude write SetLongitude;
-    property Latitude: Single read GetLatitude write SetLatitude;
+    property Longitude: Double read GetLongitude write SetLongitude;
+    property Latitude: Double read GetLatitude write SetLatitude;
   end;
 
   ItgVenue = interface

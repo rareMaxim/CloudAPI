@@ -54,7 +54,6 @@ end;
 procedure TTestTextMessage.Setup;
 begin
   FBot := TTelegramBot.Create(TestConfig.Token);
-
 end;
 
 procedure TTestTextMessage.Should_Parse_Message_Entities_Into_Values;
@@ -85,6 +84,7 @@ end;
 
 procedure TTestTextMessage.TearDown;
 begin
+  (FBot as TTelegramBot).Free;
   FBot := nil;
 end;
 
@@ -162,10 +162,6 @@ begin
     begin
       Assert.IsTrue(LEntityData.ContainsKey(LEnt.TypeMessage));
     end;
-//    for LVal in LEntityData.Values do
-//    begin
-//     Assert.contains(LMessage.Text, LVal);
-//    end;
   finally
     LEntityData.Free;
   end;

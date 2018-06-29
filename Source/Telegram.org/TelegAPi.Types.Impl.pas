@@ -160,15 +160,15 @@ type
 
   TtgLocation = class(TBaseJson, ItgLocation)
   private
-    function GetLongitude: Single;
-    function GetLatitude: Single;
-    procedure SetLatitude(const Value: Single);
-    procedure SetLongitude(const Value: Single);
+    function GetLongitude: Double;
+    function GetLatitude: Double;
+    procedure SetLatitude(const Value: Double);
+    procedure SetLongitude(const Value: Double);
   public
-    constructor Create(const ALongitude, ALatitude: Single); reintroduce; overload;
+    constructor Create(const ALongitude, ALatitude: Double); reintroduce; overload;
     constructor Create(const AJson: string); overload; override;
-    property Longitude: Single read GetLongitude write SetLongitude;
-    property Latitude: Single read GetLatitude write SetLatitude;
+    property Longitude: Double read GetLongitude write SetLongitude;
+    property Latitude: Double read GetLatitude write SetLatitude;
   end;
 
   TtgVenue = class(TBaseJson, ItgVenue)
@@ -731,6 +731,8 @@ begin
     Exit(TtgMessageType.Document);
   if Game <> nil then
     Exit(TtgMessageType.Game);
+  if (Venue <> nil) then
+    Exit(TtgMessageType.Venue);
   if (Location <> nil) then
     Exit(TtgMessageType.Location);
   if (NewChatMember <> nil) or (LeftChatMember <> nil) or ((NewChatPhoto <> nil)
@@ -743,8 +745,6 @@ begin
     Exit(TtgMessageType.Photo);
   if (Sticker <> nil) then
     Exit(TtgMessageType.Sticker);
-  if (Venue <> nil) then
-    Exit(TtgMessageType.Venue);
   if (Video <> nil) then
     Exit(TtgMessageType.Video);
   if (VideoNote <> nil) then
@@ -920,9 +920,9 @@ end;
 
 { TtgLocation }
 
-constructor TtgLocation.Create(const ALongitude, ALatitude: Single);
+constructor TtgLocation.Create(const ALongitude, ALatitude: Double);
 begin
-  inherited Create('{}');
+  inherited Create;
   SetLongitude(ALongitude);
   SetLatitude(ALatitude);
 end;
@@ -932,22 +932,22 @@ begin
   inherited Create(AJson);
 end;
 
-function TtgLocation.GetLatitude: Single;
+function TtgLocation.GetLatitude: Double;
 begin
-  Result := ToSimpleType<Single>('latitude');
+  Result := ToSimpleType<Double>('latitude');
 end;
 
-function TtgLocation.GetLongitude: Single;
+function TtgLocation.GetLongitude: Double;
 begin
-  Result := ToSimpleType<Single>('longitude');
+  Result := ToSimpleType<Double>('longitude');
 end;
 
-procedure TtgLocation.SetLatitude(const Value: Single);
+procedure TtgLocation.SetLatitude(const Value: Double);
 begin
   Write('latitude', TJSONNumber.Create(Value));
 end;
 
-procedure TtgLocation.SetLongitude(const Value: Single);
+procedure TtgLocation.SetLongitude(const Value: Double);
 begin
   Write('longitude', TJSONNumber.Create(Value));
 end;

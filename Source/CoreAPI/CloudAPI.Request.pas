@@ -29,8 +29,7 @@ type
     class operator Implicit(AValue: string): TFileToSend;
     class operator Implicit(AValue: TStream): TFileToSend;
         {$ENDREGION}
-    class function Create(const ATag: TFileToSendTag = TFileToSendTag.ERROR;
-      const AData: string = ''; AContent: TStream = nil): TFileToSend; static;
+    class function Create(const ATag: TFileToSendTag; const AData: string; AContent: TStream): TFileToSend; static;
     class function FromFile(const AFileName: string): TFileToSend; static;
     class function FromID(const AID: string): TFileToSend; static;
     class function FromURL(const AURL: string): TFileToSend; static;
@@ -75,7 +74,7 @@ type
     function AddParameter(const AKey: string; const AValue, ADefaultValue:
       TObject; const ARequired: Boolean; const AStoreFormat: TStoreFormat = TStoreFormat.Auto): IApiRequest; overload;
     function AddParameter(const AKey: string; const AValue, ADefaultValue:
-      Single; const ARequired: Boolean; const AStoreFormat: TStoreFormat = TStoreFormat.Auto): IApiRequest; overload;
+      Double; const ARequired: Boolean; const AStoreFormat: TStoreFormat = TStoreFormat.Auto): IApiRequest; overload;
     function AddParameter(const AKey: string; const AValue, ADefaultValue:
       Boolean; const ARequired: Boolean; const AStoreFormat: TStoreFormat = TStoreFormat.Auto): IApiRequest; overload;
     function AddParameter(const AKey: string; AValue, ADefaultValue: TFileToSend;
@@ -153,12 +152,12 @@ type
     function RaiseArgument(const AValue, ADefaultValue: string; const ARequired: Boolean): Boolean;
     procedure DoStoreParam(const AKey: string; const AValue, ADefaultValue:
       string; const ARequired: Boolean; const AStoreFormat: TStoreFormat = TStoreFormat.Auto);
-    function AddParameter(const AKey: string; const AValue, ADefaultValue:
-      Single; const ARequired: Boolean; const AStoreFormat: TStoreFormat = TStoreFormat.Auto): IApiRequest; overload;
-    function AddParameter(const AKey: string; const AValue, ADefaultValue:
-      Boolean; const ARequired: Boolean; const AStoreFormat: TStoreFormat = TStoreFormat.Auto): IApiRequest; overload;
   public
     {$REGION 'Add Parameter'}
+    function AddParameter(const AKey: string; const AValue, ADefaultValue:
+      Double; const ARequired: Boolean; const AStoreFormat: TStoreFormat = TStoreFormat.Auto): IApiRequest; overload;
+    function AddParameter(const AKey: string; const AValue, ADefaultValue:
+      Boolean; const ARequired: Boolean; const AStoreFormat: TStoreFormat = TStoreFormat.Auto): IApiRequest; overload;
     function AddParameter(const AKey: string; const AValue, ADefaultValue:
       string; const ARequired: Boolean; const AStoreFormat: TStoreFormat = TStoreFormat.Auto): IApiRequest; overload;
     function AddParameter(const AKey: string; const AValue, ADefaultValue: Int64;
@@ -241,7 +240,7 @@ end;
 
 class function TFileToSend.Empty: TFileToSend;
 begin
-  Result := TFileToSend.Create();
+  Result := TFileToSend.Create(TFileToSendTag.ERROR, '', nil);
 end;
 
 class operator TFileToSend.Equal(a, b: TFileToSend): Boolean;
@@ -280,6 +279,7 @@ end;
 
 class operator TFileToSend.Implicit(AValue: string): TFileToSend;
 begin
+  Result.Content := nil;
   Result.Data := AValue;
   if FileExists(AValue) then
     Result.Tag := TFileToSendTag.FromFile
@@ -328,9 +328,14 @@ begin
 end;
 
 function TApiRequest.AddParameter(const AKey: string; const AValue,
-  ADefaultValue: Single; const ARequired: Boolean; const AStoreFormat: TStoreFormat): IApiRequest;
+  ADefaultValue: Double; const ARequired: Boolean; const AStoreFormat: TStoreFormat): IApiRequest;
+const
+  CFORMAT = '##.########';
 begin
-  Result := AddParameter(AKey, AValue.ToString, ADefaultValue.ToString, ARequired, AStoreFormat);
+  Result := AddParameter(AKey, //
+    FormatFloat(CFORMAT, AValue, TFormatSettings.Invariant), //
+    FormatFloat(CFORMAT, ADefaultValue, TFormatSettings.Invariant), //
+    ARequired, AStoreFormat);
 end;
 
 function TApiRequest.ClearParams: IApiRequest;

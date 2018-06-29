@@ -41,7 +41,7 @@ const
 var
   LMessage: ITgMessage;
 begin
-  LMessage := FBot.SendVideo(TestConfig.UserId, TFileToSend.FromFile(TTestConst.Video.MoonLanding),
+  LMessage := FBot.SendVideo(TestConfig.UserId, TTestConst.Video.MoonLanding,
     caption, TtgParseMode.Default, True, duration, width, height);
   Assert.AreEqual(TtgMessageType.Video, LMessage.&Type);
   Assert.AreEqual(caption, LMessage.Caption);
@@ -82,6 +82,7 @@ end;
 
 procedure TTestSendVideo.TearDown;
 begin
+  (FBot as TTelegramBot).Free;
   FBot := nil;
 end;
 
