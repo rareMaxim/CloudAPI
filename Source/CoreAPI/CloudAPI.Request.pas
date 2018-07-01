@@ -169,6 +169,7 @@ type
     {$ENDREGION}
     function ClearParams: IApiRequest;
     function Execute: IHTTPResponse;
+    function TryExecute(var AHttpResponse: IHTTPResponse): Boolean;
     function ExecuteAsString: string;
     function ExecuteAsBytes: TArray<Byte>;
     function ExecuteAndReadValue: string;
@@ -472,15 +473,20 @@ function TApiRequest.ExecuteAsBytes: TArray<Byte>;
 var
   LResponse: IHTTPResponse;
 begin
-  LResponse := Execute;
+  if not TryExecute(LResponse) then
+    Exit(nil);
   LResponse.ContentStream.Position := 0;
   SetLength(Result, LResponse.ContentStream.Size);
   LResponse.ContentStream.Read(Result[0], LResponse.ContentStream.Size);
 end;
 
 function TApiRequest.ExecuteAsString: string;
+var
+  LResponse: IHTTPResponse;
 begin
-  Result := Execute.ContentAsString();
+  if not TryExecute(LResponse) then
+    Exit(string.Empty);
+  Result := LResponse.ContentAsString();
   if Assigned(OnDataReceiveAsString) then
     Result := OnDataReceiveAsString(Result);
 end;
@@ -646,6 +652,12 @@ end;
 procedure TApiRequest.SetStoreUrl(const Value: TStringList);
 begin
   FStoreInUrl := Value;
+end;
+
+function TApiRequest.TryExecute(var AHttpResponse: IHTTPResponse): Boolean;
+begin
+  AHttpResponse := Execute;
+  Result := Assigned(AHttpResponse);
 end;
 
 procedure TApiRequest.SetDomain(const AValue: string);
