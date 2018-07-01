@@ -9,7 +9,9 @@ uses
   System.Classes,
   CloudAPI.Logger,
   CloudAPI.Request,
+  CloudAPI.Exception,
   System.SysUtils,
+  System.Zip,
   TelegAPI.Receiver.Console,
   TelegAPI.Bot,
   TelegAPI.Types.ReplyMarkups,
@@ -21,7 +23,7 @@ uses
 const
   Token = '606359138:AAGUqIymgeLstmDafIjculG9p5zjSg3s_qk';
 
-function CreatePls(const ABitrate: Integer): string;
+function CreatePls(const ABitrate: Integer; var ACount: Integer): string;
 const
   M3U_ITEM = '#EXTINF:-1,%s'#13#10'%s';
 var
@@ -30,13 +32,15 @@ var
   Plt: TStringList;
   LStream: string;
 begin
-  Write('Создаю плейлист с качеством потока: ' + ABitrate.ToString + '... ');
+
+  ACount := 0;
   RR := TRadioRecord.Create(nil);
   Plt := TStringList.Create;
   try
     Plt.Add('#EXTM3U');
     for Station in RR.GetStations do
     begin
+      Inc(ACount);
       case ABitrate of
         32:
           LStream := Station.stream_32;
@@ -54,11 +58,37 @@ begin
     Result := ExtractFilePath(ParamStr(0));
     Result := Result + 'radiorecord' + ABitrate.ToString + '.m3u';
     Plt.SaveToFile(Result);
-    Writeln('Готово');
+
   finally
     RR.Free;
     Plt.Free;
   end;
+end;
+
+function CreateZip(var ACount: Integer): string;
+var
+  LZip: TZipFile;
+begin
+  LZip := TZipFile.Create;
+  try
+    Result := ExtractFilePath(ParamStr(0)) + 'by @radio_record_bot.zip';
+    LZip.Open(Result, TZipMode.zmWrite);
+    LZip.Add(CreatePls(32, ACount));
+    LZip.Add(CreatePls(64, ACount));
+    LZip.Add(CreatePls(128, ACount));
+    LZip.Add(CreatePls(320, ACount));
+    LZip.Close;
+  finally
+    LZip.Free;
+  end;
+end;
+
+function CreateFile(const AData: string; var ACount: Integer): string;
+begin
+  if AData = 'zip' then
+    Result := CreateZip(ACount)
+  else
+    Result := CreatePls(AData.ToInteger, ACount);
 end;
 
 function GetKbBitrate: IReplyMarkup;
@@ -70,6 +100,7 @@ begin
     Kb.AddRow([TtgInlineKeyboardButton.Create('3️⃣2️⃣0️⃣', '320'),
       TtgInlineKeyboardButton.Create('1️⃣2️⃣8️⃣', '128'), TtgInlineKeyboardButton.Create
       ('6️⃣4️⃣ ', '64'), TtgInlineKeyboardButton.Create('3️⃣2️⃣ ', '32')]);
+    Kb.AddRow([TtgInlineKeyboardButton.Create('🗂 ZIP', 'zip')]);
     Result := Kb;
   finally
   //  Kb.Free;
@@ -89,7 +120,7 @@ begin
   try
     LExcp := (LBot as TTelegramBot).Logger as TtgExceptionManagerConsole;
     LExcp.OnLog :=
-      procedure(level: TLogLevel; msg: string; e: Exception)
+      procedure(level: TLogLevel; msg: string; e: ECloudApiException)
       begin
         if level >= TLogLevel.Error then
         begin
@@ -111,12 +142,16 @@ begin
       end;
     LReceiver.OnCallbackQuery :=
       procedure(Qr: ItgCallbackQuery)
-       begin
+      var
+        LCount: Integer;
+      begin
+        Write('Создаю плейлист с качеством потока: ' + Qr.Data + '... ');
         LBot.AnswerCallbackQuery(Qr.ID, 'Секундочку...');
         LBot.SendChatAction(Qr.From.ID, TtgSendChatAction.Upload_document);
         Writeln(Qr.Data);
-        LBot.SendDocument(Qr.From.ID, TFileToSend.FromFile(CreatePls(Qr.Data.ToInteger)));
+        LBot.SendDocument(Qr.From.ID, CreateFile(Qr.Data, LCount), 'Станций: ' + LCount.ToString);
         LBot.AnswerCallbackQuery(Qr.ID);
+        Writeln('Готово');
       end;
     LReceiver.OnMessage :=
       procedure(AMessage: ITgMessage)
