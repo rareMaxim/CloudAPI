@@ -161,7 +161,7 @@ type
     function GetUserId: Int64;
     procedure SetUserId(const AValue: Int64);
   public
-    constructor Create(const AFirstName, ALastName, APhoneNumber: string);
+    constructor Create(const AFirstName, ALastName, APhoneNumber: string); reintroduce;
     property PhoneNumber: string read GetPhoneNumber write SetPhoneNumber;
     property FirstName: string read GetFirstName write SetFirstName;
     property LastName: string read GetLastName write SetLastName;
@@ -420,7 +420,7 @@ type
 implementation
 
 uses
-  System.JSON,
+  System.Json,
   System.TypInfo;
 { TtgAnimation }
 
