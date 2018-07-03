@@ -29,6 +29,7 @@ type
     procedure DoOnStop; virtual; abstract;
   public
     constructor Create(AOwner: TComponent); overload; override;
+    constructor Create(ABot: TTelegramBot); reintroduce; overload;
     constructor Create(ABot: ITelegramBot); reintroduce; overload;
     destructor Destroy; override;
     procedure Start;
@@ -39,8 +40,7 @@ type
     property Bot: TTelegramBot read FBotDonor write FBotDonor;
     [Default(0)]
     property MessageOffset: Int64 read FMessageOffset write FMessageOffset;
-    property AllowedUpdates: TAllowedUpdates read FAllowedUpdates write
-      FAllowedUpdates default UPDATES_ALLOWED_ALL;
+    property AllowedUpdates: TAllowedUpdates read FAllowedUpdates write FAllowedUpdates default UPDATES_ALLOWED_ALL;
     [Default(1000)]
     property PollingInterval: Integer read FPollingInterval write FPollingInterval;
   end;
@@ -63,8 +63,13 @@ end;
 
 constructor TTgBotReceiverBase.Create(ABot: ITelegramBot);
 begin
-  Self.Create(nil);
+  Self.Create(TComponent(nil));
   FBotDonor := ABot as TTelegramBot;
+end;
+
+constructor TTgBotReceiverBase.Create(ABot: TTelegramBot);
+begin
+  Self.Create(ITelegramBot(ABot));
 end;
 
 destructor TTgBotReceiverBase.Destroy;
