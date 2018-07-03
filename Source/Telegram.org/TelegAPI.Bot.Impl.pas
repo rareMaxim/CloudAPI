@@ -382,6 +382,7 @@ begin
   if not (Assigned(Dest) or (Dest is TTelegramBot)) then
     Exit;
   (Dest as TTelegramBot).Token := Self.Token;
+  (Dest as TTelegramBot).Proxy := Self.Proxy;
   (Dest as TTelegramBot).Logger := Self.Logger;
   (Dest as TTelegramBot).OnReceiveRawData := Self.OnReceiveRawData;
   (Dest as TTelegramBot).OnSendData := Self.OnSendData;
