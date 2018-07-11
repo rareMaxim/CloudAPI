@@ -32,7 +32,7 @@ type
     class function Create(const ATag: TFileToSendTag; const AData: string; AContent: TStream): TFileToSend; static;
     class function FromFile(const AFileName: string): TFileToSend; static;
     class function FromID(const AID: string): TFileToSend; static;
-    class function FromURL(const AURL: string): TFileToSend; static;
+    class function FromURL(const AUrl: string): TFileToSend; static;
     class function FromStream(const AContent: TStream; const AFileName: string): TFileToSend; static;
     class function Empty: TFileToSend; static;
     function IsEmpty: Boolean;
@@ -144,6 +144,10 @@ type
   {$IFDEF TESTINSIGHT}
   public
   {$ENDIF}
+    procedure DoCheckExecute(AResult: IHTTPResponse);
+    function DoExecute_StoreInStringList(AUrl: string; var AResult: IHTTPResponse): Boolean;
+    function DoExecute_StoreInFormData(AUrl: string; var AResult: IHTTPResponse): Boolean;
+    function DoExecute_Get(AUrl: string; var AResult: IHTTPResponse): Boolean;
     procedure DoStaticFill;
     function HeadersToString(AHeaders: TArray<TNetHeader>): string;
     function FormDataToString(AFormData: TMultipartFormData): string;
@@ -365,7 +369,7 @@ begin
     OnError(E)
   else
     raise E;
-  FreeAndNil(E);
+ // FreeAndNil(E);
 end;
 
 procedure TApiRequest.DoStaticFill;
@@ -397,51 +401,77 @@ begin
   end;
 end;
 
+procedure TApiRequest.DoCheckExecute(AResult: IHTTPResponse);
+var
+  LException: ECloudApiException;
+begin
+  if Assigned(AResult) and (AResult.StatusCode <> 200) then
+  begin
+    LException := ECloudApiException.Create(AResult.StatusCode, AResult.StatusText, Self);
+    try
+      DoHaveException(LException);
+    finally
+      LException.Free;
+    end;
+  end;
+end;
+
+function TApiRequest.DoExecute_Get(AUrl: string; var AResult: IHTTPResponse): Boolean;
+begin
+  if Assigned(OnDataSend) then
+    OnDataSend(AUrl, '', HeadersToString(FStoreInHeader.ToArray));
+  AResult := FHttpClient.Get(AUrl, nil, FStoreInHeader.ToArray);
+  Result := True;
+end;
+
+function TApiRequest.DoExecute_StoreInFormData(AUrl: string; var AResult: IHTTPResponse): Boolean;
+begin
+  if FStoreInFormData.Stream.Size > 44 { wtf } then
+  begin
+    if Assigned(OnDataSend) then
+      OnDataSend(AUrl, FormDataToString(FStoreInFormData), HeadersToString(FStoreInHeader.ToArray));
+    AResult := FHttpClient.Post(AUrl, FStoreInFormData, nil, FStoreInHeader.ToArray);
+    Result := True;
+  end
+  else
+    Result := False;
+end;
+
+function TApiRequest.DoExecute_StoreInStringList(AUrl: string; var AResult: IHTTPResponse): Boolean;
+begin
+  if FStoreInStringList.Count > 0 then
+  begin
+    if Assigned(OnDataSend) then
+      OnDataSend(AUrl, FStoreInStringList.ToString, HeadersToString(FStoreInHeader.ToArray));
+    AResult := FHttpClient.Post(AUrl, FStoreInStringList, nil, nil, FStoreInHeader.ToArray);
+    Result := True;
+  end
+  else
+    Result := False;
+end;
+
 function TApiRequest.Execute: IHTTPResponse;
 var
   LFullUrl: string;
-  LPostRunned: Boolean; // Отправлено из TMultipartFormData
 begin
   DoStaticFill;
   Result := nil;
-  LPostRunned := False;
   try
-    LFullUrl := string.Join('/', [Domain, MethodUrl]) + '?' + string.Join('&', FStoreInUrl.ToStringArray);
-    if FStoreInFormData.Stream.Size > 44 { wtf } then
-    begin
-      if Assigned(OnDataSend) then
-        OnDataSend(LFullUrl, FormDataToString(FStoreInFormData), HeadersToString(FStoreInHeader.ToArray));
-      Result := FHttpClient.Post(LFullUrl, FStoreInFormData, nil, FStoreInHeader.ToArray);
-      LPostRunned := True;
+    try
+      LFullUrl := string.Join('/', [Domain, MethodUrl]) + '?' + string.Join('&', FStoreInUrl.ToStringArray);
+      if DoExecute_StoreInFormData(LFullUrl, Result) then
+        Exit;
+      if DoExecute_StoreInStringList(LFullUrl, Result) then
+        Exit;
+      DoExecute_Get(LFullUrl, Result);
+    except
+      on E: Exception do
+        DoHaveException(E);
     end;
-    if FStoreInStringList.Count > 0 then
-    begin
-      if LPostRunned then
-        DoHaveException(Exception.Create(ERR_TWICE_POST_STORE))
-      else
-      begin
-        if Assigned(OnDataSend) then
-          OnDataSend(LFullUrl, FStoreInStringList.ToString, HeadersToString(FStoreInHeader.ToArray));
-        Result := FHttpClient.Post(LFullUrl, FStoreInStringList, nil, nil, FStoreInHeader.ToArray);
-        LPostRunned := True;
-      end;
-    end;
-    if not LPostRunned then
-    begin
-      if Assigned(OnDataSend) then
-        OnDataSend(LFullUrl, '', HeadersToString(FStoreInHeader.ToArray));
-      Result := FHttpClient.Get(LFullUrl, nil, FStoreInHeader.ToArray);
-    end;
-  except
-    on E: Exception do
-      DoHaveException(E);
+  finally
+    DoCheckExecute(Result);
+    ClearParams;
   end;
-  if Result.StatusCode <> 200 then
-  begin
-    DoHaveException(ECloudApiException.Create(Result.StatusCode, Result.StatusText, Self));
-    Exit;
-  end;
-  ClearParams;
 end;
 
 function TApiRequest.ExecuteAndReadValue: string;
