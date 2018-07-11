@@ -151,7 +151,7 @@ type
     procedure DoStaticFill;
     function HeadersToString(AHeaders: TArray<TNetHeader>): string;
     function FormDataToString(AFormData: TMultipartFormData): string;
-    procedure DoHaveException(E: Exception);
+    procedure DoHaveException(E: Exception; CanBeFree: Boolean = False);
     function NeedAdd(const AValue, ADefaultValue: string; const ARequired: Boolean): Boolean;
     function RaiseArgument(const AValue, ADefaultValue: string; const ARequired: Boolean): Boolean;
     procedure DoStoreParam(const AKey: string; const AValue, ADefaultValue:
@@ -363,13 +363,14 @@ begin
   inherited;
 end;
 
-procedure TApiRequest.DoHaveException(E: Exception);
+procedure TApiRequest.DoHaveException(E: Exception; CanBeFree: Boolean);
 begin
   if Assigned(OnError) then
     OnError(E)
   else
     raise E;
- // FreeAndNil(E);
+  if CanBeFree then
+    FreeAndNil(E);
 end;
 
 procedure TApiRequest.DoStaticFill;
@@ -660,7 +661,7 @@ end;
 procedure TApiRequest.SetStoreAutoFormat(const Value: TStoreFormat);
 begin
   if Value = TStoreFormat.Auto then
-    DoHaveException(Exception.Create(ERR_CANT_SETUP_STORE_AUTO));
+    DoHaveException(Exception.Create(ERR_CANT_SETUP_STORE_AUTO), True);
   FStoreAutoFormat := Value;
 end;
 
@@ -729,7 +730,7 @@ function TApiRequest.AddParameter(const AKey: string; AValue, ADefaultValue:
 begin
   if ARequired and ((AValue = ADefaultValue) or AValue.IsEmpty) then
   begin
-    DoHaveException(Exception.Create('Not assigned required data'));
+    DoHaveException(Exception.Create('Not assigned required data'), True);
     Exit;
   end;
   Result := Self;
@@ -741,7 +742,7 @@ begin
     TFileToSendTag.ID, TFileToSendTag.FromURL:
       AddParameter(AKey, AValue.Data, '', ARequired, AStoreFormat);
   else
-    DoHaveException(Exception.Create('Cant convert TTgFileToSend: Unknown prototype tag'));
+    DoHaveException(Exception.Create('Cant convert TTgFileToSend: Unknown prototype tag'), True);
     Exit;
   end;
   if Assigned(AValue.Content) then
