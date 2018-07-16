@@ -15,7 +15,7 @@ type
   protected
     procedure EventParser(AUpdates: TArray<ItgUpdate>); virtual;
     procedure TypeUpdate(AUpdate: ItgUpdate); virtual;
-    //События
+    // События
     procedure DoOnUpdates(AUpdates: TArray<ItgUpdate>); virtual; abstract;
     procedure DoOnUpdate(AUpdate: ItgUpdate); virtual; abstract;
     procedure DoOnMessage(AMessage: ITgMessage); virtual; abstract;
@@ -52,11 +52,15 @@ end;
 procedure TTgBotUpdateParser.ParseResponse(const JSON: string);
 var
   LUpdates: TArray<ItgUpdate>;
-  LBot: ITelegramBot;
+  LBot: TTelegramBot;
 begin
   LBot := TTelegramBot.Create(nil);
-  LUpdates := LBot.GetUpdates(JSON);
-  EventParser(LUpdates);
+  try
+    LUpdates := LBot.GetUpdates(JSON);
+    EventParser(LUpdates);
+  finally
+    FreeAndNil(LBot);
+  end;
 end;
 
 procedure TTgBotUpdateParser.TypeUpdate(AUpdate: ItgUpdate);
@@ -92,4 +96,3 @@ begin
 end;
 
 end.
-

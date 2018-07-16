@@ -1,4 +1,4 @@
-﻿program Pls;
+﻿ program Pls;
 
 {$APPTYPE CONSOLE}
 {$R *.res}
@@ -7,7 +7,6 @@ uses
   RadioRecord,
   RadioRecord.Types,
   System.Classes,
-  CloudAPI.Logger,
   CloudAPI.Request,
   CloudAPI.Exception,
   System.SysUtils,
@@ -17,8 +16,7 @@ uses
   TelegAPI.Types.ReplyMarkups,
   TelegAPI.Types,
   TelegAPI.Types.Enums,
-  TelegAPI.Bot.Impl,
-  TelegAPI.Logger.Old;
+  TelegAPI.Bot.Impl;
 
 const
   Token = '606359138:AAGUqIymgeLstmDafIjculG9p5zjSg3s_qk';
@@ -32,7 +30,6 @@ var
   Plt: TStringList;
   LStream: string;
 begin
-
   ACount := 0;
   RR := TRadioRecord.Create(nil);
   Plt := TStringList.Create;
@@ -58,7 +55,6 @@ begin
     Result := ExtractFilePath(ParamStr(0));
     Result := Result + 'radiorecord' + ABitrate.ToString + '.m3u';
     Plt.SaveToFile(Result);
-
   finally
     RR.Free;
     Plt.Free;
@@ -103,32 +99,24 @@ begin
     Kb.AddRow([TtgInlineKeyboardButton.Create('🗂 ZIP', 'zip')]);
     Result := Kb;
   finally
-  //  Kb.Free;
+    // Kb.Free;
   end;
 end;
 
 procedure Main;
 var
-  LBot: ITelegramBot;
+  LBot: TTelegramBot;
   LReceiver: TtgReceiverConsole;
-  LExcp: TtgExceptionManagerConsole;
   LStop: string;
 begin
   LBot := TTelegramBot.Create(Token);
   LReceiver := TtgReceiverConsole.Create(LBot);
-  (LBot as TTelegramBot).Logger := TtgExceptionManagerConsole.Create(nil);
   try
-    LExcp := (LBot as TTelegramBot).Logger as TtgExceptionManagerConsole;
-    LExcp.OnLog :=
-      procedure(level: TLogLevel; msg: string; e: ECloudApiException)
+    LBot.OnError :=
+      procedure(Sender: TObject; E: ECloudApiException)
       begin
-        if level >= TLogLevel.Error then
-        begin
-          if Assigned(e) then
-            Writeln('[' + e.ToString + '] ' + msg)
-          else
-            Writeln(msg);
-        end;
+        if Assigned(E) then
+          Writeln(E.ToString);
       end;
     LReceiver.OnStart :=
       procedure
@@ -175,6 +163,7 @@ begin
         LReceiver.IsActive := True;
     end;
   finally
+    LBot.Free;
     LReceiver.Free;
   end;
 end;
@@ -182,10 +171,11 @@ end;
 begin
   try
     { TODO -oUser -cConsole Main : Insert code here }
+    ReportMemoryLeaksOnShutdown := True;
     Main;
   except
-    on e: Exception do
-      Writeln(e.ClassName, ': ', e.message);
+    on E: Exception do
+      Writeln(E.ClassName, ': ', E.message);
   end;
 
 end.

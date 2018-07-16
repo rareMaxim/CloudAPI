@@ -3,39 +3,31 @@
 interface
 
 uses
-  CloudAPI.Logger,
   CloudAPI.Request,
+  CloudAPI.Exception,
   System.Net.URLClient,
+  System.SysUtils,
   System.Classes;
 
 type
+
+{$IFDEF CONSOLE}
+  TOnReceiveRawData = TProc<TObject, string>;
+  TOnSendData = TProc<TObject, string, string>;
+  TOnError = TProc<TObject, ECloudApiException>;
+{$ELSE}
   TOnReceiveRawData = procedure(ASender: TObject; const AData: string) of object;
-
   TOnSendData = procedure(ASender: TObject; const AUrl, AData: string) of object;
+  TOnError = procedure(ASender: TObject; const Exception: ECloudApiException) of object;
+{$ENDIF}
 
-  ICloudApiBaseComponent = interface
-    ['{8E30982C-64EA-4B01-8AD8-AA5A42E15809}']
-    function GetLogger: ILogger;
-    procedure SetLogger(const Value: ILogger);
-    function GetDomain: string;
-    procedure SetDomain(const Value: string);
-    function GetProxy: TProxySettings;
-    procedure SetProxy(const Value: TProxySettings);
-    //
-    property Logger: ILogger read GetLogger write SetLogger;
-    property Domain: string read GetDomain write SetDomain;
-    property Proxy: TProxySettings read GetProxy write SetProxy;
-  end;
-
-  TCloudApiBaseComponent = class(TComponent, ICloudApiBaseComponent)
+  TCloudApiBaseComponent = class(TComponent)
   strict private
-    FLog: ILogger;
     FRequest: IApiRequest;
     FOnRawData: TOnReceiveRawData;
     FOnSendData: TOnSendData;
+    FOnError: TOnError;
   private
-    function GetLogger: ILogger;
-    procedure SetLogger(const Value: ILogger);
     function GetDomain: string;
     procedure SetDomain(const Value: string);
     function GetProxy: TProxySettings;
@@ -44,24 +36,22 @@ type
     function GetRequest: IApiRequest;
     procedure SetRequest(const Value: IApiRequest);
     procedure DoInitApiCore; virtual;
+    procedure DoCallLogEvent(const AException: ECloudApiException); overload;
   public
     constructor Create(AOwner: TComponent); override;
-    {$REGION 'Property|Свойства'}
-    property Logger: ILogger read GetLogger write SetLogger;
+{$REGION 'Property|Свойства'}
     property Domain: string read GetDomain write SetDomain;
     property Proxy: TProxySettings read GetProxy write SetProxy;
-    {$ENDREGION}
-    {$REGION 'События|Events'}
+{$ENDREGION}
+{$REGION 'События|Events'}
     property OnReceiveRawData: TOnReceiveRawData read FOnRawData write FOnRawData;
     property OnSendData: TOnSendData read FOnSendData write FOnSendData;
-    {$ENDREGION}
+    property OnError: TOnError read FOnError write FOnError;
+{$ENDREGION}
   end;
 
 implementation
 
-uses
-  System.SysUtils,
-  CloudAPI.Exception;
 { TTelegramBotBase }
 
 constructor TCloudApiBaseComponent.Create(AOwner: TComponent);
@@ -70,55 +60,47 @@ begin
   DoInitApiCore;
 end;
 
+procedure TCloudApiBaseComponent.DoCallLogEvent(const AException: ECloudApiException);
+begin
+  if Assigned(OnError) then
+    OnError(Self, AException)
+  else
+    raise AException;
+end;
+
 procedure TCloudApiBaseComponent.DoInitApiCore;
 begin
   FRequest := TApiRequest.Create;
-  GetRequest.OnError :=
-    procedure(E: Exception)
+  GetRequest.OnError := procedure(E: ECloudApiException)
     begin
-      if Assigned(Logger) then
-        Logger.Error('RequestAPI', ECloudApiException(E))
-      else
-        raise ECloudApiException(E);
+      DoCallLogEvent(ECloudApiException(E));
     end;
-  GetRequest.OnDataReceiveAsString :=
-    function(AData: string): string
+  GetRequest.OnDataReceiveAsString := function(AData: string): string
     begin
       if Assigned(OnReceiveRawData) then
         OnReceiveRawData(Self, AData);
       result := AData;
     end;
-  GetRequest.OnDataSend :=
-    procedure(AUrl, AData, AHeaders: string)
+  GetRequest.OnDataSend := procedure(AUrl, AData, AHeaders: string)
     begin
       if Assigned(OnSendData) then
         OnSendData(Self, AUrl, AData);
     end;
 end;
 
-function TCloudApiBaseComponent.GetLogger: ILogger;
-begin
-  Result := FLog;
-end;
-
 function TCloudApiBaseComponent.GetProxy: TProxySettings;
 begin
-  Result := GetRequest.HttpClient.ProxySettings;
+  result := GetRequest.HttpClient.ProxySettings;
 end;
 
 function TCloudApiBaseComponent.GetRequest: IApiRequest;
 begin
-  Result := FRequest;
+  result := FRequest;
 end;
 
 function TCloudApiBaseComponent.GetDomain: string;
 begin
-  Result := GetRequest.Domain;
-end;
-
-procedure TCloudApiBaseComponent.SetLogger(const Value: ILogger);
-begin
-  FLog := Value;
+  result := GetRequest.Domain;
 end;
 
 procedure TCloudApiBaseComponent.SetProxy(const Value: TProxySettings);
@@ -137,4 +119,3 @@ begin
 end;
 
 end.
-

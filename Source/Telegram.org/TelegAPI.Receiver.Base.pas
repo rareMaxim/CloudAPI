@@ -21,16 +21,16 @@ type
     FThread: TThread;
     FIsActive: Boolean;
     procedure SetIsActive(const AValue: Boolean);
+    procedure AfterCreate;
   protected
     function ReadUpdates: TArray<ItgUpdate>; virtual;
     procedure Go; virtual;
-    //События
+    // События
     procedure DoOnStart; virtual; abstract;
     procedure DoOnStop; virtual; abstract;
   public
     constructor Create(AOwner: TComponent); overload; override;
     constructor Create(ABot: TTelegramBot); reintroduce; overload;
-    constructor Create(ABot: ITelegramBot); reintroduce; overload;
     destructor Destroy; override;
     procedure Start;
     procedure Stop;
@@ -50,31 +50,30 @@ implementation
 uses
   CloudAPI.Exception;
 
-
 { TTgBotReceiverBase }
 
 constructor TTgBotReceiverBase.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
+  AfterCreate;
+end;
+
+procedure TTgBotReceiverBase.AfterCreate;
+begin
   MessageOffset := 0;
   AllowedUpdates := UPDATES_ALLOWED_ALL;
   PollingInterval := 1000;
 end;
 
-constructor TTgBotReceiverBase.Create(ABot: ITelegramBot);
-begin
-  Self.Create(TComponent(nil));
-  FBotDonor := ABot as TTelegramBot;
-end;
-
 constructor TTgBotReceiverBase.Create(ABot: TTelegramBot);
 begin
-  Self.Create(ITelegramBot(ABot));
+  inherited Create(nil);
+  AfterCreate;
+  FBotDonor := ABot;
 end;
 
 destructor TTgBotReceiverBase.Destroy;
 begin
- // FBotDonor.Free;
   Stop;
   inherited;
 end;
@@ -107,9 +106,8 @@ begin
   try
     FBotDonor.AssignTo(LBot);
     Result := LBot.GetUpdates(MessageOffset, 100, 0, AllowedUpdates);
-  except
-    on E: ECloudApiException do
-      Bot.Logger.Fatal('TTgBotReceiverBase.ReadUpdates', E)
+  finally
+    LBot.Free;
   end;
 end;
 

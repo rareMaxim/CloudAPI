@@ -10,21 +10,21 @@ package TelegaPi;
 {$EXTENDEDSYNTAX ON}
 {$IMPORTEDDATA ON}
 {$IOCHECKS ON}
-{$LOCALSYMBOLS OFF}
+{$LOCALSYMBOLS ON}
 {$LONGSTRINGS ON}
 {$OPENSTRINGS ON}
-{$OPTIMIZATION ON}
+{$OPTIMIZATION OFF}
 {$OVERFLOWCHECKS OFF}
 {$RANGECHECKS OFF}
-{$REFERENCEINFO OFF}
+{$REFERENCEINFO ON}
 {$SAFEDIVIDE OFF}
-{$STACKFRAMES OFF}
+{$STACKFRAMES ON}
 {$TYPEDADDRESS OFF}
 {$VARSTRINGCHECKS ON}
 {$WRITEABLECONST OFF}
 {$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
-{$DEFINE RELEASE}
+{$DEFINE DEBUG}
 {$ENDIF IMPLICITBUILDING}
 {$DESCRIPTION 'Telegram API for Delphi'}
 {$IMPLICITBUILD ON}
@@ -39,7 +39,6 @@ contains
   TelegAPI.Bot in '..\Source\Telegram.org\TelegAPI.Bot.pas',
   TelegaPi.Ext.Sessions in '..\Source\Telegram.org\TelegaPi.Ext.Sessions.pas',
   TelegAPi.Helpers in '..\Source\Telegram.org\TelegAPi.Helpers.pas',
-  TelegAPI.Logger.Old in '..\Source\Telegram.org\TelegAPI.Logger.Old.pas',
   TelegAPI.Receiver.Base in '..\Source\Telegram.org\TelegAPI.Receiver.Base.pas',
   TelegAPI.Receiver.Console in '..\Source\Telegram.org\TelegAPI.Receiver.Console.pas',
   TelegAPI.Receiver.Service in '..\Source\Telegram.org\TelegAPI.Receiver.Service.pas',

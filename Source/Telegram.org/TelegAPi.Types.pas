@@ -3,7 +3,7 @@
 interface
 
 uses
-  CloudAPI.Request,
+  CloudAPI.Types,
   REST.Json.Types,
   System.Classes,
   TelegAPi.Types.Enums;

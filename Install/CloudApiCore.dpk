@@ -33,9 +33,9 @@ requires
 
 contains
   CloudAPI.BaseComponent in '..\source\CoreAPI\CloudAPI.BaseComponent.pas',
-  CloudAPI.Logger in '..\Source\CoreAPI\CloudAPI.Logger.pas',
   CloudAPI.Request in '..\Source\CoreAPI\CloudAPI.Request.pas',
   CloudAPI.Utils.Json in '..\source\CoreAPI\CloudAPI.Utils.Json.pas',
-  CloudAPI.Exception in '..\Source\CoreAPI\CloudAPI.Exception.pas';
+  CloudAPI.Exception in '..\Source\CoreAPI\CloudAPI.Exception.pas',
+  CloudAPI.Types in '..\Source\CoreAPI\CloudAPI.Types.pas';
 
 end.
