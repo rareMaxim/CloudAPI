@@ -36,7 +36,7 @@ type
     function GetRequest: IApiRequest;
     procedure SetRequest(const Value: IApiRequest);
     procedure DoInitApiCore; virtual;
-    procedure DoCallLogEvent(const AException: ECloudApiException); overload;
+    procedure DoCallLogEvent(AException: ECloudApiException; const ACanBeFree: Boolean); overload;
   public
     constructor Create(AOwner: TComponent); override;
 {$REGION 'Property|Свойства'}
@@ -60,12 +60,14 @@ begin
   DoInitApiCore;
 end;
 
-procedure TCloudApiBaseComponent.DoCallLogEvent(const AException: ECloudApiException);
+procedure TCloudApiBaseComponent.DoCallLogEvent(AException: ECloudApiException; const ACanBeFree: Boolean);
 begin
   if Assigned(OnError) then
     OnError(Self, AException)
   else
     raise AException;
+  if ACanBeFree then
+    FreeAndNil(AException);
 end;
 
 procedure TCloudApiBaseComponent.DoInitApiCore;
@@ -73,7 +75,7 @@ begin
   FRequest := TApiRequest.Create;
   GetRequest.OnError := procedure(E: ECloudApiException)
     begin
-      DoCallLogEvent(ECloudApiException(E));
+      DoCallLogEvent(ECloudApiException(E), False);
     end;
   GetRequest.OnDataReceiveAsString := function(AData: string): string
     begin

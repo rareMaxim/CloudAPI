@@ -422,8 +422,7 @@ begin
         begin
           LExcCode := (LJSON.GetValue('error_code') as TJSONNumber).AsInt;
           LExcDesc := (LJSON.GetValue('description') as TJSONString).Value;
-          DoCallLogEvent(ECloudApiException.Create(LExcCode, LExcDesc));
-
+          DoCallLogEvent(ECloudApiException.Create(LExcCode, LExcDesc), True);
         end
         else
         begin
