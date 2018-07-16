@@ -3,8 +3,7 @@ unit TelegAPi.Helpers;
 interface
 
 uses
-  TelegAPi.Bot.Impl,
-  TelegAPi.Types,
+  TelegAPi.Bot,
   TelegAPi.Types.Enums;
 
 type

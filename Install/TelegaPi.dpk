@@ -35,7 +35,6 @@ requires
   CloudApiCore;
 
 contains
-  TelegAPI.Bot.Impl in '..\Source\Telegram.org\TelegAPI.Bot.Impl.pas',
   TelegAPI.Bot in '..\Source\Telegram.org\TelegAPI.Bot.pas',
   TelegaPi.Ext.Sessions in '..\Source\Telegram.org\TelegaPi.Ext.Sessions.pas',
   TelegAPi.Helpers in '..\Source\Telegram.org\TelegAPi.Helpers.pas',

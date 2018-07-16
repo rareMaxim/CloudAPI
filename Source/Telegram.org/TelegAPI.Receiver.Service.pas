@@ -3,27 +3,19 @@ unit TelegAPI.Receiver.Service;
 interface
 
 uses
-  TelegAPI.Receiver.Base,
   System.Classes,
+  TelegAPI.Receiver.Base,
   TelegAPI.Types;
 
 type
   TtgOnUpdate = procedure(ASender: TObject; AUpdate: ItgUpdate) of object;
-
   TtgOnUpdates = procedure(ASender: TObject; AUpdates: TArray<ItgUpdate>) of object;
-
   TtgOnMessage = procedure(ASender: TObject; AMessage: ITgMessage) of object;
-
   TtgOnInlineQuery = procedure(ASender: TObject; AInlineQuery: ItgInlineQuery) of object;
-
   TtgOnInlineResultChosen = procedure(ASender: TObject; AChosenInlineResult: ItgChosenInlineResult) of object;
-
   TtgOnCallbackQuery = procedure(ASender: TObject; ACallbackQuery: ItgCallbackQuery) of object;
-
   TtgOnChannelPost = procedure(ASender: TObject; AChanelPost: ITgMessage) of object;
-
   TtgOnShippingQuery = procedure(ASender: TObject; AShippingQuery: ItgShippingQuery) of object;
-
   TtgOnPreCheckoutQuery = procedure(ASender: TObject; APreCheckoutQuery: ItgPreCheckoutQuery) of object;
 
   TtgReceiverService = class(TTgBotReceiverBase)

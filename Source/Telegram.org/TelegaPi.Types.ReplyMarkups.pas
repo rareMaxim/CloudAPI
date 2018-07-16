@@ -123,8 +123,7 @@ type
 
 implementation
 
-uses
-  System.SysUtils;
+
 
 constructor TtgInlineKeyboardButton.Create(const AText: string);
 begin

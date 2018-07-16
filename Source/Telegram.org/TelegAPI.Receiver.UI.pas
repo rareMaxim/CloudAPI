@@ -3,8 +3,8 @@ unit TelegAPI.Receiver.UI;
 interface
 
 uses
-  TelegAPI.Types,
-  TelegAPI.Receiver.Service;
+  TelegAPI.Receiver.Service,
+  TelegAPI.Types;
 
 type
   TtgReceiverUI = class(TtgReceiverService)

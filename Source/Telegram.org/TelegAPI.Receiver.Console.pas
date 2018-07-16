@@ -3,9 +3,9 @@ unit TelegAPI.Receiver.Console;
 interface
 
 uses
+  System.SysUtils,
   TelegAPI.Receiver.Base,
-  TelegAPI.Types,
-  System.SysUtils;
+  TelegAPI.Types;
 
 type
   TtgReceiverConsole = class(TTgBotReceiverBase)

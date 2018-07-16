@@ -7,7 +7,6 @@ uses
   System.SysUtils,
   TelegAPI.UpdateParser,
   TelegAPI.Bot,
-  TelegAPI.Bot.Impl,
   TelegAPI.Types,
   TelegAPI.Types.Enums;
 
@@ -46,9 +45,6 @@ type
   end;
 
 implementation
-
-uses
-  CloudAPI.Exception;
 
 { TTgBotReceiverBase }
 

@@ -33,8 +33,6 @@ type
 
 implementation
 
-uses
-  TelegAPI.Bot.Impl;
 { TTgBotReceiverBase }
 
 procedure TTgBotUpdateParser.EventParser(AUpdates: TArray<ItgUpdate>);
