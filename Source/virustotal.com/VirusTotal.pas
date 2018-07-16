@@ -4,6 +4,7 @@ interface
 
 uses
   CloudAPI.BaseComponent,
+  CloudAPI.Types,
   CloudAPI.Request,
   VirusTotal.Types,
   System.Classes;
@@ -33,7 +34,7 @@ type
     property ApiKey: string read FApiKey write FApiKey;
   end;
 
-  TFileToSend = CloudAPI.Request.TFileToSend;
+  TFileToSend = CloudAPI.Types.TFileToSend;
 
 implementation
 

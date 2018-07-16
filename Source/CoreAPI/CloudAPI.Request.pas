@@ -130,7 +130,6 @@ type
     function ExecuteAndReadValue: string;
     function ExecuteAsBool: Boolean;
     function SetMethod(const AValue: string): IApiRequest;
-
     destructor Destroy; override;
     constructor Create; override;
     property MethodUrl: string read GetMethodUrl write SetMethodUrl;
@@ -269,18 +268,9 @@ begin
 end;
 
 procedure TApiRequest.DoCheckExecute(AResult: IHTTPResponse);
-var
-  LException: ECloudApiException;
 begin
   if Assigned(AResult) and (AResult.StatusCode <> 200) then
-  begin
-    LException := ECloudApiException.Create(AResult.StatusCode, AResult.StatusText, Self);
-    try
-      DoHaveException(LException);
-    finally
-      LException.Free;
-    end;
-  end;
+    DoHaveException(ECloudApiException.Create(AResult.StatusCode, AResult.StatusText, Self), True);
 end;
 
 function TApiRequest.DoExecute_Get(const AUrl: string; var AResult: IHTTPResponse): Boolean;

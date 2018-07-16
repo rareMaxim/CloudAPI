@@ -54,7 +54,6 @@ var
 begin
   VT := TVirusTotal.Create(nil);
   VT.ApiKey := API_KEY;
-  VT.Logger := nil;
   try
     Writeln(VT.FileScanUploadUrl);
   finally

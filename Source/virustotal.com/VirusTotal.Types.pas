@@ -11,7 +11,7 @@ type
   INeedPrivateApi = interface
     ['{99D9CEB7-E0ED-42F7-AE2D-279E3B6A2C7B}']
   end;
-  {$REGION 'vtScan'}
+{$REGION 'vtScan'}
 
   IvtScan = interface
     ['{9914B45E-23E3-4A89-8ACC-894C32009C0D}']
@@ -28,8 +28,8 @@ type
     function Result: string;
     function update: string;
   end;
-  {$ENDREGION}
-  {$REGION 'vtScan'}
+{$ENDREGION}
+{$REGION 'vtScan'}
 
   IvtScanResponse = interface
     ['{BF88E0FF-82AB-4876-9E7F-6D2CF561595B}']
@@ -49,8 +49,8 @@ type
     function verbose_msg: string;
     function sha256: string;
   end;
-  {$ENDREGION}
-  {$REGION 'vtReport'}
+{$ENDREGION}
+{$REGION 'vtReport'}
 
   IvtReport = interface(IvtScanResponse)
     ['{85648437-CFE1-4B18-865D-FA9AE401403F}']
@@ -70,7 +70,7 @@ type
     function total: Integer;
     function scans: TArray<TPair<string, IvtScan>>;
   end;
-  {$ENDREGION}
+{$ENDREGION}
 
   IvtUrlSamples = interface
     ['{B804D913-F704-4B94-B874-B1B8478A3FC6}']
@@ -97,7 +97,7 @@ type
     function detected_referrer_samples: string;
   end;
 
-  TvtDomainReport = class(TBaseJson, IvtUrlSamples)
+  TvtDomainReport = class(TBaseJson, IvtDomainReport)
     function BitDefenderCategory: string;
     function undetected_referrer_samples: TArray<IvtUrlSamples>;
     function whois_timestamp: Int64;
@@ -107,7 +107,6 @@ type
   end;
 
 implementation
-
 
 { TvtScan }
 
@@ -163,7 +162,6 @@ begin
   Result := ToSimpleType<Integer>('total');
 end;
 
-
 { TvtScanResponse }
 
 function TvtScanResponse.permalink: string;
@@ -218,5 +216,36 @@ begin
   Result := ToSimpleType<Integer>('total');
 end;
 
-end.
+{ TvtDomainReport }
 
+function TvtDomainReport.BitDefenderCategory: string;
+begin
+  Result := ToSimpleType<string>('BitDefender category');
+end;
+
+function TvtDomainReport.detected_downloaded_samples: TArray<IvtUrlSamples>;
+begin
+
+end;
+
+function TvtDomainReport.detected_referrer_samples: string;
+begin
+
+end;
+
+function TvtDomainReport.Malwarebytes_hpHosts_info: string;
+begin
+
+end;
+
+function TvtDomainReport.undetected_referrer_samples: TArray<IvtUrlSamples>;
+begin
+
+end;
+
+function TvtDomainReport.whois_timestamp: Int64;
+begin
+
+end;
+
+end.
