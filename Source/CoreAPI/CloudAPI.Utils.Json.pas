@@ -47,15 +47,6 @@ type
     class procedure ObjectToFile(AObj: TObject; const AFileName: string);
   end;
 
-  TJSONValueHelper = class helper for TJSONValue
-  strict private
-  private
-    function GetS(const APath: string): string;
-    procedure SetS(const APath, AValue: string);
-  public
-    property S[const APath: string]: string read GetS write SetS;
-  end;
-
 implementation
 
 uses
@@ -73,28 +64,6 @@ type
   end;
 
 
-
-{ TJSONValueHelper }
-type
-  TJSONStringHack = class(TJSONString);
-
-function TJSONValueHelper.GetS(const APath: string): string;
-begin
-  if (not Self.TryGetValue<string>(APath, Result)) then
-    Result := string.Empty;
-end;
-
-procedure TJSONValueHelper.SetS(const APath, AValue: string);
-var
-  LValue: TJSONValue;
-begin
-  LValue := Self.FindValue(APath);
-  if (LValue is TJSONString) then
-  begin
-    TJSONStringHack(LValue).FStrBuffer.Clear();
-    TJSONStringHack(LValue).FStrBuffer.Append(AValue);
-  end;
-end;
 { TJsonUtils }
 
 class function TJsonUtils.ArrayToJString<T>(LArray: TArray<T>): string;
