@@ -536,25 +536,28 @@ end;
 function TApiRequest.AddParameter(const AKey: string; AValue, ADefaultValue:
   TFileToSend; const ARequired: Boolean; const AStoreFormat: TStoreFormat): IApiRequest;
 begin
-  if ARequired and ((AValue = ADefaultValue) or AValue.IsEmpty) then
-  begin
-    DoHaveException(ECloudApiException.Create('Not assigned required data'), True);
-    Exit;
+  try
+    if ARequired and ((AValue = ADefaultValue) or AValue.IsEmpty) then
+    begin
+      DoHaveException(ECloudApiException.Create('Not assigned required data'), True);
+      Exit;
+    end;
+    Result := Self;
+    case AValue.Tag of
+      TFileToSendTag.FromStream:
+        StoreMultipartForm.AddStream(AKey, AValue.Content, AValue.Data);
+      TFileToSendTag.FromFile:
+        StoreMultipartForm.AddFile(AKey, AValue.Data);
+      TFileToSendTag.ID, TFileToSendTag.FromURL:
+        AddParameter(AKey, AValue.Data, '', ARequired, AStoreFormat);
+    else
+      DoHaveException(ECloudApiException.Create('Cant convert TTgFileToSend: Unknown prototype tag'), True);
+      Exit;
+    end;
+  finally
+    if Assigned(AValue.Content) then
+      FreeAndNil(AValue.Content);
   end;
-  Result := Self;
-  case AValue.Tag of
-    TFileToSendTag.FromStream:
-      StoreMultipartForm.AddStream(AKey, AValue.Content, AValue.Data);
-    TFileToSendTag.FromFile:
-      StoreMultipartForm.AddFile(AKey, AValue.Data);
-    TFileToSendTag.ID, TFileToSendTag.FromURL:
-      AddParameter(AKey, AValue.Data, '', ARequired, AStoreFormat);
-  else
-    DoHaveException(ECloudApiException.Create('Cant convert TTgFileToSend: Unknown prototype tag'), True);
-    Exit;
-  end;
-  if Assigned(AValue.Content) then
-    FreeAndNil(AValue.Content);
 end;
 
 end.
