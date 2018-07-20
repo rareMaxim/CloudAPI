@@ -10,7 +10,7 @@ type
   [TestFixture]
   TTestSendVideo = class(TObject)
   strict private
-    FBot: ITelegramBot;
+    FBot: TTelegramBot;
   public
     [Setup]
     procedure Setup;
@@ -26,7 +26,6 @@ implementation
 
 uses
   CloudAPI.Request,
-  TelegAPI.Bot.Impl,
   Test.Config,
   TelegAPI.Types,
   TelegAPI.Types.Enums;

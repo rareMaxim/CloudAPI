@@ -11,7 +11,7 @@ type
   [TestFixture]
   TSendingPhotoMessageTests = class(TObject)
   strict private
-    FBot: ITelegramBot;
+    FBot: TTelegramBot;
     FTmpMsg: ITgMessage;
   public
     [Setup]
@@ -32,7 +32,6 @@ implementation
 
 uses
   System.SysUtils,
-  TelegAPI.Bot.Impl,
   Test.Config,
   TelegAPI.Types.Enums,
   System.Generics.Collections;

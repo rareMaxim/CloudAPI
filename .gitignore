@@ -72,4 +72,3 @@ __recovery/
 # my list ignored
 Demo/token.inc
 Samples/RadioRecord.ru/Win32/
-Test/Telegram/Win32/Debug/config.test.json

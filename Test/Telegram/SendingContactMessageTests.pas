@@ -10,7 +10,7 @@ type
   [TestFixture]
   TSendingContactMessageTests = class(TObject)
   strict private
-    FBot: ITelegramBot;
+    FBot: TTelegramBot;
   public
     [Setup]
     procedure Setup;
@@ -25,7 +25,6 @@ type
 implementation
 
 uses
-  TelegAPI.Bot.Impl,
   Test.Config,
   TelegAPI.Types,
   TelegAPI.Types.Impl,

@@ -7,10 +7,11 @@ uses
   TelegAPI.Bot;
 
 type
+
   [TestFixture]
   TSendingVenueMessageTests = class(TObject)
   strict private
-    FBot: ITelegramBot;
+    FBot: TTelegramBot;
   public
     [Setup]
     procedure Setup;
@@ -24,7 +25,6 @@ implementation
 
 uses
   System.Math,
-  TelegAPI.Bot.Impl,
   Test.Config,
   TelegAPI.Types,
   TelegAPI.Types.Impl,
@@ -82,7 +82,7 @@ begin
 end;
 
 initialization
-  TDUnitX.RegisterTestFixture(TSendingVenueMessageTests);
+
+TDUnitX.RegisterTestFixture(TSendingVenueMessageTests);
 
 end.
-

@@ -4,7 +4,6 @@ interface
 
 uses
   TelegAPi.Bot,
-  TelegAPi.Bot.Impl,
   TelegAPi.Types,
   DUnitX.TestFramework;
 
@@ -12,7 +11,7 @@ type
   //[TestFixture]
   TTestTextMessage = class(TObject)
   strict private
-    FBot: ITelegramBot;
+    FBot: TTelegramBot;
   public
     [Setup]
     procedure Setup;

@@ -4,15 +4,15 @@ interface
 
 uses
   TelegAPI.Bot,
-  TelegAPI.Bot.Impl,
   TelegAPI.Types,
   DUnitX.TestFramework;
 
 type
+
   [TestFixture]
   TGettingUpdatesTests = class(TObject)
   strict private
-    FBot: ITelegramBot;
+    FBot: TTelegramBot;
   public
     function TestApi(const AToken: string): Boolean;
     [Setup]
@@ -80,20 +80,24 @@ end;
 
 function TGettingUpdatesTests.TestApi(const AToken: string): Boolean;
 var
-  LBot: ITelegramBot;
+  LBot: TTelegramBot;
 begin
   LBot := TTelegramBot.Create(AToken);
-  Result := True;
   try
-    LBot.GetMe;
-  except
-    on E: ECloudApiException do
-      Result := False;
+    Result := True;
+    try
+      LBot.GetMe;
+    except
+      on E: ECloudApiException do
+        Result := False;
+    end;
+  finally
+    LBot.Free;
   end;
 end;
 
 initialization
-  TDUnitX.RegisterTestFixture(TGettingUpdatesTests);
+
+TDUnitX.RegisterTestFixture(TGettingUpdatesTests);
 
 end.
-
