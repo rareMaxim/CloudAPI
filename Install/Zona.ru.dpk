@@ -32,6 +32,7 @@ requires
 
 contains
   ZonaRu in '..\Source\zona.ru\ZonaRu.pas',
-  ZonaRu.Types in '..\Source\zona.ru\ZonaRu.Types.pas';
+  ZonaRu.Types in '..\Source\zona.ru\ZonaRu.Types.pas',
+  ZonaRu.Query in '..\Source\zona.ru\ZonaRu.Query.pas';
 
 end.

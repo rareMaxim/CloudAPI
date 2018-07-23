@@ -1,0 +1,48 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{F605CE31-5A25-4113-A5DD-E3DB7BFBE3F2}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="..\Install\Zona.ru.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="..\Test\ZonaRu\Project6.dproj">
+            <Dependencies>..\Install\Zona.ru.dproj</Dependencies>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="Zona_ru">
+        <MSBuild Projects="..\Install\Zona.ru.dproj"/>
+    </Target>
+    <Target Name="Zona_ru:Clean">
+        <MSBuild Projects="..\Install\Zona.ru.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Zona_ru:Make">
+        <MSBuild Projects="..\Install\Zona.ru.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Project6" DependsOnTargets="Zona.ru">
+        <MSBuild Projects="..\Test\ZonaRu\Project6.dproj"/>
+    </Target>
+    <Target Name="Project6:Clean" DependsOnTargets="Zona.ru:Clean">
+        <MSBuild Projects="..\Test\ZonaRu\Project6.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Project6:Make" DependsOnTargets="Zona.ru:Make">
+        <MSBuild Projects="..\Test\ZonaRu\Project6.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="Zona_ru;Project6"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="Zona_ru:Clean;Project6:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="Zona_ru:Make;Project6:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>
