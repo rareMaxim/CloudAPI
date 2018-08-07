@@ -161,11 +161,14 @@ type
     procedure SetLastName(const AValue: string);
     function GetUserId: Int64;
     procedure SetUserId(const AValue: Int64);
+    function GetvCard: string;
+    procedure SetvCard(const Value: string);
     // public
     property PhoneNumber: string read GetPhoneNumber write SetPhoneNumber;
     property FirstName: string read GetFirstName write SetFirstName;
     property LastName: string read GetLastName write SetLastName;
     property UserId: Int64 read GetUserId write SetUserId;
+    property vCard: string read GetvCard write SetvCard;
   end;
 
   ItgLocation = interface
@@ -190,7 +193,7 @@ type
     procedure SetAddress(const AValue: string);
     function GetFoursquareId: string;
     procedure SetFoursquareId(const AValue: string);
-  //
+    //
     property Location: ItgLocation read GetLocation write SetLocation;
     property Title: string read GetTitle write SetTitle;
     property Address: string read GetAddress write SetAddress;
@@ -374,7 +377,7 @@ type
     function EditedChannelPost: ITgMessage;
     function ShippingQuery: ItgShippingQuery;
     function PreCheckoutQuery: ItgPreCheckoutQuery;
-   // function PassportData:ItgPassportData;
+    // function PassportData:ItgPassportData;
     function &Type: TtgUpdateType;
   end;
 
@@ -412,10 +415,10 @@ type
     FFileToSend: TFileToSend;
   public
     function GetFileToSend: TFileToSend;
-    constructor Create(AMedia: TFileToSend; const ACaption: string = ''; const
-      AParseMode: TtgParseMode = TtgParseMode.default); virtual;
+    constructor Create(AMedia: TFileToSend; const ACaption: string = '';
+      const AParseMode: TtgParseMode = TtgParseMode.default); virtual;
     [JsonName('type')]
-    property {}&Type: string read FType write FType;
+    property { } &Type: string read FType write FType;
     property Media: string read FMedia write FMedia;
     property Caption: string read FCaption write FCaption;
     [JsonName('parse_mode')]
@@ -424,8 +427,8 @@ type
 
   TtgInputMediaPhoto = class(TtgInputMedia)
   public
-    constructor Create(AMedia: TFileToSend; const ACaption: string = ''; const
-      AParseMode: TtgParseMode = TtgParseMode.default); override;
+    constructor Create(AMedia: TFileToSend; const ACaption: string = '';
+      const AParseMode: TtgParseMode = TtgParseMode.default); override;
   end;
 
   TtgInputMediaVideo = class(TtgInputMedia)
@@ -435,9 +438,9 @@ type
     FDuration: Integer;
     FSupportsStreaming: Boolean;
   public
-    constructor Create(AMedia: TFileToSend; const ACaption: string = ''; const
-      AParseMode: TtgParseMode = TtgParseMode.default; AWidth: Integer = 0;
-      AHeight: Integer = 0; ADuration: Integer = 0; ASupportsStreaming: Boolean = True); reintroduce;
+    constructor Create(AMedia: TFileToSend; const ACaption: string = '';
+      const AParseMode: TtgParseMode = TtgParseMode.default; AWidth: Integer = 0; AHeight: Integer = 0;
+      ADuration: Integer = 0; ASupportsStreaming: Boolean = True); reintroduce;
     property Width: Integer read FWidth write FWidth;
     property Height: Integer read FHeight write FHeight;
     property Duration: Integer read FDuration write FDuration;
@@ -492,8 +495,8 @@ end;
 
 { TtgInputMediaVideo }
 
-constructor TtgInputMediaVideo.Create(AMedia: TFileToSend; const ACaption:
-  string; const AParseMode: TtgParseMode; AWidth, AHeight, ADuration: Integer; ASupportsStreaming: Boolean);
+constructor TtgInputMediaVideo.Create(AMedia: TFileToSend; const ACaption: string; const AParseMode: TtgParseMode;
+  AWidth, AHeight, ADuration: Integer; ASupportsStreaming: Boolean);
 begin
   inherited Create(AMedia, ACaption, AParseMode);
   FType := 'video';
@@ -548,4 +551,3 @@ begin
 end;
 
 end.
-

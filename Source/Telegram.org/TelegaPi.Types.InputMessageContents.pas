@@ -33,7 +33,9 @@ type
     /// </summary>
     [JSONName('last_name')]
     LastName: string;
-    constructor Create(const APhoneNumber, AFirstName, ALastName: string);
+    [JSONName('vCard')]
+    vCard: string;
+    constructor Create(const APhoneNumber, AFirstName: string; ALastName: string = ''; AvCard: string = '');
   end;
 
   /// <summary>
@@ -77,8 +79,7 @@ type
     /// </summary>
     [JSONName('disable_web_page_preview')]
     DisableWebPagePreview: Boolean;
-    constructor Create(const AMessageText, AParseMode: string;
-      ADisableWebPagePreview: Boolean);
+    constructor Create(const AMessageText, AParseMode: string; ADisableWebPagePreview: Boolean);
   end;
 
   /// <summary>
@@ -112,32 +113,19 @@ type
     /// </summary>
     [JSONName('foursquare_id')]
     FoursquareId: string;
-    constructor Create(ALatitude, ALongitude: Single; const ATitle, AAddress,
-      AFoursquareId: string);
+    constructor Create(ALatitude, ALongitude: Single; const ATitle, AAddress, AFoursquareId: string);
   end;
 
 implementation
 
 { TtgInputTextMessageContent }
 
-constructor TtgInputTextMessageContent.Create(const AMessageText, AParseMode:
-  string; ADisableWebPagePreview: Boolean);
+constructor TtgInputTextMessageContent.Create(const AMessageText, AParseMode: string; ADisableWebPagePreview: Boolean);
 begin
   inherited Create;
   MessageText := AMessageText;
   ParseMode := AParseMode;
   DisableWebPagePreview := ADisableWebPagePreview;
-end;
-
-{ TtgInputContactMessageContent }
-
-constructor TtgInputContactMessageContent.Create(const APhoneNumber, AFirstName,
-  ALastName: string);
-begin
-  inherited Create;
-  PhoneNumber := APhoneNumber;
-  FirstName := AFirstName;
-  LastName := ALastName;
 end;
 
 { TtgInputLocationMessageContent }
@@ -162,5 +150,15 @@ begin
   FoursquareId := AFoursquareId;
 end;
 
-end.
+{ TtgInputContactMessageContent }
 
+constructor TtgInputContactMessageContent.Create(const APhoneNumber, AFirstName: string; ALastName, AvCard: string);
+begin
+  inherited Create;
+  PhoneNumber := APhoneNumber;
+  FirstName := AFirstName;
+  LastName := ALastName;
+  vCard := AvCard;
+end;
+
+end.

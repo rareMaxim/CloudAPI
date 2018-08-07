@@ -159,12 +159,15 @@ type
     procedure SetLastName(const AValue: string);
     function GetUserId: Int64;
     procedure SetUserId(const AValue: Int64);
+    function GetvCard: string;
+    procedure SetvCard(const Value: string);
   public
     constructor Create(const AFirstName, ALastName, APhoneNumber: string); reintroduce;
     property PhoneNumber: string read GetPhoneNumber write SetPhoneNumber;
     property FirstName: string read GetFirstName write SetFirstName;
     property LastName: string read GetLastName write SetLastName;
     property UserId: Int64 read GetUserId write SetUserId;
+    property vCard: string read GetvCard write SetvCard;
   end;
 
   TtgLocation = class(TBaseJson, ItgLocation)
@@ -744,10 +747,9 @@ begin
     Exit(TtgMessageType.Venue);
   if (Location <> nil) then
     Exit(TtgMessageType.Location);
-  if (NewChatMember <> nil) or (LeftChatMember <> nil) or ((NewChatPhoto <> nil)
-    and (Length(NewChatPhoto) > 0)) or ((NewChatMembers <> nil) and (Length(NewChatMembers)
-    > 0)) or (not NewChatTitle.IsEmpty) or DeleteChatPhoto or GroupChatCreated
-    or SupergroupChatCreated or ChannelChatCreated or (MigrateToChatId <> 0) or
+  if (NewChatMember <> nil) or (LeftChatMember <> nil) or ((NewChatPhoto <> nil) and (Length(NewChatPhoto) > 0)) or
+    ((NewChatMembers <> nil) and (Length(NewChatMembers) > 0)) or (not NewChatTitle.IsEmpty) or DeleteChatPhoto or
+    GroupChatCreated or SupergroupChatCreated or ChannelChatCreated or (MigrateToChatId <> 0) or
     (MigrateFromChatId <> 0) or (PinnedMessage <> nil) then
     Exit(TtgMessageType.Service);
   if (Photo <> nil) and (Length(Photo) > 0) then
@@ -1690,6 +1692,11 @@ begin
   Result := ToSimpleType<Int64>('user_id');
 end;
 
+function TtgContact.GetvCard: string;
+begin
+  Result := ToSimpleType<string>('vcard');
+end;
+
 procedure TtgContact.SetFirstName(const AValue: string);
 begin
   Write('first_name', AValue);
@@ -1708,6 +1715,11 @@ end;
 procedure TtgContact.SetUserId(const AValue: Int64);
 begin
   Write('user_id', TJSONNumber.Create(AValue));
+end;
+
+procedure TtgContact.SetvCard(const Value: string);
+begin
+  Write('vcard', Value);
 end;
 
 { TtgVenue }
@@ -1860,25 +1872,25 @@ begin
     Exit;
   GUID := GetTypeData(TypeInfo(ItgPhotoSize))^.GUID;
   SetLength(Result, PhotoArr.Count);
-  //Some photos could be empty(?), so we should
-  //use separated counter instead of copy of the FOR-loop variable value.
+  // Some photos could be empty(?), so we should
+  // use separated counter instead of copy of the FOR-loop variable value.
   ResultPhotoIndex := 0;
   for PhotoIndex := 0 to High(Result) do
   begin
-    //get array of photoSizes from photoArr[i]
+    // get array of photoSizes from photoArr[i]
     SizeArr := PhotoArr.Items[PhotoIndex] as TJSONArray;
-    //check for empty photo
+    // check for empty photo
     if (not Assigned(SizeArr)) or SizeArr.Null then
       Continue;
-    //set length of photoSize array
+    // set length of photoSize array
     SetLength(Result[ResultPhotoIndex], SizeArr.Count);
-    //fills the result[RealIndex] with array of sizes
+    // fills the result[RealIndex] with array of sizes
     for SizeIndex := 0 to High(Result[ResultPhotoIndex]) do
       GetTgClass.Create(SizeArr.Items[SizeIndex].ToString).GetInterface(GUID, Result[ResultPhotoIndex, SizeIndex]);
-    //inc counter of processed photos
+    // inc counter of processed photos
     Inc(ResultPhotoIndex);
   end;
-  //Set real length of the result array. length = zero based index + 1;
+  // Set real length of the result array. length = zero based index + 1;
   SetLength(Result, ResultPhotoIndex + 1);
 end;
 
@@ -1888,4 +1900,3 @@ begin
 end;
 
 end.
-

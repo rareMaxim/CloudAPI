@@ -28,17 +28,17 @@ type
     /// <summary>
     ///   Title of the result
     /// </summary>
-    [JSonName('title')]
+    [JSONName('title')]
     Title: String;
     /// <summary>
     ///   Optional. Inline keyboard attached to the message
     /// </summary>
-    [JSonName('input_message_content')]
+    [JSONName('input_message_content')]
     InputMessageContent: TtgInputMessageContent;
     /// <summary>
     ///   Optional. Inline keyboard attached to the message
     /// </summary>
-    [JSonName('reply_markup')]
+    [JSONName('reply_markup')]
     ReplyMarkup: TtgInlineKeyboardMarkup;
     constructor Create;
     destructor Destroy; override;
@@ -311,6 +311,8 @@ type
     /// </summary>
     [JSONName('last_name')]
     LastName: string;
+    [JSONName('vCard')]
+    vCard: string;
     constructor Create;
   end;
 
@@ -352,9 +354,9 @@ type
   TtgInlineQueryResultGame = class
   public
     [JSONName('type')]
-    &type: String;
+    &Type: String;
     [JSONName('id')]
-    id: String;
+    ID: String;
     /// <summary>
     ///   Short name of the game.
     /// </summary>
