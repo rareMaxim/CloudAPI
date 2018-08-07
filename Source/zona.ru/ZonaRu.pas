@@ -16,11 +16,11 @@ type
     function ExractDocs(const AInput: string): string;
     procedure DoInitApiCore; override;
   protected
-    function GetMedia: TArray<IznCoverSerial>;
+    function GetMedia(const AStart, ARows: Integer): TArray<IznCoverMedia>;
   public
 
-    function GetMovies: TArray<IznCoverSerial>;
-    function GetSerials: TArray<IznCoverSerial>;
+    function GetMovies(const AStart, ARows: Integer): TArray<IznCoverMedia>;
+    function GetSerials(const AStart, ARows: Integer): TArray<IznCoverMedia>;
     function OpenMedia(const ID: Integer): IznItemFull;
     destructor Destroy; override;
     constructor Create(AOwner: TComponent); override;
@@ -60,6 +60,8 @@ begin
         AddParameter('Accept-Encoding', 'gzip, deflate', '', True, TStoreFormat.InHeader);
         AddParameter('Connection', 'keep-alive', '', True, TStoreFormat.InHeader);
         AddParameter('User-Agent', 'Java/1.8.0_171', '', True, TStoreFormat.InHeader);
+        AddParameter('version', '2.2', '', True);
+        AddParameter('wt', 'json', '', True);
       end;
 
     end;
@@ -99,7 +101,7 @@ begin
   end;
 end;
 
-function TZona.GetMedia: TArray<IznCoverSerial>;
+function TZona.GetMedia(const AStart, ARows: Integer): TArray<IznCoverMedia>;
 const
   // CQ = '(NOT(abuse:zona)AND(adult:false)AND(tor_count:[1+TO+2147483647])AND(indexed:[1+TO+7])AND(serial:false)NOT(genreId:(12+OR+15+OR+25+OR+26+OR+1747+OR+28+OR+27+OR+tv)))';
   CFL1 = 'id,year,playable,trailer,quality,audio_quality,type3d,serial,languages_imdb,rating,genre,runtime,episodes,tor_count,serial_end_year,serial_ended,abuse,';
@@ -112,27 +114,25 @@ begin
   begin
     SetMethod('movie/select');
     AddParameter('q', FQuery.ToCatalog, '', True);
-    AddParameter('version', '2.2', '', True);
-    AddParameter('wt', 'json', '', True);
     AddParameter('sort', 'popularity desc,seeds desc,id desc', '', True);
     AddParameter('fl', CFL, '', True);
-    AddParameter('start', 0, -1, True);
-    AddParameter('rows', 60, -1, True);
+    AddParameter('start', AStart, -1, True);
+    AddParameter('rows', ARows, -1, True);
     LResp := (ExractDocs(ExecuteAsString));
-    Result := TBaseJson.AsArray<IznCoverSerial>(TznCoverSerial, LResp);
+    Result := TBaseJson.AsArray<IznCoverMedia>(TznCoverMedia, LResp);
   end;
 end;
 
-function TZona.GetMovies: TArray<IznCoverSerial>;
+function TZona.GetMovies(const AStart, ARows: Integer): TArray<IznCoverMedia>;
 begin
   FQuery.Serial := False;
-  Result := GetMedia;
+  Result := GetMedia(AStart, ARows);
 end;
 
-function TZona.GetSerials: TArray<IznCoverSerial>;
+function TZona.GetSerials(const AStart, ARows: Integer): TArray<IznCoverMedia>;
 begin
   FQuery.Serial := True;
-  Result := GetMedia;
+  Result := GetMedia(AStart, ARows);
 end;
 
 function TZona.OpenMedia(const ID: Integer): IznItemFull;
@@ -144,10 +144,8 @@ begin
   begin
     SetMethod('movie/select');
     AddParameter('q', FQuery.ToItem, '', True);
-    AddParameter('version', '2.2', '', True);
-    AddParameter('wt', 'json', '', True);
     AddParameter('start', 0, -1, True);
-    AddParameter('rows', 60, -1, True);
+    AddParameter('rows', 1, -1, True);
     LResp := (ExractDocs(ExecuteAsString));
     Result := TBaseJson.AsArray<IznItemFull>(TznItemFull, LResp)[0];
   end;

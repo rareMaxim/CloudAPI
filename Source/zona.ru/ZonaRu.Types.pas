@@ -7,8 +7,8 @@ uses
 
 type
 
-  IznCoverSerial = interface
-    ['{2DF78C63-B657-41DE-99FC-173EB5AEB3CB}']
+  IznCoverMedia = interface
+  ['{2DF78C63-B657-41DE-99FC-173EB5AEB3CB}']
     function type3d: integer;
     function year: integer;
     function release_date_int: string;
@@ -34,7 +34,7 @@ type
     function serial: boolean;
   end;
 
-  TznCoverSerial = class(TBaseJson, IznCoverSerial)
+  TznCoverMedia = class(TBaseJson, IznCoverMedia)
   public
     function type3d: integer;
     function year: integer;
@@ -61,7 +61,7 @@ type
     function serial: boolean;
   end;
 
-  IznItemFull = interface(IznCoverSerial)
+  IznItemFull = interface(IznCoverMedia)
     ['{A80FA048-ED6D-49CA-A782-9A2D4C549247}']
     function _version_: int64;
     function adult: boolean;
@@ -120,7 +120,7 @@ type
     function &type: string;
   end;
 
-  TznItemFull = class(TznCoverSerial, IznItemFull)
+  TznItemFull = class(TznCoverMedia, IznItemFull)
     function _version_: int64;
     function adult: boolean;
     function await_count: integer;
@@ -180,119 +180,119 @@ type
 
 implementation
 
-{ TznCoverSerial }
+{ TznCoverMedia }
 
-function TznCoverSerial.abuse: string;
+function TznCoverMedia.abuse: string;
 begin
   Result := ToSimpleType<string>('abuse');
 end;
 
-function TznCoverSerial.audio_quality: integer;
+function TznCoverMedia.audio_quality: integer;
 begin
   Result := ToSimpleType<integer>('audio_quality');
 end;
 
-function TznCoverSerial.episodes: string;
+function TznCoverMedia.episodes: string;
 begin
   Result := ToSimpleType<string>('episodes');
 end;
 
-function TznCoverSerial.genre: string;
+function TznCoverMedia.genre: string;
 begin
   Result := ToSimpleType<string>('genre');
 end;
 
-function TznCoverSerial.id: string;
+function TznCoverMedia.id: string;
 begin
   Result := ToSimpleType<string>('id');
 end;
 
-function TznCoverSerial.indexed: integer;
+function TznCoverMedia.indexed: integer;
 begin
   Result := ToSimpleType<integer>('indexed');
 end;
 
-function TznCoverSerial.languages_imdb: string;
+function TznCoverMedia.languages_imdb: string;
 begin
   Result := ToSimpleType<string>('languages_imdb');
 end;
 
-function TznCoverSerial.name_eng: string;
+function TznCoverMedia.name_eng: string;
 begin
   Result := ToSimpleType<string>('name_eng');
 end;
 
-function TznCoverSerial.name_original: string;
+function TznCoverMedia.name_original: string;
 begin
   Result := ToSimpleType<string>('name_original');
 end;
 
-function TznCoverSerial.name_rus: string;
+function TznCoverMedia.name_rus: string;
 begin
   Result := ToSimpleType<string>('name_rus');
 end;
 
-function TznCoverSerial.playable: boolean;
+function TznCoverMedia.playable: boolean;
 begin
   Result := ToSimpleType<boolean>('playable');
 end;
 
-function TznCoverSerial.quality: integer;
+function TznCoverMedia.quality: integer;
 begin
   Result := ToSimpleType<integer>('quality');
 end;
 
-function TznCoverSerial.rating: single;
+function TznCoverMedia.rating: single;
 begin
   Result := ToSimpleType<single>('rating');
 end;
 
-function TznCoverSerial.release_date_int: string;
+function TznCoverMedia.release_date_int: string;
 begin
   Result := ToSimpleType<string>('release_date_int');
 end;
 
-function TznCoverSerial.release_date_rus: string;
+function TznCoverMedia.release_date_rus: string;
 begin
   Result := ToSimpleType<string>('release_date_rus');
 end;
 
-function TznCoverSerial.runtime: integer;
+function TznCoverMedia.runtime: integer;
 begin
   Result := ToSimpleType<integer>('runtime');
 end;
 
-function TznCoverSerial.serial: boolean;
+function TznCoverMedia.serial: boolean;
 begin
   Result := ToSimpleType<boolean>('serial');
 end;
 
-function TznCoverSerial.serial_ended: boolean;
+function TznCoverMedia.serial_ended: boolean;
 begin
   Result := ToSimpleType<boolean>('serial_ended');
 end;
 
-function TznCoverSerial.serial_end_year: integer;
+function TznCoverMedia.serial_end_year: integer;
 begin
   Result := ToSimpleType<integer>('serial_end_year');
 end;
 
-function TznCoverSerial.tor_count: integer;
+function TznCoverMedia.tor_count: integer;
 begin
   Result := ToSimpleType<integer>('tor_count');
 end;
 
-function TznCoverSerial.trailer: boolean;
+function TznCoverMedia.trailer: boolean;
 begin
   Result := ToSimpleType<boolean>('trailer');
 end;
 
-function TznCoverSerial.type3d: integer;
+function TznCoverMedia.type3d: integer;
 begin
   Result := ToSimpleType<integer>('type3d');
 end;
 
-function TznCoverSerial.year: integer;
+function TznCoverMedia.year: integer;
 begin
   Result := ToSimpleType<integer>('year');
 end;
