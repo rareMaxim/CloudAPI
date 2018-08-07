@@ -533,6 +533,8 @@ type
     /// </summary>
     [JSONName('foursquare_id')]
     FoursquareId: string;
+    [JSONName('foursquare_type')]
+    FoursquareType: string;
     constructor Create;
   end;
 

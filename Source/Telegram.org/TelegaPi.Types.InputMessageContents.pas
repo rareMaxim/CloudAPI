@@ -113,7 +113,10 @@ type
     /// </summary>
     [JSONName('foursquare_id')]
     FoursquareId: string;
-    constructor Create(ALatitude, ALongitude: Single; const ATitle, AAddress, AFoursquareId: string);
+    [JSONName('foursquare_type')]
+    FoursquareType: string;
+    constructor Create(ALatitude, ALongitude: Single; const ATitle, AAddress: string; const AFoursquareId: string = '';
+      const AFoursquareType: string = '');
   end;
 
 implementation
@@ -140,7 +143,7 @@ end;
 { TtgInputVenueMessageContent }
 
 constructor TtgInputVenueMessageContent.Create(ALatitude, ALongitude: Single;
-  const ATitle, AAddress, AFoursquareId: string);
+  const ATitle, AAddress, AFoursquareId, AFoursquareType: string);
 begin
   inherited Create;
   Latitude := ALatitude;
@@ -148,6 +151,7 @@ begin
   Title := ATitle;
   Address := AAddress;
   FoursquareId := AFoursquareId;
+  FoursquareType := AFoursquareType;
 end;
 
 { TtgInputContactMessageContent }

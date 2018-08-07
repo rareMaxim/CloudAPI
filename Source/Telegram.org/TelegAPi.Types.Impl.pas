@@ -193,11 +193,14 @@ type
     procedure SetAddress(const AValue: string);
     function GetFoursquareId: string;
     procedure SetFoursquareId(const AValue: string);
+    function GetFoursquareType: string;
+    procedure SetFoursquareType(const Value: string);
   public
     property Location: ItgLocation read GetLocation write SetLocation;
     property Title: string read GetTitle write SetTitle;
     property Address: string read GetAddress write SetAddress;
     property FoursquareId: string read GetFoursquareId write SetFoursquareId;
+    property FoursquareType: string read GetFoursquareType write SetFoursquareType;
   end;
 
   TtgAnimation = class(TBaseJson, ItgAnimation)
@@ -1734,6 +1737,11 @@ begin
   Result := ToSimpleType<string>('foursquare_id');
 end;
 
+function TtgVenue.GetFoursquareType: string;
+begin
+  Result := ToSimpleType<string>('foursquare_type');
+end;
+
 function TtgVenue.GetLocation: ItgLocation;
 begin
   Result := ToClass<TtgLocation>('location');
@@ -1752,6 +1760,11 @@ end;
 procedure TtgVenue.SetFoursquareId(const AValue: string);
 begin
   Write('foursquare_id', AValue);
+end;
+
+procedure TtgVenue.SetFoursquareType(const Value: string);
+begin
+  Write('foursquare_type', Value);
 end;
 
 procedure TtgVenue.SetLocation(const AValue: ItgLocation);
