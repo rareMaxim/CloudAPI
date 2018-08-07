@@ -203,13 +203,9 @@ type
     property FoursquareType: string read GetFoursquareType write SetFoursquareType;
   end;
 
-  TtgAnimation = class(TBaseJson, ItgAnimation)
+  TtgAnimation = class(TtgVideo, ItgAnimation)
   public
-    function FileId: string;
-    function Thumb: ItgPhotoSize;
     function FileName: string;
-    function MimeType: string;
-    function FileSize: Int64;
   end;
 
   TtgGameHighScore = class(TBaseJson, ItgGameHighScore)
@@ -248,6 +244,7 @@ type
     function CaptionEntities: TArray<ItgMessageEntity>;
     function Audio: ItgAudio;
     function Document: ItgDocument;
+    function Animation: ItgAnimation;
     function Game: ItgGame;
     function Photo: TArray<ItgPhotoSize>;
     function Sticker: ItgSticker;
@@ -427,31 +424,12 @@ implementation
 uses
   System.Json,
   System.TypInfo;
-{ TtgAnimation }
 
-function TtgAnimation.FileId: string;
-begin
-  Result := ToSimpleType<string>('file_id');
-end;
+{ TtgAnimation }
 
 function TtgAnimation.FileName: string;
 begin
   Result := ToSimpleType<string>('file_name');
-end;
-
-function TtgAnimation.FileSize: Int64;
-begin
-  Result := ToSimpleType<Int64>('file_size');
-end;
-
-function TtgAnimation.MimeType: string;
-begin
-  Result := ToSimpleType<string>('mime_type');
-end;
-
-function TtgAnimation.Thumb: ItgPhotoSize;
-begin
-  Result := ToClass<TtgPhotoSize>('thumb');
 end;
 
 { TtgCallbackQuery }
@@ -768,6 +746,11 @@ begin
   if not Text.IsEmpty then
     Exit(TtgMessageType.Text);
   Result := TtgMessageType.Unknown;
+end;
+
+function TTgMessage.Animation: ItgAnimation;
+begin
+  Result := ToClass<TtgAnimation>('animation');
 end;
 
 function TTgMessage.Audio: ItgAudio;

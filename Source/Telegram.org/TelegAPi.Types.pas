@@ -260,6 +260,7 @@ type
     function CaptionEntities: TArray<ItgMessageEntity>;
     function Audio: ItgAudio;
     function Document: ItgDocument;
+    function Animation: ItgAnimation;
     function Game: ItgGame;
     function Photo: TArray<ItgPhotoSize>;
     function Sticker: ItgSticker;
