@@ -1464,6 +1464,10 @@ begin
     Result := TtgMessageEntityType.TextMention
   else if LValue = 'email' then
     Result := TtgMessageEntityType.Email
+  else if LValue = 'cashtag' then
+    Result := TtgMessageEntityType.CashTag
+  else if LValue = 'phone_number' then
+    Result := TtgMessageEntityType.PhoneNumber
   else
     raise Exception.CreateFmt('Cant parse Entity: %S', [LValue]);
 end;

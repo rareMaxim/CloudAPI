@@ -137,8 +137,8 @@ type
   /// The type of a Message
   /// </summary>
 
-  TtgMessageType = (Unknown = 0, Text, Photo, Audio, Video, VideoNote, Voice,
-    Document, Sticker, Game, Location, Contact, Service, Venue);
+  TtgMessageType = (Unknown = 0, Text, Photo, Audio, Video, VideoNote, Voice, Document, Sticker, Game, Location,
+    Contact, Service, Venue);
   /// <summary>
   /// Text parsing mode
   /// </summary>
@@ -239,6 +239,7 @@ type
   /// Type of a <see cref="MessageEntity" />
   /// </summary>
   TtgMessageEntityType = (
+
     /// <summary>
     /// A mentioned <see cref="User" />
     /// </summary>
@@ -247,8 +248,7 @@ type
     /// <summary>
     /// A searchable Hashtag
     /// </summary>
-    Hashtag,
-
+    Hashtag, CashTag,
     /// <summary>
     /// A Bot command
     /// </summary>
@@ -262,7 +262,7 @@ type
     /// <summary>
     /// An email
     /// </summary>
-    Email,
+    Email, PhoneNumber,
 
     /// <summary>
     /// Bold text
@@ -317,20 +317,18 @@ type
 
   TtgGender = (Male, Female);
 
-  TtgPassportAvaibleData = (PersonalDetails, Passport, InternalPassport,
-    DriverLicense, IdentityCard, IdDocument, IdSelfie, Address, UtilityBill,
-    BankStatement, RentalAgreement, PassportRegistration, TemporaryRegistration,
-    AdressDocument, PhoneNumber, email);
+  TtgPassportAvaibleData = (PersonalDetails, Passport, InternalPassport, DriverLicense, IdentityCard, IdDocument,
+    IdSelfie, Address, UtilityBill, BankStatement, RentalAgreement, PassportRegistration, TemporaryRegistration,
+    AdressDocument, PhoneNumber, Email);
 
-  TAllowedUpdate = (message, Edited_message, Channel_post, Edited_channel_post,
-    Inline_query, Chosen_inline_result, Callback_query);
+  TAllowedUpdate = (message, Edited_message, Channel_post, Edited_channel_post, Inline_query, Chosen_inline_result,
+    Callback_query);
 
   TAllowedUpdates = set of TAllowedUpdate;
 
 const
-  UPDATES_ALLOWED_ALL =[Low(TAllowedUpdate)..High(TAllowedUpdate)];
+  UPDATES_ALLOWED_ALL = [Low(TAllowedUpdate) .. High(TAllowedUpdate)];
 
 implementation
 
 end.
-
