@@ -81,18 +81,19 @@ type
     function GetFileUrl(const AToken: string): string;
   end;
 
+  ItgPhotoSize = interface(ItgFile)
+    ['{FF71291C-4E00-483E-8363-AF160CE78A4F}']
+    function Width: Int64;
+    function Height: Int64;
+  end;
+
   ItgAudio = interface(ItgFile)
     ['{8220DE57-2A5E-4B77-8B62-A3268E15D938}']
     function Duration: Int64;
     function Performer: string;
     function Title: string;
     function MimeType: string;
-  end;
-
-  ItgPhotoSize = interface(ItgFile)
-    ['{FF71291C-4E00-483E-8363-AF160CE78A4F}']
-    function Width: Int64;
-    function Height: Int64;
+    function Thumb: ItgPhotoSize;
   end;
 
   ItgDocument = interface(ItgFile)
@@ -135,6 +136,11 @@ type
     function Duration: Int64;
     function Thumb: ItgPhotoSize;
     function MimeType: string;
+  end;
+
+  ItgAnimation = interface(ItgVideo)
+    ['{3F6B1CE1-E835-4018-99CD-712E66220B2E}']
+    function FileName: string;
   end;
 
   ItgVideoNote = interface(ItgFile)
@@ -198,15 +204,6 @@ type
     property Title: string read GetTitle write SetTitle;
     property Address: string read GetAddress write SetAddress;
     property FoursquareId: string read GetFoursquareId write SetFoursquareId;
-  end;
-
-  ItgAnimation = interface
-    ['{A0C6E374-590C-469B-AC76-F91135899FC5}']
-    function FileId: string;
-    function Thumb: ItgPhotoSize;
-    function FileName: string;
-    function MimeType: string;
-    function FileSize: Int64;
   end;
 
   ItgGameHighScore = interface

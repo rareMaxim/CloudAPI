@@ -85,6 +85,7 @@ type
     function Performer: string;
     function Title: string;
     function MimeType: string;
+    function Thumb: ItgPhotoSize;
   end;
 
   TtgPhotoSize = class(TtgFile, ItgPhotoSize)
@@ -1480,6 +1481,11 @@ end;
 function TtgAudio.Performer: string;
 begin
   Result := ToSimpleType<string>('performer');
+end;
+
+function TtgAudio.Thumb: ItgPhotoSize;
+begin
+  Result := ToClass<TtgPhotoSize>('thumb');
 end;
 
 function TtgAudio.Title: string;

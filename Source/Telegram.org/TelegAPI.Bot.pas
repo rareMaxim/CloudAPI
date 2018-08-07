@@ -70,6 +70,7 @@ type
     function SendAudio( //
       const ChatId: TtgUserLink; //
       const Audio: TFileToSend; //
+      const Thumb: TFileToSend; //
       const Caption: string = ''; //
       const ParseMode: TtgParseMode = TtgParseMode.Default; //
       const Duration: Int64 = 0; //
@@ -694,8 +695,8 @@ begin
     .ExecuteAsString);
 end;
 
-function TTelegramBot.SendAudio(const ChatId: TtgUserLink; const Audio: TFileToSend; const Caption: string;
-  const ParseMode: TtgParseMode; const Duration: Int64; const Performer, Title: string;
+function TTelegramBot.SendAudio(const ChatId: TtgUserLink; const Audio: TFileToSend; const Thumb: TFileToSend;
+  const Caption: string; const ParseMode: TtgParseMode; const Duration: Int64; const Performer, Title: string;
   const DisableNotification: Boolean; const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
 begin
   with GetRequest do
@@ -703,6 +704,7 @@ begin
     SetMethod('sendAudio');
     AddParameter('chat_id', ChatId.ToString, '', True, TStoreFormat.InUrl);
     AddParameter('audio', Audio, TFileToSend.Empty, True, TStoreFormat.InFormData);
+    AddParameter('thumb', Thumb, TFileToSend.Empty, True, TStoreFormat.InFormData);
     AddParameter('caption', Caption, '', False, TStoreFormat.InUrl);
     AddParameter('parse_mode', ParseMode.ToString, '', False, TStoreFormat.InUrl);
     AddParameter('duration', Duration, 0, False, TStoreFormat.InUrl);
