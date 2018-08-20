@@ -12,13 +12,14 @@ type
   TZona = class(TCloudApiBaseComponent)
   private
     FQuery: TZonaQuery;
+    FLastResponse: IznLastResponse;
   protected
     function ExractDocs(const AInput: string): string;
     procedure DoInitApiCore; override;
   protected
     function GetMedia(const AStart, ARows: Integer): TArray<IznCoverMedia>;
   public
-
+    function LastResponse: IznLastResponse;
     function GetMovies(const AStart, ARows: Integer): TArray<IznCoverMedia>;
     function GetSerials(const AStart, ARows: Integer): TArray<IznCoverMedia>;
     function OpenMedia(const ID: Integer): IznItemFull;
@@ -76,6 +77,7 @@ begin
         Exit;
       LJSON := TJSONObject.ParseJSONValue(AInput) as TJSONObject;
       try
+        FLastResponse := TznLastResponse.Create(LJSON.ToString);
         Result := LJSON.GetValue('response').ToString;
       finally
         LJSON.Free;
@@ -133,6 +135,11 @@ function TZona.GetSerials(const AStart, ARows: Integer): TArray<IznCoverMedia>;
 begin
   FQuery.Serial := True;
   Result := GetMedia(AStart, ARows);
+end;
+
+function TZona.LastResponse: IznLastResponse;
+begin
+  Result := FLastResponse;
 end;
 
 function TZona.OpenMedia(const ID: Integer): IznItemFull;

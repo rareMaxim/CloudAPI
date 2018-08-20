@@ -6,9 +6,19 @@ uses
   CloudAPI.Utils.Json;
 
 type
+  IznLastResponse = interface
+    ['{4735F71E-A681-4A11-AB58-983383CA12FF}']
+    function numFound: integer;
+    function start: integer;
+  end;
+
+  TznLastResponse = class(TBaseJson, IznLastResponse)
+    function numFound: integer;
+    function start: integer;
+  end;
 
   IznCoverMedia = interface
-  ['{2DF78C63-B657-41DE-99FC-173EB5AEB3CB}']
+    ['{2DF78C63-B657-41DE-99FC-173EB5AEB3CB}']
     function type3d: integer;
     function year: integer;
     function release_date_int: string;
@@ -573,6 +583,18 @@ end;
 function TznItemFull._version_: int64;
 begin
   Result := ToSimpleType<int64>('_version_');
+end;
+
+{ TznLastResponse }
+
+function TznLastResponse.numFound: integer;
+begin
+  Result := ToSimpleType<integer>('numFound');
+end;
+
+function TznLastResponse.start: integer;
+begin
+  Result := ToSimpleType<integer>('start');
 end;
 
 end.

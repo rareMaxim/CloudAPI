@@ -28,7 +28,9 @@ package Zona.ru;
 {$IMPLICITBUILD ON}
 
 requires
-  rtl;
+  rtl,
+  RESTComponents,
+  CloudApiCore;
 
 contains
   ZonaRu in '..\Source\zona.ru\ZonaRu.pas',

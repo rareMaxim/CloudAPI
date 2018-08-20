@@ -86,6 +86,8 @@
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
         <DCCReference Include="rtl.dcp"/>
+        <DCCReference Include="RESTComponents.dcp"/>
+        <DCCReference Include="CloudApiCore.dcp"/>
         <DCCReference Include="..\Source\zona.ru\ZonaRu.pas"/>
         <DCCReference Include="..\Source\zona.ru\ZonaRu.Types.pas"/>
         <DCCReference Include="..\Source\zona.ru\ZonaRu.Query.pas"/>
