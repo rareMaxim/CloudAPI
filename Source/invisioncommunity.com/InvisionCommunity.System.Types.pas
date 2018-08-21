@@ -3,7 +3,7 @@ unit InvisionCommunity.System.Types;
 interface
 
 uses
-  InvisionCommunity.Core.JsonBaseClass;
+  CloudAPI.Utils.Json;
 
 type
   IicSystemResult = interface
@@ -25,17 +25,17 @@ implementation
 
 function TicSystemResult.communityName: string;
 begin
-  Result := ReadToSimpleType<string>('communityName');
+  Result := ToSimpleType<string>('communityName');
 end;
 
 function TicSystemResult.communityUrl: string;
 begin
-  Result := ReadToSimpleType<string>('communityUrl');
+  Result := ToSimpleType<string>('communityUrl');
 end;
 
 function TicSystemResult.ipsVersion: string;
 begin
-  Result := ReadToSimpleType<string>('ipsVersion');
+  Result := ToSimpleType<string>('ipsVersion');
 end;
 
 end.

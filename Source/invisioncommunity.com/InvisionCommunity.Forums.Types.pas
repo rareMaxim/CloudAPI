@@ -3,7 +3,7 @@ unit InvisionCommunity.Forums.Types;
 interface
 
 uses
-  InvisionCommunity.Core.JsonBaseClass;
+  CloudAPI.Utils.Json;
 
 type
 {$REGION 'ForumObject'}
@@ -148,29 +148,29 @@ implementation
 
 function TicForumObject.ID: Integer;
 begin
-  Result := ReadToSimpleType<Integer>('id');
+  Result := ToSimpleType<Integer>('id');
 end;
 
 function TicForumObject.Name: string;
 begin
-  Result := ReadToSimpleType<string>('name');
+  Result := ToSimpleType<string>('name');
 end;
 
 function TicForumObject.topics: Integer;
 begin
-  Result := ReadToSimpleType<Integer>('topics');
+  Result := ToSimpleType<Integer>('topics');
 end;
 
 function TicForumObject.url: string;
 begin
-  Result := ReadToSimpleType<string>('url');
+  Result := ToSimpleType<string>('url');
 end;
 
 { TicTopicObject }
 
 function TicTopicObject.archived: Boolean;
 begin
-  Result := ReadToSimpleType<Boolean>('archived');
+  Result := ToSimpleType<Boolean>('archived');
 end;
 
 function TicTopicObject.bestAnswer: IicPostObject;
@@ -180,7 +180,7 @@ end;
 
 function TicTopicObject.featured: Boolean;
 begin
-  Result := ReadToSimpleType<Boolean>('featured');
+  Result := ToSimpleType<Boolean>('featured');
 end;
 
 function TicTopicObject.firstPost: IicPostObject;
@@ -195,12 +195,12 @@ end;
 
 function TicTopicObject.hidden: Boolean;
 begin
-  Result := ReadToSimpleType<Boolean>('hidden');
+  Result := ToSimpleType<Boolean>('hidden');
 end;
 
 function TicTopicObject.ID: Integer;
 begin
-  Result := ReadToSimpleType<Integer>('id');
+  Result := ToSimpleType<Integer>('id');
 end;
 
 function TicTopicObject.lastPost: IicPostObject;
@@ -210,12 +210,12 @@ end;
 
 function TicTopicObject.locked: Boolean;
 begin
-  Result := ReadToSimpleType<Boolean>('locked');
+  Result := ToSimpleType<Boolean>('locked');
 end;
 
 function TicTopicObject.pinned: Boolean;
 begin
-  Result := ReadToSimpleType<Boolean>('pinned');
+  Result := ToSimpleType<Boolean>('pinned');
 end;
 
 function TicTopicObject.poll: IicPollObject;
@@ -225,17 +225,17 @@ end;
 
 function TicTopicObject.Posts: Integer;
 begin
-  Result := ReadToSimpleType<Integer>('posts');
+  Result := ToSimpleType<Integer>('posts');
 end;
 
 function TicTopicObject.Prefix: string;
 begin
-  Result := ReadToSimpleType<string>('prefix');
+  Result := ToSimpleType<string>('prefix');
 end;
 
 function TicTopicObject.rating: Single;
 begin
-  Result := ReadToSimpleType<Single>('rating');
+  Result := ToSimpleType<Single>('rating');
 end;
 
 function TicTopicObject.tags: TArray<string>;
@@ -245,17 +245,17 @@ end;
 
 function TicTopicObject.Title: string;
 begin
-  Result := ReadToSimpleType<string>('title');
+  Result := ToSimpleType<string>('title');
 end;
 
 function TicTopicObject.url: string;
 begin
-  Result := ReadToSimpleType<string>('url');
+  Result := ToSimpleType<string>('url');
 end;
 
 function TicTopicObject.Views: Integer;
 begin
-  Result := ReadToSimpleType<Integer>('views');
+  Result := ToSimpleType<Integer>('views');
 end;
 
 end.

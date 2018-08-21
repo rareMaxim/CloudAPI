@@ -4,15 +4,10 @@ interface
 
 uses
   InvisionCommunity.System.Types,
-  InvisionCommunity.Core.Api;
+  InvisionCommunity.Base;
 
 type
-  IicSystem = interface(IicRequest)
-    ['{5E03F911-4D08-4E34-A933-F571716FF9CD}']
-    function Hello: IicSystemResult;
-  end;
-
-  TicSystem = class(TicRequest, IicSystem)
+  TicSystem = class(TInvCommBase)
   private
   public
     function Hello: IicSystemResult;
@@ -24,9 +19,11 @@ implementation
 
 function TicSystem.Hello: IicSystemResult;
 begin
-  SetPath('/api/core/hello');
-  Result := TicSystemResult.Create(Get);
+  with GetRequest do
+  begin
+    SetMethod('/api/core/hello');
+    Result := TicSystemResult.Create(ExecuteAsString);
+  end;
 end;
 
 end.
-

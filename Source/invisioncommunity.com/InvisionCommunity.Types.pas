@@ -3,7 +3,7 @@ unit InvisionCommunity.Types;
 interface
 
 uses
-  InvisionCommunity.Core.JsonBaseClass;
+  CloudAPI.Utils.Json;
 
 type
   IicArray<T> = interface
@@ -42,28 +42,27 @@ end;
 
 function TicArray<T>.Page: Integer;
 begin
-  Result := ReadToSimpleType<Integer>('page');
+  Result := ToSimpleType<Integer>('page');
 end;
 
 function TicArray<T>.PerPage: Integer;
 begin
-  Result := ReadToSimpleType<Integer>('perPage');
+  Result := ToSimpleType<Integer>('perPage');
 end;
 
 function TicArray<T>.Results: TArray<T>;
 begin
-  Result := ReadToArray<T>(FBase, 'results');
+  Result := ToArray<T>(FBase, 'results');
 end;
 
 function TicArray<T>.TotalPages: Integer;
 begin
-  Result := ReadToSimpleType<Integer>('totalPages');
+  Result := ToSimpleType<Integer>('totalPages');
 end;
 
 function TicArray<T>.TotalResults: Integer;
 begin
-  Result := ReadToSimpleType<Integer>('totalResults');
+  Result := ToSimpleType<Integer>('totalResults');
 end;
 
 end.
-

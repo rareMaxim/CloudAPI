@@ -3,41 +3,47 @@ unit InvisionCommunity.Forums;
 interface
 
 uses
-  InvisionCommunity.Core.Api,
+  InvisionCommunity.Base,
   InvisionCommunity.Types,
   InvisionCommunity.Forums.Types;
 
 type
-  IicForums = interface(IicRequest)
-    ['{4AA39BC9-A179-4C20-9A90-CF1D3A86E34E}']
+  TicForums = class(TInvCommBase)
+  public
     function GetForums: IicArray<IicForumObject>;
     function GetTopics(const Forums, authors: string; //
       const hasBestAnswer, hasPoll, locked, hidden, pinned, featured, archived: Integer; //
       const sortBy, sortDir: string; //
       const page: Integer //
-    ): IicArray<IicTopicObject>;
-  end;
-
-  TicForums = class(TicRequest, IicForums)
-    function GetForums: IicArray<IicForumObject>;
-    function GetTopics(const Forums, authors: string; //
-      const hasBestAnswer, hasPoll, locked, hidden, pinned, featured, archived: Integer; //
-      const sortBy, sortDir: string; //
-      const page: Integer //
-    ): IicArray<IicTopicObject>;
+      ): IicArray<IicTopicObject>;
+    function GetTopic(const ID: Integer): IicTopicObject;
   end;
 
 implementation
 
 uses
+  System.SysUtils,
   System.Net.URLClient;
 
 { TicSystem }
 
 function TicForums.GetForums: IicArray<IicForumObject>;
 begin
-  SetPath('/api/forums/forums');
-  Result := TicArray<IicForumObject>.Create(Get, TicForumObject);
+  with GetRequest do
+  begin
+    SetMethod('/api/forums/forums');
+    Result := TicArray<IicForumObject>.Create(ExecuteAsString, TicForumObject);
+  end;
+end;
+
+function TicForums.GetTopic(const ID: Integer): IicTopicObject;
+begin
+  with GetRequest do
+  begin
+    SetMethod('/api/forums/topics/' + ID.ToString);
+    Result := TicTopicObject.Create(ExecuteAsString);
+    // Result := TicArray<IicTopicObject>.Create(ExecuteAsString, TicTopicObject);
+  end;
 end;
 
 function TicForums.GetTopics( //
@@ -46,21 +52,22 @@ function TicForums.GetTopics( //
   const sortBy, sortDir: string; //
   const page: Integer): IicArray<IicTopicObject>;
 begin
-  AddParameter('forums', Forums);
-  AddParameter('authors', authors);
-  AddParameter('hasBestAnswer', hasBestAnswer);
-  AddParameter('hasPoll', hasPoll);
-  AddParameter('locked', locked);
-  AddParameter('hidden', hidden);
-  AddParameter('pinned', pinned);
-  AddParameter('featured', featured);
-  AddParameter('archived', archived);
-  AddParameter('sortBy', sortBy);
-  AddParameter('sortDir', sortDir);
-  AddParameter('page', page);
-  SetPath('/api/forums/topics');
-  Result := TicArray<IicTopicObject>.Create(Get, TicTopicObject);
+  with GetRequest.SetMethod('/api/forums/topics') do
+  begin
+    AddParameter('forums', Forums, '', False);
+    AddParameter('authors', authors, '', False);
+    AddParameter('hasBestAnswer', hasBestAnswer, -1, False);
+    AddParameter('hasPoll', hasPoll, -1, False);
+    AddParameter('locked', locked, -1, False);
+    AddParameter('hidden', hidden, -1, False);
+    AddParameter('pinned', pinned, -1, False);
+    AddParameter('featured', featured, -1, False);
+    AddParameter('archived', archived, -1, False);
+    AddParameter('sortBy', sortBy, '', False);
+    AddParameter('sortDir', sortDir, '', False);
+    AddParameter('page', page, -1, False);
+    Result := TicArray<IicTopicObject>.Create(ExecuteAsString, TicTopicObject);
+  end;
 end;
 
 end.
-
