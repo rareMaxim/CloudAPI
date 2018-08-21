@@ -14,11 +14,9 @@ type
 {$IFDEF CONSOLE}
   TOnReceiveRawData = TProc<TObject, string>;
   TOnSendData = TProc<TObject, string, string>;
-  TOnError = TProc<TObject, ECloudApiException>;
 {$ELSE}
   TOnReceiveRawData = procedure(ASender: TObject; const AData: string) of object;
   TOnSendData = procedure(ASender: TObject; const AUrl, AData: string) of object;
-  TOnError = procedure(ASender: TObject; const Exception: ECloudApiException) of object;
 {$ENDIF}
 
   TCloudApiBaseComponent = class(TComponent)

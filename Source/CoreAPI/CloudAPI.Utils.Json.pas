@@ -1,5 +1,5 @@
 ﻿unit CloudAPI.Utils.Json;
-{/$I jedi\jedi.inc}
+{ /$I jedi\jedi.inc }
 
 interface
 
@@ -13,7 +13,7 @@ type
   TBaseJson = class(TInterfacedObject)
   private
     FJSON: TJSONObject;
-    FJsonRaw: string; //for debbuger
+    FJsonRaw: string; // for debbuger
   protected
     function GetJson: TJSONObject;
   public
@@ -32,6 +32,7 @@ type
     function AsBoolean: Boolean;
     function AsString: string;
     class function AsArray<TI>(const TgClass: TBaseJsonClass; const AValue: string): TArray<TI>;
+    class function AsClass<T: TBaseJson, constructor>(const AJson: string): T;
     class function AsJSONArray(const AValue: string): TJSONArray;
     class function FromJson(const AJson: string): TBaseJson;
     class function GetTgClass: TBaseJsonClass; virtual; // abstract;
@@ -58,13 +59,11 @@ uses
 
 type
   TRCStrings = class
-  public
-    const
-      BAD_INTF_FOR_CLASS = 'Unsupported interface for %S';
+  public const
+    BAD_INTF_FOR_CLASS = 'Unsupported interface for %S';
   end;
 
-
-{ TJsonUtils }
+  { TJsonUtils }
 
 class function TJsonUtils.ArrayToJString<T>(LArray: TArray<T>): string;
 var
@@ -155,6 +154,19 @@ begin
   Result := (FJSON as TJSONValue) is TJSONTrue;
 end;
 
+class function TBaseJson.AsClass<T>(const AJson: string): T;
+var
+  LValue: string;
+  FJSON: TJSONObject;
+begin
+  Result := nil;
+  FJSON := TJSONObject.ParseJSONValue(AJson) as TJSONObject;
+  if Assigned(FJSON) and (not FJSON.Null) then
+  begin
+    Result := TBaseJsonClass(T).Create(AJson) as T;
+  end
+end;
+
 function TBaseJson.AsJson: string;
 begin
   if Assigned(FJSON) then
@@ -177,6 +189,8 @@ constructor TBaseJson.Create(const AJson: string);
 begin
   inherited Create;
   SetJson(AJson);
+  if FJSON.Null then
+    Self := nil;
 end;
 
 function TBaseJson.ToClass<T>(const AKey: string): T;
@@ -237,22 +251,24 @@ begin
   SetLength(Result, LJsonArray.Count);
   for I := 0 to High(Result) do
   begin
-    if (not Assigned(LJsonArray.Items[I])) or (not LJsonArray.Items[I].TryGetValue < T > (Result[I])) then
-      Result[I] := Default(T);
+    if (not Assigned(LJsonArray.Items[I])) or (not LJsonArray.Items[I].TryGetValue<T>(Result[I])) then
+      Result[I] := Default (T);
   end;
 end;
 
 function TBaseJson.ToSimpleType<T>(const AKey: string): T;
 begin
   if (not Assigned(FJSON)) or (not FJSON.TryGetValue<T>(AKey, Result)) then
-    Result := Default(T);
+    Result := Default (T);
 end;
 
 procedure TBaseJson.SetJson(const AJson: string);
 begin
   FJsonRaw := AJson;
   if FJsonRaw.IsEmpty then
+  begin
     Exit;
+  end;
   if Assigned(FJSON) then
     FreeAndNil(FJSON);
   FJSON := TJSONObject.ParseJSONValue(AJson) as TJSONObject;
@@ -263,7 +279,7 @@ var
   LTemp: TArray<TPair<string, TI>>;
   I: Integer;
 begin
-  LTemp := ToPairs<ti>(TgClass, AKey);
+  LTemp := ToPairs<TI>(TgClass, AKey);
   SetLength(Result, Length(LTemp));
   for I := Low(Result) to High(Result) do
     Result[I] := LTemp[I].Value;
@@ -293,7 +309,7 @@ var
   GUID: TGUID;
   LValue: TI;
 begin
-  FList := TList<TPair<string, TI>>.Create;
+  FList := TList < TPair < string, TI >>.Create;
   try
     for LItem in ToPairs(AKey) do
     begin
@@ -316,12 +332,12 @@ end;
 
 procedure TBaseJson.Write(const AKey: string; AValue: TJSONValue);
 var
-  i: Integer;
+  I: Integer;
 begin
-  for i := 0 to FJSON.Count - 1 do
-    if FJSON.Pairs[i].JsonString.Value = AKey then
+  for I := 0 to FJSON.Count - 1 do
+    if FJSON.Pairs[I].JsonString.Value = AKey then
     begin
-      FJSON.Pairs[i].JsonValue := AValue;
+      FJSON.Pairs[I].JsonValue := AValue;
       FJsonRaw := FJSON.ToJSON;
       Exit;
     end;
@@ -335,4 +351,3 @@ begin
 end;
 
 end.
-

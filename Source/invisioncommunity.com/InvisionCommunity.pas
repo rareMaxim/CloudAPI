@@ -3,6 +3,8 @@ unit InvisionCommunity;
 interface
 
 uses
+  CloudApi.Exception,
+  System.SysUtils,
   InvisionCommunity.System,
   InvisionCommunity.Forums;
 
@@ -13,8 +15,10 @@ type
     FToken: string;
     FUrl: string;
     FSystem: TicSystem;
+    FOnError: TOnError;
     procedure SetUrl(const Value: string);
     procedure SetToken(const Value: string);
+    procedure SetOnError(const Value: TOnError);
   public
     constructor Create;
     destructor Destroy; override;
@@ -23,6 +27,7 @@ type
     property Forums: TicForums read FForums write FForums;
     property Token: string read FToken write SetToken;
     property Url: string read FUrl write SetUrl;
+    property OnError: TOnError read FOnError write SetOnError;
   end;
 
 implementation
@@ -40,6 +45,13 @@ begin
   FSystem.Free;
   FForums.Free;
   inherited;
+end;
+
+procedure TInvComm.SetOnError(const Value: TOnError);
+begin
+  FOnError := Value;
+  FSystem.OnError := Value;
+  FForums.OnError := Value;
 end;
 
 procedure TInvComm.SetToken(const Value: string);

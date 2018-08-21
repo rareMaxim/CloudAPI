@@ -22,6 +22,7 @@ type
 implementation
 
 uses
+  CloudApi.Utils.Json,
   System.SysUtils,
   System.Net.URLClient;
 
@@ -41,7 +42,7 @@ begin
   with GetRequest do
   begin
     SetMethod('/api/forums/topics/' + ID.ToString);
-    Result := TicTopicObject.Create(ExecuteAsString);
+    Result := TBaseJson.AsClass<TicTopicObject>(ExecuteAsString);
     // Result := TicArray<IicTopicObject>.Create(ExecuteAsString, TicTopicObject);
   end;
 end;

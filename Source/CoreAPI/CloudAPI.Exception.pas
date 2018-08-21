@@ -17,8 +17,8 @@ type
   public
     constructor Create(AException: Exception); reintroduce; overload;
     constructor Create(const ACode, ADescription: string; ARequest: IRequestData = nil); reintroduce; overload;
-    constructor Create(const ACode: Integer; const ADescription: string;
-      ARequest: IRequestData = nil); reintroduce; overload;
+    constructor Create(const ACode: Integer; const ADescription: string; ARequest: IRequestData = nil);
+      reintroduce; overload;
     function ToString: string; override;
     property Code: string read FCode write FCode;
     property Description: string read FDescription write FDescription;
@@ -26,6 +26,12 @@ type
     property Response: string read FResponse write FResponse;
     property Time: TDateTime read FTime write FTime;
   end;
+
+{$IFDEF CONSOLE}
+  TOnError = TProc<TObject, ECloudApiException>;
+{$ELSE}
+  TOnError = procedure(ASender: TObject; const Exception: ECloudApiException) of object;
+{$ENDIF}
 
 implementation
 
@@ -56,4 +62,3 @@ begin
 end;
 
 end.
-

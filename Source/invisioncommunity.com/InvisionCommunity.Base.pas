@@ -41,7 +41,6 @@ begin
     begin
       if Assigned(OnReceiveRawData) then
         OnReceiveRawData(Self, AInput);
-      Result := AInput;
       if AInput.IsEmpty or AInput.StartsWith('<html') then
         Exit;
       LJSON := TJSONObject.ParseJSONValue(AInput) as TJSONObject;
@@ -56,6 +55,7 @@ begin
             LExcept.Free;
           end;
         end;
+         Result := AInput;
       finally
         LJSON.Free;
       end
