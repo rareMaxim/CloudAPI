@@ -188,6 +188,18 @@ type
     function &type: string;
   end;
 
+  IznDirectMediaInfo = interface
+    ['{B7FF9024-167C-41D7-84F8-D424C8500932}']
+    function Images: TArray<string>;
+    function url: string;
+  end;
+
+  TznDirectMediaInfo = class(TBaseJson, IznDirectMediaInfo)
+  public
+    function Images: System.TArray<System.string>;
+    function url: string;
+  end;
+
 implementation
 
 { TznCoverMedia }
@@ -595,6 +607,18 @@ end;
 function TznLastResponse.start: integer;
 begin
   Result := ToSimpleType<integer>('start');
+end;
+
+{ TznDirectMediaInfo }
+
+function TznDirectMediaInfo.Images: System.TArray<System.string>;
+begin
+  TBaseJson.UnSupported;
+end;
+
+function TznDirectMediaInfo.url: string;
+begin
+  Result := ToSimpleType<string>('url');
 end;
 
 end.

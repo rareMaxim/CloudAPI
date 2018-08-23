@@ -23,6 +23,7 @@ type
     function GetMovies(const AStart, ARows: Integer): TArray<IznCoverMedia>;
     function GetSerials(const AStart, ARows: Integer): TArray<IznCoverMedia>;
     function OpenMedia(const ID: Integer): IznItemFull;
+    function DirectMediaInfo(const ID: IznItemFull): IznDirectMediaInfo;
     destructor Destroy; override;
     constructor Create(AOwner: TComponent); override;
   end;
@@ -46,6 +47,14 @@ destructor TZona.Destroy;
 begin
   FQuery.Free;
   inherited;
+end;
+
+function TZona.DirectMediaInfo(const ID: IznItemFull): IznDirectMediaInfo;
+var
+  LResp: string;
+begin
+  LResp := GetRequest.HttpClient.Get('https://w6.zona.plus/ajax/video/' + ID.mobi_link_id.ToString).ContentAsString();
+  Result := TznDirectMediaInfo.Create(LResp);
 end;
 
 procedure TZona.DoInitApiCore;
