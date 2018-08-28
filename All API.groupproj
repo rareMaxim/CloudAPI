@@ -18,6 +18,12 @@
         <Projects Include="Install\Zona.ru.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="Install\InvisionCommunity.com.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Install\Virustotal.com.dproj">
+            <Dependencies>Install\CloudApiCore.dproj</Dependencies>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -71,14 +77,32 @@
     <Target Name="Zona_ru:Make">
         <MSBuild Projects="Install\Zona.ru.dproj" Targets="Make"/>
     </Target>
+    <Target Name="InvisionCommunity_com">
+        <MSBuild Projects="Install\InvisionCommunity.com.dproj"/>
+    </Target>
+    <Target Name="InvisionCommunity_com:Clean">
+        <MSBuild Projects="Install\InvisionCommunity.com.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="InvisionCommunity_com:Make">
+        <MSBuild Projects="Install\InvisionCommunity.com.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Virustotal_com" DependsOnTargets="CloudApiCore">
+        <MSBuild Projects="Install\Virustotal.com.dproj"/>
+    </Target>
+    <Target Name="Virustotal_com:Clean" DependsOnTargets="CloudApiCore:Clean">
+        <MSBuild Projects="Install\Virustotal.com.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Virustotal_com:Make" DependsOnTargets="CloudApiCore:Make">
+        <MSBuild Projects="Install\Virustotal.com.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="CloudApiCore;TelegaPi;TelegraPhAPI;radiorecord_ru;Zona_ru"/>
+        <CallTarget Targets="CloudApiCore;TelegaPi;TelegraPhAPI;radiorecord_ru;Zona_ru;InvisionCommunity_com;Virustotal_com"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="CloudApiCore:Clean;TelegaPi:Clean;TelegraPhAPI:Clean;radiorecord_ru:Clean;Zona_ru:Clean"/>
+        <CallTarget Targets="CloudApiCore:Clean;TelegaPi:Clean;TelegraPhAPI:Clean;radiorecord_ru:Clean;Zona_ru:Clean;InvisionCommunity_com:Clean;Virustotal_com:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="CloudApiCore:Make;TelegaPi:Make;TelegraPhAPI:Make;radiorecord_ru:Make;Zona_ru:Make"/>
+        <CallTarget Targets="CloudApiCore:Make;TelegaPi:Make;TelegraPhAPI:Make;radiorecord_ru:Make;Zona_ru:Make;InvisionCommunity_com:Make;Virustotal_com:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

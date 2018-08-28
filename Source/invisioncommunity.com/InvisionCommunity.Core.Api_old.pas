@@ -83,7 +83,7 @@ implementation
 uses
   System.JSON,
   System.NetEncoding,
-  CloudApi.Exception;
+  InvisionCommunity.Exceptions;
 
 { TicRequest }
 

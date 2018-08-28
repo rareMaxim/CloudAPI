@@ -1,5 +1,29 @@
-﻿unit CloudAPI.Utils.Json;
-{ /$I jedi\jedi.inc }
+﻿{***************************************************************************}
+{                                                                           }
+{           CloudApi for Delphi                                             }
+{                                                                           }
+{           Copyright (c) 2014-2018 Maxim Sysoev                            }
+{                                                                           }
+{           https://t.me/CloudAPI                                           }
+{                                                                           }
+{***************************************************************************}
+{                                                                           }
+{  Licensed under the Apache License, Version 2.0 (the "License");          }
+{  you may not use this file except in compliance with the License.         }
+{  You may obtain a copy of the License at                                  }
+{                                                                           }
+{      http://www.apache.org/licenses/LICENSE-2.0                           }
+{                                                                           }
+{  Unless required by applicable law or agreed to in writing, software      }
+{  distributed under the License is distributed on an "AS IS" BASIS,        }
+{  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. }
+{  See the License for the specific language governing permissions and      }
+{  limitations under the License.                                           }
+{                                                                           }
+{***************************************************************************}
+
+unit CloudAPI.Utils.Json;
+{/$I jedi\jedi.inc}
 
 interface
 
@@ -13,7 +37,7 @@ type
   TBaseJson = class(TInterfacedObject)
   private
     FJSON: TJSONObject;
-    FJsonRaw: string; // for debbuger
+    FJsonRaw: string; //for debbuger
   protected
     function GetJson: TJSONObject;
   public
@@ -59,11 +83,13 @@ uses
 
 type
   TRCStrings = class
-  public const
-    BAD_INTF_FOR_CLASS = 'Unsupported interface for %S';
+  public
+    const
+      BAD_INTF_FOR_CLASS = 'Unsupported interface for %S';
   end;
 
-  { TJsonUtils }
+
+{ TJsonUtils }
 
 class function TJsonUtils.ArrayToJString<T>(LArray: TArray<T>): string;
 var
@@ -189,8 +215,6 @@ constructor TBaseJson.Create(const AJson: string);
 begin
   inherited Create;
   SetJson(AJson);
-  if FJSON.Null then
-    Self := nil;
 end;
 
 function TBaseJson.ToClass<T>(const AKey: string): T;
@@ -251,24 +275,22 @@ begin
   SetLength(Result, LJsonArray.Count);
   for I := 0 to High(Result) do
   begin
-    if (not Assigned(LJsonArray.Items[I])) or (not LJsonArray.Items[I].TryGetValue<T>(Result[I])) then
-      Result[I] := Default (T);
+    if (not Assigned(LJsonArray.Items[I])) or (not LJsonArray.Items[I].TryGetValue < T > (Result[I])) then
+      Result[I] := Default(T);
   end;
 end;
 
 function TBaseJson.ToSimpleType<T>(const AKey: string): T;
 begin
   if (not Assigned(FJSON)) or (not FJSON.TryGetValue<T>(AKey, Result)) then
-    Result := Default (T);
+    Result := Default(T);
 end;
 
 procedure TBaseJson.SetJson(const AJson: string);
 begin
   FJsonRaw := AJson;
   if FJsonRaw.IsEmpty then
-  begin
     Exit;
-  end;
   if Assigned(FJSON) then
     FreeAndNil(FJSON);
   FJSON := TJSONObject.ParseJSONValue(AJson) as TJSONObject;
@@ -279,7 +301,7 @@ var
   LTemp: TArray<TPair<string, TI>>;
   I: Integer;
 begin
-  LTemp := ToPairs<TI>(TgClass, AKey);
+  LTemp := ToPairs<ti>(TgClass, AKey);
   SetLength(Result, Length(LTemp));
   for I := Low(Result) to High(Result) do
     Result[I] := LTemp[I].Value;
@@ -309,7 +331,7 @@ var
   GUID: TGUID;
   LValue: TI;
 begin
-  FList := TList < TPair < string, TI >>.Create;
+  FList := TList<TPair<string, TI>>.Create;
   try
     for LItem in ToPairs(AKey) do
     begin
@@ -332,12 +354,12 @@ end;
 
 procedure TBaseJson.Write(const AKey: string; AValue: TJSONValue);
 var
-  I: Integer;
+  i: Integer;
 begin
-  for I := 0 to FJSON.Count - 1 do
-    if FJSON.Pairs[I].JsonString.Value = AKey then
+  for i := 0 to FJSON.Count - 1 do
+    if FJSON.Pairs[i].JsonString.Value = AKey then
     begin
-      FJSON.Pairs[I].JsonValue := AValue;
+      FJSON.Pairs[i].JsonValue := AValue;
       FJsonRaw := FJSON.ToJSON;
       Exit;
     end;
@@ -351,3 +373,4 @@ begin
 end;
 
 end.
+
