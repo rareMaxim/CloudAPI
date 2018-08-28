@@ -1,23 +1,22 @@
-# Telega π - Beta #
+# Delphi Cloud Api - Beta #
 
-Telega π - Library for working with Telegram Bot API in Delphi
+Delphi Cloud Api - Library for working with many API in Delphi
 
 
-Version Bot API: *3.6.0*
+Version Delphi Cloud Api: *0.1*
 
-**Installing and other info: see [wiki-page](https://github.com/ms301/TelegaPi/wiki)**
+**Installing and other info: see [wiki-page](https://bitbucket.org/RareGods/cloudapi/wiki/Home)**
 
 ## Support project
 
 You can help the project:
 
-### [Create issues and requesting futures](https://github.com/ms301/TelegAPI/issues)
+### [Create issues and requesting futures](https://bitbucket.org/RareGods/cloudapi/issues)
 Thank you for your active assistance to the project:
 * [Eldar](https://github.com/deadalice)
 * [Andrei](https://github.com/andb24)
 
 as well as many others who ask / suggest features / points bugs.
-### Ads
 
 ### **Donate**
 
@@ -44,23 +43,23 @@ as well as many others who ask / suggest features / points bugs.
 * [Troloload](https://t.me/trololoadBot) - bot for sharing files in internet
 
 ## Dependencies
+* Official support only [Delphi CE](https://www.embarcadero.com/products/delphi/starter)
+* But you can use this version: [RAD Studio XE8, 10.0(Seattle) 10.1(Berlin) 10.2(Tokyo)](https://www.embarcadero.com/products/delphi)
 
-* [RAD Studio XE6, XE7, XE8, 10.0(Seattle) 10.1(Berlin) 10.2(Tokyo)](https://www.embarcadero.com/products/delphi)
 
+# Delphi Cloud Api- Beta #
 
-# Telega π - Beta #
+Delphi Cloud Api - Библиотека для работы с разными сервисами API в Delphi
 
-Telega π - Библиотека для работы с Telegram Bot API в Delphi
+Delphi Cloud Api: *0.1*
 
-Версия Bot API: *3.6.0*
-
-**Установка и другая информация: смотреть [wiki-страницу](https://github.com/ms301/TelegaPi/wiki)**
+**Установка и другая информация: смотреть [wiki-страницу](https://bitbucket.org/RareGods/cloudapi/wiki/Home)**
 
 ## Помощь проекту
 
 Вы можете помочь проекту:
 
-### [Созданием баг-репортов и запросов новых возможностей](https://github.com/ms301/TelegAPI/issues)
+### [Созданием баг-репортов и запросов новых возможностей](https://bitbucket.org/RareGods/cloudapi/issues)
 Благодарю за активную помощь проекту:
 * [Эльдар](https://github.com/deadalice)
 * [Андрей](https://github.com/andb24)
@@ -93,8 +92,8 @@ Telega π - Библиотека для работы с Telegram Bot API в Delp
 * [Troloload](https://t.me/trololoadBot) - бот поможет Вам поделиться файлами в сети Интернет
 
 ## Зависимости
-
-* [RAD Studio XE6, XE7, XE8, 10.0(Seattle) 10.1(Berlin) 10.2(Tokyo)](https://www.embarcadero.com/products/delphi)
+* Официальная поддержка только для версии [Delphi CE](https://www.embarcadero.com/products/delphi/starter)
+* Но вы также можете использовать следующие версии: [RAD Studio XE6, XE7, XE8, 10.0(Seattle) 10.1(Berlin) 10.2(Tokyo)](https://www.embarcadero.com/products/delphi)
 
 
 [Delphinus-Support](https://github.com/Memnarch/Delphinus)
