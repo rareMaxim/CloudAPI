@@ -32,31 +32,25 @@ package TelegaPi;
 requires
   rtl,
   RESTComponents,
-  CrossUrl;
+  CloudApiCore;
 
 contains
-  TelegAPI.Base in '..\Source\TelegAPI.Base.pas',
-  TelegAPI.Bot.Impl in '..\Source\TelegAPI.Bot.Impl.pas',
-  TelegAPI.Bot in '..\Source\TelegAPI.Bot.pas',
-  TelegAPi.Helpers in '..\Source\TelegAPi.Helpers.pas',
-  TelegAPI.Receiver.Base in '..\Source\TelegAPI.Receiver.Base.pas',
-  TelegAPI.Receiver.Console in '..\Source\TelegAPI.Receiver.Console.pas',
-  TelegAPI.Receiver.Service in '..\Source\TelegAPI.Receiver.Service.pas',
-  TelegAPi.RegisterIDE in '..\Source\TelegAPi.RegisterIDE.pas',
-  TelegaPi.Types.Enums in '..\Source\TelegaPi.Types.Enums.pas',
-  TelegAPi.Types.Impl in '..\Source\TelegAPi.Types.Impl.pas',
-  TelegaPi.Types.InlineQueryResults in '..\Source\TelegaPi.Types.InlineQueryResults.pas',
-  TelegaPi.Types.InputMessageContents in '..\Source\TelegaPi.Types.InputMessageContents.pas',
-  TelegAPi.Types in '..\Source\TelegAPi.Types.pas',
-  TelegaPi.Types.ReplyMarkups in '..\Source\TelegaPi.Types.ReplyMarkups.pas',
-  TelegAPI.Utils.Json in '..\Source\TelegAPI.Utils.Json.pas',
-  TelegAPI.Receiver.UI in '..\Source\TelegAPI.Receiver.UI.pas',
-  TelegaPi.Ext.Sessions in '..\Source\TelegaPi.Ext.Sessions.pas',
-  CoreAPI in '..\Source\CoreAPI.pas',
-  TelegAPI.UpdateParser in '..\Source\TelegAPI.UpdateParser.pas',
-  TelegAPI.Logger in '..\Source\TelegAPI.Logger.pas',
-  TelegAPI.Logger.Old in '..\Source\TelegAPI.Logger.Old.pas',
-  TelegaPi.Types.Passport in '..\Source\TelegaPi.Types.Passport.pas';
+  TelegAPI.Bot in '..\Source\Telegram.org\TelegAPI.Bot.pas',
+  TelegaPi.Ext.Sessions in '..\Source\Telegram.org\TelegaPi.Ext.Sessions.pas',
+  TelegAPi.Helpers in '..\Source\Telegram.org\TelegAPi.Helpers.pas',
+  TelegAPI.Receiver.Base in '..\Source\Telegram.org\TelegAPI.Receiver.Base.pas',
+  TelegAPI.Receiver.Console in '..\Source\Telegram.org\TelegAPI.Receiver.Console.pas',
+  TelegAPI.Receiver.Service in '..\Source\Telegram.org\TelegAPI.Receiver.Service.pas',
+  TelegAPI.Receiver.UI in '..\Source\Telegram.org\TelegAPI.Receiver.UI.pas',
+  TelegAPi.RegisterIDE in '..\Source\Telegram.org\TelegAPi.RegisterIDE.pas',
+  TelegaPi.Types.Enums in '..\Source\Telegram.org\TelegaPi.Types.Enums.pas',
+  TelegAPi.Types.Impl in '..\Source\Telegram.org\TelegAPi.Types.Impl.pas',
+  TelegaPi.Types.InlineQueryResults in '..\Source\Telegram.org\TelegaPi.Types.InlineQueryResults.pas',
+  TelegaPi.Types.InputMessageContents in '..\Source\Telegram.org\TelegaPi.Types.InputMessageContents.pas',
+  TelegAPi.Types in '..\Source\Telegram.org\TelegAPi.Types.pas',
+  TelegaPi.Types.Passport in '..\Source\Telegram.org\TelegaPi.Types.Passport.pas',
+  TelegaPi.Types.ReplyMarkups in '..\Source\Telegram.org\TelegaPi.Types.ReplyMarkups.pas',
+  TelegAPI.UpdateParser in '..\Source\Telegram.org\TelegAPI.UpdateParser.pas';
 
 end.
 
