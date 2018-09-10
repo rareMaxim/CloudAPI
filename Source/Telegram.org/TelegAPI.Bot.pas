@@ -399,6 +399,7 @@ type
 {$REGION 'События|Events'}
     property OnReceiveRawData;
     property OnSendData;
+    property OnError;
 {$ENDREGION}
   end;
 
