@@ -7,6 +7,7 @@ uses
   TelegAPI.Bot;
 
 type
+
   [TestFixture]
   TSendingAudioMessageTests = class(TObject)
   strict private
@@ -38,8 +39,8 @@ var
 begin
   LMessage := FBot.SendVoice(TestConfig.UserId, TTestConst.Audio.TestOgg, caption, TtgParseMode.default, duration);
   Assert.AreEqual(TtgMessageType.Voice, LMessage.&Type);
-  Assert.AreEqual(caption, LMessage.Caption);
-  Assert.AreEqual(duration, LMessage.Voice.Duration);
+  Assert.AreEqual(caption, LMessage.caption);
+  Assert.AreEqual(duration, LMessage.Voice.duration);
   Assert.AreEqual('audio/ogg', LMessage.Voice.MimeType);
   Assert.IsNotEmpty(LMessage.Voice.FileId);
   Assert.IsTrue(LMessage.Voice.FileSize > 200);
@@ -65,21 +66,21 @@ const
 var
   LMessage: ITgMessage;
 begin
-  LMessage := FBot.SendAudio(TestConfig.UserId, TTestConst.Audio.CantinaRagMp3,
-    caption, TtgParseMode.default, duration, performer, title);
+  LMessage := FBot.SendAudio(TestConfig.UserId, TTestConst.Audio.CantinaRagMp3, '', caption, TtgParseMode.default,
+    duration, performer, title);
 
   Assert.AreEqual(TtgMessageType.Audio, LMessage.&Type);
-  Assert.AreEqual(caption, LMessage.Caption);
-  Assert.AreEqual(performer, LMessage.Audio.Performer);
-  Assert.AreEqual(title, LMessage.Audio.Title);
-  Assert.AreEqual(duration, LMessage.Audio.Duration);
+  Assert.AreEqual(caption, LMessage.caption);
+  Assert.AreEqual(performer, LMessage.Audio.performer);
+  Assert.AreEqual(title, LMessage.Audio.title);
+  Assert.AreEqual(duration, LMessage.Audio.duration);
   Assert.AreEqual('audio/mpeg', LMessage.Audio.MimeType);
   Assert.IsNotEmpty(LMessage.Audio.FileId);
   Assert.IsTrue(LMessage.Audio.FileSize > 200);
 end;
 
 initialization
-  TDUnitX.RegisterTestFixture(TSendingAudioMessageTests);
+
+TDUnitX.RegisterTestFixture(TSendingAudioMessageTests);
 
 end.
-

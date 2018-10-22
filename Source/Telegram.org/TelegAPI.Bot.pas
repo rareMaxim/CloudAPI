@@ -46,6 +46,7 @@ type
   TTelegramBot = class(TCloudApiBaseComponent)
   private
     FToken: string;
+    FDomain: string;
     function GetToken: string;
     procedure SetToken(const Value: string);
   protected
@@ -393,7 +394,7 @@ type
 {$ENDREGION}
   published
 {$REGION 'Property|Свойства'}
-    property Domain;
+    property Domain read FDomain write FDomain;
     property Token: string read GetToken write SetToken;
 {$ENDREGION}
 {$REGION 'События|Events'}
@@ -474,7 +475,7 @@ end;
 procedure TTelegramBot.SetToken(const Value: string);
 begin
   FToken := Value;
-  GetRequest.Domain := Domain + Token;
+  GetRequest.Domain := FDomain + Token;
 end;
 
 {$ENDREGION}
