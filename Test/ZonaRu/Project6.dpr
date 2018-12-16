@@ -11,11 +11,11 @@ uses
 procedure Test;
 var
   Zona: TZona;
-  LMovie: IznCoverSerial;
+  LMovie: IznCoverMedia;
 begin
   Zona := TZona.Create(nil);
   try
-    for LMovie in Zona.GetMovies do
+    for LMovie in Zona.GetMovies(0,100) do
     begin
       Writeln(LMovie.name_rus,' ' , LMovie.abuse,' ', LMovie.id);
     end;
