@@ -624,7 +624,7 @@ function TTelegramBot.SendMessage(const ChatId: TtgUserLink; const Text: string;
 begin
   Result := TTgMessage.Create(GetRequest.SetMethod('sendMessage') //
     .AddParameter('chat_id', ChatId.ToString, '', True, TStoreFormat.InUrl) //
-    .AddParameter('text', Text, '', True, TStoreFormat.InUrl) //
+    .AddParameter('text', Text, '', True, TStoreFormat.InFormData) //
     .AddParameter('parse_mode', ParseMode.ToString, '', False, TStoreFormat.InUrl) //
     .AddParameter('disable_web_page_preview', DisableWebPagePreview, False, False, TStoreFormat.InUrl) //
     .AddParameter('disable_notification', DisableNotification, False, False, TStoreFormat.InUrl) //
