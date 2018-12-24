@@ -448,7 +448,8 @@ implementation
 
 uses
   System.Json,
-  System.TypInfo;
+  System.TypInfo,
+  System.Generics.Collections;
 
 { TtgAnimation }
 

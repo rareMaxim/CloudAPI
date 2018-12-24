@@ -98,8 +98,11 @@ type
     procedure SetStoreHeaders(const Value: TList<TNetHeader>);
   public
     function ClearParams: IRequestData; virtual;
+    function HeadersToString(AHeaders: TArray<TNetHeader>): string;
+    function FormDataToString(AFormData: TMultipartFormData): string;
     constructor Create; virtual;
     destructor Destroy; override;
+    function ToString: string; override;
     property Domain: string read GetDomain write SetDomain;
     property StoreMultipartForm: TMultipartFormData read GetStoreMultipartForm write SetStoreMultipartForm;
     property StoreStringList: TStringList read GetStoreStringList write SetStoreStringList;
@@ -209,6 +212,23 @@ begin
   inherited;
 end;
 
+function TRequestData.FormDataToString(AFormData: TMultipartFormData): string;
+var
+  LStrList: TStringList;
+  LPos: Int64;
+begin
+  LStrList := TStringList.Create;
+  try
+    LPos := AFormData.Stream.Position;
+    AFormData.Stream.Position := 0;
+    LStrList.LoadFromStream(AFormData.Stream);
+    Result := LStrList.Text;
+    AFormData.Stream.Position := LPos;
+  finally
+    LStrList.Free;
+  end;
+end;
+
 function TRequestData.GetDomain: string;
 begin
   Result := FDomain;
@@ -234,6 +254,17 @@ begin
   Result := FStoreInUrl;
 end;
 
+function TRequestData.HeadersToString(AHeaders: TArray<TNetHeader>): string;
+var
+  LHeader: TNameValuePair;
+begin
+  Result := '';
+  for LHeader in AHeaders do
+  begin
+    Result := Result + LHeader.Name + '=' + LHeader.Value + #13#10;
+  end;
+end;
+
 procedure TRequestData.SetDomain(const AValue: string);
 begin
   FDomain := AValue;
@@ -257,6 +288,22 @@ end;
 procedure TRequestData.SetStoreUrl(const Value: TStringList);
 begin
   FStoreInUrl := Value;
+end;
+
+function TRequestData.ToString: string;
+var
+  SL: TStringList;
+begin
+  SL := TStringList.Create;
+  try
+    SL//
+.AddPair('In Url:        ', StoreUrl.Text)//
+.AddPair('In StringList: ', StoreStringList.Text)//
+.AddPair('In FormData:   ', FormDataToString(StoreMultipartForm))//
+.AddPair('In Headers:    ', HeadersToString(StoreHeaders.ToArray))
+  finally
+    SL.Free;
+  end;
 end;
 
 end.

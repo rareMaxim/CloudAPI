@@ -471,11 +471,13 @@ type
   end;
 
   TtgUserLink = record
+  private
     ID: Int64;
     Username: string;
     class function FromID(const AID: Int64): TtgUserLink; static;
-    class function Empty: TtgUserLink; static;
     class function FromUserName(const AUsername: string): TtgUserLink; static;
+  public
+    class function Empty: TtgUserLink; static;
     class operator Implicit(AID: Int64): TtgUserLink;
     class operator Implicit(AUsername: string): TtgUserLink;
     function ToString: string;

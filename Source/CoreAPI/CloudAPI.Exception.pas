@@ -54,6 +54,7 @@ type
 {$IFDEF CONSOLE}
   TOnError = TProc<TObject, ECloudApiException>;
 {$ELSE}
+
   TOnError = procedure(ASender: TObject; const Exception: ECloudApiException) of object;
 {$ENDIF}
 
@@ -86,3 +87,4 @@ begin
 end;
 
 end.
+
