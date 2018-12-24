@@ -177,7 +177,7 @@ type
       const Action: TtgSendChatAction): Boolean;
     function GetUserProfilePhotos( //
       const ChatId: TtgUserLink; //
-      const Offset: Int64; //
+      const Offset: Int64 = 0; //
       const Limit: Int64 = 100): ItgUserProfilePhotos;
     function GetFile(const FileId: string): ItgFile;
     function KickChatMember( //
@@ -807,7 +807,7 @@ function TTelegramBot.GetUserProfilePhotos(const ChatId: TtgUserLink; const Offs
 begin
   Result := TtgUserProfilePhotos.Create(GetRequest.SetMethod('getUserProfilePhotos') //
     .AddParameter('chat_id', ChatId.ToString, '', True, TStoreFormat.InUrl) //
-    .AddParameter('offset', Offset, 0, True, TStoreFormat.InUrl) //
+    .AddParameter('offset', Offset, 0, False, TStoreFormat.InUrl) //
     .AddParameter('limit', Limit, 100, False, TStoreFormat.InUrl) //
     .ExecuteAsString);
 end;
