@@ -321,7 +321,7 @@ begin
   if StoreStringList.Count > 0 then
   begin
     if Assigned(OnDataSend) then
-      OnDataSend(AUrl, StoreStringList.ToString, HeadersToString(StoreHeaders.ToArray));
+      OnDataSend(AUrl, StoreStringList.Text, HeadersToString(StoreHeaders.ToArray));
     AResult := FHttpClient.Post(AUrl, StoreStringList, nil, nil, StoreHeaders.ToArray);
     Result := True;
   end
