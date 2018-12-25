@@ -32,78 +32,86 @@ uses
 type
   IznLastResponse = interface
     ['{4735F71E-A681-4A11-AB58-983383CA12FF}']
-    function numFound: integer;
-    function start: integer;
+    function numFound: Integer;
+    function start: Integer;
   end;
 
   TznLastResponse = class(TBaseJson, IznLastResponse)
-    function numFound: integer;
-    function start: integer;
+    function numFound: Integer;
+    function start: Integer;
   end;
 
-  IznCoverMedia = interface
+  IznCoverFilm = interface
     ['{2DF78C63-B657-41DE-99FC-173EB5AEB3CB}']
-    function type3d: integer;
-    function year: integer;
-    function release_date_int: string;
-    function name_original: string;
-    function rating: single;
-    function playable: boolean;
-    function name_eng: string;
-    function id: string;
-    function episodes: string;
-    function release_date_rus: string;
-    function indexed: integer;
-    function serial_end_year: integer;
-    function runtime: integer;
-    function quality: integer;
-    function serial_ended: boolean;
-    function audio_quality: integer;
     function abuse: string;
-    function tor_count: integer;
-    function trailer: boolean;
+    function audio_quality: Integer;
     function genre: string;
+    function id: string;
+    function indexed: Integer;
     function languages_imdb: string;
+    function name_eng: string;
+    function name_original: string;
     function name_rus: string;
-    function serial: boolean;
+    function playable: Boolean;
+    function quality: Integer;
+    function rating: Single;
+    function release_date_int: string;
+    function release_date_rus: string;
+    function runtime: Integer;
+    function serial: Boolean;
+    function serial_ended: Boolean;
+    function serial_end_year: Integer;
+    function tor_count: Integer;
+    function trailer: Boolean;
+    function type3d: Integer;
+    function year: Integer;
   end;
 
-  TznCoverMedia = class(TBaseJson, IznCoverMedia)
+  TznCoverFilm = class(TBaseJson, IznCoverFilm)
   public
-    function type3d: integer;
-    function year: integer;
-    function release_date_int: string;
-    function name_original: string;
-    function rating: single;
-    function playable: boolean;
-    function name_eng: string;
-    function id: string;
-    function episodes: string;
-    function release_date_rus: string;
-    function indexed: integer;
-    function serial_end_year: integer;
-    function runtime: integer;
-    function quality: integer;
-    function serial_ended: boolean;
-    function audio_quality: integer;
     function abuse: string;
-    function tor_count: integer;
-    function trailer: boolean;
+    function audio_quality: Integer;
     function genre: string;
+    function id: string;
+    function indexed: Integer;
     function languages_imdb: string;
+    function name_eng: string;
+    function name_original: string;
     function name_rus: string;
-    function serial: boolean;
+    function playable: Boolean;
+    function quality: Integer;
+    function rating: Single;
+    function release_date_int: string;
+    function release_date_rus: string;
+    function runtime: Integer;
+    function serial: Boolean;
+    function serial_ended: Boolean;
+    function serial_end_year: Integer;
+    function tor_count: Integer;
+    function trailer: Boolean;
+    function type3d: Integer;
+    function year: Integer;
   end;
 
-  IznItemFull = interface(IznCoverMedia)
+  IznCoverSerial = interface(IznCoverFilm)
+    ['{27D4ABA7-59C1-4B23-8091-40F0BE5D0897}']
+    function episodes: string;
+  end;
+
+  TznCoverSerial = class(TznCoverFilm, IznCoverSerial)
+  public
+    function episodes: string;
+  end;
+
+  IznItemFull = interface(IznCoverFilm)
     ['{A80FA048-ED6D-49CA-A782-9A2D4C549247}']
-    function _version_: int64;
-    function adult: boolean;
-    function await_count: integer;
-    function await_percent: integer;
-    function backdrop_id: integer;
-    function budget: integer;
-    function color_rgb: integer;
+    function _version_: Int64;
+    function adult: Boolean;
+    function await_count: Integer;
+    function await_percent: Integer;
+    function backdrop_id: Integer;
+    function budget: Integer;
+    function color_rgb: Integer;
     function country: string;
     function country_id: string;
     function description: string;
@@ -113,15 +121,15 @@ type
     function genre: string;
     function genreId: string;
     function genre_name: string;
-    function gross: integer;
+    function gross: Integer;
     function last_update: string;
-    function max_age: integer;
-    function min_age: integer;
+    function max_age: Integer;
+    function min_age: Integer;
     function mobi_link_date: string;
-    function mobi_link_height: integer;
-    function mobi_link_id: integer; // по нему получаем прямой линк на просмотр
+    function mobi_link_height: Integer;
+    function mobi_link_id: Integer; // по нему получаем прямой линк на просмотр
     function mobi_link_shift: string;
-    function mobi_link_width: integer;
+    function mobi_link_width: Integer;
     function mobi_url: string;
     function name_eng: string;
     function name_eng_exact: string;
@@ -133,20 +141,20 @@ type
     function name_rus: string;
     function name_rus_exact: string;
     function name_rus_exact_t: string;
-    function not_magnet: boolean;
+    function not_magnet: Boolean;
     function partner_episodes_linked: string;
     function persons: string;
-    function playable: boolean;
-    function popularity: integer;
-    function rating_count: integer;
-    function rating_imdb: single;
-    function rating_imdb_count: integer;
-    function rating_kinopoisk: single;
-    function rating_kinopoisk_count: integer;
+    function playable: Boolean;
+    function popularity: Integer;
+    function rating_count: Integer;
+    function rating_imdb: Single;
+    function rating_imdb_count: Integer;
+    function rating_kinopoisk: Single;
+    function rating_kinopoisk_count: Integer;
     function release_date: string;
     function release_date_hq: string;
     function rels: string;
-    function seeds: integer;
+    function seeds: Integer;
     function strid: string;
     function trailer_id: string;
     function trailer_language: string;
@@ -154,14 +162,14 @@ type
     function &type: string;
   end;
 
-  TznItemFull = class(TznCoverMedia, IznItemFull)
-    function _version_: int64;
-    function adult: boolean;
-    function await_count: integer;
-    function await_percent: integer;
-    function backdrop_id: integer;
-    function budget: integer;
-    function color_rgb: integer;
+  TznItemFull = class(TznCoverFilm, IznItemFull)
+    function _version_: Int64;
+    function adult: Boolean;
+    function await_count: Integer;
+    function await_percent: Integer;
+    function backdrop_id: Integer;
+    function budget: Integer;
+    function color_rgb: Integer;
     function country: string;
     function country_id: string;
     function description: string;
@@ -171,15 +179,15 @@ type
     function genre: string;
     function genreId: string;
     function genre_name: string;
-    function gross: integer;
+    function gross: Integer;
     function last_update: string;
-    function max_age: integer;
-    function min_age: integer;
+    function max_age: Integer;
+    function min_age: Integer;
     function mobi_link_date: string;
-    function mobi_link_height: integer;
-    function mobi_link_id: integer; // по нему получаем прямой линк на просмотр
+    function mobi_link_height: Integer;
+    function mobi_link_id: Integer; // по нему получаем прямой линк на просмотр
     function mobi_link_shift: string;
-    function mobi_link_width: integer;
+    function mobi_link_width: Integer;
     function mobi_url: string;
     function name_eng: string;
     function name_eng_exact: string;
@@ -191,20 +199,20 @@ type
     function name_rus: string;
     function name_rus_exact: string;
     function name_rus_exact_t: string;
-    function not_magnet: boolean;
+    function not_magnet: Boolean;
     function partner_episodes_linked: string;
     function persons: string;
-    function playable: boolean;
-    function popularity: integer;
-    function rating_count: integer;
-    function rating_imdb: single;
-    function rating_imdb_count: integer;
-    function rating_kinopoisk: single;
-    function rating_kinopoisk_count: integer;
+    function playable: Boolean;
+    function popularity: Integer;
+    function rating_count: Integer;
+    function rating_imdb: Single;
+    function rating_imdb_count: Integer;
+    function rating_kinopoisk: Single;
+    function rating_kinopoisk_count: Integer;
     function release_date: string;
     function release_date_hq: string;
     function rels: string;
-    function seeds: integer;
+    function seeds: Integer;
     function strid: string;
     function trailer_id: string;
     function trailer_language: string;
@@ -228,119 +236,114 @@ implementation
 
 { TznCoverMedia }
 
-function TznCoverMedia.abuse: string;
+function TznCoverFilm.abuse: string;
 begin
   Result := ToSimpleType<string>('abuse');
 end;
 
-function TznCoverMedia.audio_quality: integer;
+function TznCoverFilm.audio_quality: Integer;
 begin
-  Result := ToSimpleType<integer>('audio_quality');
+  Result := ToSimpleType<Integer>('audio_quality');
 end;
 
-function TznCoverMedia.episodes: string;
+function TznCoverFilm.genre: string;
 begin
-  Result := ToSimpleType<string>('episodes');
+  Result := ToSimpleType<string>('genre2');
 end;
 
-function TznCoverMedia.genre: string;
-begin
-  Result := ToSimpleType<string>('genre');
-end;
-
-function TznCoverMedia.id: string;
+function TznCoverFilm.id: string;
 begin
   Result := ToSimpleType<string>('id');
 end;
 
-function TznCoverMedia.indexed: integer;
+function TznCoverFilm.indexed: Integer;
 begin
-  Result := ToSimpleType<integer>('indexed');
+  Result := ToSimpleType<Integer>('indexed');
 end;
 
-function TznCoverMedia.languages_imdb: string;
+function TznCoverFilm.languages_imdb: string;
 begin
   Result := ToSimpleType<string>('languages_imdb');
 end;
 
-function TznCoverMedia.name_eng: string;
+function TznCoverFilm.name_eng: string;
 begin
   Result := ToSimpleType<string>('name_eng');
 end;
 
-function TznCoverMedia.name_original: string;
+function TznCoverFilm.name_original: string;
 begin
   Result := ToSimpleType<string>('name_original');
 end;
 
-function TznCoverMedia.name_rus: string;
+function TznCoverFilm.name_rus: string;
 begin
   Result := ToSimpleType<string>('name_rus');
 end;
 
-function TznCoverMedia.playable: boolean;
+function TznCoverFilm.playable: Boolean;
 begin
-  Result := ToSimpleType<boolean>('playable');
+  Result := ToSimpleType<Boolean>('playable');
 end;
 
-function TznCoverMedia.quality: integer;
+function TznCoverFilm.quality: Integer;
 begin
-  Result := ToSimpleType<integer>('quality');
+  Result := ToSimpleType<Integer>('quality');
 end;
 
-function TznCoverMedia.rating: single;
+function TznCoverFilm.rating: Single;
 begin
-  Result := ToSimpleType<single>('rating');
+  Result := ToSimpleType<Single>('rating');
 end;
 
-function TznCoverMedia.release_date_int: string;
+function TznCoverFilm.release_date_int: string;
 begin
   Result := ToSimpleType<string>('release_date_int');
 end;
 
-function TznCoverMedia.release_date_rus: string;
+function TznCoverFilm.release_date_rus: string;
 begin
   Result := ToSimpleType<string>('release_date_rus');
 end;
 
-function TznCoverMedia.runtime: integer;
+function TznCoverFilm.runtime: Integer;
 begin
-  Result := ToSimpleType<integer>('runtime');
+  Result := ToSimpleType<Integer>('runtime');
 end;
 
-function TznCoverMedia.serial: boolean;
+function TznCoverFilm.serial: Boolean;
 begin
-  Result := ToSimpleType<boolean>('serial');
+  Result := ToSimpleType<Boolean>('serial');
 end;
 
-function TznCoverMedia.serial_ended: boolean;
+function TznCoverFilm.serial_ended: Boolean;
 begin
-  Result := ToSimpleType<boolean>('serial_ended');
+  Result := ToSimpleType<Boolean>('serial_ended');
 end;
 
-function TznCoverMedia.serial_end_year: integer;
+function TznCoverFilm.serial_end_year: Integer;
 begin
-  Result := ToSimpleType<integer>('serial_end_year');
+  Result := ToSimpleType<Integer>('serial_end_year');
 end;
 
-function TznCoverMedia.tor_count: integer;
+function TznCoverFilm.tor_count: Integer;
 begin
-  Result := ToSimpleType<integer>('tor_count');
+  Result := ToSimpleType<Integer>('tor_count');
 end;
 
-function TznCoverMedia.trailer: boolean;
+function TznCoverFilm.trailer: Boolean;
 begin
-  Result := ToSimpleType<boolean>('trailer');
+  Result := ToSimpleType<Boolean>('trailer');
 end;
 
-function TznCoverMedia.type3d: integer;
+function TznCoverFilm.type3d: Integer;
 begin
-  Result := ToSimpleType<integer>('type3d');
+  Result := ToSimpleType<Integer>('type3d');
 end;
 
-function TznCoverMedia.year: integer;
+function TznCoverFilm.year: Integer;
 begin
-  Result := ToSimpleType<integer>('year');
+  Result := ToSimpleType<Integer>('year');
 end;
 
 { TznItemFull }
@@ -350,34 +353,34 @@ begin
   Result := ToSimpleType<string>('type');
 end;
 
-function TznItemFull.adult: boolean;
+function TznItemFull.adult: Boolean;
 begin
-  Result := ToSimpleType<boolean>('adult');
+  Result := ToSimpleType<Boolean>('adult');
 end;
 
-function TznItemFull.await_count: integer;
+function TznItemFull.await_count: Integer;
 begin
-  Result := ToSimpleType<integer>('await_count');
+  Result := ToSimpleType<Integer>('await_count');
 end;
 
-function TznItemFull.await_percent: integer;
+function TznItemFull.await_percent: Integer;
 begin
-  Result := ToSimpleType<integer>('await_percent');
+  Result := ToSimpleType<Integer>('await_percent');
 end;
 
-function TznItemFull.backdrop_id: integer;
+function TznItemFull.backdrop_id: Integer;
 begin
-  Result := ToSimpleType<integer>('backdrop_id');
+  Result := ToSimpleType<Integer>('backdrop_id');
 end;
 
-function TznItemFull.budget: integer;
+function TznItemFull.budget: Integer;
 begin
-  Result := ToSimpleType<integer>('budget');
+  Result := ToSimpleType<Integer>('budget');
 end;
 
-function TznItemFull.color_rgb: integer;
+function TznItemFull.color_rgb: Integer;
 begin
-  Result := ToSimpleType<integer>('color_rgb');
+  Result := ToSimpleType<Integer>('color_rgb');
 end;
 
 function TznItemFull.country: string;
@@ -426,9 +429,9 @@ begin
   Result := ToSimpleType<string>('genre_name');
 end;
 
-function TznItemFull.gross: integer;
+function TznItemFull.gross: Integer;
 begin
-  Result := ToSimpleType<integer>('gross');
+  Result := ToSimpleType<Integer>('gross');
 end;
 
 function TznItemFull.last_update: string;
@@ -436,14 +439,14 @@ begin
   Result := ToSimpleType<string>('last_update');
 end;
 
-function TznItemFull.max_age: integer;
+function TznItemFull.max_age: Integer;
 begin
-  Result := ToSimpleType<integer>('max_age');
+  Result := ToSimpleType<Integer>('max_age');
 end;
 
-function TznItemFull.min_age: integer;
+function TznItemFull.min_age: Integer;
 begin
-  Result := ToSimpleType<integer>('min_age');
+  Result := ToSimpleType<Integer>('min_age');
 end;
 
 function TznItemFull.mobi_link_date: string;
@@ -451,14 +454,14 @@ begin
   Result := ToSimpleType<string>('mobi_link_date');
 end;
 
-function TznItemFull.mobi_link_height: integer;
+function TznItemFull.mobi_link_height: Integer;
 begin
-  Result := ToSimpleType<integer>('mobi_link_height');
+  Result := ToSimpleType<Integer>('mobi_link_height');
 end;
 
-function TznItemFull.mobi_link_id: integer;
+function TznItemFull.mobi_link_id: Integer;
 begin
-  Result := ToSimpleType<integer>('mobi_link_id');
+  Result := ToSimpleType<Integer>('mobi_link_id');
 end;
 
 function TznItemFull.mobi_link_shift: string;
@@ -466,9 +469,9 @@ begin
   Result := ToSimpleType<string>('mobi_link_shift');
 end;
 
-function TznItemFull.mobi_link_width: integer;
+function TznItemFull.mobi_link_width: Integer;
 begin
-  Result := ToSimpleType<integer>('mobi_link_width');
+  Result := ToSimpleType<Integer>('mobi_link_width');
 end;
 
 function TznItemFull.mobi_url: string;
@@ -526,9 +529,9 @@ begin
   Result := ToSimpleType<string>('name_rus_exact_t');
 end;
 
-function TznItemFull.not_magnet: boolean;
+function TznItemFull.not_magnet: Boolean;
 begin
-  Result := ToSimpleType<boolean>('not_magnet');
+  Result := ToSimpleType<Boolean>('not_magnet');
 end;
 
 function TznItemFull.partner_episodes_linked: string;
@@ -541,39 +544,39 @@ begin
   Result := ToSimpleType<string>('persons');
 end;
 
-function TznItemFull.playable: boolean;
+function TznItemFull.playable: Boolean;
 begin
-  Result := ToSimpleType<boolean>('playable');
+  Result := ToSimpleType<Boolean>('playable');
 end;
 
-function TznItemFull.popularity: integer;
+function TznItemFull.popularity: Integer;
 begin
-  Result := ToSimpleType<integer>('popularity');
+  Result := ToSimpleType<Integer>('popularity');
 end;
 
-function TznItemFull.rating_count: integer;
+function TznItemFull.rating_count: Integer;
 begin
-  Result := ToSimpleType<integer>('rating_count');
+  Result := ToSimpleType<Integer>('rating_count');
 end;
 
-function TznItemFull.rating_imdb: single;
+function TznItemFull.rating_imdb: Single;
 begin
-  Result := ToSimpleType<single>('rating_imdb');
+  Result := ToSimpleType<Single>('rating_imdb');
 end;
 
-function TznItemFull.rating_imdb_count: integer;
+function TznItemFull.rating_imdb_count: Integer;
 begin
-  Result := ToSimpleType<integer>('rating_imdb_count');
+  Result := ToSimpleType<Integer>('rating_imdb_count');
 end;
 
-function TznItemFull.rating_kinopoisk: single;
+function TznItemFull.rating_kinopoisk: Single;
 begin
-  Result := ToSimpleType<single>('rating_kinopoisk');
+  Result := ToSimpleType<Single>('rating_kinopoisk');
 end;
 
-function TznItemFull.rating_kinopoisk_count: integer;
+function TznItemFull.rating_kinopoisk_count: Integer;
 begin
-  Result := ToSimpleType<integer>('rating_kinopoisk_count');
+  Result := ToSimpleType<Integer>('rating_kinopoisk_count');
 end;
 
 function TznItemFull.release_date: string;
@@ -591,9 +594,9 @@ begin
   Result := ToSimpleType<string>('rels');
 end;
 
-function TznItemFull.seeds: integer;
+function TznItemFull.seeds: Integer;
 begin
-  Result := ToSimpleType<integer>('seeds');
+  Result := ToSimpleType<Integer>('seeds');
 end;
 
 function TznItemFull.strid: string;
@@ -616,21 +619,21 @@ begin
   Result := ToSimpleType<string>('trailer_url');
 end;
 
-function TznItemFull._version_: int64;
+function TznItemFull._version_: Int64;
 begin
-  Result := ToSimpleType<int64>('_version_');
+  Result := ToSimpleType<Int64>('_version_');
 end;
 
 { TznLastResponse }
 
-function TznLastResponse.numFound: integer;
+function TznLastResponse.numFound: Integer;
 begin
-  Result := ToSimpleType<integer>('numFound');
+  Result := ToSimpleType<Integer>('numFound');
 end;
 
-function TznLastResponse.start: integer;
+function TznLastResponse.start: Integer;
 begin
-  Result := ToSimpleType<integer>('start');
+  Result := ToSimpleType<Integer>('start');
 end;
 
 { TznDirectMediaInfo }
@@ -645,4 +648,12 @@ begin
   Result := ToSimpleType<string>('url');
 end;
 
+{ TznCoverSerial }
+
+function TznCoverSerial.episodes: string;
+begin
+  Result := ToSimpleType<string>('episodes');
+end;
+
 end.
+

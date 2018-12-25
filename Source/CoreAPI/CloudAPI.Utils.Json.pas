@@ -275,7 +275,7 @@ begin
   SetLength(Result, LJsonArray.Count);
   for I := 0 to High(Result) do
   begin
-    if (not Assigned(LJsonArray.Items[I])) or (not LJsonArray.Items[I].TryGetValue < T > (Result[I])) then
+    if (not Assigned(LJsonArray.Items[I])) or (not LJsonArray.Items[I].TryGetValue<T>(Result[I])) then
       Result[I] := Default(T);
   end;
 end;

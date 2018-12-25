@@ -1,0 +1,284 @@
+{
+   "response" : {
+      "docs" : [
+         {
+            "adult" : false,
+            "custom" : false,
+            "fictional" : false,
+            "id" : "25",
+            "name" : "реальное ТВ",
+            "ord" : 27
+         },
+         {
+            "adult" : false,
+            "custom" : false,
+            "fictional" : false,
+            "id" : "28",
+            "name" : "новости",
+            "ord" : 30
+         },
+         {
+            "adult" : false,
+            "custom" : false,
+            "fictional" : true,
+            "id" : "1750",
+            "name" : "аниме",
+            "ord" : 21
+         },
+         {
+            "adult" : false,
+            "custom" : false,
+            "fictional" : true,
+            "id" : "1",
+            "name" : "ужасы",
+            "ord" : 6
+         },
+         {
+            "adult" : false,
+            "custom" : false,
+            "fictional" : true,
+            "id" : "2",
+            "name" : "фантастика",
+            "ord" : 18
+         },
+         {
+            "adult" : false,
+            "custom" : false,
+            "fictional" : true,
+            "id" : "3",
+            "name" : "боевик",
+            "ord" : 8
+         },
+         {
+            "adult" : false,
+            "custom" : false,
+            "fictional" : true,
+            "id" : "4",
+            "name" : "триллер",
+            "ord" : 5
+         },
+         {
+            "adult" : false,
+            "custom" : false,
+            "fictional" : true,
+            "id" : "5",
+            "name" : "фэнтези",
+            "ord" : 19
+         },
+         {
+            "adult" : false,
+            "custom" : false,
+            "fictional" : true,
+            "id" : "6",
+            "name" : "комедия",
+            "ord" : 1
+         },
+         {
+            "adult" : false,
+            "custom" : false,
+            "fictional" : true,
+            "id" : "7",
+            "name" : "мелодрама",
+            "ord" : 3
+         },
+         {
+            "adult" : false,
+            "custom" : false,
+            "fictional" : true,
+            "id" : "8",
+            "name" : "драма",
+            "ord" : 4
+         },
+         {
+            "adult" : false,
+            "custom" : false,
+            "fictional" : true,
+            "id" : "9",
+            "name" : "мюзикл",
+            "ord" : 24
+         },
+         {
+            "adult" : false,
+            "custom" : false,
+            "fictional" : true,
+            "id" : "10",
+            "name" : "приключения",
+            "ord" : 17
+         },
+         {
+            "adult" : false,
+            "custom" : false,
+            "fictional" : true,
+            "id" : "11",
+            "name" : "семейный",
+            "ord" : 2
+         },
+         {
+            "adult" : false,
+            "custom" : false,
+            "fictional" : true,
+            "id" : "13",
+            "name" : "вестерн",
+            "ord" : 9
+         },
+         {
+            "adult" : false,
+            "custom" : false,
+            "fictional" : true,
+            "id" : "14",
+            "name" : "мультфильм",
+            "ord" : 20
+         },
+         {
+            "adult" : false,
+            "custom" : false,
+            "fictional" : false,
+            "id" : "15",
+            "name" : "короткометражка",
+            "ord" : 26
+         },
+         {
+            "adult" : false,
+            "custom" : false,
+            "fictional" : true,
+            "id" : "16",
+            "name" : "криминал",
+            "ord" : 11
+         },
+         {
+            "adult" : false,
+            "custom" : false,
+            "fictional" : true,
+            "id" : "17",
+            "name" : "детектив",
+            "ord" : 12
+         },
+         {
+            "adult" : false,
+            "custom" : false,
+            "fictional" : true,
+            "id" : "18",
+            "name" : "фильм-нуар",
+            "ord" : 13
+         },
+         {
+            "adult" : false,
+            "custom" : false,
+            "fictional" : true,
+            "id" : "19",
+            "name" : "военный",
+            "ord" : 10
+         },
+         {
+            "adult" : true,
+            "custom" : false,
+            "fictional" : false,
+            "id" : "20",
+            "name" : "для взрослых",
+            "ord" : 33
+         },
+         {
+            "adult" : false,
+            "custom" : false,
+            "fictional" : true,
+            "id" : "21",
+            "name" : "музыка",
+            "ord" : 23
+         },
+         {
+            "adult" : false,
+            "custom" : false,
+            "fictional" : true,
+            "id" : "22",
+            "name" : "биография",
+            "ord" : 15
+         },
+         {
+            "adult" : false,
+            "custom" : false,
+            "fictional" : true,
+            "id" : "23",
+            "name" : "история",
+            "ord" : 14
+         },
+         {
+            "adult" : false,
+            "custom" : false,
+            "fictional" : true,
+            "id" : "24",
+            "name" : "спорт",
+            "ord" : 16
+         },
+         {
+            "adult" : false,
+            "custom" : false,
+            "fictional" : true,
+            "id" : "456",
+            "name" : "детский",
+            "ord" : 22
+         },
+         {
+            "adult" : false,
+            "custom" : true,
+            "fictional" : true,
+            "id" : "1002",
+            "name" : "3d",
+            "ord" : 7
+         },
+         {
+            "adult" : false,
+            "custom" : false,
+            "fictional" : false,
+            "id" : "1747",
+            "name" : "концерт",
+            "ord" : 29
+         },
+         {
+            "adult" : false,
+            "custom" : true,
+            "fictional" : false,
+            "id" : "1001",
+            "name" : "tv",
+            "ord" : 32
+         },
+         {
+            "adult" : false,
+            "custom" : false,
+            "fictional" : false,
+            "id" : "12",
+            "name" : "документальный",
+            "ord" : 25
+         },
+         {
+            "adult" : false,
+            "custom" : false,
+            "fictional" : false,
+            "id" : "27",
+            "name" : "игра",
+            "ord" : 31
+         },
+         {
+            "adult" : false,
+            "custom" : false,
+            "fictional" : false,
+            "id" : "26",
+            "name" : "ток-шоу",
+            "ord" : 28
+         }
+      ],
+      "numFound" : 33,
+      "start" : 0
+   },
+   "responseHeader" : {
+      "QTime" : 0,
+      "params" : {
+         "fl" : "id,name,ord,adult,fictional,custom",
+         "q" : "*:*",
+         "rows" : "2147483647",
+         "start" : "0",
+         "version" : "2.2",
+         "wt" : "json"
+      },
+      "status" : 0
+   }
+}
