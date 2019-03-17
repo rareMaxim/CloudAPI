@@ -33,8 +33,14 @@ object Form4: TForm4
     Session.SessionController = Empty
     SystemInfo.JavaEnabled = False
     Hit.HitType = pageview
+    AppTracking.ApplicationName = 'CloudAPI Demo'
+    AppTracking.ApplicationID = '1234567890'
+    AppTracking.ApplicationVersion = '0.1'
+    AppTracking.ApplicationInstallerID = '1'
     Exception.IsFatal = False
     OnSendData = gaAnalitics1SendData
+    OnDebug = gaAnalitics1Debug
+    IsDebug = False
     Left = 384
     Top = 256
   end
