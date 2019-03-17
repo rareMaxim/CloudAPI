@@ -1,4 +1,4 @@
-unit CloudAPI.GoogleAnalitics;
+п»їunit CloudAPI.GoogleAnalitics;
 
 interface
 
@@ -9,6 +9,13 @@ uses
   System.SysUtils;
 
 type
+  {$SCOPEDENUMS ON}
+  TgaTypeTreatment = (pageview, screenview, event, transaction, item, social,
+    Exception, timing);
+
+  TgaSessionControllerState = (Empty, Start, &End);
+  {$SCOPEDENUMS OFF}
+
   TgaExtension = class(TPersistent)
   protected
     procedure FillData(const HitType: string; ADataStorage: TStringList);
@@ -16,7 +23,7 @@ type
   end;
 
   /// <summary>
-  /// Общие поля
+  /// РћР±С‰РёРµ РїРѕР»СЏ
   /// </summary>
   TgaGeneral = class(TgaExtension)
   private
@@ -32,59 +39,59 @@ type
     constructor Create;
   published
     /// <summary>
-    /// Версия протокола
+    /// Р’РµСЂСЃРёСЏ РїСЂРѕС‚РѕРєРѕР»Р°
     /// </summary>
     /// <remarks>
-    /// Является обязательным для всех типов обращений.
-    /// Версия протокола. Текущее значение – 1.
-    /// Оно изменится только в том случае, если в протокол будут внесены изменения без обратной совместимости.
+    /// РЇРІР»СЏРµС‚СЃСЏ РѕР±СЏР·Р°С‚РµР»СЊРЅС‹Рј РґР»СЏ РІСЃРµС… С‚РёРїРѕРІ РѕР±СЂР°С‰РµРЅРёР№.
+    /// Р’РµСЂСЃРёСЏ РїСЂРѕС‚РѕРєРѕР»Р°. РўРµРєСѓС‰РµРµ Р·РЅР°С‡РµРЅРёРµ вЂ“ 1.
+    /// РћРЅРѕ РёР·РјРµРЅРёС‚СЃСЏ С‚РѕР»СЊРєРѕ РІ С‚РѕРј СЃР»СѓС‡Р°Рµ, РµСЃР»Рё РІ РїСЂРѕС‚РѕРєРѕР» Р±СѓРґСѓС‚ РІРЅРµСЃРµРЅС‹ РёР·РјРµРЅРµРЅРёСЏ Р±РµР· РѕР±СЂР°С‚РЅРѕР№ СЃРѕРІРјРµСЃС‚РёРјРѕСЃС‚Рё.
     /// </remarks>
     property Version: string read FVersion;
     /// <summary>
-    /// Идентификатор отслеживания/идентификатор веб-ресурса
+    /// РРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РѕС‚СЃР»РµР¶РёРІР°РЅРёСЏ/РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РІРµР±-СЂРµСЃСѓСЂСЃР°
     /// </summary>
     /// <remarks>
-    /// Является обязательным для всех типов обращений.
-    /// Идентификатор отслеживания/идентификатор веб-ресурса в формате <c>UA-XXXX-Y</c>. С этим
-    /// идентификатором связываются все собираемые данные.
+    /// РЇРІР»СЏРµС‚СЃСЏ РѕР±СЏР·Р°С‚РµР»СЊРЅС‹Рј РґР»СЏ РІСЃРµС… С‚РёРїРѕРІ РѕР±СЂР°С‰РµРЅРёР№.
+    /// РРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РѕС‚СЃР»РµР¶РёРІР°РЅРёСЏ/РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РІРµР±-СЂРµСЃСѓСЂСЃР° РІ С„РѕСЂРјР°С‚Рµ <c>UA-XXXX-Y</c>. РЎ СЌС‚РёРј
+    /// РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂРѕРј СЃРІСЏР·С‹РІР°СЋС‚СЃСЏ РІСЃРµ СЃРѕР±РёСЂР°РµРјС‹Рµ РґР°РЅРЅС‹Рµ.
     /// </remarks>
     property TrackingId: string read FTrackingId write FTrackingId;
     /// <summary>
-    /// Источник данных
+    /// РСЃС‚РѕС‡РЅРёРє РґР°РЅРЅС‹С…
     /// </summary>
     /// <remarks>
-    /// Необязательное поле.
-    /// Указывает источник данных для обращения.
-    /// Обращения от analytics.js будут иметь значение web, обращения от мобильных SDK – значение app.
+    /// РќРµРѕР±СЏР·Р°С‚РµР»СЊРЅРѕРµ РїРѕР»Рµ.
+    /// РЈРєР°Р·С‹РІР°РµС‚ РёСЃС‚РѕС‡РЅРёРє РґР°РЅРЅС‹С… РґР»СЏ РѕР±СЂР°С‰РµРЅРёСЏ.
+    /// РћР±СЂР°С‰РµРЅРёСЏ РѕС‚ analytics.js Р±СѓРґСѓС‚ РёРјРµС‚СЊ Р·РЅР°С‡РµРЅРёРµ web, РѕР±СЂР°С‰РµРЅРёСЏ РѕС‚ РјРѕР±РёР»СЊРЅС‹С… SDK вЂ“ Р·РЅР°С‡РµРЅРёРµ app.
     /// </remarks>
     property DataSource: string read FDataSource write FDataSource;
     /// <summary>
-    /// Анонимизация IP
+    /// РђРЅРѕРЅРёРјРёР·Р°С†РёСЏ IP
     /// </summary>
     /// <remarks>
-    /// Необязательное поле.
-    /// IP-адрес отправителя (при наличии) переводится в анонимную форму.
+    /// РќРµРѕР±СЏР·Р°С‚РµР»СЊРЅРѕРµ РїРѕР»Рµ.
+    /// IP-Р°РґСЂРµСЃ РѕС‚РїСЂР°РІРёС‚РµР»СЏ (РїСЂРё РЅР°Р»РёС‡РёРё) РїРµСЂРµРІРѕРґРёС‚СЃСЏ РІ Р°РЅРѕРЅРёРјРЅСѓСЋ С„РѕСЂРјСѓ.
     /// </remarks>
     property AnonymizingIP: Boolean read FAnonymizingIP write FAnonymizingIP;
     /// <summary>
-    /// Время в очереди
+    /// Р’СЂРµРјСЏ РІ РѕС‡РµСЂРµРґРё
     /// </summary>
     /// <remarks>
-    /// Необязательное поле.
-    /// Используется для сбора офлайн-обращений (латентных обращений). Значение представляет собой временную дельту (в миллисекундах) между моментом, когда произошло обращение, и его отправкой. Значение должно быть больше или равно 0. Если значение превышает четыре часа, обращение может быть не обработано.
+    /// РќРµРѕР±СЏР·Р°С‚РµР»СЊРЅРѕРµ РїРѕР»Рµ.
+    /// РСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РґР»СЏ СЃР±РѕСЂР° РѕС„Р»Р°Р№РЅ-РѕР±СЂР°С‰РµРЅРёР№ (Р»Р°С‚РµРЅС‚РЅС‹С… РѕР±СЂР°С‰РµРЅРёР№). Р—РЅР°С‡РµРЅРёРµ РїСЂРµРґСЃС‚Р°РІР»СЏРµС‚ СЃРѕР±РѕР№ РІСЂРµРјРµРЅРЅСѓСЋ РґРµР»СЊС‚Сѓ (РІ РјРёР»Р»РёСЃРµРєСѓРЅРґР°С…) РјРµР¶РґСѓ РјРѕРјРµРЅС‚РѕРј, РєРѕРіРґР° РїСЂРѕРёР·РѕС€Р»Рѕ РѕР±СЂР°С‰РµРЅРёРµ, Рё РµРіРѕ РѕС‚РїСЂР°РІРєРѕР№. Р—РЅР°С‡РµРЅРёРµ РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ Р±РѕР»СЊС€Рµ РёР»Рё СЂР°РІРЅРѕ 0. Р•СЃР»Рё Р·РЅР°С‡РµРЅРёРµ РїСЂРµРІС‹С€Р°РµС‚ С‡РµС‚С‹СЂРµ С‡Р°СЃР°, РѕР±СЂР°С‰РµРЅРёРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РЅРµ РѕР±СЂР°Р±РѕС‚Р°РЅРѕ.
     /// </remarks>
     property QueueTime: Integer read FQueueTime write FQueueTime;
     /// <summary>
-    /// Блокировка кеша
+    /// Р‘Р»РѕРєРёСЂРѕРІРєР° РєРµС€Р°
     /// </summary>
     /// <remarks>
-    /// Необязательное поле.
-    /// Используется для отправки случайно выбранных значений в запросах GET, чтобы браузеры и прокси-серверы не кешировали обращения. Этот параметр должен быть последним, так как, по нашему опыту, некоторые сторонние программы фильтрации неправильно добавляют дополнительные параметры в HTTP-запросы. Это значение не попадает в отчеты. Это значение не попадает в отчеты.
+    /// РќРµРѕР±СЏР·Р°С‚РµР»СЊРЅРѕРµ РїРѕР»Рµ.
+    /// РСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РґР»СЏ РѕС‚РїСЂР°РІРєРё СЃР»СѓС‡Р°Р№РЅРѕ РІС‹Р±СЂР°РЅРЅС‹С… Р·РЅР°С‡РµРЅРёР№ РІ Р·Р°РїСЂРѕСЃР°С… GET, С‡С‚РѕР±С‹ Р±СЂР°СѓР·РµСЂС‹ Рё РїСЂРѕРєСЃРё-СЃРµСЂРІРµСЂС‹ РЅРµ РєРµС€РёСЂРѕРІР°Р»Рё РѕР±СЂР°С‰РµРЅРёСЏ. Р­С‚РѕС‚ РїР°СЂР°РјРµС‚СЂ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ РїРѕСЃР»РµРґРЅРёРј, С‚Р°Рє РєР°Рє, РїРѕ РЅР°С€РµРјСѓ РѕРїС‹С‚Сѓ, РЅРµРєРѕС‚РѕСЂС‹Рµ СЃС‚РѕСЂРѕРЅРЅРёРµ РїСЂРѕРіСЂР°РјРјС‹ С„РёР»СЊС‚СЂР°С†РёРё РЅРµРїСЂР°РІРёР»СЊРЅРѕ РґРѕР±Р°РІР»СЏСЋС‚ РґРѕРїРѕР»РЅРёС‚РµР»СЊРЅС‹Рµ РїР°СЂР°РјРµС‚СЂС‹ РІ HTTP-Р·Р°РїСЂРѕСЃС‹. Р­С‚Рѕ Р·РЅР°С‡РµРЅРёРµ РЅРµ РїРѕРїР°РґР°РµС‚ РІ РѕС‚С‡РµС‚С‹. Р­С‚Рѕ Р·РЅР°С‡РµРЅРёРµ РЅРµ РїРѕРїР°РґР°РµС‚ РІ РѕС‚С‡РµС‚С‹.
     /// </remarks>
     property CacheLock: string read FCacheLock write FCacheLock;
   end;
   /// <summary>
-  /// Пользователь
+  /// РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ
   /// </summary>
 
   TgaUser = class(TgaExtension)
@@ -95,25 +102,25 @@ type
     procedure FillData(const HitType: string; ADataStorage: TStringList); override;
   published
     /// <summary>
-    /// Идентификатор клиента
+    /// РРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РєР»РёРµРЅС‚Р°
     /// </summary>
     /// <remarks>
-    /// Это поле должно быть заполнено, если в запросе не указан User ID (uid). С помощью значения этого поля выполняется анонимная идентификация экземпляра пользователя, устройства или браузера. На сайтах этот идентификатор обычно сохраняется в основном файле cookie, который действует два года, а в случае мобильных приложений – случайным образом генерируется для каждого экземпляра установленного приложения. В этом поле должен быть указан универсальный уникальный идентификатор (версии 4), как описано в файле http://www.ietf.org/rfc/rfc4122.txt.
+    /// Р­С‚Рѕ РїРѕР»Рµ РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ Р·Р°РїРѕР»РЅРµРЅРѕ, РµСЃР»Рё РІ Р·Р°РїСЂРѕСЃРµ РЅРµ СѓРєР°Р·Р°РЅ User ID (uid). РЎ РїРѕРјРѕС‰СЊСЋ Р·РЅР°С‡РµРЅРёСЏ СЌС‚РѕРіРѕ РїРѕР»СЏ РІС‹РїРѕР»РЅСЏРµС‚СЃСЏ Р°РЅРѕРЅРёРјРЅР°СЏ РёРґРµРЅС‚РёС„РёРєР°С†РёСЏ СЌРєР·РµРјРїР»СЏСЂР° РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ, СѓСЃС‚СЂРѕР№СЃС‚РІР° РёР»Рё Р±СЂР°СѓР·РµСЂР°. РќР° СЃР°Р№С‚Р°С… СЌС‚РѕС‚ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РѕР±С‹С‡РЅРѕ СЃРѕС…СЂР°РЅСЏРµС‚СЃСЏ РІ РѕСЃРЅРѕРІРЅРѕРј С„Р°Р№Р»Рµ cookie, РєРѕС‚РѕСЂС‹Р№ РґРµР№СЃС‚РІСѓРµС‚ РґРІР° РіРѕРґР°, Р° РІ СЃР»СѓС‡Р°Рµ РјРѕР±РёР»СЊРЅС‹С… РїСЂРёР»РѕР¶РµРЅРёР№ вЂ“ СЃР»СѓС‡Р°Р№РЅС‹Рј РѕР±СЂР°Р·РѕРј РіРµРЅРµСЂРёСЂСѓРµС‚СЃСЏ РґР»СЏ РєР°Р¶РґРѕРіРѕ СЌРєР·РµРјРїР»СЏСЂР° СѓСЃС‚Р°РЅРѕРІР»РµРЅРЅРѕРіРѕ РїСЂРёР»РѕР¶РµРЅРёСЏ. Р’ СЌС‚РѕРј РїРѕР»Рµ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ СѓРєР°Р·Р°РЅ СѓРЅРёРІРµСЂСЃР°Р»СЊРЅС‹Р№ СѓРЅРёРєР°Р»СЊРЅС‹Р№ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ (РІРµСЂСЃРёРё 4), РєР°Рє РѕРїРёСЃР°РЅРѕ РІ С„Р°Р№Р»Рµ http://www.ietf.org/rfc/rfc4122.txt.
     /// </remarks>
     property ClientID: string read FClientID write FClientID;
     /// <summary>
-    /// Идентификатор пользователя
+    /// РРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
     /// </summary>
     /// <remarks>
-    /// Это поле обязательно, если в запросе не задан идентификатор клиента. User ID – известный идентификатор, присваиваемый пользователю владельцем сайта или пользователем библиотеки отслеживания. Он должен быть анонимным, т. е. не связанным с личной информацией, а его значение не должно сохраняться с помощью файлов cookie или каких-либо других средств хранения данных в Google Analytics.
+    /// Р­С‚Рѕ РїРѕР»Рµ РѕР±СЏР·Р°С‚РµР»СЊРЅРѕ, РµСЃР»Рё РІ Р·Р°РїСЂРѕСЃРµ РЅРµ Р·Р°РґР°РЅ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РєР»РёРµРЅС‚Р°. User ID вЂ“ РёР·РІРµСЃС‚РЅС‹Р№ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ, РїСЂРёСЃРІР°РёРІР°РµРјС‹Р№ РїРѕР»СЊР·РѕРІР°С‚РµР»СЋ РІР»Р°РґРµР»СЊС†РµРј СЃР°Р№С‚Р° РёР»Рё РїРѕР»СЊР·РѕРІР°С‚РµР»РµРј Р±РёР±Р»РёРѕС‚РµРєРё РѕС‚СЃР»РµР¶РёРІР°РЅРёСЏ. РћРЅ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ Р°РЅРѕРЅРёРјРЅС‹Рј, С‚. Рµ. РЅРµ СЃРІСЏР·Р°РЅРЅС‹Рј СЃ Р»РёС‡РЅРѕР№ РёРЅС„РѕСЂРјР°С†РёРµР№, Р° РµРіРѕ Р·РЅР°С‡РµРЅРёРµ РЅРµ РґРѕР»Р¶РЅРѕ СЃРѕС…СЂР°РЅСЏС‚СЊСЃСЏ СЃ РїРѕРјРѕС‰СЊСЋ С„Р°Р№Р»РѕРІ cookie РёР»Рё РєР°РєРёС…-Р»РёР±Рѕ РґСЂСѓРіРёС… СЃСЂРµРґСЃС‚РІ С…СЂР°РЅРµРЅРёСЏ РґР°РЅРЅС‹С… РІ Google Analytics.
     /// </remarks>
     property UserID: string read FUserID write FUserID;
   end;
 
-  TgaSessionControllerState = (Empty, Start, &End);
+
 
   /// <summary>
-  /// Сеанс
+  /// РЎРµР°РЅСЃ
   /// </summary>
   TgaSession = class(TgaExtension)
   private
@@ -125,40 +132,40 @@ type
     procedure FillData(const HitType: string; ADataStorage: TStringList); override;
   published
     /// <summary>
-    /// Контроллер сеансов
+    /// РљРѕРЅС‚СЂРѕР»Р»РµСЂ СЃРµР°РЅСЃРѕРІ
     /// </summary>
     /// <remarks>
-    /// Используется для контроля за продолжительностью сеанса. При значении start с этого обращения начинается новый сеанс, а при значении end на этом обращении заканчивается текущий сеанс. Все остальные значения игнорируются.
+    /// РСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РґР»СЏ РєРѕРЅС‚СЂРѕР»СЏ Р·Р° РїСЂРѕРґРѕР»Р¶РёС‚РµР»СЊРЅРѕСЃС‚СЊСЋ СЃРµР°РЅСЃР°. РџСЂРё Р·РЅР°С‡РµРЅРёРё start СЃ СЌС‚РѕРіРѕ РѕР±СЂР°С‰РµРЅРёСЏ РЅР°С‡РёРЅР°РµС‚СЃСЏ РЅРѕРІС‹Р№ СЃРµР°РЅСЃ, Р° РїСЂРё Р·РЅР°С‡РµРЅРёРё end РЅР° СЌС‚РѕРј РѕР±СЂР°С‰РµРЅРёРё Р·Р°РєР°РЅС‡РёРІР°РµС‚СЃСЏ С‚РµРєСѓС‰РёР№ СЃРµР°РЅСЃ. Р’СЃРµ РѕСЃС‚Р°Р»СЊРЅС‹Рµ Р·РЅР°С‡РµРЅРёСЏ РёРіРЅРѕСЂРёСЂСѓСЋС‚СЃСЏ.
     /// </remarks>
     property SessionController: TgaSessionControllerState read
       FSessionController write FSessionController;
     /// <summary>
-    /// Переопределение IP
+    /// РџРµСЂРµРѕРїСЂРµРґРµР»РµРЅРёРµ IP
     /// </summary>
     /// <remarks>
-    /// Необязательное поле.
-    /// IP-адрес пользователя. Этот IP-адрес должен быть действительным, в формате IPv4 или IPv6. IP пользователей всегда анонимизируются.
+    /// РќРµРѕР±СЏР·Р°С‚РµР»СЊРЅРѕРµ РїРѕР»Рµ.
+    /// IP-Р°РґСЂРµСЃ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ. Р­С‚РѕС‚ IP-Р°РґСЂРµСЃ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ РґРµР№СЃС‚РІРёС‚РµР»СЊРЅС‹Рј, РІ С„РѕСЂРјР°С‚Рµ IPv4 РёР»Рё IPv6. IP РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№ РІСЃРµРіРґР° Р°РЅРѕРЅРёРјРёР·РёСЂСѓСЋС‚СЃСЏ.
     /// </remarks>
     property IpOverride: string read FIpOverride write FIpOverride;
     /// <summary>
-    /// Переопределение агента пользователя
+    /// РџРµСЂРµРѕРїСЂРµРґРµР»РµРЅРёРµ Р°РіРµРЅС‚Р° РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
     /// </summary>
     /// <remarks>
-    /// Необязательное поле.
-    /// Агент пользователя браузера. Обратите внимание, что Google предоставляет библиотеки, позволяющие идентифицировать действительных агентов пользователя. Использование собственного агента ненадежно и может привести к ошибкам.
+    /// РќРµРѕР±СЏР·Р°С‚РµР»СЊРЅРѕРµ РїРѕР»Рµ.
+    /// РђРіРµРЅС‚ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ Р±СЂР°СѓР·РµСЂР°. РћР±СЂР°С‚РёС‚Рµ РІРЅРёРјР°РЅРёРµ, С‡С‚Рѕ Google РїСЂРµРґРѕСЃС‚Р°РІР»СЏРµС‚ Р±РёР±Р»РёРѕС‚РµРєРё, РїРѕР·РІРѕР»СЏСЋС‰РёРµ РёРґРµРЅС‚РёС„РёС†РёСЂРѕРІР°С‚СЊ РґРµР№СЃС‚РІРёС‚РµР»СЊРЅС‹С… Р°РіРµРЅС‚РѕРІ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ. РСЃРїРѕР»СЊР·РѕРІР°РЅРёРµ СЃРѕР±СЃС‚РІРµРЅРЅРѕРіРѕ Р°РіРµРЅС‚Р° РЅРµРЅР°РґРµР¶РЅРѕ Рё РјРѕР¶РµС‚ РїСЂРёРІРµСЃС‚Рё Рє РѕС€РёР±РєР°Рј.
     /// </remarks>
     property UserAgent: string read FUserAgent write FUserAgent;
     /// <summary>
-    /// Переопределение геоданных
+    /// РџРµСЂРµРѕРїСЂРµРґРµР»РµРЅРёРµ РіРµРѕРґР°РЅРЅС‹С…
     /// </summary>
     /// <remarks>
-    /// Необязательное поле.
-    /// Географическое местоположение пользователя. Идентификатор местоположения должен представлять собой двухбуквенный код страны или идентификатор критерия для города или региона (см. http://developers.google.com/analytics/devguides/collection/protocol/v1/geoid). Этот параметр переопределяет все значения, определенные по IP-адресу, в том числе параметр переопределения IP. При неверном коде географические параметры будут иметь значение (not set).
+    /// РќРµРѕР±СЏР·Р°С‚РµР»СЊРЅРѕРµ РїРѕР»Рµ.
+    /// Р“РµРѕРіСЂР°С„РёС‡РµСЃРєРѕРµ РјРµСЃС‚РѕРїРѕР»РѕР¶РµРЅРёРµ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ. РРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РјРµСЃС‚РѕРїРѕР»РѕР¶РµРЅРёСЏ РґРѕР»Р¶РµРЅ РїСЂРµРґСЃС‚Р°РІР»СЏС‚СЊ СЃРѕР±РѕР№ РґРІСѓС…Р±СѓРєРІРµРЅРЅС‹Р№ РєРѕРґ СЃС‚СЂР°РЅС‹ РёР»Рё РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РєСЂРёС‚РµСЂРёСЏ РґР»СЏ РіРѕСЂРѕРґР° РёР»Рё СЂРµРіРёРѕРЅР° (СЃРј. http://developers.google.com/analytics/devguides/collection/protocol/v1/geoid). Р­С‚РѕС‚ РїР°СЂР°РјРµС‚СЂ РїРµСЂРµРѕРїСЂРµРґРµР»СЏРµС‚ РІСЃРµ Р·РЅР°С‡РµРЅРёСЏ, РѕРїСЂРµРґРµР»РµРЅРЅС‹Рµ РїРѕ IP-Р°РґСЂРµСЃСѓ, РІ С‚РѕРј С‡РёСЃР»Рµ РїР°СЂР°РјРµС‚СЂ РїРµСЂРµРѕРїСЂРµРґРµР»РµРЅРёСЏ IP. РџСЂРё РЅРµРІРµСЂРЅРѕРј РєРѕРґРµ РіРµРѕРіСЂР°С„РёС‡РµСЃРєРёРµ РїР°СЂР°РјРµС‚СЂС‹ Р±СѓРґСѓС‚ РёРјРµС‚СЊ Р·РЅР°С‡РµРЅРёРµ (not set).
     /// </remarks>
     property GeoID: string read FGeoID write FGeoID;
   end;
   /// <summary>
-  /// Источники трафика
+  /// РСЃС‚РѕС‡РЅРёРєРё С‚СЂР°С„РёРєР°
   /// </summary>
 
   TgaTrafficSources = class(TgaExtension)
@@ -176,82 +183,82 @@ type
     procedure FillData(const HitType: string; ADataStorage: TStringList); override;
   published
     /// <summary>
-    ///  URL перехода к документу
+    ///  URL РїРµСЂРµС…РѕРґР° Рє РґРѕРєСѓРјРµРЅС‚Сѓ
     /// </summary>
     /// <remarks>
-    ///  Необязательное поле.
-    ///  Показывает, с какого URL поступил трафик на сайт. Это значение используется для определения источника трафика. Формат значения – URL.
+    ///  РќРµРѕР±СЏР·Р°С‚РµР»СЊРЅРѕРµ РїРѕР»Рµ.
+    ///  РџРѕРєР°Р·С‹РІР°РµС‚, СЃ РєР°РєРѕРіРѕ URL РїРѕСЃС‚СѓРїРёР» С‚СЂР°С„РёРє РЅР° СЃР°Р№С‚. Р­С‚Рѕ Р·РЅР°С‡РµРЅРёРµ РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РґР»СЏ РѕРїСЂРµРґРµР»РµРЅРёСЏ РёСЃС‚РѕС‡РЅРёРєР° С‚СЂР°С„РёРєР°. Р¤РѕСЂРјР°С‚ Р·РЅР°С‡РµРЅРёСЏ вЂ“ URL.
     /// </remarks>
     property DocumentReferrer: string read FDocumentReferrer write FDocumentReferrer;
     /// <summary>
-    ///  Название кампании
+    ///  РќР°Р·РІР°РЅРёРµ РєР°РјРїР°РЅРёРё
     /// </summary>
     /// <remarks>
-    ///  Необязательное поле.
-    ///  Указывает название кампании.
+    ///  РќРµРѕР±СЏР·Р°С‚РµР»СЊРЅРѕРµ РїРѕР»Рµ.
+    ///  РЈРєР°Р·С‹РІР°РµС‚ РЅР°Р·РІР°РЅРёРµ РєР°РјРїР°РЅРёРё.
     /// </remarks>
     property CampaignName: string read FCampaignName write FCampaignName;
     /// <summary>
-    ///  Источник кампании
+    ///  РСЃС‚РѕС‡РЅРёРє РєР°РјРїР°РЅРёРё
     /// </summary>
     /// <remarks>
-    ///  Необязательное поле.
-    ///  Указывает источник кампании.
+    ///  РќРµРѕР±СЏР·Р°С‚РµР»СЊРЅРѕРµ РїРѕР»Рµ.
+    ///  РЈРєР°Р·С‹РІР°РµС‚ РёСЃС‚РѕС‡РЅРёРє РєР°РјРїР°РЅРёРё.
     /// </remarks>
     property CampaignSource: string read FCampaignSource write FCampaignSource;
     /// <summary>
-    ///  Канал кампании
+    ///  РљР°РЅР°Р» РєР°РјРїР°РЅРёРё
     /// </summary>
     /// <remarks>
-    ///  Необязательное поле.
-    ///  Указывает канал кампании.
+    ///  РќРµРѕР±СЏР·Р°С‚РµР»СЊРЅРѕРµ РїРѕР»Рµ.
+    ///  РЈРєР°Р·С‹РІР°РµС‚ РєР°РЅР°Р» РєР°РјРїР°РЅРёРё.
     /// </remarks>
     property CampaignMedium: string read FCampaignMedium write FCampaignMedium;
     /// <summary>
-    ///  Ключевое слово кампании
+    ///  РљР»СЋС‡РµРІРѕРµ СЃР»РѕРІРѕ РєР°РјРїР°РЅРёРё
     /// </summary>
     /// <remarks>
-    ///  Необязательное поле.
-    ///  Определяет ключевое слово кампании.
+    ///  РќРµРѕР±СЏР·Р°С‚РµР»СЊРЅРѕРµ РїРѕР»Рµ.
+    ///  РћРїСЂРµРґРµР»СЏРµС‚ РєР»СЋС‡РµРІРѕРµ СЃР»РѕРІРѕ РєР°РјРїР°РЅРёРё.
     /// </remarks>
     property CampaignKeyword: string read FCampaignKeyword write FCampaignKeyword;
     /// <summary>
-    ///  Содержание кампании
+    ///  РЎРѕРґРµСЂР¶Р°РЅРёРµ РєР°РјРїР°РЅРёРё
     /// </summary>
     /// <remarks>
-    ///  Необязательное поле.
-    ///  Определяет содержание кампании.
+    ///  РќРµРѕР±СЏР·Р°С‚РµР»СЊРЅРѕРµ РїРѕР»Рµ.
+    ///  РћРїСЂРµРґРµР»СЏРµС‚ СЃРѕРґРµСЂР¶Р°РЅРёРµ РєР°РјРїР°РЅРёРё.
     /// </remarks>
     property CampaignContent: string read FCampaignContent write FCampaignContent;
     /// <summary>
-    ///  Идентификатор кампании
+    ///  РРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РєР°РјРїР°РЅРёРё
     /// </summary>
     /// <remarks>
-    ///  Необязательное поле.
-    ///  Определяет идентификатор кампании.
+    ///  РќРµРѕР±СЏР·Р°С‚РµР»СЊРЅРѕРµ РїРѕР»Рµ.
+    ///  РћРїСЂРµРґРµР»СЏРµС‚ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РєР°РјРїР°РЅРёРё.
     /// </remarks>
     property CampaignID: string read FCampaignID write FCampaignID;
     /// <summary>
-    ///  Идентификатор Google Рекламы
+    ///  РРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ Google Р РµРєР»Р°РјС‹
     /// </summary>
     /// <remarks>
-    ///  Необязательное поле.
-    ///  Определяет идентификатор Google Рекламы.
+    ///  РќРµРѕР±СЏР·Р°С‚РµР»СЊРЅРѕРµ РїРѕР»Рµ.
+    ///  РћРїСЂРµРґРµР»СЏРµС‚ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ Google Р РµРєР»Р°РјС‹.
     /// </remarks>
     property GoogleAdWordsID: string read FGoogleAdWordsID write FGoogleAdWordsID;
     /// <summary>
-    ///  Идентификатор медийных объявлений Google
+    ///  РРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РјРµРґРёР№РЅС‹С… РѕР±СЉСЏРІР»РµРЅРёР№ Google
     /// </summary>
     /// <remarks>
-    ///  Необязательное поле.
-    ///  Указывает идентификатор медийных объявлений Google.
+    ///  РќРµРѕР±СЏР·Р°С‚РµР»СЊРЅРѕРµ РїРѕР»Рµ.
+    ///  РЈРєР°Р·С‹РІР°РµС‚ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РјРµРґРёР№РЅС‹С… РѕР±СЉСЏРІР»РµРЅРёР№ Google.
     /// </remarks>
     property GoogleDisplayAdsID: string read FGoogleDisplayAdsID write
       FGoogleDisplayAdsID;
   end;
 
   /// <summary>
-  ///   Информация о системе
+  ///   РРЅС„РѕСЂРјР°С†РёСЏ Рѕ СЃРёСЃС‚РµРјРµ
   /// </summary>
   TgaSystem = class(TgaExtension)
   private
@@ -260,60 +267,72 @@ type
     FDocumentEncoding: TEncoding;
     FScreenColors: string;
     FUserLanguage: string;
+    FJavaEnabled: Boolean;
+    FFlashVersion: string;
   protected
     procedure FillData(const HitType: string; ADataStorage: TStringList); override;
-  public
-    function ToString: string; override;
   published
     /// <summary>
-    ///  Разрешение экрана
+    ///  Р Р°Р·СЂРµС€РµРЅРёРµ СЌРєСЂР°РЅР°
     /// </summary>
     /// <remarks>
-    ///  Необязательное поле.
-    ///  Указывает разрешение экрана.
+    ///  РќРµРѕР±СЏР·Р°С‚РµР»СЊРЅРѕРµ РїРѕР»Рµ.
+    ///  РЈРєР°Р·С‹РІР°РµС‚ СЂР°Р·СЂРµС€РµРЅРёРµ СЌРєСЂР°РЅР°.
     /// </remarks>
     property ScreenResolution: TSizeF read FScreenResolution write FScreenResolution;
     /// <summary>
-    ///  Окно просмотра
+    ///  РћРєРЅРѕ РїСЂРѕСЃРјРѕС‚СЂР°
     /// </summary>
     /// <remarks>
-    ///  Необязательное поле.
-    ///  Определяет размер видимой области браузера/устройства.
+    ///  РќРµРѕР±СЏР·Р°С‚РµР»СЊРЅРѕРµ РїРѕР»Рµ.
+    ///  РћРїСЂРµРґРµР»СЏРµС‚ СЂР°Р·РјРµСЂ РІРёРґРёРјРѕР№ РѕР±Р»Р°СЃС‚Рё Р±СЂР°СѓР·РµСЂР°/СѓСЃС‚СЂРѕР№СЃС‚РІР°.
     /// </remarks>
     property ViewportSize: TSizeF read FViewportSize write FViewportSize;
     /// <summary>
-    ///  Кодирование документа
+    ///  РљРѕРґРёСЂРѕРІР°РЅРёРµ РґРѕРєСѓРјРµРЅС‚Р°
     /// </summary>
     /// <remarks>
-    ///  Необязательное поле.
-    ///  Определяет набор символов для кодирования страницы/документа.
+    ///  РќРµРѕР±СЏР·Р°С‚РµР»СЊРЅРѕРµ РїРѕР»Рµ.
+    ///  РћРїСЂРµРґРµР»СЏРµС‚ РЅР°Р±РѕСЂ СЃРёРјРІРѕР»РѕРІ РґР»СЏ РєРѕРґРёСЂРѕРІР°РЅРёСЏ СЃС‚СЂР°РЅРёС†С‹/РґРѕРєСѓРјРµРЅС‚Р°.
     /// </remarks>
     property DocumentEncoding: TEncoding read FDocumentEncoding write FDocumentEncoding;
     /// <summary>
-    ///  Цвета экрана
+    ///  Р¦РІРµС‚Р° СЌРєСЂР°РЅР°
     /// </summary>
     /// <remarks>
-    ///  Необязательное поле.
-    ///  Определяет глубину цветов экрана.
+    ///  РќРµРѕР±СЏР·Р°С‚РµР»СЊРЅРѕРµ РїРѕР»Рµ.
+    ///  РћРїСЂРµРґРµР»СЏРµС‚ РіР»СѓР±РёРЅСѓ С†РІРµС‚РѕРІ СЌРєСЂР°РЅР°.
     /// </remarks>
     property ScreenColors: string read FScreenColors write FScreenColors;
     /// <summary>
-    ///  Язык пользователя
+    ///  РЇР·С‹Рє РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
     /// </summary>
     /// <remarks>
-    ///  Необязательное поле.
-    ///  Определяет язык пользователя.
+    ///  РќРµРѕР±СЏР·Р°С‚РµР»СЊРЅРѕРµ РїРѕР»Рµ.
+    ///  РћРїСЂРµРґРµР»СЏРµС‚ СЏР·С‹Рє РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ.
     /// </remarks>
     property UserLanguage: string read FUserLanguage write FUserLanguage;
-    {TODO -oOwner -cGeneral : Java Enabled}
-    {TODO -oOwner -cGeneral : Flash Version}
+    /// <summary>
+    ///   РџРѕРґРґРµСЂР¶РєР° Java РІРєР»СЋС‡РµРЅР°
+    /// </summary>
+    /// <remarks>
+    ///  РќРµРѕР±СЏР·Р°С‚РµР»СЊРЅРѕРµ РїРѕР»Рµ.
+    ///  РЈРєР°Р·С‹РІР°РµС‚, РІРєР»СЋС‡РµРЅР° Р»Рё РїРѕРґРґРµСЂР¶РєР° Java.
+    /// </remarks>
+    property JavaEnabled: Boolean read FJavaEnabled write FJavaEnabled;
+    /// <summary>
+    ///   Р’РµСЂСЃРёСЏ Flash
+    /// </summary>
+    /// <remarks>
+    ///  РќРµРѕР±СЏР·Р°С‚РµР»СЊРЅРѕРµ РїРѕР»Рµ.
+    ///  РЈРєР°Р·С‹РІР°РµС‚ РІРµСЂСЃРёСЋ Flash.
+    /// </remarks>
+    property FlashVersion: string read FFlashVersion write FFlashVersion;
   end;
 
-  TgaTypeTreatment = (pageview, screenview, event, transaction, item, social,
-    Exception, timing);
 
   /// <summary>
-  ///   Обращение
+  ///   РћР±СЂР°С‰РµРЅРёРµ
   /// </summary>
   TgaHit = class(TgaExtension)
   private
@@ -325,42 +344,97 @@ type
     constructor Create;
   published
     /// <summary>
-    ///   Тип обращения
+    ///   РўРёРї РѕР±СЂР°С‰РµРЅРёСЏ
     /// </summary>
     /// <remarks>
-    ///   Является обязательным для всех типов обращений.
-    ///  Тип обращения. Возможные варианты: pageview, screenview, event, transaction, item, social, exception, timing.
+    ///   РЇРІР»СЏРµС‚СЃСЏ РѕР±СЏР·Р°С‚РµР»СЊРЅС‹Рј РґР»СЏ РІСЃРµС… С‚РёРїРѕРІ РѕР±СЂР°С‰РµРЅРёР№.
+    ///  РўРёРї РѕР±СЂР°С‰РµРЅРёСЏ. Р’РѕР·РјРѕР¶РЅС‹Рµ РІР°СЂРёР°РЅС‚С‹: pageview, screenview, event, transaction, item, social, exception, timing.
     /// </remarks>
     property HitType: TgaTypeTreatment read FHitType write FHitType;
     /// <summary>
-    ///   Пассивное событие
+    ///   РџР°СЃСЃРёРІРЅРѕРµ СЃРѕР±С‹С‚РёРµ
     /// </summary>
     /// <remarks>
-    ///   Необязательное поле.
-    ///   Указывает на то, что обращение не должно считаться взаимодействием.
+    ///   РќРµРѕР±СЏР·Р°С‚РµР»СЊРЅРѕРµ РїРѕР»Рµ.
+    ///   РЈРєР°Р·С‹РІР°РµС‚ РЅР° С‚Рѕ, С‡С‚Рѕ РѕР±СЂР°С‰РµРЅРёРµ РЅРµ РґРѕР»Р¶РЅРѕ СЃС‡РёС‚Р°С‚СЊСЃСЏ РІР·Р°РёРјРѕРґРµР№СЃС‚РІРёРµРј.
     /// </remarks>
     property NonInteractionHit: Boolean read FNonInteractionHit write
       FNonInteractionHit default False;
   end;
 
 
-
   /// <summary>
-  ///
+  ///  РРЅС„РѕСЂРјР°С†РёСЏ Рѕ СЃРѕРґРµСЂР¶Р°РЅРёРё
   /// </summary>
   TgaContentInformation = class(TgaExtension)
   private
     FDocumentPath: string;
+    FDocumentLocationURL: string;
+    FDocumentHostName: string;
+    FDocumentTitle: string;
+    FScreenName: string;
+    FContentGroup: string;
+    FLinkID: string;
   protected
     procedure FillData(const HitType: string; ADataStorage: TStringList); override;
   published
     /// <summary>
-    ///
+    ///   URL РјРµСЃС‚РѕРїРѕР»РѕР¶РµРЅРёСЏ РґРѕРєСѓРјРµРЅС‚Р°
     /// </summary>
     /// <remarks>
-    ///
+    ///   РќРµРѕР±СЏР·Р°С‚РµР»СЊРЅРѕРµ РїРѕР»Рµ.
+    ///  Р­С‚РѕС‚ РїР°СЂР°РјРµС‚СЂ РїРѕР·РІРѕР»СЏРµС‚ РїРµСЂРµРґР°С‚СЊ РїРѕР»РЅС‹Р№ URL (РїСѓС‚СЊ Рє РґРѕРєСѓРјРµРЅС‚Сѓ) СЃС‚СЂР°РЅРёС†С‹, РЅР° РєРѕС‚РѕСЂРѕР№ СЂР°Р·РјРµС‰РµРЅ РєРѕРЅС‚РµРЅС‚. РџРµСЂРµРѕРїСЂРµРґРµР»РёС‚СЊ РёРјСЏ С…РѕСЃС‚Р° Рё РїСѓС‚СЊ+Р·Р°РїСЂРѕСЃ РјРѕР¶РЅРѕ СЃ РїРѕРјРѕС‰СЊСЋ РїР°СЂР°РјРµС‚СЂРѕРІ dh Рё dp СЃРѕРѕС‚РІРµС‚СЃС‚РІРµРЅРЅРѕ. РљР»РёРµРЅС‚С‹ JavaScript РѕРїСЂРµРґРµР»СЏСЋС‚ URL, РёСЃРїРѕР»СЊР·СѓСЏ РєРѕРјР±РёРЅР°С†РёСЋ РїР°СЂР°РјРµС‚СЂРѕРІ Р±СЂР°СѓР·РµСЂР° document.location.origin, document.location.pathname Рё document.location.search. Р•СЃР»Рё РІ URL РµСЃС‚СЊ РєР°РєР°СЏ-Р»РёР±Рѕ Р»РёС‡РЅР°СЏ РёРЅС„РѕСЂРјР°С†РёСЏ, РІРєР»СЋС‡Р°СЏ СЃРІРµРґРµРЅРёСЏ, РЅРµРѕР±С…РѕРґРёРјС‹Рµ РґР»СЏ Р°СѓС‚РµРЅС‚РёС„РёРєР°С†РёРё, РµРµ РЅСѓР¶РЅРѕ СѓРґР°Р»РёС‚СЊ. Р”Р»СЏ РѕР±СЂР°С‰РµРЅРёР№ С‚РёРїР° pageview РЅРµРѕР±С…РѕРґРёРјРѕ СѓРєР°Р·С‹РІР°С‚СЊ Р»РёР±Рѕ РїР°СЂР°РјРµС‚СЂ dl, Р»РёР±Рѕ РїР°СЂР°РјРµС‚СЂС‹ dh Рё dp РѕРґРЅРѕРІСЂРµРјРµРЅРЅРѕ.
+    /// </remarks>
+    property DocumentLocationURL: string read FDocumentLocationURL write
+      FDocumentLocationURL;
+    /// <summary>
+    ///  РРјСЏ С…РѕСЃС‚Р° РґРѕРєСѓРјРµРЅС‚Р°
+    /// </summary>
+    /// <remarks>
+    ///  РќРµРѕР±СЏР·Р°С‚РµР»СЊРЅРѕРµ РїРѕР»Рµ.
+    ///  РЈРєР°Р·С‹РІР°РµС‚ РёРјСЏ С…РѕСЃС‚Р°, РіРґРµ С…СЂР°РЅРёС‚СЃСЏ РєРѕРЅС‚РµРЅС‚.
+    /// </remarks>
+    property DocumentHostName: string read FDocumentHostName write FDocumentHostName;
+    /// <summary>
+    ///   РџСѓС‚СЊ Рє РґРѕРєСѓРјРµРЅС‚Сѓ
+    /// </summary>
+    /// <remarks>
+    ///    РќРµРѕР±СЏР·Р°С‚РµР»СЊРЅРѕРµ РїРѕР»Рµ.
+    ///  Р§Р°СЃС‚СЊ URL СЃС‚СЂР°РЅРёС†С‹, РѕРїСЂРµРґРµР»СЏСЋС‰Р°СЏ РїСѓС‚СЊ. РџСѓС‚СЊ РґРѕР»Р¶РµРЅ РЅР°С‡РёРЅР°С‚СЊСЃСЏ СЃ СЃРёРјРІРѕР»Р° РєРѕСЃРѕР№ С‡РµСЂС‚С‹ (/). Р”Р»СЏ РѕР±СЂР°С‰РµРЅРёР№ С‚РёРїР° pageview РЅРµРѕР±С…РѕРґРёРјРѕ СѓРєР°Р·Р°С‚СЊ Р»РёР±Рѕ РїР°СЂР°РјРµС‚СЂ dl, Р»РёР±Рѕ РѕРґРЅРѕРІСЂРµРјРµРЅРЅРѕ РїР°СЂР°РјРµС‚СЂС‹ dh Рё dp.
     /// </remarks>
     property DocumentPath: string read FDocumentPath write FDocumentPath;
+    /// <summary>
+    ///  Р—Р°РіРѕР»РѕРІРѕРє РґРѕРєСѓРјРµРЅС‚Р°
+    /// </summary>
+    /// <remarks>
+    ///  РќРµРѕР±СЏР·Р°С‚РµР»СЊРЅРѕРµ РїРѕР»Рµ.
+    ///  Р—Р°РіРѕР»РѕРІРѕРє СЃС‚СЂР°РЅРёС†С‹/РґРѕРєСѓРјРµРЅС‚Р°.
+    /// </remarks>
+    property DocumentTitle: string read FDocumentTitle write FDocumentTitle;
+    /// <summary>
+    ///   РќР°Р·РІР°РЅРёРµ СЌРєСЂР°РЅР°
+    /// </summary>
+    /// <remarks>
+    ///    РћР±СЏР·Р°С‚РµР»СЊРЅРѕ РґР»СЏ РѕР±СЂР°С‰РµРЅРёР№ С‚РёРїР° screenview (РїСЂРѕСЃРјРѕС‚СЂ СЌРєСЂР°РЅР°).
+    ///  Р­С‚Рѕ РЅРµРѕР±СЏР·Р°С‚РµР»СЊРЅС‹Р№ РїР°СЂР°РјРµС‚СЂ РґР»СЏ РІРµР±-СЂРµСЃСѓСЂСЃРѕРІ Рё РѕР±СЏР·Р°С‚РµР»СЊРЅС‹Р№ вЂ“ РґР»СЏ РјРѕР±РёР»СЊРЅС‹С… СЂРµСЃСѓСЂСЃРѕРІ. РћРЅ РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РІ РєР°С‡РµСЃС‚РІРµ РЅР°Р·РІР°РЅРёСЏ СЌРєСЂР°РЅР° РґР»СЏ РѕР±СЂР°С‰РµРЅРёР№ С‚РёРїР° screenview (РїСЂРѕСЃРјРѕС‚СЂ СЌРєСЂР°РЅР°). Р”Р»СЏ РІРµР±-СЂРµСЃСѓСЂСЃРѕРІ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ СѓРЅРёРєР°Р»СЊРЅС‹Р№ URL СЃС‚СЂР°РЅРёС†С‹ (РїР°СЂР°РјРµС‚СЂ dl "РєР°Рє РµСЃС‚СЊ" Р»РёР±Рѕ РєРѕРјР±РёРЅР°С†РёСЏ РїР°СЂР°РјРµС‚СЂРѕРІ dh Рё dp).
+    /// </remarks>
+    property ScreenName: string read FScreenName write FScreenName;
+    /// <summary>
+    ///   Р“СЂСѓРїРїР° РєРѕРЅС‚РµРЅС‚Р° (РќР• РџРћР”Р”Р•Р Р–РР’РђР•РўРЎРЇ РќРђ Р”РђРќРќР«Р™ РњРћРњР•РќРў)
+    /// </summary>
+    /// <remarks>
+    ///   РќРµРѕР±СЏР·Р°С‚РµР»СЊРЅРѕРµ РїРѕР»Рµ.
+    ///   РЈ РІР°СЃ РјРѕР¶РµС‚ Р±С‹С‚СЊ РґРѕ РїСЏС‚Рё РіСЂСѓРїРї РєРѕРЅС‚РµРЅС‚Р°, РєР°Р¶РґРѕР№ РёР· РєРѕС‚РѕСЂС‹С… РїСЂРёСЃРІР°РёРІР°РµС‚СЃСЏ РЅРѕРјРµСЂ РѕС‚ 1 РґРѕ 5. РљР°Р¶РґР°СЏ РёР· РЅРёС… РІ СЃРІРѕСЋ РѕС‡РµСЂРµРґСЊ РјРѕР¶РµС‚ РІРєР»СЋС‡Р°С‚СЊ РґРѕ 100 РіСЂСѓРїРї РєРѕРЅС‚РµРЅС‚Р°. Р—РЅР°С‡РµРЅРёРµРј РїР°СЂР°РјРµС‚СЂР° "Р“СЂСѓРїРїР° РєРѕРЅС‚РµРЅС‚Р°" РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ С‚РµРєСЃС‚, РѕР±РѕР·РЅР°С‡Р°СЋС‰РёР№ РєР°С‚РµРіРѕСЂРёСЋ РєРѕРЅС‚РµРЅС‚Р° РІ РёРµСЂР°СЂС…РёС‡РµСЃРєРѕР№ СЃС‚СЂСѓРєС‚СѓСЂРµ. РџСЂРё СЌС‚РѕРј РІ РєР°С‡РµСЃС‚РІРµ СЂР°Р·РґРµР»РёС‚РµР»СЏ РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РєРѕСЃР°СЏ С‡РµСЂС‚Р° "/". Р•СЃР»Рё С‚Р°РєРёРµ Р·РЅР°РєРё СЃРѕРґРµСЂР¶Р°С‚СЃСЏ РІ РЅР°С‡Р°Р»Рµ РёР»Рё РєРѕРЅС†Рµ СЃС‚СЂРѕРєРё, РѕРЅРё Р±СѓРґСѓС‚ СѓРґР°Р»РµРЅС‹. Р•СЃР»Рё СЌС‚РѕС‚ Р·РЅР°Рє СѓРєР°Р·Р°РЅ РЅРµСЃРєРѕР»СЊРєРѕ СЂР°Р· РїРѕРґСЂСЏРґ, С‚Рѕ РµРіРѕ РїРѕРІС‚РѕСЂС‹ СѓРґР°Р»СЏСЋС‚СЃСЏ. РќР°РїСЂРёРјРµСЂ, СЃС‚СЂРѕРєР° "/a//b/" РїСЂРµРѕР±СЂР°Р·СѓРµС‚СЃСЏ РІ "a/b".
+    /// </remarks>
+    property ContentGroup: string read FContentGroup write FContentGroup;
+    /// <summary>
+    ///   РРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ СЃСЃС‹Р»РєРё
+    /// </summary>
+    /// <remarks>
+    ///   РќРµРѕР±СЏР·Р°С‚РµР»СЊРЅРѕРµ РїРѕР»Рµ.
+    ///  РРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ СЌР»РµРјРµРЅС‚Р° DOM, РЅР° РєРѕС‚РѕСЂС‹Р№ РЅР°Р¶Р°Р» РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ. Р•РіРѕ Р·РЅР°С‡РµРЅРёРµ РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РґР»СЏ СЂР°Р·Р»РёС‡РµРЅРёСЏ СЃСЃС‹Р»РѕРє РЅР° РѕРґРёРЅ URL РІ РѕС‚С‡РµС‚Р°С… "РЎС‚Р°С‚РёСЃС‚РёРєР° СЃС‚СЂР°РЅРёС†С‹" РІ СЃР»СѓС‡Р°СЏС…, РєРѕРіРґР° РґР»СЏ СЂРµСЃСѓСЂСЃР° РІРєР»СЋС‡РµРЅР° СѓР»СѓС‡С€РµРЅРЅР°СЏ Р°С‚СЂРёР±СѓС†РёСЏ СЃСЃС‹Р»РѕРє.
+    /// </remarks>
+    property LinkID: string read FLinkID write FLinkID;
   end;
 
   TgaException = class(TgaExtension)
@@ -386,7 +460,7 @@ type
     property IsFatal: Boolean read FIsFatal write FIsFatal;
   end;
   /// <summary>
-  /// Класс для работы с Analitics.Google.com: Measurement Protocol.
+  /// РљР»Р°СЃСЃ РґР»СЏ СЂР°Р±РѕС‚С‹ СЃ Analitics.Google.com: Measurement Protocol.
   /// </summary>
 
   TgaAnalitics = class(TCloudApiBaseComponent)
@@ -403,6 +477,7 @@ type
     FException: TgaException;
     FIsDebug: Boolean;
     FDebugOutput: string;
+    FHit: TgaHit;
   protected
     function Execute(const AUrl, AType: string): TBytes;
     procedure DoExecute(const AType: string);
@@ -415,6 +490,7 @@ type
     property General: TgaGeneral read FGeneral write FGeneral;
     property User: TgaUser read FUser write FUser;
     property System: TgaSystem read FSystem write FSystem;
+    property Hit: TgaHit read FHit write FHit;
     property Session: TgaSession read FSessionController write FSessionController;
     property ContentInformation: TgaContentInformation read FContentInformation
       write FContentInformation;
@@ -445,7 +521,7 @@ type
     function ToString: string;
   end;
 
-  TgaTgaSessionControllerStateHelper = record helper for TgaSessionControllerState
+  TgaSessionControllerStateHelper = record helper for TgaSessionControllerState
     function ToString: string;
   end;
   { TggAnalitics }
@@ -456,6 +532,7 @@ begin
   FGeneral := TgaGeneral.Create;
   FUser := TgaUser.Create;
   FSystem := TgaSystem.Create;
+  FHit := TgaHit.Create;
   FSessionController := TgaSession.Create;
   FContentInformation := TgaContentInformation.Create;
   FException := TgaException.Create;
@@ -466,6 +543,7 @@ begin
   FreeAndNil(FGeneral);
   FreeAndNil(FUser);
   FreeAndNil(FSystem);
+  FreeAndNil(FHit);
   FreeAndNil(FSessionController);
   FreeAndNil(FContentInformation);
   FreeAndNil(FException);
@@ -493,9 +571,9 @@ end;
 
 function TgaAnalitics.Execute(const AUrl, AType: string): TBytes;
 begin
-  GetRequest.AddParameter('t', AType, '', True, TStoreFormat.InUrl);
   User.FillData(AType, GetRequest.StoreUrl);
   System.FillData(AType, GetRequest.StoreUrl);
+  FHit.FillData(AType, GetRequest.StoreUrl);
   Session.FillData(AType, GetRequest.StoreUrl);
   ContentInformation.FillData(AType, GetRequest.StoreUrl);
   Exception.FillData(AType, GetRequest.StoreUrl);
@@ -563,6 +641,13 @@ begin
     ADataStorage.AddPair('vp', ViewportSize.ToString);
   if Assigned(DocumentEncoding) then
     ADataStorage.AddPair('de', DocumentEncoding.ToString);
+  if not ScreenColors.IsEmpty then
+    ADataStorage.AddPair('sd', DocumentEncoding.ToString);
+  if not UserLanguage.IsEmpty then
+    ADataStorage.AddPair('ul', DocumentEncoding.ToString);
+  ADataStorage.AddPair('je', JavaEnabled.ToString);
+  if not FlashVersion.IsEmpty then
+    ADataStorage.AddPair('fl', FlashVersion);
 end;
 
 { TgaBase }
@@ -606,14 +691,14 @@ end;
 
 { TgaTgaSessionControllerStateHelper }
 
-function TgaTgaSessionControllerStateHelper.ToString: string;
+function TgaSessionControllerStateHelper.ToString: string;
 begin
   case Self of
-    Empty:
+    TgaSessionControllerState.Empty:
       Result := '';
-    Start:
+    TgaSessionControllerState.Start:
       Result := 'start';
-    &End:
+    TgaSessionControllerState.&End:
       Result := 'end';
   end;
 end;
@@ -623,8 +708,20 @@ end;
 procedure TgaContentInformation.FillData(const HitType: string; ADataStorage:
   TStringList);
 begin
+  if not DocumentLocationURL.IsEmpty then
+    ADataStorage.Add('dl', DocumentLocationURL);
+  if not DocumentHostName.IsEmpty then
+    ADataStorage.Add('dh', DocumentHostName);
   if not DocumentPath.IsEmpty then
     ADataStorage.AddPair('dp', DocumentPath);
+  if not DocumentTitle.IsEmpty then
+    ADataStorage.AddPair('dt', DocumentTitle);
+  if not ScreenName.IsEmpty then
+    ADataStorage.AddPair('cd', ScreenName);
+// if not ContentGroup.IsEmpty then
+ //   ADataStorage.AddPair('cd', ContentGroup);
+  if not LinkID.IsEmpty then
+    ADataStorage.AddPair('linkid', LinkID);
 end;
 
 { TgaException }
