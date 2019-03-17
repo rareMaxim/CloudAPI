@@ -33,7 +33,8 @@ requires
   RESTComponents;
 
 contains
-  CloudAPI.GoogleAnalitics in 'CloudAPI.GoogleAnalitics.pas';
+  CloudAPI.GoogleAnalitics in 'CloudAPI.GoogleAnalitics.pas',
+  CloudAPI.GoogleAnalitics.Extensions in 'CloudAPI.GoogleAnalitics.Extensions.pas';
 
 end.
 

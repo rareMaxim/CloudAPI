@@ -10,7 +10,7 @@
             <Dependencies>..\Install\CloudApiCore.dproj</Dependencies>
         </Projects>
         <Projects Include="..\Samples\GoogleAnalitics\GoogleAnaliticsDemo.dproj">
-            <Dependencies/>
+            <Dependencies>..\Source\google.com\GoogleAPI.dproj</Dependencies>
         </Projects>
     </ItemGroup>
     <ProjectExtensions>
@@ -38,13 +38,13 @@
     <Target Name="GoogleAPI:Make" DependsOnTargets="CloudApiCore:Make">
         <MSBuild Projects="..\Source\google.com\GoogleAPI.dproj" Targets="Make"/>
     </Target>
-    <Target Name="GoogleAnaliticsDemo">
+    <Target Name="GoogleAnaliticsDemo" DependsOnTargets="GoogleAPI">
         <MSBuild Projects="..\Samples\GoogleAnalitics\GoogleAnaliticsDemo.dproj"/>
     </Target>
-    <Target Name="GoogleAnaliticsDemo:Clean">
+    <Target Name="GoogleAnaliticsDemo:Clean" DependsOnTargets="GoogleAPI:Clean">
         <MSBuild Projects="..\Samples\GoogleAnalitics\GoogleAnaliticsDemo.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="GoogleAnaliticsDemo:Make">
+    <Target Name="GoogleAnaliticsDemo:Make" DependsOnTargets="GoogleAPI:Make">
         <MSBuild Projects="..\Samples\GoogleAnalitics\GoogleAnaliticsDemo.dproj" Targets="Make"/>
     </Target>
     <Target Name="Build">

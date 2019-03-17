@@ -75,6 +75,9 @@
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
         <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
+        <DCC_ConsoleTarget>true</DCC_ConsoleTarget>
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <VerInfo_Locale>1033</VerInfo_Locale>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
@@ -114,6 +117,12 @@
                 <Source>
                     <Source Name="MainSource">GoogleAnaliticsDemo.dpr</Source>
                 </Source>
+                <Excluded_Packages>
+                    <Excluded_Packages Name="C:\Program Files\FGX Native\Libs\260\Win32\fgx_design.260.bpl">FGX Native - IDE Form Designer</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Program Files\FGX Native\Libs\260\Win32\fgx_reg.260.bpl">FGX Native - Designtime</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k260.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp260.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">
                 <DeployFile LocalName="Win32\Debug\GoogleAnaliticsDemo.exe" Configuration="Debug" Class="ProjectOutput">
