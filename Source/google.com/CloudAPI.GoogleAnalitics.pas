@@ -436,6 +436,54 @@ type
     /// </remarks>
     property LinkID: string read FLinkID write FLinkID;
   end;
+  
+ /// <summary>
+ ///   Отслеживание приложений
+ /// </summary>
+  TgaAppTracking = class(TgaExtension)
+  private
+    FApplicationName: string;
+    FApplicationID: string;
+    FApplicationVersion: string;
+    FApplicationInstallerID: string;
+  protected
+    procedure FillData(const HitType: string; ADataStorage: TStringList); override;
+  published
+    /// <summary>
+    ///  Название приложения
+    /// </summary>
+    /// <remarks>
+    ///  Необязательное поле.
+    ///  Указывает название приложения. Это поле является обязательным для обращений, в которых содержатся данные, связанные с приложением (например, версия приложения, его идентификатор или идентификатор установщика). Для веб-ресурсов необязательно.
+    /// </remarks>
+    property ApplicationName: string read FApplicationName write FApplicationName;
+    /// <summary>
+    ///   Идентификатор приложения
+    /// </summary>
+    /// <remarks>
+    ///  Необязательное поле.
+    ///  Идентификатор приложения.
+    /// </remarks>
+    property ApplicationID: string read FApplicationID write FApplicationID;
+    /// <summary>
+    ///  Версия приложения
+    /// </summary>
+    /// <remarks>
+    ///  Необязательное поле.
+    ///  Указывает версию приложения.
+    /// </remarks>
+    property ApplicationVersion: string read FApplicationVersion write
+      FApplicationVersion;
+    /// <summary>
+    ///  Идентификатор установщика приложения
+    /// </summary>
+    /// <remarks>
+    ///  Необязательное поле.
+    ///  Идентификатор установщика приложения.
+    /// </remarks>
+    property ApplicationInstallerID: string read FApplicationInstallerID write
+      FApplicationInstallerID;
+  end;
 
   TgaException = class(TgaExtension)
   private
@@ -768,6 +816,20 @@ begin
   ADataStorage.AddPair('t', Self.HitType.ToString);
   if NonInteractionHit then
     ADataStorage.AddPair('ni', '1');
+end;
+
+{ TgaAppTracking }
+
+procedure TgaAppTracking.FillData(const HitType: string; ADataStorage: TStringList);
+begin
+  if not ApplicationName.IsEmpty then
+    ADataStorage.AddPair('an', ApplicationName);
+  if not ApplicationID.IsEmpty then
+    ADataStorage.AddPair('aid', ApplicationID);
+  if not ApplicationVersion.IsEmpty then
+    ADataStorage.AddPair('av', ApplicationVersion);
+  if not ApplicationInstallerID.IsEmpty then
+    ADataStorage.AddPair('aiid', ApplicationInstallerID);
 end;
 
 end.
