@@ -29,7 +29,7 @@ interface
 uses
   CloudAPI.Types,
   REST.Json.Types,
-  TelegAPi.Types.Enums;
+  TelegaPi.Types.Enums;
 
 type
   ItgUser = interface
@@ -437,8 +437,7 @@ type
     FFileToSend: TFileToSend;
   public
     function GetFileToSend: TFileToSend;
-    constructor Create(AMedia: TFileToSend; const ACaption: string = '';
-      const AParseMode: TtgParseMode = TtgParseMode.default); virtual;
+    constructor Create(AMedia: TFileToSend; const ACaption: string = ''; const AParseMode: TtgParseMode = TtgParseMode.default); virtual;
     [JsonName('type')]
     property { } &Type: string read FType write FType;
     property Media: string read FMedia write FMedia;
@@ -449,8 +448,7 @@ type
 
   TtgInputMediaPhoto = class(TtgInputMedia)
   public
-    constructor Create(AMedia: TFileToSend; const ACaption: string = '';
-      const AParseMode: TtgParseMode = TtgParseMode.default); override;
+    constructor Create(AMedia: TFileToSend; const ACaption: string = ''; const AParseMode: TtgParseMode = TtgParseMode.default); override;
   end;
 
   TtgInputMediaVideo = class(TtgInputMedia)
@@ -460,9 +458,7 @@ type
     FDuration: Integer;
     FSupportsStreaming: Boolean;
   public
-    constructor Create(AMedia: TFileToSend; const ACaption: string = '';
-      const AParseMode: TtgParseMode = TtgParseMode.default; AWidth: Integer = 0; AHeight: Integer = 0;
-      ADuration: Integer = 0; ASupportsStreaming: Boolean = True); reintroduce;
+    constructor Create(AMedia: TFileToSend; const ACaption: string = ''; const AParseMode: TtgParseMode = TtgParseMode.default; AWidth: Integer = 0; AHeight: Integer = 0; ADuration: Integer = 0; ASupportsStreaming: Boolean = True); reintroduce;
     property Width: Integer read FWidth write FWidth;
     property Height: Integer read FHeight write FHeight;
     property Duration: Integer read FDuration write FDuration;
@@ -480,6 +476,7 @@ type
     function IsEmpty: Boolean;
     function IsHaveID: Boolean;
     function IsHaveUsername: Boolean;
+    function GetUsernameWithDog: string;
     class function Empty: TtgUserLink; static;
     class operator Implicit(AID: Int64): TtgUserLink;
     class operator Implicit(AUsername: string): TtgUserLink;
@@ -522,8 +519,7 @@ end;
 
 { TtgInputMediaVideo }
 
-constructor TtgInputMediaVideo.Create(AMedia: TFileToSend; const ACaption: string; const AParseMode: TtgParseMode;
-  AWidth, AHeight, ADuration: Integer; ASupportsStreaming: Boolean);
+constructor TtgInputMediaVideo.Create(AMedia: TFileToSend; const ACaption: string; const AParseMode: TtgParseMode; AWidth, AHeight, ADuration: Integer; ASupportsStreaming: Boolean);
 begin
   inherited Create(AMedia, ACaption, AParseMode);
   FType := 'video';
@@ -550,6 +546,14 @@ begin
   Result.Username := AUsername;
 end;
 
+function TtgUserLink.GetUsernameWithDog: string;
+begin
+  if Username.StartsWith('@') then
+    Result := Username
+  else
+    Result := '@' + Username;
+end;
+
 class operator TtgUserLink.Implicit(AUsername: string): TtgUserLink;
 begin
   Result := TtgUserLink.FromUserName(AUsername);
@@ -572,19 +576,12 @@ end;
 
 function TtgUserLink.ToString: string;
 begin
-  if Username.IsEmpty then
-  begin
-    if ID = 0 then
-      Result := ''
-    else
-      Result := ID.ToString
-  end
+  if IsHaveID then
+    Result := ID.ToString
+  else if IsHaveUsername then
+    Result := GetUsernameWithDog
   else
-  begin
-    if not Username.StartsWith('@') then
-      Username := '@' + Username;
-    Result := Username;
-  end;
+    Result := string.Empty;
 end;
 
 class operator TtgUserLink.Implicit(AID: Int64): TtgUserLink;
@@ -593,3 +590,4 @@ begin
 end;
 
 end.
+
