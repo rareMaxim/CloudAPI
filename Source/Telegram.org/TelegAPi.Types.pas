@@ -477,6 +477,7 @@ type
     class function FromID(const AID: Int64): TtgUserLink; static;
     class function FromUserName(const AUsername: string): TtgUserLink; static;
   public
+    function IsEmpty: boolean;
     class function Empty: TtgUserLink; static;
     class operator Implicit(AID: Int64): TtgUserLink;
     class operator Implicit(AUsername: string): TtgUserLink;
@@ -550,6 +551,11 @@ end;
 class operator TtgUserLink.Implicit(AUsername: string): TtgUserLink;
 begin
   Result := TtgUserLink.FromUserName(AUsername);
+end;
+
+function TtgUserLink.IsEmpty: boolean;
+begin
+  Result := Username.IsEmpty and (ID <= 0);
 end;
 
 function TtgUserLink.ToString: string;
