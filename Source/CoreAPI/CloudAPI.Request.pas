@@ -186,7 +186,7 @@ uses
 
 const
   ERR_CANT_SETUP_STORE_AUTO = 'Нельзя использовать это значение, попробуйте другое';
-  ERR_SOME_VALUE = 'В данном методе указанное значение не может быть таким, как и значение по-умолчанию';
+  ERR_SOME_VALUE = 'В методе "%s": аргумент "%s" имеет значение "%s", которое не может быть таким, как и значение по-умолчанию: "%s"';
 
 { TApiRequest }
 
@@ -270,7 +270,7 @@ procedure TApiRequest.DoStoreParam(const AKey, AValue, ADefaultValue: string; co
   Boolean; const AStoreFormat: TStoreFormat);
 begin
   if RaiseArgument(AValue, ADefaultValue, ARequired) then
-    raise EArgumentException.Create(ERR_SOME_VALUE);
+    raise EArgumentException.CreateFmt(ERR_SOME_VALUE, [FMethod, AKey, AValue, ADefaultValue]);
   if not NeedAdd(AValue, ADefaultValue, ARequired) then
     Exit;
   case AStoreFormat of
