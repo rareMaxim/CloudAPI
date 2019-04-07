@@ -526,7 +526,7 @@ begin
   FWidth := AWidth;
   FHeight := AHeight;
   FDuration := ADuration;
-  Self.FSupportsStreaming := ASupportsStreaming;
+  FSupportsStreaming := ASupportsStreaming;
 end;
 { TtgUserLink }
 
