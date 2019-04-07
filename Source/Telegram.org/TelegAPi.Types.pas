@@ -562,7 +562,7 @@ end;
 
 function TtgUserLink.IsHaveID: Boolean;
 begin
-  Result := ID > -1;
+  Result := ID <> 0;
 end;
 
 function TtgUserLink.IsHaveUsername: Boolean;
