@@ -562,7 +562,7 @@ end;
 function TTelegramBot.SendLocation(const ChatId: TtgUserLink; const Location: TtgLocation; const LivePeriod: Int64;
   const DisableNotification: Boolean; const ReplyToMessageId: Int64; ReplyMarkup: IReplyMarkup): ITgMessage;
 begin
-  Result := TTgMessage.Create(GetRequest.SetMethod('unbanChatMember') //
+  Result := TTgMessage.Create(GetRequest.SetMethod('sendLocation') //
     .AddParameter('chat_id', ChatId.ToString, '', True, TStoreFormat.InFormData)
     //
     .AddParameter('latitude', Location.Latitude, 0.0, True, TStoreFormat.InFormData) //
