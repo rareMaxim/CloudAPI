@@ -56,7 +56,6 @@ type
     function AsBoolean: Boolean;
     function AsString: string;
     class function AsArray<TI>(const TgClass: TBaseJsonClass; const AValue: string): TArray<TI>;
-    class function AsClass<T: TBaseJson, constructor>(const AJson: string): T;
     class function AsJSONArray(const AValue: string): TJSONArray;
     class function FromJson(const AJson: string): TBaseJson;
     class function GetTgClass: TBaseJsonClass; virtual; // abstract;
@@ -178,19 +177,6 @@ end;
 function TBaseJson.AsBoolean: Boolean;
 begin
   Result := (FJSON as TJSONValue) is TJSONTrue;
-end;
-
-class function TBaseJson.AsClass<T>(const AJson: string): T;
-var
-  LValue: string;
-  FJSON: TJSONObject;
-begin
-  Result := nil;
-  FJSON := TJSONObject.ParseJSONValue(AJson) as TJSONObject;
-  if Assigned(FJSON) and (not FJSON.Null) then
-  begin
-    Result := TBaseJsonClass(T).Create(AJson) as T;
-  end
 end;
 
 function TBaseJson.AsJson: string;
