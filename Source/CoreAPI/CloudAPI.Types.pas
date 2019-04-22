@@ -296,11 +296,10 @@ var
 begin
   SL := TStringList.Create;
   try
-    SL//
-.AddPair('In Url:        ', StoreUrl.Text)//
-.AddPair('In StringList: ', StoreStringList.Text)//
-.AddPair('In FormData:   ', FormDataToString(StoreMultipartForm))//
-.AddPair('In Headers:    ', HeadersToString(StoreHeaders.ToArray))
+    SL.Add('In Url:        ' + StoreUrl.Text);
+    SL.Add('In StringList: ' + StoreStringList.Text);
+    SL.Add('In FormData:   ' + FormDataToString(StoreMultipartForm));
+    SL.Add('In Headers:    ' + HeadersToString(StoreHeaders.ToArray));
   finally
     SL.Free;
   end;

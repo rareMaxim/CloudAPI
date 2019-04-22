@@ -277,9 +277,9 @@ begin
     TStoreFormat.InFormData:
       StoreMultipartForm.AddField(AKey, AValue);
     TStoreFormat.InStringList:
-      StoreStringList.AddPair(AKey, AValue);
+      StoreStringList.Add(AKey + '=' + AValue);
     TStoreFormat.InUrl:
-      StoreUrl.AddPair(AKey, AValue);
+      StoreUrl.Add(AKey + '=' + AValue);
     TStoreFormat.InHeader:
       StoreHeaders.Add(TNetHeader.Create(AKey, AValue));
     TStoreFormat.Auto:
