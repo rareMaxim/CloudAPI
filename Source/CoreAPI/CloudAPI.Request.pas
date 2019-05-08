@@ -291,7 +291,7 @@ end;
 
 procedure TApiRequest.DoCheckExecute(AResult: IHTTPResponse);
 begin
-  if Assigned(AResult) and (AResult.StatusCode <> 200) then
+  if Assigned(AResult) and (AResult.StatusCode >= 400) then
     DoHaveException(ECloudApiException.Create(AResult.StatusCode, AResult.StatusText, Self), True);
 end;
 
