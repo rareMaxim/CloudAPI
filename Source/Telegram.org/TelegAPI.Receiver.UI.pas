@@ -28,12 +28,14 @@ interface
 
 uses
   TelegAPI.Receiver.Service,
-  TelegAPI.Types;
+  TelegAPi.Types;
 
 type
   TtgReceiverUI = class(TtgReceiverService)
   protected
     procedure EventParser(AUpdates: System.TArray<TelegAPI.Types.ItgUpdate>); override;
+    procedure DoOnStart; override;
+    procedure DoOnStop; override;
   end;
 
 implementation
@@ -41,6 +43,24 @@ implementation
 uses
   System.Classes;
 { TtgRecesiverUI }
+
+procedure TtgReceiverUI.DoOnStart;
+begin
+  TThread.Synchronize(nil,
+    procedure
+    begin
+      inherited DoOnStart;
+    end);
+end;
+
+procedure TtgReceiverUI.DoOnStop;
+begin
+  TThread.Synchronize(nil,
+    procedure
+    begin
+      inherited DoOnStop;
+    end);
+end;
 
 procedure TtgReceiverUI.EventParser(AUpdates: System.TArray<TelegAPI.Types.ItgUpdate>);
 begin
