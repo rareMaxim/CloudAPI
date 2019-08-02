@@ -7,7 +7,6 @@ uses
   TelegAPI.Bot;
 
 type
-
   [TestFixture]
   TSendingVenueMessageTests = class(TObject)
   strict private
@@ -24,6 +23,7 @@ type
 implementation
 
 uses
+  DUnitX.Assert,
   System.Math,
   Test.Config,
   TelegAPI.Types,
@@ -82,7 +82,7 @@ begin
 end;
 
 initialization
-
-TDUnitX.RegisterTestFixture(TSendingVenueMessageTests);
+  TDUnitX.RegisterTestFixture(TSendingVenueMessageTests);
 
 end.
+

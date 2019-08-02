@@ -62,18 +62,18 @@ type
     procedure SetOnStaticFill(const Value: TProc);
     // public
 {$REGION 'Add Parameter'}
-    function AddParameter(const AKey: string; const AValue, ADefaultValue: string; const ARequired:
-      Boolean; const AStoreFormat: TStoreFormat = TStoreFormat.Auto): IApiRequest; overload;
-    function AddParameter(const AKey: string; const AValue, ADefaultValue: Int64; const ARequired:
-      Boolean; const AStoreFormat: TStoreFormat = TStoreFormat.Auto): IApiRequest; overload;
-    function AddParameter(const AKey: string; const AValue, ADefaultValue: TObject; const ARequired:
-      Boolean; const AStoreFormat: TStoreFormat = TStoreFormat.Auto): IApiRequest; overload;
-    function AddParameter(const AKey: string; const AValue, ADefaultValue: Double; const ARequired:
-      Boolean; const AStoreFormat: TStoreFormat = TStoreFormat.Auto): IApiRequest; overload;
-    function AddParameter(const AKey: string; const AValue, ADefaultValue: Boolean; const ARequired:
-      Boolean; const AStoreFormat: TStoreFormat = TStoreFormat.Auto): IApiRequest; overload;
-    function AddParameter(const AKey: string; AValue, ADefaultValue: TFileToSend; const ARequired:
-      Boolean; const AStoreFormat: TStoreFormat): IApiRequest; overload;
+    function AddParameter(const AKey: string; const AValue, ADefaultValue:
+      string; const ARequired: Boolean; const AStoreFormat: TStoreFormat = TStoreFormat.Auto): IApiRequest; overload;
+    function AddParameter(const AKey: string; const AValue, ADefaultValue: Int64;
+      const ARequired: Boolean; const AStoreFormat: TStoreFormat = TStoreFormat.Auto): IApiRequest; overload;
+    function AddParameter(const AKey: string; const AValue, ADefaultValue:
+      TObject; const ARequired: Boolean; const AStoreFormat: TStoreFormat = TStoreFormat.Auto): IApiRequest; overload;
+    function AddParameter(const AKey: string; const AValue, ADefaultValue:
+      Double; const ARequired: Boolean; const AStoreFormat: TStoreFormat = TStoreFormat.Auto): IApiRequest; overload;
+    function AddParameter(const AKey: string; const AValue, ADefaultValue:
+      Boolean; const ARequired: Boolean; const AStoreFormat: TStoreFormat = TStoreFormat.Auto): IApiRequest; overload;
+    function AddParameter(const AKey: string; AValue, ADefaultValue: TFileToSend;
+      const ARequired: Boolean; const AStoreFormat: TStoreFormat): IApiRequest; overload;
 {$ENDREGION}
     function ClearParams: IApiRequest;
     function Execute: IHTTPResponse;
@@ -127,22 +127,22 @@ type
     procedure DoHaveException(E: ECloudApiException; CanBeFree: Boolean = False);
     function NeedAdd(const AValue, ADefaultValue: string; const ARequired: Boolean): Boolean;
     function RaiseArgument(const AValue, ADefaultValue: string; const ARequired: Boolean): Boolean;
-    procedure DoStoreParam(const AKey: string; const AValue, ADefaultValue: string; const ARequired:
-      Boolean; const AStoreFormat: TStoreFormat = TStoreFormat.Auto);
+    procedure DoStoreParam(const AKey: string; const AValue, ADefaultValue:
+      string; const ARequired: Boolean; const AStoreFormat: TStoreFormat = TStoreFormat.Auto);
   public
 {$REGION 'Add Parameter'}
-    function AddParameter(const AKey: string; const AValue, ADefaultValue: Double; const ARequired:
-      Boolean; const AStoreFormat: TStoreFormat = TStoreFormat.Auto): IApiRequest; overload;
-    function AddParameter(const AKey: string; const AValue, ADefaultValue: Boolean; const ARequired:
-      Boolean; const AStoreFormat: TStoreFormat = TStoreFormat.Auto): IApiRequest; overload;
-    function AddParameter(const AKey: string; const AValue, ADefaultValue: string; const ARequired:
-      Boolean; const AStoreFormat: TStoreFormat = TStoreFormat.Auto): IApiRequest; overload;
-    function AddParameter(const AKey: string; const AValue, ADefaultValue: Int64; const ARequired:
-      Boolean; const AStoreFormat: TStoreFormat = TStoreFormat.Auto): IApiRequest; overload;
-    function AddParameter(const AKey: string; const AValue, ADefaultValue: TObject; const ARequired:
-      Boolean; const AStoreFormat: TStoreFormat = TStoreFormat.Auto): IApiRequest; overload;
-    function AddParameter(const AKey: string; AValue, ADefaultValue: TFileToSend; const ARequired:
-      Boolean; const AStoreFormat: TStoreFormat): IApiRequest; overload;
+    function AddParameter(const AKey: string; const AValue, ADefaultValue:
+      Double; const ARequired: Boolean; const AStoreFormat: TStoreFormat = TStoreFormat.Auto): IApiRequest; overload;
+    function AddParameter(const AKey: string; const AValue, ADefaultValue:
+      Boolean; const ARequired: Boolean; const AStoreFormat: TStoreFormat = TStoreFormat.Auto): IApiRequest; overload;
+    function AddParameter(const AKey: string; const AValue, ADefaultValue:
+      string; const ARequired: Boolean; const AStoreFormat: TStoreFormat = TStoreFormat.Auto): IApiRequest; overload;
+    function AddParameter(const AKey: string; const AValue, ADefaultValue: Int64;
+      const ARequired: Boolean; const AStoreFormat: TStoreFormat = TStoreFormat.Auto): IApiRequest; overload;
+    function AddParameter(const AKey: string; const AValue, ADefaultValue:
+      TObject; const ARequired: Boolean; const AStoreFormat: TStoreFormat = TStoreFormat.Auto): IApiRequest; overload;
+    function AddParameter(const AKey: string; AValue, ADefaultValue: TFileToSend;
+      const ARequired: Boolean; const AStoreFormat: TStoreFormat): IApiRequest; overload;
 {$ENDREGION}
     function ClearParams: IApiRequest; reintroduce;
     function Execute: IHTTPResponse;
@@ -186,7 +186,8 @@ uses
 
 const
   ERR_CANT_SETUP_STORE_AUTO = 'Нельзя использовать это значение, попробуйте другое';
-  ERR_SOME_VALUE = 'В методе "%s": аргумент "%s" имеет значение "%s", которое не может быть таким, как и значение по-умолчанию: "%s"';
+  ERR_SOME_VALUE =
+    'В методе "%s": аргумент "%s" имеет значение "%s", которое не может быть таким, как и значение по-умолчанию: "%s"';
 
 { TApiRequest }
 
@@ -195,28 +196,28 @@ begin
   Result := ARequired and AValue.Equals(ADefaultValue);
 end;
 
-function TApiRequest.AddParameter(const AKey: string; const AValue, ADefaultValue: Int64; const
-  ARequired: Boolean; const AStoreFormat: TStoreFormat): IApiRequest;
+function TApiRequest.AddParameter(const AKey: string; const AValue,
+  ADefaultValue: Int64; const ARequired: Boolean; const AStoreFormat: TStoreFormat): IApiRequest;
 begin
   Result := AddParameter(AKey, AValue.ToString, ADefaultValue.ToString, ARequired, AStoreFormat);
 end;
 
-function TApiRequest.AddParameter(const AKey: string; const AValue, ADefaultValue: TObject; const
-  ARequired: Boolean; const AStoreFormat: TStoreFormat): IApiRequest;
+function TApiRequest.AddParameter(const AKey: string; const AValue,
+  ADefaultValue: TObject; const ARequired: Boolean; const AStoreFormat: TStoreFormat): IApiRequest;
 begin
   Result := AddParameter(AKey, TJsonUtils.ObjectToJString(AValue), //
     TJsonUtils.ObjectToJString(ADefaultValue), ARequired, AStoreFormat);
 end;
 
-function TApiRequest.AddParameter(const AKey: string; const AValue, ADefaultValue, ARequired:
-  Boolean; const AStoreFormat: TStoreFormat): IApiRequest;
+function TApiRequest.AddParameter(const AKey: string; const AValue,
+  ADefaultValue, ARequired: Boolean; const AStoreFormat: TStoreFormat): IApiRequest;
 begin
-  Result := AddParameter(AKey, AValue.ToString(TUseBoolStrs.True), ADefaultValue.ToString(TUseBoolStrs.True),
-    ARequired, AStoreFormat);
+  Result := AddParameter(AKey, AValue.ToString(TUseBoolStrs.True), ADefaultValue.ToString
+    (TUseBoolStrs.True), ARequired, AStoreFormat);
 end;
 
-function TApiRequest.AddParameter(const AKey: string; const AValue, ADefaultValue: Double; const
-  ARequired: Boolean; const AStoreFormat: TStoreFormat): IApiRequest;
+function TApiRequest.AddParameter(const AKey: string; const AValue,
+  ADefaultValue: Double; const ARequired: Boolean; const AStoreFormat: TStoreFormat): IApiRequest;
 const
   CFORMAT = '##.########';
 begin
@@ -266,24 +267,27 @@ begin
     OnStaticFill();
 end;
 
-procedure TApiRequest.DoStoreParam(const AKey, AValue, ADefaultValue: string; const ARequired:
-  Boolean; const AStoreFormat: TStoreFormat);
+procedure TApiRequest.DoStoreParam(const AKey, AValue, ADefaultValue: string;
+  const ARequired: Boolean; const AStoreFormat: TStoreFormat);
+var
+  AReplaced: string;
 begin
   if RaiseArgument(AValue, ADefaultValue, ARequired) then
     raise EArgumentException.CreateFmt(ERR_SOME_VALUE, [FMethod, AKey, AValue, ADefaultValue]);
   if not NeedAdd(AValue, ADefaultValue, ARequired) then
     Exit;
+  AReplaced := FixReplaceMe(AValue);
   case AStoreFormat of
     TStoreFormat.InFormData:
-      StoreMultipartForm.AddField(AKey, AValue);
+      StoreMultipartForm.AddField(AKey, AReplaced);
     TStoreFormat.InStringList:
-      StoreStringList.Add(AKey + '=' + AValue);
+      StoreStringList.Add(AKey + '=' + AReplaced);
     TStoreFormat.InUrl:
-      StoreUrl.Add(AKey + '=' + AValue);
+      StoreUrl.Add(AKey + '=' + AReplaced);
     TStoreFormat.InHeader:
-      StoreHeaders.Add(TNetHeader.Create(AKey, AValue));
+      StoreHeaders.Add(TNetHeader.Create(AKey, AReplaced));
     TStoreFormat.Auto:
-      DoStoreParam(AKey, AValue, ADefaultValue, ARequired, GetStoreAutoFormat);
+      DoStoreParam(AKey, AReplaced, ADefaultValue, ARequired, GetStoreAutoFormat);
   else
     raise ENotImplemented.Create('Unknown StoreFormat');
   end;
@@ -406,8 +410,8 @@ begin
   Result := ARequired or (not AValue.Equals(ADefaultValue));
 end;
 
-function TApiRequest.AddParameter(const AKey, AValue, ADefaultValue: string; const ARequired:
-  Boolean; const AStoreFormat: TStoreFormat): IApiRequest;
+function TApiRequest.AddParameter(const AKey, AValue, ADefaultValue: string;
+  const ARequired: Boolean; const AStoreFormat: TStoreFormat): IApiRequest;
 begin
   DoStoreParam(AKey, AValue, ADefaultValue, ARequired, AStoreFormat);
   Result := Self;
@@ -528,8 +532,8 @@ begin
   end;
 end;
 
-function TApiRequest.AddParameter(const AKey: string; AValue, ADefaultValue: TFileToSend; const
-  ARequired: Boolean; const AStoreFormat: TStoreFormat): IApiRequest;
+function TApiRequest.AddParameter(const AKey: string; AValue, ADefaultValue:
+  TFileToSend; const ARequired: Boolean; const AStoreFormat: TStoreFormat): IApiRequest;
 begin
   try
     if ARequired and ((AValue = ADefaultValue) or AValue.IsEmpty) then

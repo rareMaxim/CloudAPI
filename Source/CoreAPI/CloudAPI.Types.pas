@@ -35,7 +35,7 @@ uses
 
 type
 {$SCOPEDENUMS ON}
-  TFileToSendTag = (ERROR = 254, ID = 0, FromURL = 1, FromFile = 2, FromStream = 3);
+  TFileToSendTag = (Error = 254, ID = 0, FromURL = 1, FromFile = 2, FromStream = 3);
 {$SCOPEDENUMS OFF}
 
   TFileToSend = record
@@ -69,13 +69,15 @@ type
     procedure SetStoreUrl(const Value: TStringList);
     function GetStoreHeaders: TList<TNetHeader>;
     procedure SetStoreHeaders(const Value: TList<TNetHeader>);
-
+    function GetAutoReplace: TStringList;
+    procedure SetAutoReplace(const Value: TStringList);
     //
     property Domain: string read GetDomain write SetDomain;
     property StoreMultipartForm: TMultipartFormData read GetStoreMultipartForm write SetStoreMultipartForm;
     property StoreStringList: TStringList read GetStoreStringList write SetStoreStringList;
     property StoreUrl: TStringList read GetStoreUrl write SetStoreUrl;
     property StoreHeaders: TList<TNetHeader> read GetStoreHeaders write SetStoreHeaders;
+    property AutoReplace: TStringList read GetAutoReplace write SetAutoReplace;
   end;
 
   TRequestData = class(TInterfacedObject, IRequestData)
@@ -85,6 +87,7 @@ type
     FStoreInStringList: TStringList;
     FStoreInUrl: TStringList;
     FStoreInHeader: TList<TNetHeader>;
+    FAutoReplace: TStringList;
   private
     function GetDomain: string;
     procedure SetDomain(const AValue: string);
@@ -96,6 +99,10 @@ type
     procedure SetStoreUrl(const Value: TStringList);
     function GetStoreHeaders: TList<TNetHeader>;
     procedure SetStoreHeaders(const Value: TList<TNetHeader>);
+    function GetAutoReplace: TStringList;
+    procedure SetAutoReplace(const Value: TStringList);
+  protected
+    function FixReplaceMe(const AValue: string): string;
   public
     function ClearParams: IRequestData; virtual;
     function HeadersToString(AHeaders: TArray<TNetHeader>): string;
@@ -108,6 +115,7 @@ type
     property StoreStringList: TStringList read GetStoreStringList write SetStoreStringList;
     property StoreUrl: TStringList read GetStoreUrl write SetStoreUrl;
     property StoreHeaders: TList<TNetHeader> read GetStoreHeaders write SetStoreHeaders;
+    property AutoReplace: TStringList read GetAutoReplace write SetAutoReplace;
   end;
 
 implementation
@@ -201,15 +209,26 @@ begin
   FStoreInStringList := TStringList.Create;
   FStoreInUrl := TStringList.Create;
   FStoreInHeader := TList<TNetHeader>.Create;
+  FAutoReplace := TStringList.Create;
 end;
 
 destructor TRequestData.Destroy;
 begin
+  FreeAndNil(FAutoReplace);
   FreeAndNil(FStoreInFormData);
   FreeAndNil(FStoreInStringList);
   FreeAndNil(FStoreInUrl);
   FreeAndNil(FStoreInHeader);
   inherited;
+end;
+
+function TRequestData.FixReplaceMe(const AValue: string): string;
+var
+  I: Integer;
+begin
+  Result := AValue;
+  for I := 0 to AutoReplace.Count - 1 do
+    Result := Result.Replace(AutoReplace.KeyNames[I], AutoReplace.ValueFromIndex[I]);
 end;
 
 function TRequestData.FormDataToString(AFormData: TMultipartFormData): string;
@@ -227,6 +246,11 @@ begin
   finally
     LStrList.Free;
   end;
+end;
+
+function TRequestData.GetAutoReplace: TStringList;
+begin
+  Result := FAutoReplace;
 end;
 
 function TRequestData.GetDomain: string;
@@ -263,6 +287,11 @@ begin
   begin
     Result := Result + LHeader.Name + '=' + LHeader.Value + #13#10;
   end;
+end;
+
+procedure TRequestData.SetAutoReplace(const Value: TStringList);
+begin
+  FAutoReplace := Value;
 end;
 
 procedure TRequestData.SetDomain(const AValue: string);
