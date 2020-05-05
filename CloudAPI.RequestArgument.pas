@@ -3,7 +3,6 @@ unit CloudAPI.RequestArgument;
 interface
 
 uses
-  CloudAPI.Enum,
   CloudAPI.Request,
   System.Rtti,
   System.SysUtils,

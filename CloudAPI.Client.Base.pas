@@ -53,7 +53,6 @@ type
 implementation
 
 uses
-  CloudAPI.Enum,
   CloudAPI.Types,
   System.Classes,
   System.Rtti;

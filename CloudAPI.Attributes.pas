@@ -3,7 +3,7 @@
 interface
 
 uses
-  CloudAPI.Enum;
+  CloudAPI.Types;
 
 type
   caNameAttribute = class(TCustomAttribute)

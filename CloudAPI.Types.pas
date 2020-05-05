@@ -8,6 +8,8 @@ uses
 type
 {$SCOPEDENUMS ON}
   TcaFileToSendTag = (Error = 254, Unknown = 0, ID = 100, FromURL = 101, FromFile = 102, FromStream = 103);
+  TcaParameterType = (Cookie, GetOrPost, UrlSegment, HttpHeader, RequestBody, QueryString, QueryStringWithoutEncode);
+  TcaMethod = (GET, POST, PUT, DELETE, HEAD, OPTIONS, PATCH, MERGE, COPY);
 {$SCOPEDENUMS OFF}
 
   TcaFileToSend = record

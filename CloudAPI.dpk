@@ -32,7 +32,6 @@ requires
 
 contains
   CloudAPI.Client.Base in 'CloudAPI.Client.Base.pas',
-  CloudAPI.Enum in 'CloudAPI.Enum.pas',
   CloudAPI.IAuthenticator in 'CloudAPI.IAuthenticator.pas',
   CloudAPI.Response in 'CloudAPI.Response.pas',
   CloudAPI.Types in 'CloudAPI.Types.pas',

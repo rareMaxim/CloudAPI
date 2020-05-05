@@ -89,7 +89,6 @@
         </DelphiCompile>
         <DCCReference Include="rtl.dcp"/>
         <DCCReference Include="CloudAPI.Client.Base.pas"/>
-        <DCCReference Include="CloudAPI.Enum.pas"/>
         <DCCReference Include="CloudAPI.IAuthenticator.pas"/>
         <DCCReference Include="CloudAPI.Response.pas"/>
         <DCCReference Include="CloudAPI.Types.pas"/>
@@ -146,7 +145,7 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="..\..\..\..\Public\Documents\Embarcadero\Studio\20.0\Bpl\CloudAPI.bpl" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="C:\Users\Public\Documents\Embarcadero\Studio\20.0\Bpl\CloudAPI.bpl" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
                         <RemoteName>CloudAPI.bpl</RemoteName>
                         <Overwrite>true</Overwrite>
