@@ -1,0 +1,2 @@
+topFontColor=d4d4e6
+bottomFontColor=fff9e4
