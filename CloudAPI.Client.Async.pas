@@ -6,39 +6,60 @@ uses
   CloudAPI.Client.Base,
   CloudAPI.Response,
   CloudAPI.Request,
-  System.Threading;
+  System.Threading,
+  System.SysUtils;
 
 type
   TCloudApiClient = class(TCloudApiClientBase)
-    function Execute(ARequest: IcaRequest): IFuture<IcaResponseBase>; overload;
-    function Execute<T>(ARequest: IcaRequest): IFuture<IcaResponse<T>>; overload;
+    procedure Execute(ARequest: IcaRequest; OnResult: TProc<IcaResponseBase>); overload;
+    procedure Execute<T>(ARequest: IcaRequest; OnResult: TProc < IcaResponse < T >> ); overload;
   end;
 
 implementation
 
+uses
+  System.Classes;
 { TCloudApiClient }
 
-function TCloudApiClient.Execute(ARequest: IcaRequest): IFuture<IcaResponseBase>;
+procedure TCloudApiClient.Execute(ARequest: IcaRequest; OnResult: TProc<IcaResponseBase>);
+var
+  LTask: ITask;
 begin
-  Result := TTask.Future<IcaResponseBase>(
-    function: IcaResponseBase
-    begin
-      Result := InternalExecute(ARequest);
-    end);
-  Result.Start;
-end;
-
-function TCloudApiClient.Execute<T>(ARequest: IcaRequest): IFuture<IcaResponse<T>>;
-begin
-  Result := TTask.Future < IcaResponse < T >> (
-    function: IcaResponse<T>
+  LTask := TTask.Run(
+    procedure
     var
       LResult: IcaResponseBase;
     begin
       LResult := InternalExecute(ARequest);
-      Result := TcaResponse<T>.Create(ARequest, LResult.HttpRequest, LResult.HttpResponse, GetSerializer);
+      TThread.Synchronize(nil,
+        procedure()
+        begin
+          if Assigned(OnResult) then
+            OnResult(LResult);
+        end);
     end);
-  Result.Start;
+end;
+
+procedure TCloudApiClient.Execute<T>(ARequest: IcaRequest; OnResult: TProc < IcaResponse < T >> );
+var
+  LTask: ITask;
+begin
+  LTask := TTask.Run(
+    procedure
+    var
+      LResponseBase: IcaResponseBase;
+      LResponseT: IcaResponse<T>;
+    begin
+      LResponseBase := InternalExecute(ARequest);
+      LResponseT := TcaResponse<T>.Create(ARequest, LResponseBase.HttpRequest, LResponseBase.HttpResponse,
+        GetSerializer);
+      TThread.Synchronize(nil,
+        procedure()
+        begin
+          if Assigned(OnResult) then
+            OnResult(LResponseT);
+        end);
+    end);
 end;
 
 end.
