@@ -69,7 +69,7 @@ end;
 constructor TCloudApiClientBase.Create;
 begin
   FHttpClient := THTTPClient.Create;
-  FHttpClient.UserAgent := 'CloudAPI for Delphi v 2.0.1';
+  FHttpClient.UserAgent := 'CloudAPI for Delphi v 4.0.0';
   FHttpClient.ResponseTimeout := 5000;
   FSerializer := TJsonSerializer.Create;
   FDefaultParams := TList<TcaParameter>.Create;
