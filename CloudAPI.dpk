@@ -1,0 +1,52 @@
+package CloudAPI;
+
+{$R *.res}
+{$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
+{$ALIGN 8}
+{$ASSERTIONS ON}
+{$BOOLEVAL OFF}
+{$DEBUGINFO OFF}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS ON}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION OFF}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO ON}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES ON}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST OFF}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DEFINE DEBUG}
+{$ENDIF IMPLICITBUILDING}
+{$IMPLICITBUILD ON}
+
+requires
+  rtl;
+
+contains
+  CloudAPI.Client.Base in 'CloudAPI.Client.Base.pas',
+  CloudAPI.Enum in 'CloudAPI.Enum.pas',
+  CloudAPI.IAuthenticator in 'CloudAPI.IAuthenticator.pas',
+  CloudAPI.Response in 'CloudAPI.Response.pas',
+  CloudAPI.Types in 'CloudAPI.Types.pas',
+  CloudAPI.RequestArgument in 'CloudAPI.RequestArgument.pas',
+  CloudAPI.Converter.BasicTypes in 'CloudAPI.Converter.BasicTypes.pas',
+  CloudAPI.Attributes in 'CloudAPI.Attributes.pas',
+  CloudAPI.Parameter in 'CloudAPI.Parameter.pas',
+  CloudAPI.Authenticator.Basic in 'CloudAPI.Authenticator.Basic.pas',
+  CloudAPI.Json.Converters in 'CloudAPI.Json.Converters.pas',
+  CloudAPI.Exceptions in 'CloudAPI.Exceptions.pas',
+  CloudAPI.LongPolling in 'CloudAPI.LongPolling.pas',
+  CloudAPI.Ext.MethodLimits in 'CloudAPI.Ext.MethodLimits.pas',
+  CloudAPI.Client.Async in 'CloudAPI.Client.Async.pas',
+  CloudAPI.Client.Sync in 'CloudAPI.Client.Sync.pas',
+  CloudAPI.Request in 'CloudAPI.Request.pas';
+
+end.

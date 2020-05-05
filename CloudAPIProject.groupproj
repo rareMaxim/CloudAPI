@@ -1,0 +1,60 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{FD1D0B5E-7C2F-4255-BCFE-8F6D5E487EE0}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="CloudAPI.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Tests\CloudApiTest.dproj">
+            <Dependencies>CloudAPI.dproj</Dependencies>
+        </Projects>
+        <Projects Include="Site-examples\Project7.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="CloudAPI">
+        <MSBuild Projects="CloudAPI.dproj"/>
+    </Target>
+    <Target Name="CloudAPI:Clean">
+        <MSBuild Projects="CloudAPI.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="CloudAPI:Make">
+        <MSBuild Projects="CloudAPI.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="CloudApiTest" DependsOnTargets="CloudAPI">
+        <MSBuild Projects="Tests\CloudApiTest.dproj"/>
+    </Target>
+    <Target Name="CloudApiTest:Clean" DependsOnTargets="CloudAPI:Clean">
+        <MSBuild Projects="Tests\CloudApiTest.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="CloudApiTest:Make" DependsOnTargets="CloudAPI:Make">
+        <MSBuild Projects="Tests\CloudApiTest.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Project7">
+        <MSBuild Projects="Site-examples\Project7.dproj"/>
+    </Target>
+    <Target Name="Project7:Clean">
+        <MSBuild Projects="Site-examples\Project7.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Project7:Make">
+        <MSBuild Projects="Site-examples\Project7.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="CloudAPI;CloudApiTest;Project7"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="CloudAPI:Clean;CloudApiTest:Clean;Project7:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="CloudAPI:Make;CloudApiTest:Make;Project7:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>
