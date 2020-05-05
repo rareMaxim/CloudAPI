@@ -3,12 +3,11 @@ unit CloudAPI.Request;
 interface
 
 uses
-  CloudAPI.Enum,
   CloudAPI.Parameter,
   CloudAPI.Types,
   System.Generics.Collections,
   System.Net.UrlClient,
-  System.Rtti;
+  System.Rtti, System.Classes;
 
 type
 
@@ -17,7 +16,7 @@ type
 
   IcaRequest = interface
     ['{13E72C25-63BE-4F99-8957-7DDA6810C28C}']
- // private
+    // private
     function GetAlwaysMultipartFormData: Boolean;
     function GetDefaultParameterType: TcaParameterType;
     function GetFiles: TcaFileList;
@@ -27,13 +26,13 @@ type
     function GetHttpHeaders: TcaParameterList;
     function GetUrlSegments: TcaParameterList;
     function GetQueryString: TcaParameterList;
-// function GetParameters: TcaParameterList;
+    // function GetParameters: TcaParameterList;
     function GetResource: string;
     procedure SetAlwaysMultipartFormData(const Value: Boolean);
     procedure SetDefaultParameterType(const Value: TcaParameterType);
     procedure SetMethod(const Value: TcaMethod);
     procedure SetResource(const Value: string);
-// public
+    // public
     function AddParam(AParam: TcaParameter): IcaRequest; overload;
     function AddParam(const AName: string; AValue: TValue): IcaRequest; overload;
     function AddParam(const AName: string; AValue: TValue; AType: TcaParameterType): IcaRequest; overload;
@@ -46,10 +45,10 @@ type
     procedure AddFile(const AFile: TcaFileToSend);
     function GetLimitInfo: TcaRequestLimit;
     procedure SetLimitInfo(const Value: TcaRequestLimit);
-// public
+    // public
     function IsMultipartFormData: Boolean;
     property DefaultParameterType: TcaParameterType read GetDefaultParameterType write SetDefaultParameterType;
-  // property Parameters: TcaParameterList read GetParameters;
+    // property Parameters: TcaParameterList read GetParameters;
     property Files: TcaFileList read GetFiles;
     property AlwaysMultipartFormData: Boolean read GetAlwaysMultipartFormData write SetAlwaysMultipartFormData;
     property Resource: string read GetResource write SetResource;
@@ -75,6 +74,7 @@ type
     FQueryStrings: TcaParameterList;
     FFiles: TcaFileList;
     FLimitInfo: TcaRequestLimit;
+    FRequestBody: TStringList;
     function GetAlwaysMultipartFormData: Boolean;
     function GetDefaultParameterType: TcaParameterType;
     function GetFiles: TcaFileList;
@@ -90,6 +90,7 @@ type
     function GetLimitInfo: TcaRequestLimit;
     function GetUrlSegments: TcaParameterList;
     function GetQueryString: TcaParameterList;
+    function GetRequestBody: TStringList;
     procedure SetLimitInfo(const Value: TcaRequestLimit);
   public
     constructor Create; overload;
@@ -123,6 +124,7 @@ type
     property UrlSegments: TcaParameterList read GetUrlSegments;
     property QueryParameters: TcaParameterList read GetQueryString;
     property LimitInfo: TcaRequestLimit read GetLimitInfo write SetLimitInfo;
+    property RequestBody: TStringList read GetRequestBody;
   end;
 
 implementation
@@ -140,6 +142,7 @@ begin
   FGetOrPosts := TcaParameterList.Create;
   FUrlSegments := TcaParameterList.Create;
   FQueryStrings := TcaParameterList.Create;
+  FRequestBody := TStringList.Create;
   // FHttpHeaders := TcaParameterList.Create;
   FMethod := TcaMethod.GET;
 end;
@@ -157,6 +160,7 @@ begin
   FUrlSegments.Free;
   FQueryStrings.Free;
   FFiles.Free;
+  FRequestBody.Free;
   inherited Destroy;
 end;
 
@@ -345,6 +349,11 @@ end;
 function TcaRequest.GetQueryString: TcaParameterList;
 begin
   Result := FQueryStrings;
+end;
+
+function TcaRequest.GetRequestBody: TStringList;
+begin
+  Result := FRequestBody;
 end;
 
 function TcaRequest.GetResource: string;
