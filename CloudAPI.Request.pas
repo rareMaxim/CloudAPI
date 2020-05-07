@@ -26,12 +26,12 @@ type
     function GetHttpHeaders: TcaParameterList;
     function GetUrlSegments: TcaParameterList;
     function GetQueryString: TcaParameterList;
-    // function GetParameters: TcaParameterList;
     function GetResource: string;
     procedure SetAlwaysMultipartFormData(const Value: Boolean);
     procedure SetDefaultParameterType(const Value: TcaParameterType);
     procedure SetMethod(const Value: TcaMethod);
     procedure SetResource(const Value: string);
+    function GetRequestBody: TStringList;
     // public
     function AddParam(AParam: TcaParameter): IcaRequest; overload;
     function AddParam(const AName: string; AValue: TValue): IcaRequest; overload;
@@ -48,7 +48,6 @@ type
     // public
     function IsMultipartFormData: Boolean;
     property DefaultParameterType: TcaParameterType read GetDefaultParameterType write SetDefaultParameterType;
-    // property Parameters: TcaParameterList read GetParameters;
     property Files: TcaFileList read GetFiles;
     property AlwaysMultipartFormData: Boolean read GetAlwaysMultipartFormData write SetAlwaysMultipartFormData;
     property Resource: string read GetResource write SetResource;
@@ -59,6 +58,7 @@ type
     property UrlSegments: TcaParameterList read GetUrlSegments;
     property QueryParameters: TcaParameterList read GetQueryString;
     property LimitInfo: TcaRequestLimit read GetLimitInfo write SetLimitInfo;
+    property RequestBody: TStringList read GetRequestBody;
   end;
 
   TcaRequest = class(TInterfacedObject, IcaRequest)
@@ -133,6 +133,8 @@ uses
   CloudAPI.Exceptions,
   System.SysUtils;
 
+{ TcaRequest }
+
 constructor TcaRequest.Create;
 begin
   inherited Create;
@@ -143,7 +145,6 @@ begin
   FUrlSegments := TcaParameterList.Create;
   FQueryStrings := TcaParameterList.Create;
   FRequestBody := TStringList.Create;
-  // FHttpHeaders := TcaParameterList.Create;
   FMethod := TcaMethod.GET;
 end;
 
@@ -163,8 +164,6 @@ begin
   FRequestBody.Free;
   inherited Destroy;
 end;
-
-{ TcaRequest }
 
 function TcaRequest.AddCookie(const AName, AValue: string): IcaRequest;
 begin
@@ -208,7 +207,10 @@ begin
       TcaParameterType.UrlSegment:
         FUrlSegments.Add(AParam);
       TcaParameterType.RequestBody:
-        ;
+        begin
+          if FRequestBody.Text.IsEmpty then
+            FRequestBody.Text := AParam.ValueAsString;
+        end;
       TcaParameterType.QueryString, TcaParameterType.QueryStringWithoutEncode:
         FQueryStrings.Add(AParam);
     end;
@@ -273,9 +275,7 @@ begin
         AddParam(LParam);
       end;
   else
-    // TFileToSendTag.Error: ;
-    // TFileToSendTag.Unknown: ;
-    raise ENotImplemented.Create('Report me, if I rise');
+    raise ENotImplemented.Create('[procedure TcaRequest.AddFile] Report me, if I rise');
   end;
 
 end;
