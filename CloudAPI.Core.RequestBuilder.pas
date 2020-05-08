@@ -7,7 +7,8 @@ uses
   System.Net.HttpClient,
   CloudAPI.Request,
   System.Net.Mime,
-  System.Net.URLClient;
+  System.Net.URLClient,
+  System.Classes;
 
 type
   IcaRequestBuilder = interface
@@ -21,6 +22,7 @@ type
     FRequest: IHTTPRequest;
     FcaRequest: IcaRequest;
     FFormData: TMultipartFormData;
+    FRequestBody: TStringStream;
   protected
     procedure BuildHttpHeaders;
     procedure BuildCookies;
@@ -42,7 +44,7 @@ uses
   CloudAPI.Parameter,
   CloudAPI.Types,
   System.Rtti,
-  System.SysUtils, System.Classes;
+  System.SysUtils;
 
 { TRequestBuilder }
 
@@ -139,7 +141,7 @@ end;
 
 procedure TRequestBuilder.BuildRequestBody;
 begin
-  FRequest.SourceStream := TStringStream.Create(FcaRequest.RequestBody.Text);
+  FRequest.SourceStream := FRequestBody;
 end;
 
 function TRequestBuilder.BuildUrlSegments(const ABaseUrl: string): TURI;
@@ -160,14 +162,18 @@ begin
   FClient := AClient;
   FcaRequest := ARequest;
   if FcaRequest.IsMultipartFormData then
-    FFormData := TMultipartFormData.Create;
+    FFormData := TMultipartFormData.Create
+  else if FcaRequest.IsRequestBody then
+    FRequestBody := TStringStream.Create(FcaRequest.RequestBody.Text);
 end;
 
 destructor TRequestBuilder.Destroy;
 begin
   if FcaRequest.IsMultipartFormData then
-    FFormData.Free;
-  inherited;
+    FFormData.Free
+  else if FcaRequest.IsRequestBody then
+    FRequestBody.Free;
+  inherited Destroy;
 end;
 
 end.

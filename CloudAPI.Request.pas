@@ -47,6 +47,7 @@ type
     procedure SetLimitInfo(const Value: TcaRequestLimit);
     // public
     function IsMultipartFormData: Boolean;
+    function IsRequestBody: Boolean;
     property DefaultParameterType: TcaParameterType read GetDefaultParameterType write SetDefaultParameterType;
     property Files: TcaFileList read GetFiles;
     property AlwaysMultipartFormData: Boolean read GetAlwaysMultipartFormData write SetAlwaysMultipartFormData;
@@ -112,6 +113,7 @@ type
     procedure AddFile(const AFile: TcaFileToSend); overload;
     procedure AddFile(const AFile: TcaFileToSend; AParameterType: TcaParameterType); overload;
     function IsMultipartFormData: Boolean;
+    function IsRequestBody: Boolean;
   public
     property DefaultParameterType: TcaParameterType read GetDefaultParameterType write SetDefaultParameterType;
     property Files: TcaFileList read GetFiles;
@@ -369,6 +371,11 @@ end;
 function TcaRequest.IsMultipartFormData: Boolean;
 begin
   Result := AlwaysMultipartFormData or (FFiles.Count > 0);
+end;
+
+function TcaRequest.IsRequestBody: Boolean;
+begin
+  Result := FRequestBody.Count > 0;
 end;
 
 procedure TcaRequest.SetAlwaysMultipartFormData(const Value: Boolean);

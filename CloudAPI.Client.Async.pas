@@ -7,22 +7,40 @@ uses
   CloudAPI.Response,
   CloudAPI.Request,
   System.Threading,
-  System.SysUtils;
+  System.SysUtils,
+  System.Classes,
+  System.Generics.Collections;
 
 type
   TCloudApiClient = class(TCloudApiClientBase)
+  private
+    FTask: TList<ITask>;
+  protected
   public
     procedure Execute(ARequest: IcaRequest; OnResult: TProc<IcaResponseBase>); overload;
     procedure Execute<T>(ARequest: IcaRequest; OnResult: TProc < IcaResponse < T >> ); overload;
     procedure GroupExecute(ARequests: TArray<IcaRequest>; OnResult: TProc < TArray < IcaResponseBase >> ); overload;
     procedure GroupExecute<T>(ARequests: TArray<IcaRequest>; OnResult: TProc < TArray < IcaResponse<T> >> ); overload;
+    destructor Destroy; override;
+    constructor Create;
   end;
 
 implementation
 
-uses
-  System.Classes;
 { TCloudApiClient }
+
+constructor TCloudApiClient.Create;
+begin
+  inherited Create;
+  FTask := TList<ITask>.Create;
+end;
+
+destructor TCloudApiClient.Destroy;
+begin
+  TTask.WaitForAll(FTask.ToArray);
+  FTask.Free;
+  inherited Destroy;
+end;
 
 procedure TCloudApiClient.Execute(ARequest: IcaRequest; OnResult: TProc<IcaResponseBase>);
 var
@@ -41,6 +59,7 @@ begin
             OnResult(LResult);
         end);
     end);
+  FTask.Add(LTask);
 end;
 
 procedure TCloudApiClient.Execute<T>(ARequest: IcaRequest; OnResult: TProc < IcaResponse < T >> );
@@ -111,9 +130,9 @@ begin
         begin
           if Assigned(OnResult) then
             OnResult(LResponseT);
+
         end);
     end);
-
 end;
 
 end.

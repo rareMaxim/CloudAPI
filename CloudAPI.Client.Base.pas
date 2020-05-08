@@ -8,6 +8,7 @@ uses
   CloudAPI.Parameter,
   CloudAPI.Request,
   CloudAPI.Response,
+  System.Classes,
   System.Generics.Collections,
   System.JSON.Serializers,
   System.Net.HttpClient,
@@ -52,7 +53,6 @@ implementation
 
 uses
   CloudAPI.Types,
-  System.Classes,
   System.Rtti,
   CloudAPI.Core.RequestBuilder;
 
@@ -104,7 +104,8 @@ var
   I: Integer;
   LRequest: IcaRequestBuilder;
 begin
-
+  if not Assigned(ARequest) then
+    ARequest := TcaRequest.Create;
   AuthenticateIfNeeded(ARequest);
   for I := 0 to FDefaultParams.Count - 1 do
     ARequest.AddParam(FDefaultParams[I]);
