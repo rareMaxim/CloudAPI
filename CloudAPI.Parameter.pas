@@ -3,7 +3,7 @@ unit CloudAPI.Parameter;
 interface
 
 uses
-  CloudAPI.Enum,
+  CloudAPI.Types,
   System.Rtti;
 
 type

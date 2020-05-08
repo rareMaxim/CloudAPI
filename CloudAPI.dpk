@@ -32,7 +32,6 @@ requires
 
 contains
   CloudAPI.Client.Base in 'CloudAPI.Client.Base.pas',
-  CloudAPI.Enum in 'CloudAPI.Enum.pas',
   CloudAPI.IAuthenticator in 'CloudAPI.IAuthenticator.pas',
   CloudAPI.Response in 'CloudAPI.Response.pas',
   CloudAPI.Types in 'CloudAPI.Types.pas',
@@ -47,6 +46,7 @@ contains
   CloudAPI.Ext.MethodLimits in 'CloudAPI.Ext.MethodLimits.pas',
   CloudAPI.Client.Async in 'CloudAPI.Client.Async.pas',
   CloudAPI.Client.Sync in 'CloudAPI.Client.Sync.pas',
-  CloudAPI.Request in 'CloudAPI.Request.pas';
+  CloudAPI.Request in 'CloudAPI.Request.pas',
+  CloudAPI.Core.RequestBuilder in 'CloudAPI.Core.RequestBuilder.pas';
 
 end.

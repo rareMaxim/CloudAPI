@@ -21,7 +21,7 @@ type
 implementation
 
 uses
-  CloudAPI.Enum,
+  CloudAPI.Types,
   CloudAPI.Parameter,
   System.NetEncoding,
   System.Net.URLClient;
