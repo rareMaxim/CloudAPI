@@ -46,6 +46,7 @@ contains
   CloudAPI.Ext.MethodLimits in 'CloudAPI.Ext.MethodLimits.pas',
   CloudAPI.Client.Async in 'CloudAPI.Client.Async.pas',
   CloudAPI.Client.Sync in 'CloudAPI.Client.Sync.pas',
-  CloudAPI.Request in 'CloudAPI.Request.pas';
+  CloudAPI.Request in 'CloudAPI.Request.pas',
+  CloudAPI.Core.RequestBuilder in 'CloudAPI.Core.RequestBuilder.pas';
 
 end.

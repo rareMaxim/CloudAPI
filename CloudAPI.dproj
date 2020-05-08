@@ -104,6 +104,7 @@
         <DCCReference Include="CloudAPI.Client.Async.pas"/>
         <DCCReference Include="CloudAPI.Client.Sync.pas"/>
         <DCCReference Include="CloudAPI.Request.pas"/>
+        <DCCReference Include="CloudAPI.Core.RequestBuilder.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
