@@ -11,12 +11,7 @@ uses
   System.Classes;
 
 type
-  IcaRequestBuilder = interface
-    ['{98D49AA1-417F-483D-8EBA-0708DDDFA232}']
-    function Build: IHTTPRequest;
-  end;
-
-  TRequestBuilder = class(tinterfacedObject, IcaRequestBuilder)
+  TRequestBuilder = class
   private
     FClient: TCloudApiClientBase;
     FRequest: IHTTPRequest;
@@ -32,9 +27,10 @@ type
     procedure BuildFiles;
     procedure BuildFormData;
     procedure BuildRequestBody;
+    function DoBuild: IHTTPRequest;
   public
     constructor Create(AClient: TCloudApiClientBase; ARequest: IcaRequest);
-    function Build: IHTTPRequest;
+    class function Build(AClient: TCloudApiClientBase; ARequest: IcaRequest): IHTTPRequest;
     destructor Destroy; override;
   end;
 
@@ -48,11 +44,11 @@ uses
 
 { TRequestBuilder }
 
-function TRequestBuilder.Build: IHTTPRequest;
+function TRequestBuilder.DoBuild: IHTTPRequest;
 var
   LMethodString: string;
   LUrl: TURI;
-begin
+  begin
   LMethodString := TRttiEnumerationType.GetName<TcaMethod>(FcaRequest.Method);
   LUrl := BuildUrlSegments(FClient.BaseUrl);
   FRequest := FClient.HttpClient.GetRequest(LMethodString, LUrl);
@@ -66,6 +62,18 @@ begin
   else
     BuildRequestBody;
   Result := FRequest;
+end;
+
+class function TRequestBuilder.Build(AClient: TCloudApiClientBase; ARequest: IcaRequest): IHTTPRequest;
+var
+  MyClass: TRequestBuilder;
+begin
+  MyClass := TRequestBuilder.Create(AClient, ARequest);
+  try
+    Result := MyClass.DoBuild;
+  finally
+    MyClass.Free;
+  end;
 end;
 
 procedure TRequestBuilder.BuildCookies;

@@ -102,18 +102,14 @@ var
   LHttpResponse: IHTTPResponse;
   LResponseContent: TStream;
   I: Integer;
-  LRequest: IcaRequestBuilder;
 begin
+  LResponseContent := nil;
   if not Assigned(ARequest) then
     ARequest := TcaRequest.Create;
   AuthenticateIfNeeded(ARequest);
   for I := 0 to FDefaultParams.Count - 1 do
     ARequest.AddParam(FDefaultParams[I]);
-  LResponseContent := nil;
-
-  LRequest := TRequestBuilder.Create(self, ARequest);
-
-  LHttpRequest := LRequest.Build;
+  LHttpRequest := TRequestBuilder.Build(self, ARequest);
   WriteLimitInfo(ARequest);
   LHttpResponse := FHttpClient.Execute(LHttpRequest, LResponseContent, LHttpRequest.Headers);
   Result := TcaResponseBase.Create(ARequest, LHttpRequest, LHttpResponse);
