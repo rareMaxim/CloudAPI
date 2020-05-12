@@ -18,6 +18,7 @@ type
     FcaRequest: IcaRequest;
     FFormData: TMultipartFormData;
     FRequestBody: TStringStream;
+    FUrl: TURI;
   protected
     procedure BuildHttpHeaders;
     procedure BuildCookies;
@@ -47,14 +48,14 @@ uses
 function TRequestBuilder.DoBuild: IHTTPRequest;
 var
   LMethodString: string;
-  LUrl: TURI;
-  begin
+begin
   LMethodString := TRttiEnumerationType.GetName<TcaMethod>(FcaRequest.Method);
-  LUrl := BuildUrlSegments(FClient.BaseUrl);
-  FRequest := FClient.HttpClient.GetRequest(LMethodString, LUrl);
-  BuildFiles;
+  FUrl := BuildUrlSegments(FClient.BaseUrl);
   BuildGetOrPosts;
   BuildQueryParameters;
+  FRequest := FClient.HttpClient.GetRequest(LMethodString, FUrl);
+  BuildFiles;
+
   BuildHttpHeaders;
   BuildCookies;
   if FcaRequest.IsMultipartFormData then
@@ -122,7 +123,7 @@ begin
     end
     else
     begin
-      FRequest.URL.AddParameter(LParam.Name, LParam.ValueAsString);
+      FUrl.AddParameter(LParam.Name, LParam.ValueAsString);
     end;
   end;
 end;
@@ -143,7 +144,7 @@ var
 begin
   for LParam in FcaRequest.QueryParameters do
   begin
-    FRequest.URL.AddParameter(LParam.Name, LParam.ValueAsString);
+    FUrl.AddParameter(LParam.Name, LParam.ValueAsString);
   end;
 end;
 
