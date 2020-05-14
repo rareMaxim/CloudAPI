@@ -32,6 +32,8 @@ type
     procedure SetMethod(const Value: TcaMethod);
     procedure SetResource(const Value: string);
     function GetRequestBody: TStringList;
+    function GetStartAt: TDateTime;
+    procedure SetStartAt(const Value: TDateTime);
     // public
     function AddParam(AParam: TcaParameter): IcaRequest; overload;
     function AddParam(const AName: string; AValue: TValue): IcaRequest; overload;
@@ -60,6 +62,7 @@ type
     property QueryParameters: TcaParameterList read GetQueryString;
     property LimitInfo: TcaRequestLimit read GetLimitInfo write SetLimitInfo;
     property RequestBody: TStringList read GetRequestBody;
+    property StartAt: TDateTime read GetStartAt write SetStartAt;
   end;
 
   TcaRequest = class(TInterfacedObject, IcaRequest)
@@ -76,6 +79,7 @@ type
     FFiles: TcaFileList;
     FLimitInfo: TcaRequestLimit;
     FRequestBody: TStringList;
+    FStartAt: TDateTime;
     function GetAlwaysMultipartFormData: Boolean;
     function GetDefaultParameterType: TcaParameterType;
     function GetFiles: TcaFileList;
@@ -93,6 +97,8 @@ type
     function GetQueryString: TcaParameterList;
     function GetRequestBody: TStringList;
     procedure SetLimitInfo(const Value: TcaRequestLimit);
+    function GetStartAt: TDateTime;
+    procedure SetStartAt(const Value: TDateTime);
   public
     constructor Create; overload;
     constructor Create(const AMethod: TcaMethod); overload;
@@ -127,6 +133,7 @@ type
     property QueryParameters: TcaParameterList read GetQueryString;
     property LimitInfo: TcaRequestLimit read GetLimitInfo write SetLimitInfo;
     property RequestBody: TStringList read GetRequestBody;
+    property StartAt: TDateTime read GetStartAt write SetStartAt;
   end;
 
 implementation
@@ -363,6 +370,11 @@ begin
   Result := FResource;
 end;
 
+function TcaRequest.GetStartAt: TDateTime;
+begin
+  Result := FStartAt;
+end;
+
 function TcaRequest.GetUrlSegments: TcaParameterList;
 begin
   Result := FUrlSegments;
@@ -401,6 +413,11 @@ end;
 procedure TcaRequest.SetResource(const Value: string);
 begin
   FResource := Value;
+end;
+
+procedure TcaRequest.SetStartAt(const Value: TDateTime);
+begin
+  FStartAt := Value;
 end;
 
 end.

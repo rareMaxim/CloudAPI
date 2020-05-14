@@ -56,6 +56,7 @@ type
     function IsExpired: Boolean;
     function ActualLimit: Int64;
     property IsGlobal: Boolean read FIsGlobal write FIsGlobal;
+    class function DatesDuration(const AAfter, ABefore: TDateTime): UInt64; static;
   end;
 
 implementation
@@ -145,7 +146,7 @@ end;
 
 function TcaRequestLimit.ActualLimit: Int64;
 begin
-  Result := DateTimeToMilliseconds(EndingAt) - DateTimeToMilliseconds(Now);
+  Result := DatesDuration(EndingAt, Now);
 end;
 
 class function TcaRequestLimit.Create(const ALimit: Int64; const AName: string; const AIsGlobal: Boolean)
@@ -156,6 +157,11 @@ begin
   Result.IsGlobal := AIsGlobal;
   Result.StartedAt := Now;
   Result.EndingAt := IncMilliSecond(Result.StartedAt, Result.Limit);
+end;
+
+class function TcaRequestLimit.DatesDuration(const AAfter, ABefore: TDateTime): UInt64;
+begin
+  Result := DateTimeToMilliseconds(AAfter - ABefore);
 end;
 
 function TcaRequestLimit.IsExpired: Boolean;

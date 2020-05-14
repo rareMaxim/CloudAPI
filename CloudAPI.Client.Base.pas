@@ -111,6 +111,7 @@ begin
     ARequest.AddParam(FDefaultParams[I]);
   LHttpRequest := TRequestBuilder.Build(self, ARequest);
   WriteLimitInfo(ARequest);
+  ARequest.StartAt := Now;
   LHttpResponse := FHttpClient.Execute(LHttpRequest, LResponseContent, LHttpRequest.Headers);
   Result := TcaResponseBase.Create(ARequest, LHttpRequest, LHttpResponse);
 end;

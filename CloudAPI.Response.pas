@@ -9,6 +9,19 @@ uses
   System.SysUtils;
 
 type
+  TcaTiming = record
+  private
+    FStartTime: TDateTime;
+    FEndTime: TDateTime;
+    FDuration: Integer;
+    function GetDuration: Integer;
+  public
+    class function Create(const AStartTime, AEndTime: TDateTime): TcaTiming; static;
+    property StartTime: TDateTime read FStartTime;
+    property EndTime: TDateTime read FEndTime;
+    property Duration: Integer read GetDuration;
+  end;
+
   IcaResponseBase = interface
     ['{D577F707-054A-449C-BE42-015B7EF03CDC}']
     // private
@@ -25,17 +38,17 @@ type
   private
     FHttpRequest: IHTTPRequest;
     FHttpResponse: IHTTPResponse;
+    FTiming: TcaTiming;
     function GetHttpRequest: IHTTPRequest;
     function GetHttpResponse: IHTTPResponse;
-
     procedure SetHttpRequest(const Value: IHTTPRequest);
     procedure SetHttpResponse(const Value: IHTTPResponse);
-
+    function GetTiming: TcaTiming;
   public
     constructor Create(ACloudRequest: IcaRequest; AHttpRequest: IHTTPRequest; AHttpResponse: IHTTPResponse);
     property HttpRequest: IHTTPRequest read GetHttpRequest write SetHttpRequest;
     property HttpResponse: IHTTPResponse read GetHttpResponse write SetHttpResponse;
-
+    property Timing: TcaTiming read GetTiming;
   end;
 
   IcaResponse<T> = interface(IcaResponseBase)
@@ -69,11 +82,15 @@ type
 
 implementation
 
+uses
+  CloudAPI.Types;
+
 constructor TcaResponseBase.Create(ACloudRequest: IcaRequest; AHttpRequest: IHTTPRequest; AHttpResponse: IHTTPResponse);
 begin
   inherited Create();
   FHttpRequest := AHttpRequest;
   FHttpResponse := AHttpResponse;
+  FTiming := TcaTiming.Create(ACloudRequest.StartAt, Now);
 end;
 
 function TcaResponseBase.GetHttpRequest: IHTTPRequest;
@@ -84,6 +101,11 @@ end;
 function TcaResponseBase.GetHttpResponse: IHTTPResponse;
 begin
   Result := FHttpResponse;
+end;
+
+function TcaResponseBase.GetTiming: TcaTiming;
+begin
+  Result := FTiming;
 end;
 
 procedure TcaResponseBase.SetHttpRequest(const Value: IHTTPRequest);
@@ -128,6 +150,19 @@ end;
 procedure TcaResponse<T>.SetSerializer(const Value: TJsonSerializer);
 begin
   FSerializer := Value;
+end;
+
+{ TcaTiming }
+
+class function TcaTiming.Create(const AStartTime, AEndTime: TDateTime): TcaTiming;
+begin
+  Result.FStartTime := AStartTime;
+  Result.FEndTime := AEndTime;
+end;
+
+function TcaTiming.GetDuration: Integer;
+begin
+  Result := TcaRequestLimit.DatesDuration(EndTime, StartTime);
 end;
 
 end.
