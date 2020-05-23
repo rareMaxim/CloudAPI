@@ -13,7 +13,6 @@ type
   private
     FStartTime: TDateTime;
     FEndTime: TDateTime;
-    FDuration: Integer;
     function GetDuration: Integer;
   public
     class function Create(const AStartTime, AEndTime: TDateTime): TcaTiming; static;
