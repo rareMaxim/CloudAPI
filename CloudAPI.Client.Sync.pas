@@ -5,11 +5,14 @@ interface
 uses
   CloudAPI.Client.Base,
   CloudAPI.Response,
-  CloudAPI.Request;
+  CloudAPI.Request,
+  CloudAPI.Types;
 
 type
   TCloudApiClient = class(TCloudApiClientBase)
   public
+    function Download(ARequest: IcaRequest): IcaResponseBase; overload; override;
+    function Download(const AUrl, AFileName: string; ARequest: IcaRequest = nil): IcaResponseBase; overload;
     function Execute(ARequest: IcaRequest): IcaResponseBase; overload;
     function Execute<T>(ARequest: IcaRequest): IcaResponse<T>; overload;
     function GroupExecute(ARequests: TArray<IcaRequest>): TArray<IcaResponseBase>; overload;
@@ -18,7 +21,26 @@ type
 
 implementation
 
+uses
+  System.Classes;
+
 { TCloudApiClient }
+
+function TCloudApiClient.Download(const AUrl, AFileName: string; ARequest: IcaRequest = nil): IcaResponseBase;
+begin
+  ResponseStream := TFileStream.Create(AFileName, fmCreate);
+  try
+    BaseUrl := AUrl;
+    Result := inherited Download(ARequest);
+  finally
+    ResponseStream.Free;
+  end;
+end;
+
+function TCloudApiClient.Download(ARequest: IcaRequest): IcaResponseBase;
+begin
+  Result := inherited Download(ARequest);
+end;
 
 function TCloudApiClient.Execute(ARequest: IcaRequest): IcaResponseBase;
 begin

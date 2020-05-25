@@ -34,6 +34,8 @@ type
     procedure Patch;
     [Test]
     procedure PUT;
+    [Test]
+    procedure Image;
   end;
 
   [TestFixture]
@@ -92,6 +94,17 @@ end;
 procedure THTTPMethodsTest.Get;
 begin
   InternalExec(TcaMethod.Get, 'get', False);
+end;
+
+procedure THTTPMethodsTest.Image;
+var
+  LRequest: IcaRequest;
+  LResp: IcaResponseBase;
+begin
+  LRequest := TcaRequest.Create;
+  LRequest.AddHeader('accept', 'image/*');
+  LResp := FCloud.Download('https://httpbin.org/image', '1.png', LRequest);
+  Assert.AreEqual(200, LResp.HttpResponse.StatusCode);
 end;
 
 procedure THTTPMethodsTest.InternalExec(const AMethod: TcaMethod; const AResource: string; AWithPrint: Boolean);

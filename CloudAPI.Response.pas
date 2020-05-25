@@ -28,9 +28,12 @@ type
     function GetHttpResponse: IHTTPResponse;
     procedure SetHttpRequest(const Value: IHTTPRequest);
     procedure SetHttpResponse(const Value: IHTTPResponse);
+    function GetTiming: TcaTiming;
     // public
+    function RawBytes: TBytes;
     property HttpRequest: IHTTPRequest read GetHttpRequest write SetHttpRequest;
     property HttpResponse: IHTTPResponse read GetHttpResponse write SetHttpResponse;
+    property Timing: TcaTiming read GetTiming;
   end;
 
   TcaResponseBase = class(TInterfacedObject, IcaResponseBase)
@@ -44,6 +47,7 @@ type
     procedure SetHttpResponse(const Value: IHTTPResponse);
     function GetTiming: TcaTiming;
   public
+    function RawBytes: TBytes;
     constructor Create(ACloudRequest: IcaRequest; AHttpRequest: IHTTPRequest; AHttpResponse: IHTTPResponse);
     property HttpRequest: IHTTPRequest read GetHttpRequest write SetHttpRequest;
     property HttpResponse: IHTTPResponse read GetHttpResponse write SetHttpResponse;
@@ -105,6 +109,13 @@ end;
 function TcaResponseBase.GetTiming: TcaTiming;
 begin
   Result := FTiming;
+end;
+
+function TcaResponseBase.RawBytes: TBytes;
+begin
+  FHttpResponse.ContentStream.Position := 0;
+  SetLength(Result, FHttpResponse.ContentStream.Size);
+  FHttpResponse.ContentStream.Read(Result[0], FHttpResponse.ContentStream.Size);
 end;
 
 procedure TcaResponseBase.SetHttpRequest(const Value: IHTTPRequest);

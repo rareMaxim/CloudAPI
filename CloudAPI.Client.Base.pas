@@ -25,7 +25,10 @@ type
     FVersion: string;
     FDefaultParams: TList<TcaParameter>;
     FRequestLimitManager: TcaRequestLimitManager;
+    FResponseStream: TStream;
+  private
     class var FSerializer: TJsonSerializer;
+  private
     function GetAuthenticator: IAuthenticator;
     function GetBaseUrl: string;
     procedure SetAuthenticator(const Value: IAuthenticator);
@@ -36,17 +39,21 @@ type
     function InternalExecute(ARequest: IcaRequest): IcaResponseBase;
     procedure WriteLimitInfo(ARequest: IcaRequest);
     procedure DoOnLimit(const ATimeLimit: Int64);
+    function Download(ARequest: IcaRequest): IcaResponseBase; virtual;
   public
     constructor Create; overload;
     constructor Create(const ABaseUrl: string); overload;
     destructor Destroy; override;
+{$REGION 'Property'}
     property Authenticator: IAuthenticator read GetAuthenticator write SetAuthenticator;
     property BaseUrl: string read GetBaseUrl write SetBaseUrl;
-    property HttpClient: THTTPClient read FHttpClient;
-    class property Serializer: TJsonSerializer read FSerializer;
-    property Version: string read FVersion;
     property DefaultParams: TList<TcaParameter> read FDefaultParams;
+    property HttpClient: THTTPClient read FHttpClient;
     property RequestLimitManager: TcaRequestLimitManager read FRequestLimitManager write FRequestLimitManager;
+    property ResponseStream: TStream read FResponseStream write FResponseStream;
+    property Version: string read FVersion;
+    class property Serializer: TJsonSerializer read FSerializer;
+{$ENDREGION}
   end;
 
 implementation
@@ -72,6 +79,7 @@ begin
   FSerializer := TJsonSerializer.Create;
   FDefaultParams := TList<TcaParameter>.Create;
   FRequestLimitManager := TcaRequestLimitManager.Create;
+  FResponseStream := nil;
 end;
 
 constructor TCloudApiClientBase.Create(const ABaseUrl: string);
@@ -96,14 +104,17 @@ begin
       FRequestLimitManager.OnLimit(ATimeLimit);
 end;
 
+function TCloudApiClientBase.Download(ARequest: IcaRequest): IcaResponseBase;
+begin
+  Result := InternalExecute(ARequest);
+end;
+
 function TCloudApiClientBase.InternalExecute(ARequest: IcaRequest): IcaResponseBase;
 var
   LHttpRequest: IHTTPRequest;
   LHttpResponse: IHTTPResponse;
-  LResponseContent: TStream;
   I: Integer;
 begin
-  LResponseContent := nil;
   if not Assigned(ARequest) then
     ARequest := TcaRequest.Create;
   AuthenticateIfNeeded(ARequest);
@@ -112,7 +123,7 @@ begin
   LHttpRequest := TRequestBuilder.Build(self, ARequest);
   WriteLimitInfo(ARequest);
   ARequest.StartAt := Now;
-  LHttpResponse := FHttpClient.Execute(LHttpRequest, LResponseContent, LHttpRequest.Headers);
+  LHttpResponse := FHttpClient.Execute(LHttpRequest, FResponseStream, LHttpRequest.Headers);
   Result := TcaResponseBase.Create(ARequest, LHttpRequest, LHttpResponse);
 end;
 

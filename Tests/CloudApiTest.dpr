@@ -7,16 +7,15 @@ program CloudApiTest;
 
 uses
   System.SysUtils,
-{$IFDEF TESTINSIGHT}
+  {$IFDEF TESTINSIGHT}
   TestInsight.DUnitX,
-{$ELSE}
+  {$ELSE}
   DUnitX.Loggers.Console,
   DUnitX.Loggers.Xml.NUnit,
-{$ENDIF }
+  {$ENDIF }
   DUnitX.TestFramework,
   HttpBinTest in 'HttpBinTest.pas',
-  HttpBinTest.Types in 'HttpBinTest.Types.pas',
-  pipedreamTest in 'pipedreamTest.pas';
+  HttpBinTest.Types in 'HttpBinTest.Types.pas';
 
 {$IFNDEF TESTINSIGHT}
 
