@@ -39,7 +39,6 @@ type
     function InternalExecute(ARequest: IcaRequest): IcaResponseBase;
     procedure WriteLimitInfo(ARequest: IcaRequest);
     procedure DoOnLimit(const ATimeLimit: Int64);
-    function Download(ARequest: IcaRequest): IcaResponseBase; virtual;
   public
     constructor Create; overload;
     constructor Create(const ABaseUrl: string); overload;
@@ -102,11 +101,6 @@ begin
   if ATimeLimit > 0 then
     if Assigned(FRequestLimitManager.OnLimit) then
       FRequestLimitManager.OnLimit(ATimeLimit);
-end;
-
-function TCloudApiClientBase.Download(ARequest: IcaRequest): IcaResponseBase;
-begin
-  Result := InternalExecute(ARequest);
 end;
 
 function TCloudApiClientBase.InternalExecute(ARequest: IcaRequest): IcaResponseBase;
