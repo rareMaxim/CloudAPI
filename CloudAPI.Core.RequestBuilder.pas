@@ -40,6 +40,7 @@ implementation
 uses
   CloudAPI.Parameter,
   CloudAPI.Types,
+  System.NetEncoding,
   System.Rtti,
   System.SysUtils;
 
@@ -162,7 +163,7 @@ var
   LFullUrl: string;
   LParam: TcaParameter;
 begin
-  LFullUrl := FUrl.ToString;
+  LFullUrl := TNetEncoding.URL.Decode(FUrl.ToString);
   for LParam in FcaRequest.UrlSegments do
   begin
     LFullUrl := LFullUrl.Replace('{' + LParam.Name + '}', LParam.ValueAsString);
