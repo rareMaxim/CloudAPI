@@ -1,4 +1,4 @@
-unit CloudAPI.IAuthenticator;
+﻿unit CloudAPI.IAuthenticator;
 
 interface
 

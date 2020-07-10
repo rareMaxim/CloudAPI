@@ -1,4 +1,4 @@
-unit CloudAPI.Authenticator.Basic;
+﻿unit CloudAPI.Authenticator.Basic;
 
 interface
 

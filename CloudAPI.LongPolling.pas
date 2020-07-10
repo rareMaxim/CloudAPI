@@ -1,4 +1,4 @@
-unit CloudAPI.LongPolling;
+﻿unit CloudAPI.LongPolling;
 
 interface
 
