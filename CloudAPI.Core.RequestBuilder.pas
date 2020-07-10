@@ -1,4 +1,4 @@
-unit CloudAPI.Core.RequestBuilder;
+п»їunit CloudAPI.Core.RequestBuilder;
 
 interface
 
@@ -89,7 +89,7 @@ var
 begin
   for LParam in FcaRequest.Cookies do
   begin
-    { TODO -oMaxim Sysoev -cGeneral : Протестировать куки }
+    { TODO -oMaxim Sysoev -cGeneral : РџСЂРѕС‚РµСЃС‚РёСЂРѕРІР°С‚СЊ РєСѓРєРё }
     LCookie.Name := LParam.Name;
     LCookie.Value := LParam.ValueAsString;
     FClient.HttpClient.CookieManager.AddServerCookie(LCookie, FRequest.URL);
@@ -183,10 +183,10 @@ end;
 
 destructor TRequestBuilder.Destroy;
 begin
-  if FcaRequest.IsMultipartFormData then
-    FFormData.Free
-  else if FcaRequest.IsRequestBody then
-    FRequestBody.Free;
+  // if FcaRequest.IsMultipartFormData then
+  // FFormData.Free
+  // else if FcaRequest.IsRequestBody then
+  // FRequestBody.Free;
   inherited Destroy;
 end;
 
