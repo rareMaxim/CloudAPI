@@ -19,6 +19,7 @@ type
     FFormData: TMultipartFormData;
     FRequestBody: TStringStream;
     FUrl: TURI;
+    FUrlString: string;
   protected
     procedure BuildHttpHeaders;
     procedure BuildCookies;
@@ -33,6 +34,7 @@ type
     constructor Create(AClient: TCloudApiClientBase; ARequest: IcaRequest);
     class function Build(AClient: TCloudApiClientBase; ARequest: IcaRequest): IHTTPRequest;
     destructor Destroy; override;
+    property UrlString: string read FUrlString;
   end;
 
 implementation
@@ -67,6 +69,7 @@ begin
     BuildFormData
   else
     BuildRequestBody;
+  FUrlString := FUrl.ToString;
   Result := FRequest;
 end;
 

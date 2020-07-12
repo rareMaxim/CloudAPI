@@ -7,6 +7,7 @@ type
   private
     class procedure StringConverter;
     class procedure Int64Converter;
+    class procedure SingleConverter;
     class procedure BooleanConverter;
   public
     class procedure BasicConverter;
@@ -26,6 +27,7 @@ begin
   StringConverter;
   Int64Converter;
   BooleanConverter;
+  SingleConverter;
 end;
 
 class procedure TcaBasicConverters.BooleanConverter;
@@ -43,6 +45,18 @@ begin
     function(AValue: TValue): string
     begin
       Result := AValue.AsInt64.ToString;
+    end);
+end;
+
+class procedure TcaBasicConverters.SingleConverter;
+begin
+  TcaRequestArgument.RegisterConverter('single',
+    function(AValue: TValue): string
+    var
+      FS: TFormatSettings;
+    begin
+      FS := TFormatSettings.Invariant;
+      Result := AValue.AsExtended.ToString(TFloatFormat.ffGeneral, 8, 6, FS);
     end);
 end;
 

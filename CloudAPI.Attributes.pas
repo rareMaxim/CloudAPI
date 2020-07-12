@@ -45,6 +45,11 @@ type
     function ToString: string; override;
   end;
 
+  caDefaultValueSingleAttribute = class(caDefaultValueAttribute<Single>)
+  public
+    function ToString: string; override;
+  end;
+
   caDefaultValueBooleanAttribute = class(caDefaultValueAttribute<Boolean>)
   public
     function ToString: string; override;
@@ -147,6 +152,13 @@ constructor caLimitedMethodAttribute.Create(const ALimit: Int64; AIsGlobal: Bool
 begin
   FLimit := ALimit;
   FIsGlobal := AIsGlobal;
+end;
+
+{ caDefaultValueSingleAttribute }
+
+function caDefaultValueSingleAttribute.ToString: string;
+begin
+  Result := FDefaultValue.ToString;
 end;
 
 end.
