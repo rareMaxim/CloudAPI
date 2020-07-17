@@ -20,16 +20,19 @@ type
     FName: string;
   private
     class function TestString(const AValue: string): TcaFileToSendTag; static;
-  public
-    property Data: string read FData write FData;
-    property Content: TStream read FContent write FContent;
-    property Tag: TcaFileToSendTag read FTag write FTag;
-    property Name: string read FName write FName;
 {$REGION 'operator overload'}
+  public
     class operator Equal(a, b: TcaFileToSend): Boolean;
     class operator Implicit(const AValue: string): TcaFileToSend;
     class operator Implicit(AValue: TStream): TcaFileToSend;
 {$ENDREGION}
+  public
+    function FileName: string;
+    property Data: string read FData write FData;
+    property Content: TStream read FContent write FContent;
+    property Tag: TcaFileToSendTag read FTag write FTag;
+    property Name: string read FName write FName;
+
     class function Create(const AData: string; AContent: TStream;
       const ATag: TcaFileToSendTag = TcaFileToSendTag.Unknown): TcaFileToSend; static;
     class function FromFile(const AFileName: string): TcaFileToSend; static;
@@ -83,6 +86,14 @@ end;
 class operator TcaFileToSend.Equal(a, b: TcaFileToSend): Boolean;
 begin
   Result := (a.Data = b.Data) and (a.Tag = b.Tag) and (a.Content = b.Content);
+end;
+
+function TcaFileToSend.FileName: string;
+var
+  LBeginPos: integer;
+begin
+  LBeginPos := FData.LastIndexOfAny(['\', '/']) + 1;
+  Result := FData.Substring(LBeginPos);
 end;
 
 class function TcaFileToSend.FromFile(const AFileName: string): TcaFileToSend;
