@@ -3,6 +3,7 @@
 interface
 
 uses
+  CloudAPI.Exceptions,
   CloudAPI.Request,
   System.JSON.Serializers,
   System.Net.HttpClient,
@@ -29,11 +30,14 @@ type
     procedure SetHttpRequest(const Value: IHTTPRequest);
     procedure SetHttpResponse(const Value: IHTTPResponse);
     function GetTiming: TcaTiming;
+    function GetException: ECloudApiException;
+    procedure SetException(const Value: ECloudApiException);
     // public
     function RawBytes: TBytes;
     property HttpRequest: IHTTPRequest read GetHttpRequest write SetHttpRequest;
     property HttpResponse: IHTTPResponse read GetHttpResponse write SetHttpResponse;
     property Timing: TcaTiming read GetTiming;
+    property Exception: ECloudApiException read GetException write SetException;
   end;
 
   TcaResponseBase = class(TInterfacedObject, IcaResponseBase)
@@ -41,17 +45,21 @@ type
     FHttpRequest: IHTTPRequest;
     FHttpResponse: IHTTPResponse;
     FTiming: TcaTiming;
+    FException: ECloudApiException;
     function GetHttpRequest: IHTTPRequest;
     function GetHttpResponse: IHTTPResponse;
     procedure SetHttpRequest(const Value: IHTTPRequest);
     procedure SetHttpResponse(const Value: IHTTPResponse);
     function GetTiming: TcaTiming;
+    function GetException: ECloudApiException;
+    procedure SetException(const Value: ECloudApiException);
   public
     function RawBytes: TBytes;
     constructor Create(ACloudRequest: IcaRequest; AHttpRequest: IHTTPRequest; AHttpResponse: IHTTPResponse);
     property HttpRequest: IHTTPRequest read GetHttpRequest write SetHttpRequest;
     property HttpResponse: IHTTPResponse read GetHttpResponse write SetHttpResponse;
     property Timing: TcaTiming read GetTiming;
+    property Exception: ECloudApiException read GetException write SetException;
   end;
 
   IcaResponse<T> = interface(IcaResponseBase)
@@ -96,6 +104,11 @@ begin
   FTiming := TcaTiming.Create(ACloudRequest.StartAt, Now);
 end;
 
+function TcaResponseBase.GetException: ECloudApiException;
+begin
+  Result := FException;
+end;
+
 function TcaResponseBase.GetHttpRequest: IHTTPRequest;
 begin
   Result := FHttpRequest;
@@ -116,6 +129,11 @@ begin
   FHttpResponse.ContentStream.Position := 0;
   SetLength(Result, FHttpResponse.ContentStream.Size);
   FHttpResponse.ContentStream.Read(Result[0], FHttpResponse.ContentStream.Size);
+end;
+
+procedure TcaResponseBase.SetException(const Value: ECloudApiException);
+begin
+  FException := Value;
 end;
 
 procedure TcaResponseBase.SetHttpRequest(const Value: IHTTPRequest);

@@ -58,10 +58,10 @@ type
 implementation
 
 uses
+  CloudAPI.Core.RequestBuilder,
+  CloudAPI.Exceptions,
   CloudAPI.Types,
-  System.Rtti,
-  CloudAPI.Core.RequestBuilder;
-
+  System.Rtti;
 { TCloudApiClientBase }
 
 procedure TCloudApiClientBase.AuthenticateIfNeeded(ARequest: IcaRequest);
@@ -117,8 +117,13 @@ begin
   LHttpRequest := TRequestBuilder.Build(self, ARequest);
   WriteLimitInfo(ARequest);
   ARequest.StartAt := Now;
-  LHttpResponse := FHttpClient.Execute(LHttpRequest, FResponseStream, LHttpRequest.Headers);
-  Result := TcaResponseBase.Create(ARequest, LHttpRequest, LHttpResponse);
+  try
+    LHttpResponse := FHttpClient.Execute(LHttpRequest, FResponseStream, LHttpRequest.Headers);
+    Result := TcaResponseBase.Create(ARequest, LHttpRequest, LHttpResponse);
+  except
+    on E: Exception do
+      Result.Exception := ECloudApiException.Create('[HttpExcecute]', E.Message);
+  end;
 end;
 
 function TCloudApiClientBase.GetAuthenticator: IAuthenticator;
