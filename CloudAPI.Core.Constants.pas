@@ -5,8 +5,8 @@ interface
 type
   TcaConstException = class
   public const
-    PARAMETER_REQIRED = 'Parameter "%s" is requaired!';
-    RAISED_AT_FORMAT = 'DD:MM:YYYY';
+    PARAMETER_REQIRED = 'Parameter "{Parameter.Name}" is requaired in method "{Method}"!';
+    RAISED_AT_FORMAT = 'hh:mm:ss.zzz';
     EXCEPTION_MSG_FORMAT = '({RaisedAt}) [{Code}] {Message}';
   end;
 

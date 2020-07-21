@@ -11,27 +11,28 @@ type
   private
     FCodeInt: Integer;
     FCodeStr: string;
-    FMessage: string;
+    FText: string;
     FRaisedAt: TDateTime;
   protected
-    function BuildMsg: string; virtual;
+    procedure BuildMsg; virtual;
   public
-    constructor Create(const ACode, AMessage: string); overload;
-    constructor Create(const ACode: Integer; const AMessage: string); overload;
+    constructor Create(const ACode, AText: string); overload;
+    constructor Create(const ACode: Integer; const AText: string); overload;
   published
     property CodeInt: Integer read FCodeInt write FCodeInt;
     property CodeStr: string read FCodeStr write FCodeStr;
-    property Message: string read FMessage write FMessage;
+    property Text: string read FText write FText;
     property RaisedAt: TDateTime read FRaisedAt write FRaisedAt;
   end;
 
   ECloudApiRequairedParameterException = class(ECloudApiException)
   private
     FParameter: TcaParameter;
+    FMethod: string;
   protected
-    function BuildMsg: string; override;
+    procedure BuildMsg; override;
   public
-    constructor Create(AParameter: TcaParameter);
+    constructor Create(const AMethod: string; AParameter: TcaParameter);
   end;
 
 implementation
@@ -40,42 +41,51 @@ uses
   CloudAPI.Core.Constants;
 { ECloudApiRequairedParameterException }
 
-function ECloudApiRequairedParameterException.BuildMsg: string;
+procedure ECloudApiRequairedParameterException.BuildMsg;
 begin
-  Result := inherited BuildMsg //
+  inherited BuildMsg;
+  Message := Message //
     .Replace('{Parameter.Name}', FParameter.Name) //
     .Replace('{Parameter.Value}', FParameter.ValueAsString) //
+    .Replace('{Method}', FMethod) //
+    ;
 end;
 
-constructor ECloudApiRequairedParameterException.Create(AParameter: TcaParameter);
+constructor ECloudApiRequairedParameterException.Create(const AMethod: string; AParameter: TcaParameter);
+var
+  LMsg: string;
 begin
-  inherited Create('CloudAPI', BuildMsg);
+  FParameter := AParameter;
+  FMethod := AMethod;
+  inherited Create('CloudAPI', TcaConstException.PARAMETER_REQIRED);
 end;
 
 { ECloudApiException }
 
-constructor ECloudApiException.Create(const ACode, AMessage: string);
+constructor ECloudApiException.Create(const ACode, AText: string);
 begin
   FCodeStr := ACode;
   TryStrToInt(ACode, FCodeInt);
-  FMessage := AMessage;
+  FText := AText;
   FRaisedAt := Now;
-  inherited Create(BuildMsg);
+  inherited Create(Message);
+  BuildMsg;
 end;
 
-function ECloudApiException.BuildMsg: string;
+procedure ECloudApiException.BuildMsg;
 var
   LRaisedAtStr: string;
 begin
   LRaisedAtStr := FormatDateTime(TcaConstException.RAISED_AT_FORMAT, FRaisedAt, TFormatSettings.Invariant);
-  Result := TcaConstException.EXCEPTION_MSG_FORMAT //
+  Message := TcaConstException.EXCEPTION_MSG_FORMAT //
     .Replace('{Code}', CodeStr) //
     .Replace('{RaisedAt}', LRaisedAtStr) //
+    .Replace('{Message}', Text) //
 end;
 
-constructor ECloudApiException.Create(const ACode: Integer; const AMessage: string);
+constructor ECloudApiException.Create(const ACode: Integer; const AText: string);
 begin
-  Self.Create(ACode.ToString, AMessage);
+  self.Create(ACode.ToString, AText);
 end;
 
 end.
