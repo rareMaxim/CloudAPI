@@ -199,7 +199,7 @@ begin
   end
   else if AParam.IsDefaultParameter and AParam.IsRequired then
   begin
-    raise ECloudApiRequairedParameterException.Create(FResource, AParam);
+    TcaExceptionManager.Current.Alert(ECloudApiRequairedParameterException.Create(FResource, AParam));
   end
   else if AParam.IsDefaultParameter then
   begin

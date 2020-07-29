@@ -3,6 +3,7 @@
 interface
 
 uses
+  CloudAPI.Exceptions,
   CloudAPI.Ext.MethodLimits,
   CloudAPI.IAuthenticator,
   CloudAPI.Parameter,
@@ -26,6 +27,7 @@ type
     FDefaultParams: TList<TcaParameter>;
     FRequestLimitManager: TcaRequestLimitManager;
     FResponseStream: TStream;
+    FExceptionManager: TcaExceptionManager;
   private
     class var FSerializer: TJsonSerializer;
   private
@@ -51,6 +53,7 @@ type
     property RequestLimitManager: TcaRequestLimitManager read FRequestLimitManager write FRequestLimitManager;
     property ResponseStream: TStream read FResponseStream write FResponseStream;
     property Version: string read FVersion;
+    property ExceptionManager: TcaExceptionManager read FExceptionManager;
     class property Serializer: TJsonSerializer read FSerializer;
 {$ENDREGION}
   end;
@@ -59,7 +62,7 @@ implementation
 
 uses
   CloudAPI.Core.RequestBuilder,
-  CloudAPI.Exceptions,
+
   CloudAPI.Types,
   System.Rtti;
 { TCloudApiClientBase }
@@ -78,6 +81,7 @@ begin
   FSerializer := TJsonSerializer.Create;
   FDefaultParams := TList<TcaParameter>.Create;
   FRequestLimitManager := TcaRequestLimitManager.Create;
+  FExceptionManager := TcaExceptionManager.Current;
   FResponseStream := nil;
 end;
 
@@ -122,7 +126,10 @@ begin
     Result := TcaResponseBase.Create(ARequest, LHttpRequest, LHttpResponse);
   except
     on E: Exception do
+    begin
       Result.Exception := ECloudApiException.Create('[HttpExcecute]', E.Message);
+      FExceptionManager.Alert(E);
+    end;
   end;
 end;
 
