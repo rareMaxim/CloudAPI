@@ -32,7 +32,8 @@ type
     function DoBuild: IHTTPRequest;
   public
     constructor Create(AClient: TCloudApiClientBase; ARequest: IcaRequest);
-    class function Build(AClient: TCloudApiClientBase; ARequest: IcaRequest): IHTTPRequest;
+    function Build: IHTTPRequest; overload;
+    class function Build(AClient: TCloudApiClientBase; ARequest: IcaRequest): IHTTPRequest; overload;
     destructor Destroy; override;
     property UrlString: string read FUrlString;
   end;
@@ -186,11 +187,16 @@ end;
 
 destructor TRequestBuilder.Destroy;
 begin
-  // if FcaRequest.IsMultipartFormData then
-  // FFormData.Free
-  // else if FcaRequest.IsRequestBody then
-  // FRequestBody.Free;
+  if FcaRequest.IsMultipartFormData then
+    FFormData.Free
+  else if FcaRequest.IsRequestBody then
+    FRequestBody.Free;
   inherited Destroy;
+end;
+
+function TRequestBuilder.Build: IHTTPRequest;
+begin
+  Result := DoBuild;
 end;
 
 end.

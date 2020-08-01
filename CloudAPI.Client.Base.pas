@@ -107,6 +107,7 @@ function TCloudApiClientBase.InternalExecute(ARequest: IcaRequest): IcaResponseB
 var
   LHttpRequest: IHTTPRequest;
   LHttpResponse: IHTTPResponse;
+  LRequestBuilder: TRequestBuilder;
   I: Integer;
 begin
   if not Assigned(ARequest) then
@@ -114,11 +115,16 @@ begin
   AuthenticateIfNeeded(ARequest);
   for I := 0 to FDefaultParams.Count - 1 do
     ARequest.AddParam(FDefaultParams[I]);
-  LHttpRequest := TRequestBuilder.Build(self, ARequest);
   WriteLimitInfo(ARequest);
   ARequest.StartAt := Now;
-  LHttpResponse := FHttpClient.Execute(LHttpRequest, FResponseStream, LHttpRequest.Headers);
-  Result := TcaResponseBase.Create(ARequest, LHttpRequest, LHttpResponse);
+  LRequestBuilder := TRequestBuilder.Create(self, ARequest);
+  try
+    LHttpRequest := LRequestBuilder.Build();
+    LHttpResponse := FHttpClient.Execute(LHttpRequest, FResponseStream, LHttpRequest.Headers);
+    Result := TcaResponseBase.Create(ARequest, LHttpRequest, LHttpResponse);
+  finally
+    LRequestBuilder.Free;
+  end;
 end;
 
 function TCloudApiClientBase.GetAuthenticator: IAuthenticator;
