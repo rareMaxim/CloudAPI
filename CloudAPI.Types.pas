@@ -171,8 +171,12 @@ begin
 end;
 
 class function TcaRequestLimit.DatesDuration(const AAfter, ABefore: TDateTime): UInt64;
+var
+  LAftMSec, LBefMSec: Int64;
 begin
-  Result := DateTimeToMilliseconds(AAfter - ABefore);
+  LAftMSec := DateTimeToMilliseconds(AAfter);
+  LBefMSec := DateTimeToMilliseconds(ABefore);
+  Result := LAftMSec - LBefMSec;
 end;
 
 function TcaRequestLimit.IsExpired: Boolean;

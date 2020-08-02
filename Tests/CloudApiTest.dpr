@@ -14,8 +14,7 @@ uses
   DUnitX.Loggers.Xml.NUnit,
   {$ENDIF }
   DUnitX.TestFramework,
-  HttpBinTest in 'HttpBinTest.pas',
-  HttpBinTest.Types in 'HttpBinTest.Types.pas';
+  RequestLimitManagerTest in 'UntiTests\RequestLimitManagerTest.pas';
 
 {$IFNDEF TESTINSIGHT}
 
