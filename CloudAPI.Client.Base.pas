@@ -128,7 +128,7 @@ begin
     on E: Exception do
     begin
       Result.Exception := ECloudApiException.Create('[HttpExcecute]', E.Message);
-      FExceptionManager.Alert(E);
+      FExceptionManager.Alert(Result.Exception);
     end;
   end;
 end;

@@ -48,7 +48,9 @@ type
   public
     constructor Create;
     destructor Destroy; override;
-    procedure Alert(AException: ECloudApiException);
+    procedure Alert(AException: ECloudApiException); overload;
+    procedure Alert(const ACode, AText: string); overload;
+    procedure Alert(const ACode: Integer; const AText: string); overload;
     property AlertEvent: Boolean read FAlertEvent write FAlertEvent default True;
     property AlertException: Boolean read FAlertException write FAlertException default False;
     property OnAlert: TProc<ECloudApiException> read FOnAlert write FOnAlert;
@@ -117,6 +119,16 @@ begin
     DoAlertEvent(AException);
   if AlertException then
     DoAlertException(AException);
+end;
+
+procedure TcaExceptionManager.Alert(const ACode: Integer; const AText: string);
+begin
+  Alert(ECloudApiException.Create(ACode, AText));
+end;
+
+procedure TcaExceptionManager.Alert(const ACode, AText: string);
+begin
+  Alert(ECloudApiException.Create(ACode, AText));
 end;
 
 class constructor TcaExceptionManager.Create;
