@@ -145,7 +145,7 @@ var
   LName: string;
 begin
   LTypeInfo := TypeInfo(T);
-  LName := LTypeInfo.Name;
+  LName := string(LTypeInfo.Name);
   FConverter.AddOrSetValue(LName, AConverter);
 end;
 
