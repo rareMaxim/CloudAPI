@@ -106,7 +106,7 @@ begin
   for LFile in FcaRequest.Files do
     case LFile.Tag of
       TcaFileToSendTag.FromFile:
-        FFormData.AddFile(LFile.Name, LFile.Data);
+        FFormData.AddFile(LFile.FileName, LFile.Data);
       TcaFileToSendTag.FromStream:
         FFormData.AddStream(LFile.Name, LFile.Content, LFile.Data);
     end;
