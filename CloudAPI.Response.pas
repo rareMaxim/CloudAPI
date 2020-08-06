@@ -151,7 +151,10 @@ constructor TcaResponse<T>.Create(ACloudRequest: IcaRequest; AHttpRequest: IHTTP
 begin
   inherited Create(ACloudRequest, AHttpRequest, AHttpResponse);
   FSerializer := ASerializer;
-  DoUpdateData;
+  if AHttpResponse.StatusCode >= 400 then
+    TcaExceptionManager.Current.Alert(AHttpResponse.StatusCode, AHttpResponse.StatusText)
+  else
+    DoUpdateData;
 end;
 
 procedure TcaResponse<T>.DoUpdateData;
