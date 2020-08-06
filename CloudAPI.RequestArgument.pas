@@ -19,7 +19,7 @@ type
   public
     class constructor Create;
     class destructor Destroy;
-    class procedure RegisterConverter(AName: string; AConverter: TFunc<TValue, string>);
+    class procedure RegisterConverter<T>(AConverter: TFunc<TValue, string>);
     class function ObjToRequest<T: record >(AArguments: T): IcaRequest;
     class function ConvertToString(AValue: TValue): string;
   end;
@@ -30,7 +30,7 @@ uses
   CloudAPI.Attributes,
   CloudAPI.Converter.BasicTypes,
   CloudAPI.Parameter,
-  CloudAPI.Types;
+  CloudAPI.Types, System.TypInfo;
 
 function GetShortStringString(const ShortStringPointer: PByte): string;
 var
@@ -66,7 +66,7 @@ var
 begin
   if AValue.IsEmpty then
     Exit('');
-  LName := GetShortStringString(@AValue.TypeInfo.Name).ToLower;
+  LName := GetShortStringString(@AValue.TypeInfo.Name);
   if not FConverter.ContainsKey(LName) then
     raise ENotSupportedException.CreateFmt('Converter for %s not supported', [AValue.TypeInfo.Name]);
   Result := FConverter[LName](AValue);
@@ -139,9 +139,14 @@ begin
   end;
 end;
 
-class procedure TcaRequestArgument.RegisterConverter(AName: string; AConverter: TFunc<TValue, string>);
+class procedure TcaRequestArgument.RegisterConverter<T>(AConverter: TFunc<TValue, string>);
+var
+  LTypeInfo: PTypeInfo;
+  LName: string;
 begin
-  FConverter.AddOrSetValue(AName.ToLower, AConverter);
+  LTypeInfo := TypeInfo(T);
+  LName := LTypeInfo.Name;
+  FConverter.AddOrSetValue(LName, AConverter);
 end;
 
 end.

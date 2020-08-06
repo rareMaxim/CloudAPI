@@ -32,7 +32,7 @@ end;
 
 class procedure TcaBasicConverters.BooleanConverter;
 begin
-  TcaRequestArgument.RegisterConverter('boolean',
+  TcaRequestArgument.RegisterConverter<Boolean>(
     function(AValue: TValue): string
     begin
       Result := AValue.AsBoolean.ToString(TUseBoolStrs.True);
@@ -41,7 +41,7 @@ end;
 
 class procedure TcaBasicConverters.Int64Converter;
 begin
-  TcaRequestArgument.RegisterConverter('int64',
+  TcaRequestArgument.RegisterConverter<Int64>(
     function(AValue: TValue): string
     begin
       Result := AValue.AsInt64.ToString;
@@ -50,7 +50,7 @@ end;
 
 class procedure TcaBasicConverters.SingleConverter;
 begin
-  TcaRequestArgument.RegisterConverter('single',
+  TcaRequestArgument.RegisterConverter<Single>(
     function(AValue: TValue): string
     var
       FS: TFormatSettings;
@@ -62,7 +62,7 @@ end;
 
 class procedure TcaBasicConverters.StringConverter;
 begin
-  TcaRequestArgument.RegisterConverter('string',
+  TcaRequestArgument.RegisterConverter<string>(
     function(AValue: TValue): string
     begin
       Result := AValue.AsString;
