@@ -238,6 +238,7 @@ constructor TApiRequest.Create;
 begin
   inherited Create;
   FHttpClient := THTTPClient.Create;
+  FHttpClient.SecureProtocols := [THTTPSecureProtocol.TLS12];
   FHttpClient.AllowCookies := True;
   FStoreAutoFormat := TStoreFormat.InFormData;
   DoStaticFill;
