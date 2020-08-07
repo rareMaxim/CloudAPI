@@ -278,9 +278,14 @@ begin
       begin
         FFiles.Add(AFile);
       end;
-    TcaFileToSendType.URL, TcaFileToSendType.ID:
+    TcaFileToSendType.URL:
       begin
-        LParam := TcaParameter.Create(AFile.Name, AFile.Data, '', AParameterType, True);
+        LParam := TcaParameter.Create(AFile.Name, AFile.URL, '', AParameterType, True);
+        AddParam(LParam);
+      end;
+    TcaFileToSendType.ID:
+      begin
+        LParam := TcaParameter.Create(AFile.Name, AFile.ID, '', AParameterType, True);
         AddParam(LParam);
       end;
   else

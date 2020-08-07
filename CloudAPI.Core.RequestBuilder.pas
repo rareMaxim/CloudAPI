@@ -106,9 +106,9 @@ begin
   for LFile in FcaRequest.Files do
     case LFile.&Type of
       TcaFileToSendType.File:
-        FFormData.AddFile(LFile.FileName, LFile.Data);
+        FFormData.AddFile(LFile.Name, LFile.FilePath);
       TcaFileToSendType.Stream:
-        FFormData.AddStream(LFile.Name, LFile.Content, LFile.Data);
+        FFormData.AddStream(LFile.Name, LFile.Content, LFile.FilePath);
     end;
 end;
 
