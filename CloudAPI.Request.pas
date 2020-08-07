@@ -273,12 +273,12 @@ procedure TcaRequest.AddFile(const AFile: TcaFileToSend; AParameterType: TcaPara
 var
   LParam: TcaParameter;
 begin
-  case AFile.Tag of
-    TcaFileToSendTag.FromFile, TcaFileToSendTag.FromStream:
+  case AFile.&Type of
+    TcaFileToSendType.&File, TcaFileToSendType.Stream:
       begin
         FFiles.Add(AFile);
       end;
-    TcaFileToSendTag.FromURL, TcaFileToSendTag.ID:
+    TcaFileToSendType.URL, TcaFileToSendType.ID:
       begin
         LParam := TcaParameter.Create(AFile.Name, AFile.Data, '', AParameterType, True);
         AddParam(LParam);

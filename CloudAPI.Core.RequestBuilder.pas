@@ -104,10 +104,10 @@ var
   LFile: TcaFileToSend;
 begin
   for LFile in FcaRequest.Files do
-    case LFile.Tag of
-      TcaFileToSendTag.FromFile:
+    case LFile.&Type of
+      TcaFileToSendType.File:
         FFormData.AddFile(LFile.FileName, LFile.Data);
-      TcaFileToSendTag.FromStream:
+      TcaFileToSendType.Stream:
         FFormData.AddStream(LFile.Name, LFile.Content, LFile.Data);
     end;
 end;

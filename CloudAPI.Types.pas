@@ -7,15 +7,12 @@ uses
 
 type
 {$SCOPEDENUMS ON}
+  TcaFileToSendType = (Error = 254, Unknown = 0, ID = 100, URL = 101, &File = 102, Stream = 103);
   TcaParameterType = (Cookie, GetOrPost, UrlSegment, HttpHeader, RequestBody, QueryString, QueryStringWithoutEncode);
   TcaMethod = (GET, POST, PUT, DELETE, HEAD, OPTIONS, PATCH, MERGE, COPY);
 {$SCOPEDENUMS OFF}
 
   TcaFileToSend = record
-  private type
-{$SCOPEDENUMS ON}
-    TcaFileToSendType = (Error = 254, Unknown = 0, ID = 100, URL = 101, &File = 102, Stream = 103);
-{$SCOPEDENUMS OFF}
   private
     FData: string;
     FContent: TStream;
@@ -23,6 +20,8 @@ type
     FName: string;
   private
     class function TestString(const AValue: string): TcaFileToSendType; static;
+    class function Create(const AData: string; AContent: TStream;
+      const ATag: TcaFileToSendType = TcaFileToSendType.Unknown): TcaFileToSend; static;
 {$REGION 'operator overload'}
   public
     class operator Equal(a, b: TcaFileToSend): Boolean;
@@ -35,9 +34,6 @@ type
     property Content: TStream read FContent write FContent;
     property &Type: TcaFileToSendType read FType write FType;
     property Name: string read FName write FName;
-
-    class function Create(const AData: string; AContent: TStream;
-      const ATag: TcaFileToSendType = TcaFileToSendType.Unknown): TcaFileToSend; static;
     class function FromFile(const AFileName: string): TcaFileToSend; static;
     class function FromID(const AID: string): TcaFileToSend; static;
     class function FromURL(const AUrl: string): TcaFileToSend; static;
