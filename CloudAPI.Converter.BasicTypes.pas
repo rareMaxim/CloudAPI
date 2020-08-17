@@ -6,6 +6,8 @@ type
   TcaBasicConverters = class
   private
     class procedure StringConverter;
+    class procedure TArray_String_Converter;
+    class procedure IntegerConverter;
     class procedure Int64Converter;
     class procedure SingleConverter;
     class procedure BooleanConverter;
@@ -17,6 +19,7 @@ implementation
 
 uses
   CloudAPI.RequestArgument,
+  CloudAPI.Client.Base,
   System.SysUtils,
   System.Rtti;
 
@@ -25,6 +28,8 @@ uses
 class procedure TcaBasicConverters.BasicConverter;
 begin
   StringConverter;
+  TArray_String_Converter;
+  IntegerConverter;
   Int64Converter;
   BooleanConverter;
   SingleConverter;
@@ -48,6 +53,15 @@ begin
     end);
 end;
 
+class procedure TcaBasicConverters.IntegerConverter;
+begin
+  TcaRequestArgument.RegisterConverter<Integer>(
+    function(AValue: TValue): string
+    begin
+      Result := AValue.AsInteger.ToString;
+    end);
+end;
+
 class procedure TcaBasicConverters.SingleConverter;
 begin
   TcaRequestArgument.RegisterConverter<Single>(
@@ -66,6 +80,18 @@ begin
     function(AValue: TValue): string
     begin
       Result := AValue.AsString;
+    end);
+end;
+
+class procedure TcaBasicConverters.TArray_String_Converter;
+begin
+  TcaRequestArgument.RegisterConverter < TArray < string >> (
+    function(AValue: TValue): string
+    var
+      LValue: TArray<string>;
+    begin
+      LValue := AValue.AsType<TArray<String>>;
+      Result := TCloudApiClientBase.Serializer.Serialize < TArray < string >> (LValue);
     end);
 end;
 

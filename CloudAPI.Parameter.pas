@@ -51,8 +51,12 @@ begin
 end;
 
 function TcaParameter.IsDefaultParameter: Boolean;
+var
+  LVal, LDefVal: string;
 begin
-  Result := ValueAsString = DefaultValueAsString;
+  LVal := ValueAsString;
+  LDefVal := DefaultValueAsString;
+  Result := LVal = LDefVal;
 end;
 
 function TcaParameter.ValueAsString: string;
