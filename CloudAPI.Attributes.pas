@@ -40,6 +40,11 @@ type
     function ToString: string; override;
   end;
 
+  caDefaultValueIntAttribute = class(caDefaultValueAttribute<Integer>)
+  public
+    function ToString: string; override;
+  end;
+
   caDefaultValueInt64Attribute = class(caDefaultValueAttribute<Int64>)
   public
     function ToString: string; override;
@@ -157,6 +162,13 @@ end;
 { caDefaultValueSingleAttribute }
 
 function caDefaultValueSingleAttribute.ToString: string;
+begin
+  Result := FDefaultValue.ToString;
+end;
+
+{ caDefaultValueIntAttribute }
+
+function caDefaultValueIntAttribute.ToString: string;
 begin
   Result := FDefaultValue.ToString;
 end;
