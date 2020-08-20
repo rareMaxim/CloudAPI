@@ -1,3 +1,6 @@
 [submodule "DUnitX"]
 	path = DUnitX
 	url = https://github.com/VSoftTechnologies/DUnitX.git
+[submodule "FastMM5"]
+	path = FastMM5
+	url = https://github.com/pleriche/FastMM5.git
