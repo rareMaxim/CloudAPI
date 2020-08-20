@@ -42,6 +42,8 @@ type
     procedure WriteLimitInfo(ARequest: IcaRequest);
     procedure DoOnLimit(const ATimeLimit: Int64);
   public
+    class constructor Create;
+    class destructor Destroy;
     constructor Create; overload;
     constructor Create(const ABaseUrl: string); overload;
     destructor Destroy; override;
@@ -78,7 +80,6 @@ begin
   FHttpClient := THTTPClient.Create;
   FHttpClient.UserAgent := 'CloudAPI for Delphi v 4.0.0';
   FHttpClient.ResponseTimeout := 5000;
-  FSerializer := TJsonSerializer.Create;
   FDefaultParams := TList<TcaParameter>.Create;
   FRequestLimitManager := TcaRequestLimitManager.Create;
   FExceptionManager := TcaExceptionManager.Current;
@@ -91,13 +92,22 @@ begin
   FBaseUrl := ABaseUrl;
 end;
 
+class constructor TCloudApiClientBase.Create;
+begin
+  FSerializer := TJsonSerializer.Create;
+end;
+
 destructor TCloudApiClientBase.Destroy;
 begin
   FRequestLimitManager.Free;
   FDefaultParams.Free;
-  FSerializer.Free;
   FHttpClient.Free;
   inherited;
+end;
+
+class destructor TCloudApiClientBase.Destroy;
+begin
+  FSerializer.Free;
 end;
 
 procedure TCloudApiClientBase.DoOnLimit(const ATimeLimit: Int64);
