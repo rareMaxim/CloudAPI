@@ -1896,6 +1896,8 @@ var
   PhotoIndex, ResultPhotoIndex: Integer;
   SizeIndex: Integer;
   GUID: TGUID;
+  LCode: string;
+  LFS: TtgPhotoSize;
 begin
   Result := nil;
   PhotoArr := GetJson.GetValue('photos') as TJSONArray;
@@ -1917,7 +1919,11 @@ begin
     SetLength(Result[ResultPhotoIndex], SizeArr.Count);
     // fills the result[RealIndex] with array of sizes
     for SizeIndex := 0 to High(Result[ResultPhotoIndex]) do
-      GetTgClass.Create(SizeArr.Items[SizeIndex].ToString).GetInterface(GUID, Result[ResultPhotoIndex, SizeIndex]);
+    begin
+      LCode := SizeArr.Items[SizeIndex].ToString;
+      LFS := TBaseJsonClass(TtgPhotoSize).Create(LCode) as TtgPhotoSize;
+      LFS.GetInterface(GUID, Result[ResultPhotoIndex, SizeIndex]);
+    end;
     // inc counter of processed photos
     Inc(ResultPhotoIndex);
   end;

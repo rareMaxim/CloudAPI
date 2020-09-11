@@ -812,7 +812,7 @@ end;
 function TTelegramBot.GetUserProfilePhotos(const ChatId: TtgUserLink; const Offset, Limit: Int64): ItgUserProfilePhotos;
 begin
   Result := TtgUserProfilePhotos.Create(GetRequest.SetMethod('getUserProfilePhotos') //
-    .AddParameter('chat_id', ChatId.ToString, '', True, TStoreFormat.InUrl) //
+    .AddParameter('user_id', ChatId.ToString, '', True, TStoreFormat.InUrl) //
     .AddParameter('offset', Offset, 0, False, TStoreFormat.InUrl) //
     .AddParameter('limit', Limit, 100, False, TStoreFormat.InUrl) //
     .ExecuteAsString);
