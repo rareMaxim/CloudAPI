@@ -17,6 +17,9 @@ type
     FTask: TList<ITask>;
   protected
   public
+    procedure Download(const AUrl, AFileName: string; ARequest: IcaRequest = nil;
+      OnResult: TProc < IcaResponseBase >= nil);
+
     procedure Execute(ARequest: IcaRequest; OnResult: TProc<IcaResponseBase>); overload;
     procedure Execute<T>(ARequest: IcaRequest; OnResult: TProc < IcaResponse < T >> ); overload;
     procedure GroupExecute(ARequests: TArray<IcaRequest>; OnResult: TProc < TArray < IcaResponseBase >> ); overload;
@@ -40,6 +43,26 @@ begin
   TTask.WaitForAll(FTask.ToArray);
   FTask.Free;
   inherited Destroy;
+end;
+
+procedure TCloudApiClient.Download(const AUrl, AFileName: string; ARequest: IcaRequest;
+  OnResult: TProc<IcaResponseBase>);
+var
+  LResult: IcaResponseBase;
+begin
+  ResponseStream := TFileStream.Create(AFileName, fmCreate);
+  try
+    BaseUrl := AUrl;
+    LResult := InternalExecute(ARequest);
+    TThread.Synchronize(nil,
+      procedure()
+      begin
+        if Assigned(OnResult) then
+          OnResult(LResult);
+      end);
+  finally
+    ResponseStream.Free;
+  end;
 end;
 
 procedure TCloudApiClient.Execute(ARequest: IcaRequest; OnResult: TProc<IcaResponseBase>);
