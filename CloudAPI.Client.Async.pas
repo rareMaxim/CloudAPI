@@ -54,15 +54,16 @@ begin
   try
     BaseUrl := AUrl;
     LResult := InternalExecute(ARequest);
-    TThread.Synchronize(nil,
-      procedure()
-      begin
-        if Assigned(OnResult) then
-          OnResult(LResult);
-      end);
+
   finally
     ResponseStream.Free;
   end;
+  TThread.Synchronize(nil,
+    procedure()
+    begin
+      if Assigned(OnResult) then
+        OnResult(LResult);
+    end);
 end;
 
 procedure TCloudApiClient.Execute(ARequest: IcaRequest; OnResult: TProc<IcaResponseBase>);
