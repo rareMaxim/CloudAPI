@@ -19,7 +19,7 @@ implementation
 
 uses
   CloudAPI.RequestArgument,
-  CloudAPI.Client.Base,
+  System.JSON.Serializers,
   System.SysUtils,
   System.Rtti;
 
@@ -89,9 +89,15 @@ begin
     function(AValue: TValue): string
     var
       LValue: TArray<string>;
+      LSerializer: TJsonSerializer;
     begin
       LValue := AValue.AsType<TArray<String>>;
-      Result := TCloudApiClientBase.Serializer.Serialize < TArray < string >> (LValue);
+      LSerializer := TJsonSerializer.Create;
+      try
+        Result := LSerializer.Serialize < TArray < string >> (LValue);
+      finally
+        LSerializer.Free;
+      end;
     end);
 end;
 

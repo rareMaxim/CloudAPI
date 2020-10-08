@@ -14,7 +14,7 @@ uses
 type
   TCloudApiClient = class(TCloudApiClientBase)
   private
-    FTask: TList<ITask>;
+    class var FTask: TList<ITask>;
   protected
   public
     procedure Download(const AUrl, AFileName: string; ARequest: IcaRequest = nil;
@@ -24,25 +24,23 @@ type
     procedure Execute<T>(ARequest: IcaRequest; OnResult: TProc < IcaResponse < T >> ); overload;
     procedure GroupExecute(ARequests: TArray<IcaRequest>; OnResult: TProc < TArray < IcaResponseBase >> ); overload;
     procedure GroupExecute<T>(ARequests: TArray<IcaRequest>; OnResult: TProc < TArray < IcaResponse<T> >> ); overload;
-    destructor Destroy; override;
-    constructor Create;
+    class constructor Create;
+    class destructor Destroy;
   end;
 
 implementation
 
 { TCloudApiClient }
 
-constructor TCloudApiClient.Create;
+class constructor TCloudApiClient.Create;
 begin
-  inherited Create;
   FTask := TList<ITask>.Create;
 end;
 
-destructor TCloudApiClient.Destroy;
+class destructor TCloudApiClient.Destroy;
 begin
   TTask.WaitForAll(FTask.ToArray);
   FTask.Free;
-  inherited Destroy;
 end;
 
 procedure TCloudApiClient.Download(const AUrl, AFileName: string; ARequest: IcaRequest;

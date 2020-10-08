@@ -28,8 +28,7 @@ type
     FRequestLimitManager: TcaRequestLimitManager;
     FResponseStream: TStream;
     FExceptionManager: TcaExceptionManager;
-  private
-    class var FSerializer: TJsonSerializer;
+    FSerializer: TJsonSerializer;
   private
     function GetAuthenticator: IAuthenticator;
     function GetBaseUrl: string;
@@ -42,8 +41,6 @@ type
     procedure WriteLimitInfo(ARequest: IcaRequest);
     procedure DoOnLimit(const ATimeLimit: Int64);
   public
-    class constructor Create;
-    class destructor Destroy;
     constructor Create; overload;
     constructor Create(const ABaseUrl: string); overload;
     destructor Destroy; override;
@@ -56,7 +53,7 @@ type
     property ResponseStream: TStream read FResponseStream write FResponseStream;
     property Version: string read FVersion;
     property ExceptionManager: TcaExceptionManager read FExceptionManager;
-    class property Serializer: TJsonSerializer read FSerializer;
+    property Serializer: TJsonSerializer read FSerializer;
 {$ENDREGION}
   end;
 
@@ -78,6 +75,7 @@ end;
 constructor TCloudApiClientBase.Create;
 begin
   FHttpClient := THTTPClient.Create;
+  FSerializer := TJsonSerializer.Create;
   FHttpClient.UserAgent := 'CloudAPI for Delphi v 4.0.0';
   FHttpClient.ResponseTimeout := 5000;
   FDefaultParams := TList<TcaParameter>.Create;
@@ -92,22 +90,13 @@ begin
   FBaseUrl := ABaseUrl;
 end;
 
-class constructor TCloudApiClientBase.Create;
-begin
-  FSerializer := TJsonSerializer.Create;
-end;
-
 destructor TCloudApiClientBase.Destroy;
 begin
+  FSerializer.Free;
   FRequestLimitManager.Free;
   FDefaultParams.Free;
   FHttpClient.Free;
   inherited;
-end;
-
-class destructor TCloudApiClientBase.Destroy;
-begin
-  FSerializer.Free;
 end;
 
 procedure TCloudApiClientBase.DoOnLimit(const ATimeLimit: Int64);
