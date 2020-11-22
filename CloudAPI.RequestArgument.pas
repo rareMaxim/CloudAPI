@@ -6,6 +6,7 @@ uses
   CloudAPI.Request,
   System.Rtti,
   System.SysUtils,
+  System.TypInfo,
   System.Generics.Collections;
 
 type
@@ -20,7 +21,8 @@ type
     class constructor Create;
     class destructor Destroy;
     class procedure RegisterConverter<T>(AConverter: TFunc<TValue, string>);
-    class function ObjToRequest<T: record >(AArguments: T): IcaRequest;
+    class function ObjToRequest<T>(AArguments: T): IcaRequest; overload;
+    class function ObjToRequest(AArguments: Pointer; AType: Pointer): IcaRequest; overload;
     class function ConvertToString(AValue: TValue): string;
   end;
 
@@ -30,7 +32,7 @@ uses
   CloudAPI.Attributes,
   CloudAPI.Converter.BasicTypes,
   CloudAPI.Parameter,
-  CloudAPI.Types, System.TypInfo;
+  CloudAPI.Types;
 
 function GetShortStringString(const ShortStringPointer: PByte): string;
 var
@@ -83,7 +85,7 @@ begin
   FConverter.Free;
 end;
 
-class function TcaRequestArgument.ObjToRequest<T>(AArguments: T): IcaRequest;
+class function TcaRequestArgument.ObjToRequest(AArguments: Pointer; AType: Pointer): IcaRequest;
 var
   LRtti: TRttiContext;
   LRttiType: TRttiType;
@@ -95,7 +97,7 @@ begin
   LRtti := TRttiContext.Create();
   try
     LParam.ParameterType := TcaParameterType.QueryString;
-    LRttiType := LRtti.GetType(TypeInfo(T));
+    LRttiType := LRtti.GetType(AType);
     for LRttiAttr in LRttiType.GetAttributes do
     begin
       if LRttiAttr is caNameAttribute then
@@ -120,7 +122,7 @@ begin
     begin
       LParam.IsRequired := False;
       LParam.Name := LRttiField.Name;
-      LParam.Value := LRttiField.GetValue(@AArguments);
+      LParam.Value := LRttiField.GetValue(AArguments);
       for LRttiAttr in LRttiField.GetAttributes do
       begin
         if LRttiAttr is caIsRequairedAttribute then
@@ -137,6 +139,11 @@ begin
   finally
     LRtti.Free;
   end;
+end;
+
+class function TcaRequestArgument.ObjToRequest<T>(AArguments: T): IcaRequest;
+begin
+  Result := ObjToRequest(@AArguments, TypeInfo(T));
 end;
 
 class procedure TcaRequestArgument.RegisterConverter<T>(AConverter: TFunc<TValue, string>);
