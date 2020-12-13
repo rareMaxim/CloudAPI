@@ -99,7 +99,6 @@ procedure TcaRequestArgumentTest.RecordOneValue;
 var
   lParams: TArray<TcaParameter>;
   lVal: TOnePairRecord;
-
 begin
   lVal := TOnePairRecord.GetValue;
   lParams := fRequestArgument.ObjToParams<TOnePairRecord>(lVal);

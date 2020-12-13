@@ -157,15 +157,19 @@ end;
 
 class operator TcaFileToSend.Implicit(const AValue: string): TcaFileToSend;
 begin
-  Result.Content := nil;
-  Result.FUrlOrIdOrFilePath := AValue;
-  Result.&Type := TestString(AValue);
+  case TestString(AValue) of
+    TcaFileToSendType.ID:
+      Result := TcaFileToSend.FromID(AValue);
+    TcaFileToSendType.URL:
+      Result := TcaFileToSend.FromURL(AValue);
+    TcaFileToSendType.&File:
+      Result := TcaFileToSend.FromFile(AValue);
+  end;
 end;
 
 class operator TcaFileToSend.Implicit(AValue: TStream): TcaFileToSend;
 begin
-  Result.Content := AValue;
-  Result.&Type := TcaFileToSendType.Stream;
+  Result := TcaFileToSend.FromStream(AValue, 'file');
 end;
 
 function TcaFileToSend.IsEmpty: Boolean;
