@@ -47,7 +47,7 @@ end;
 
 function TcaParameter.DefaultValueAsString: string;
 begin
-  Result := TcaRequestArgument.ConvertToString(DefaultValue);
+  Result := TcaRequestArgument.Current.ConvertToString(DefaultValue);
 end;
 
 function TcaParameter.IsDefaultParameter: Boolean;
@@ -61,7 +61,7 @@ end;
 
 function TcaParameter.ValueAsString: string;
 begin
-  Result := TcaRequestArgument.ConvertToString(Value);
+  Result := TcaRequestArgument.Current.ConvertToString(Value);
 end;
 
 end.

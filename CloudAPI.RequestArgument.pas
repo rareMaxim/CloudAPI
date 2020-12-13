@@ -4,6 +4,8 @@ interface
 
 uses
   CloudAPI.Request,
+  CloudAPI.Parameter,
+  CloudAPI.Types,
   System.Rtti,
   System.SysUtils,
   System.TypInfo,
@@ -16,23 +18,34 @@ type
 
   TcaRequestArgument = class
   private
-    class var FConverter: TcaTypeConverter;
+    class var fCurrent: TcaRequestArgument;
+  private
+    fConverter: TcaTypeConverter;
+    fRtti: TRttiContext;
   public
+    constructor Create;
+    destructor Destroy; override;
+    procedure RegisterConverter<T>(AConverter: TFunc<TValue, string>);
+    function ObjToParams(AArguments: Pointer; AType: TRttiType; ADefaultParam: TcaParameter)
+      : TArray<TcaParameter>; overload;
+    function ObjToParams<T>(AArguments: T): TArray<TcaParameter>; overload;
+    function ObjToRequest<T>(AArguments: T): IcaRequest; overload;
+    function ObjToRequest(AArguments: Pointer; AType: Pointer): IcaRequest; overload;
+    function ConvertToString(AValue: TValue): string;
+    function ParsePrototype(AType: Pointer; var ARttiType: TRttiType; var ADefaltParam: TcaParameter;
+      var Resourse: string; var AMethod: TcaMethod): Boolean;
+    function ParseLimitInfo(ARttiType: TRttiType; AResourse: string; ALimitInfo: TcaRequestLimit): Boolean;
+
+    class function Current: TcaRequestArgument;
     class constructor Create;
     class destructor Destroy;
-    class procedure RegisterConverter<T>(AConverter: TFunc<TValue, string>);
-    class function ObjToRequest<T>(AArguments: T): IcaRequest; overload;
-    class function ObjToRequest(AArguments: Pointer; AType: Pointer): IcaRequest; overload;
-    class function ConvertToString(AValue: TValue): string;
   end;
 
 implementation
 
 uses
   CloudAPI.Attributes,
-  CloudAPI.Converter.BasicTypes,
-  CloudAPI.Parameter,
-  CloudAPI.Types;
+  CloudAPI.Converter.BasicTypes;
 
 function GetShortStringString(const ShortStringPointer: PByte): string;
 var
@@ -62,67 +75,51 @@ begin
 end;
 { TcaRequestArgument }
 
-class function TcaRequestArgument.ConvertToString(AValue: TValue): string;
+function TcaRequestArgument.ConvertToString(AValue: TValue): string;
 var
   LName: string;
 begin
   if AValue.IsEmpty then
     Exit('');
   LName := GetShortStringString(@AValue.TypeInfo.Name);
-  if not FConverter.ContainsKey(LName) then
+  if not fConverter.ContainsKey(LName) then
     raise ENotSupportedException.CreateFmt('Converter for %s not supported', [AValue.TypeInfo.Name]);
-  Result := FConverter[LName](AValue);
+  Result := fConverter[LName](AValue);
 end;
 
 class constructor TcaRequestArgument.Create;
 begin
-  FConverter := TcaTypeConverter.Create();
-  TcaBasicConverters.BasicConverter;
+  fCurrent := TcaRequestArgument.Create;
 end;
 
 class destructor TcaRequestArgument.Destroy;
 begin
-  FConverter.Free;
+  fCurrent.Free;
 end;
 
-class function TcaRequestArgument.ObjToRequest(AArguments: Pointer; AType: Pointer): IcaRequest;
+function TcaRequestArgument.ObjToParams(AArguments: Pointer; AType: TRttiType; ADefaultParam: TcaParameter)
+  : TArray<TcaParameter>;
 var
-  LRtti: TRttiContext;
-  LRttiType: TRttiType;
   LRttiField: TRttiField;
   LRttiAttr: TCustomAttribute;
   LParam: TcaParameter;
+  lParamList: TList<TcaParameter>;
+  LArguments: Pointer;
 begin
-  Result := TcaRequest.Create;
-  LRtti := TRttiContext.Create();
+  if AType.TypeKind = TTypeKind.tkClass then // <------Viktor Akselrodв
+    LArguments := PPointer(AArguments)^
+  else
+    LArguments := AArguments;
+  lParamList := TList<TcaParameter>.Create;
   try
-    LParam.ParameterType := TcaParameterType.QueryString;
-    LRttiType := LRtti.GetType(AType);
-    for LRttiAttr in LRttiType.GetAttributes do
+    for LRttiField in AType.GetFields do
     begin
-      if LRttiAttr is caNameAttribute then
-        Result.Resource := (LRttiAttr as caNameAttribute).Name;
-      if LRttiAttr is caMethodAttribute then
-        Result.Method := (LRttiAttr as caMethodAttribute).Method;
-      if LRttiAttr is caParameterTypeAttribute then
-        LParam.ParameterType := (LRttiAttr as caParameterTypeAttribute).ParameterType;
-    end;
-
-    for LRttiAttr in LRttiType.GetAttributes do
-    begin
-      if LRttiAttr is caLimitedMethodAttribute then
-      begin
-        Result.LimitInfo := TcaRequestLimit.Create( //
-          (LRttiAttr as caLimitedMethodAttribute).Limit, //
-          Result.Resource, //
-          (LRttiAttr as caLimitedMethodAttribute).IsGlobal)
-      end;
-    end;
-    for LRttiField in LRttiType.GetFields do
-    begin
+      if LRttiField.Visibility in [mvPrivate .. mvProtected] then
+        Continue;
+      LParam := ADefaultParam;
       LParam.IsRequired := False;
       LParam.Name := LRttiField.Name;
-      LParam.Value := LRttiField.GetValue(AArguments);
+      LParam.Value := LRttiField.GetValue(LArguments);
       for LRttiAttr in LRttiField.GetAttributes do
       begin
         if LRttiAttr is caIsRequairedAttribute then
@@ -134,26 +131,114 @@ begin
         else if LRttiAttr is caParameterTypeAttribute then
           LParam.ParameterType := (LRttiAttr as caParameterTypeAttribute).ParameterType;
       end;
-      Result.AddParam(LParam);
+      lParamList.Add(LParam);
     end;
+    Result := lParamList.ToArray;
   finally
-    LRtti.Free;
+    lParamList.Free;
   end;
 end;
 
-class function TcaRequestArgument.ObjToRequest<T>(AArguments: T): IcaRequest;
+function TcaRequestArgument.ObjToRequest(AArguments: Pointer; AType: Pointer): IcaRequest;
+var
+  LRttiType: TRttiType;
+  LParam: TcaParameter;
+  lParams: TArray<TcaParameter>;
+  lRes: string;
+  lMethod: TcaMethod;
+begin
+  Result := TcaRequest.Create;
+  ParsePrototype(AType, LRttiType, LParam, lRes, lMethod);
+  Result.Resource := lRes;
+  Result.Method := lMethod;
+  ParseLimitInfo(LRttiType, Result.Resource, Result.LimitInfo);
+  lParams := ObjToParams(AArguments, LRttiType, LParam);
+  for LParam in lParams do
+  begin
+    Result.AddParam(LParam);
+  end;
+end;
+
+function TcaRequestArgument.ObjToRequest<T>(AArguments: T): IcaRequest;
 begin
   Result := ObjToRequest(@AArguments, TypeInfo(T));
 end;
 
-class procedure TcaRequestArgument.RegisterConverter<T>(AConverter: TFunc<TValue, string>);
+function TcaRequestArgument.ParseLimitInfo(ARttiType: TRttiType; AResourse: string;
+  ALimitInfo: TcaRequestLimit): Boolean;
+var
+  LRttiAttr: TCustomAttribute;
+begin
+  Result := true;
+  for LRttiAttr in ARttiType.GetAttributes do
+  begin
+    if LRttiAttr is caLimitedMethodAttribute then
+    begin
+      ALimitInfo := TcaRequestLimit.Create( //
+        (LRttiAttr as caLimitedMethodAttribute).Limit, //
+        AResourse, //
+        (LRttiAttr as caLimitedMethodAttribute).IsGlobal)
+    end;
+  end;
+end;
+
+function TcaRequestArgument.ParsePrototype(AType: Pointer; var ARttiType: TRttiType; var ADefaltParam: TcaParameter;
+  var Resourse: string; var AMethod: TcaMethod): Boolean;
+var
+  LRttiAttr: TCustomAttribute;
+begin
+  Result := true;
+  ADefaltParam.ParameterType := TcaParameterType.QueryString;
+  AMethod := TcaMethod.GET;
+  ARttiType := fRtti.GetType(AType);
+  for LRttiAttr in ARttiType.GetAttributes do
+  begin
+    if LRttiAttr is caNameAttribute then
+      Resourse := (LRttiAttr as caNameAttribute).Name;
+    if LRttiAttr is caMethodAttribute then
+      AMethod := (LRttiAttr as caMethodAttribute).Method;
+    if LRttiAttr is caParameterTypeAttribute then
+      ADefaltParam.ParameterType := (LRttiAttr as caParameterTypeAttribute).ParameterType;
+  end;
+end;
+
+procedure TcaRequestArgument.RegisterConverter<T>(AConverter: TFunc<TValue, string>);
 var
   LTypeInfo: PTypeInfo;
   LName: string;
 begin
   LTypeInfo := TypeInfo(T);
   LName := string(LTypeInfo.Name);
-  FConverter.AddOrSetValue(LName, AConverter);
+  fConverter.AddOrSetValue(LName, AConverter);
+end;
+
+constructor TcaRequestArgument.Create;
+begin
+  fConverter := TcaTypeConverter.Create();
+  fRtti := TRttiContext.Create();
+  TcaBasicConverters.BasicConverter(Self);
+end;
+
+class function TcaRequestArgument.Current: TcaRequestArgument;
+begin
+  Result := fCurrent;
+end;
+
+destructor TcaRequestArgument.Destroy;
+begin
+  fConverter.Free;
+  fRtti.Free;
+end;
+
+function TcaRequestArgument.ObjToParams<T>(AArguments: T): TArray<TcaParameter>;
+var
+  LRttiType: TRttiType;
+  lDefaultParameter: TcaParameter;
+  lRes: string;
+  lMethod: TcaMethod;
+begin
+  ParsePrototype(TypeInfo(T), LRttiType, lDefaultParameter, lRes, lMethod);
+  Result := ObjToParams(@AArguments, LRttiType, lDefaultParameter);
 end;
 
 end.

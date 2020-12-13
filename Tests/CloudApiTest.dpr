@@ -14,7 +14,8 @@ uses
   DUnitX.Loggers.Xml.NUnit,
   {$ENDIF }
   DUnitX.TestFramework,
-  RequestLimitManagerTest in 'UntiTests\RequestLimitManagerTest.pas';
+  RequestArgumentTest in 'UntiTests\RequestArgumentTest.pas',
+  RequestArgumentTest.Types in 'UntiTests\RequestArgumentTest.Types.pas';
 
 {$IFNDEF TESTINSIGHT}
 

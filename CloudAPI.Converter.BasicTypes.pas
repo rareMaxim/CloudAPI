@@ -2,69 +2,71 @@
 
 interface
 
+uses
+  CloudAPI.RequestArgument;
+
 type
   TcaBasicConverters = class
   private
-    class procedure StringConverter;
-    class procedure TArray_String_Converter;
-    class procedure IntegerConverter;
-    class procedure Int64Converter;
-    class procedure SingleConverter;
-    class procedure BooleanConverter;
+    class procedure StringConverter(AConverterManager: TcaRequestArgument);
+    class procedure TArray_String_Converter(AConverterManager: TcaRequestArgument);
+    class procedure IntegerConverter(AConverterManager: TcaRequestArgument);
+    class procedure Int64Converter(AConverterManager: TcaRequestArgument);
+    class procedure SingleConverter(AConverterManager: TcaRequestArgument);
+    class procedure BooleanConverter(AConverterManager: TcaRequestArgument);
   public
-    class procedure BasicConverter;
+    class procedure BasicConverter(AConverterManager: TcaRequestArgument);
   end;
 
 implementation
 
 uses
-  CloudAPI.RequestArgument,
   System.JSON.Serializers,
   System.SysUtils,
   System.Rtti;
 
 { TcaBasicConverters }
 
-class procedure TcaBasicConverters.BasicConverter;
+class procedure TcaBasicConverters.BasicConverter(AConverterManager: TcaRequestArgument);
 begin
-  StringConverter;
-  TArray_String_Converter;
-  IntegerConverter;
-  Int64Converter;
-  BooleanConverter;
-  SingleConverter;
+  StringConverter(AConverterManager);
+  TArray_String_Converter(AConverterManager);
+  IntegerConverter(AConverterManager);
+  Int64Converter(AConverterManager);
+  BooleanConverter(AConverterManager);
+  SingleConverter(AConverterManager);
 end;
 
-class procedure TcaBasicConverters.BooleanConverter;
+class procedure TcaBasicConverters.BooleanConverter(AConverterManager: TcaRequestArgument);
 begin
-  TcaRequestArgument.RegisterConverter<Boolean>(
+  AConverterManager.RegisterConverter<Boolean>(
     function(AValue: TValue): string
     begin
       Result := AValue.AsBoolean.ToString(TUseBoolStrs.True);
     end);
 end;
 
-class procedure TcaBasicConverters.Int64Converter;
+class procedure TcaBasicConverters.Int64Converter(AConverterManager: TcaRequestArgument);
 begin
-  TcaRequestArgument.RegisterConverter<Int64>(
+  AConverterManager.RegisterConverter<Int64>(
     function(AValue: TValue): string
     begin
       Result := AValue.AsInt64.ToString;
     end);
 end;
 
-class procedure TcaBasicConverters.IntegerConverter;
+class procedure TcaBasicConverters.IntegerConverter(AConverterManager: TcaRequestArgument);
 begin
-  TcaRequestArgument.RegisterConverter<Integer>(
+  AConverterManager.RegisterConverter<Integer>(
     function(AValue: TValue): string
     begin
       Result := AValue.AsInteger.ToString;
     end);
 end;
 
-class procedure TcaBasicConverters.SingleConverter;
+class procedure TcaBasicConverters.SingleConverter(AConverterManager: TcaRequestArgument);
 begin
-  TcaRequestArgument.RegisterConverter<Single>(
+  AConverterManager.RegisterConverter<Single>(
     function(AValue: TValue): string
     var
       FS: TFormatSettings;
@@ -74,18 +76,18 @@ begin
     end);
 end;
 
-class procedure TcaBasicConverters.StringConverter;
+class procedure TcaBasicConverters.StringConverter(AConverterManager: TcaRequestArgument);
 begin
-  TcaRequestArgument.RegisterConverter<string>(
+  AConverterManager.RegisterConverter<string>(
     function(AValue: TValue): string
     begin
       Result := AValue.AsString;
     end);
 end;
 
-class procedure TcaBasicConverters.TArray_String_Converter;
+class procedure TcaBasicConverters.TArray_String_Converter(AConverterManager: TcaRequestArgument);
 begin
-  TcaRequestArgument.RegisterConverter < TArray < string >> (
+  AConverterManager.RegisterConverter < TArray < string >> (
     function(AValue: TValue): string
     var
       LValue: TArray<string>;
