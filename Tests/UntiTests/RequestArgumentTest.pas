@@ -25,6 +25,8 @@ type
     procedure RecordTwoValue;
     [Test]
     procedure ClassOneValue;
+    [Test]
+    procedure ClassTwoValue;
   end;
 
 implementation
@@ -69,6 +71,25 @@ begin
     Assert.AreEqual(1, Length(lParams));
     Assert.AreEqual(lParams[0].Name, 'key');
     Assert.AreEqual(lParams[0].ValueAsString, 'Value');
+  finally
+    lVal.Free;
+  end;
+end;
+
+procedure TcaRequestArgumentTest.ClassTwoValue;
+var
+  lParams: TArray<TcaParameter>;
+  lVal: TTwoPairClass;
+begin
+  lVal := TTwoPairClass.GetValue;
+  try
+    lParams := fRequestArgument.ObjToParams<TTwoPairClass>(lVal);
+    Assert.IsNotNull(lParams);
+    Assert.AreEqual(2, Length(lParams));
+    Assert.AreEqual(lParams[0].Name, 'key2');
+    Assert.AreEqual(lParams[0].ValueAsString, 'Value');
+    Assert.AreEqual(lParams[1].Name, 'key1');
+    Assert.AreEqual(lParams[1].ValueAsString, '1');
   finally
     lVal.Free;
   end;

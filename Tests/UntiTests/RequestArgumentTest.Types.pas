@@ -27,12 +27,29 @@ type
   [caParameterType(TcaParameterType.QueryString)]
   TOnePairClass = class
   private
-
-  public
     [caName('key')]
     fValue: string;
-    // property Value: string read fValue write fValue;
+  public
+    property Value: string read fValue write fValue;
     class function GetValue: TOnePairClass; static;
+  end;
+
+  TBaseClass = class
+  private
+    fExcludeParam: integer;
+    [caName('key1')]
+    fIncludeParam: integer;
+  end;
+
+  [caName('getMe')]
+  [caParameterType(TcaParameterType.QueryString)]
+  TTwoPairClass = class(TBaseClass)
+  private
+    [caName('key2')]
+    fValue: string;
+  public
+    property Value: string read fValue write fValue;
+    class function GetValue: TTwoPairClass; static;
   end;
 
 implementation
@@ -58,6 +75,15 @@ class function TOnePairClass.GetValue: TOnePairClass;
 begin
   Result := TOnePairClass.Create;
   Result.fValue := 'Value';
+end;
+
+{ TTwoPairClass }
+
+class function TTwoPairClass.GetValue: TTwoPairClass;
+begin
+  Result := TTwoPairClass.Create;
+  Result.fValue := 'Value';
+  Result.fIncludeParam := 1;
 end;
 
 end.

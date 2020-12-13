@@ -105,6 +105,7 @@ var
   LParam: TcaParameter;
   lParamList: TList<TcaParameter>;
   LArguments: Pointer;
+  lIsCaParameter: Boolean;
 begin
   if AType.TypeKind = TTypeKind.tkClass then // <------Viktor Akselrodв
     LArguments := PPointer(AArguments)^
@@ -114,14 +115,15 @@ begin
   try
     for LRttiField in AType.GetFields do
     begin
-      if LRttiField.Visibility in [mvPrivate .. mvProtected] then
-        Continue;
+      lIsCaParameter := False;
       LParam := ADefaultParam;
       LParam.IsRequired := False;
       LParam.Name := LRttiField.Name;
       LParam.Value := LRttiField.GetValue(LArguments);
       for LRttiAttr in LRttiField.GetAttributes do
       begin
+        if LRttiAttr is TcaCustomAttribute then
+          lIsCaParameter := True; // Поле является параметром для CloudAPI
         if LRttiAttr is caIsRequairedAttribute then
           LParam.IsRequired := (LRttiAttr as caIsRequairedAttribute).IsRequired
         else if LRttiAttr is caNameAttribute then
@@ -131,7 +133,8 @@ begin
         else if LRttiAttr is caParameterTypeAttribute then
           LParam.ParameterType := (LRttiAttr as caParameterTypeAttribute).ParameterType;
       end;
-      lParamList.Add(LParam);
+      if lIsCaParameter then
+        lParamList.Add(LParam);
     end;
     Result := lParamList.ToArray;
   finally
@@ -169,7 +172,7 @@ function TcaRequestArgument.ParseLimitInfo(ARttiType: TRttiType; AResourse: stri
 var
   LRttiAttr: TCustomAttribute;
 begin
-  Result := true;
+  Result := True;
   for LRttiAttr in ARttiType.GetAttributes do
   begin
     if LRttiAttr is caLimitedMethodAttribute then
@@ -187,7 +190,7 @@ function TcaRequestArgument.ParsePrototype(AType: Pointer; var ARttiType: TRttiT
 var
   LRttiAttr: TCustomAttribute;
 begin
-  Result := true;
+  Result := True;
   ADefaltParam.ParameterType := TcaParameterType.QueryString;
   AMethod := TcaMethod.GET;
   ARttiType := fRtti.GetType(AType);
