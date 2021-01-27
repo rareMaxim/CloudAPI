@@ -55,6 +55,8 @@ begin
   LMethodString := TRttiEnumerationType.GetName<TcaMethod>(FcaRequest.Method);
   if FcaRequest.Resource.IsEmpty then
     FUrl := TURI.Create(FClient.BaseUrl)
+  else if FClient.BaseUrl.IsEmpty then
+    FUrl := TURI.Create(FcaRequest.Resource)
   else
     FUrl := TURI.Create(FClient.BaseUrl + '/' + FcaRequest.Resource);
   BuildUrlSegments();
