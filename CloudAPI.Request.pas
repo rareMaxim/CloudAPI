@@ -43,7 +43,10 @@ type
     function AddCookie(const AName, AValue: string): IcaRequest;
     function AddUrlSegment(const AName, AValue: string): IcaRequest;
     function AddQueryParameter(const AName, AValue: string): IcaRequest; overload;
+    function AddQueryParameterJoined(const ANameValue: string; ADelimeter: Char = '='): IcaRequest; overload;
     function AddQueryParameter(const AName, AValue: string; const AEncode: Boolean): IcaRequest; overload;
+    function AddQueryParametersJoined(const ANameValues: string; ALineDelimeter: Char = '&'; ADelimeter: Char = '=')
+      : IcaRequest; overload;
     procedure AddFile(const AFile: TcaFileToSend);
     function GetLimitInfo: TcaRequestLimit;
     procedure SetLimitInfo(const Value: TcaRequestLimit);
@@ -115,7 +118,11 @@ type
     function AddCookie(const AName, AValue: string): IcaRequest;
     function AddUrlSegment(const AName, AValue: string): IcaRequest;
     function AddQueryParameter(const AName, AValue: string): IcaRequest; overload;
+    function AddQueryParameterJoined(const ANameValue: string; ADelimeter: Char = '='): IcaRequest; overload;
     function AddQueryParameter(const AName, AValue: string; const AEncode: Boolean): IcaRequest; overload;
+    function AddQueryParametersJoined(const ANameValues: string; ALineDelimeter: Char = '&'; ADelimeter: Char = '=')
+      : IcaRequest; overload;
+
     procedure AddFile(const AFile: TcaFileToSend); overload;
     procedure AddFile(const AFile: TcaFileToSend; AParameterType: TcaParameterType); overload;
     function IsMultipartFormData: Boolean;
@@ -231,6 +238,16 @@ begin
   Result := AddParam(TcaParameter.Create(AName, AValue, TValue.Empty, AType, False));
 end;
 
+function TcaRequest.AddQueryParameterJoined(const ANameValue: string; ADelimeter: Char = '='): IcaRequest;
+var
+  lNameValue: TArray<string>;
+begin
+  lNameValue := ANameValue.Split([ADelimeter]);
+  if Length(lNameValue) <> 2 then
+    raise EArgumentException.Create('Cant split ANameValue');
+  Result := AddParam(lNameValue[0], lNameValue[1], TcaParameterType.QueryString);
+end;
+
 function TcaRequest.AddQueryParameter(const AName, AValue: string): IcaRequest;
 begin
   Result := AddParam(AName, AValue, TcaParameterType.QueryString);
@@ -318,6 +335,16 @@ begin
   else
     LParameterType := TcaParameterType.QueryStringWithoutEncode;
   Result := AddParam(AName, AValue, LParameterType);
+end;
+
+function TcaRequest.AddQueryParametersJoined(const ANameValues: string; ALineDelimeter, ADelimeter: Char): IcaRequest;
+var
+  lNameValues: TArray<string>;
+  lNameValue: string;
+begin
+  lNameValues := ANameValues.Split([ALineDelimeter]);
+  for lNameValue in lNameValues do
+    AddQueryParameterJoined(lNameValue, ADelimeter);
 end;
 
 function TcaRequest.GetAlwaysMultipartFormData: Boolean;
