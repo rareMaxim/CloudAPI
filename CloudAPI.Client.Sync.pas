@@ -46,7 +46,8 @@ var
   LResult: IcaResponseBase;
 begin
   LResult := Execute(ARequest);
-  Result := TcaResponse<T>.Create(ARequest, LResult.HttpRequest, LResult.HttpResponse, GetSerializer);
+  Result := TcaResponse<T>.Create(ARequest, LResult.HttpRequest, LResult.HttpResponse, GetSerializer,
+    LResult.Exception);
 end;
 
 function TCloudApiClient.GroupExecute(ARequests: TArray<IcaRequest>): TArray<IcaResponseBase>;

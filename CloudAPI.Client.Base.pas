@@ -122,11 +122,11 @@ begin
   ARequest.StartAt := Now;
   try
     LHttpResponse := FHttpClient.Execute(LHttpRequest, FResponseStream, LHttpRequest.Headers);
-    Result := TcaResponseBase.Create(ARequest, LHttpRequest, LHttpResponse);
+    Result := TcaResponseBase.Create(ARequest, LHttpRequest, LHttpResponse, nil);
   except
     on E: Exception do
     begin
-      Result.Exception := ECloudApiException.Create('[HttpExcecute]', E.Message);
+      Result := TcaResponseBase.Create(ARequest, LHttpRequest, LHttpResponse, E);
       FExceptionManager.Alert(Result.Exception);
     end;
   end;
