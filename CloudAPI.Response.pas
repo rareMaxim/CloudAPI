@@ -55,7 +55,8 @@ type
     procedure SetException(const Value: ECloudApiException);
   public
     function RawBytes: TBytes;
-    constructor Create(ACloudRequest: IcaRequest; AHttpRequest: IHTTPRequest; AHttpResponse: IHTTPResponse);
+    constructor Create(ACloudRequest: IcaRequest; AHttpRequest: IHTTPRequest; AHttpResponse: IHTTPResponse;
+      AException: ECloudApiException);
     property HttpRequest: IHTTPRequest read GetHttpRequest write SetHttpRequest;
     property HttpResponse: IHTTPResponse read GetHttpResponse write SetHttpResponse;
     property Timing: TcaTiming read GetTiming;
@@ -86,7 +87,7 @@ type
     procedure DoUpdateData;
   public
     constructor Create(ACloudRequest: IcaRequest; AHttpRequest: IHTTPRequest; AHttpResponse: IHTTPResponse;
-      ASerializer: TJsonSerializer); reintroduce;
+      ASerializer: TJsonSerializer; AException: ECloudApiException); reintroduce;
     property Data: T read GetData write SetData;
     property Serializer: TJsonSerializer read GetSerializer write SetSerializer;
   end;
@@ -96,12 +97,14 @@ implementation
 uses
   CloudAPI.Types;
 
-constructor TcaResponseBase.Create(ACloudRequest: IcaRequest; AHttpRequest: IHTTPRequest; AHttpResponse: IHTTPResponse);
+constructor TcaResponseBase.Create(ACloudRequest: IcaRequest; AHttpRequest: IHTTPRequest; AHttpResponse: IHTTPResponse;
+  AException: ECloudApiException);
 begin
   inherited Create();
   FHttpRequest := AHttpRequest;
   FHttpResponse := AHttpResponse;
   FTiming := TcaTiming.Create(ACloudRequest.StartAt, Now);
+  FException := AException;
 end;
 
 function TcaResponseBase.GetException: ECloudApiException;
@@ -147,13 +150,11 @@ begin
 end;
 
 constructor TcaResponse<T>.Create(ACloudRequest: IcaRequest; AHttpRequest: IHTTPRequest; AHttpResponse: IHTTPResponse;
-  ASerializer: TJsonSerializer);
+  ASerializer: TJsonSerializer; AException: ECloudApiException);
 begin
-  inherited Create(ACloudRequest, AHttpRequest, AHttpResponse);
+  inherited Create(ACloudRequest, AHttpRequest, AHttpResponse, AException);
   FSerializer := ASerializer;
-  if AHttpResponse.StatusCode >= 400 then
-    TcaExceptionManager.Current.Alert(AHttpResponse.StatusCode, AHttpResponse.StatusText)
-  else
+  if not Assigned(FException) then
     DoUpdateData;
 end;
 

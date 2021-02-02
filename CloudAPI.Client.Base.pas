@@ -27,8 +27,8 @@ type
     FDefaultParams: TList<TcaParameter>;
     FRequestLimitManager: TcaRequestLimitManager;
     FResponseStream: TStream;
-    FExceptionManager: TcaExceptionManager;
     FSerializer: TJsonSerializer;
+    fExceptionManager: TcaExceptionManager;
   private
     function GetAuthenticator: IAuthenticator;
     function GetBaseUrl: string;
@@ -52,8 +52,8 @@ type
     property RequestLimitManager: TcaRequestLimitManager read FRequestLimitManager write FRequestLimitManager;
     property ResponseStream: TStream read FResponseStream write FResponseStream;
     property Version: string read FVersion;
-    property ExceptionManager: TcaExceptionManager read FExceptionManager;
     property Serializer: TJsonSerializer read FSerializer;
+    property ExceptionManager: TcaExceptionManager read fExceptionManager write fExceptionManager;
 {$ENDREGION}
   end;
 
@@ -61,7 +61,6 @@ implementation
 
 uses
   CloudAPI.Core.RequestBuilder,
-
   CloudAPI.Types,
   System.Rtti;
 { TCloudApiClientBase }
@@ -80,8 +79,8 @@ begin
   FHttpClient.ResponseTimeout := 5000;
   FDefaultParams := TList<TcaParameter>.Create;
   FRequestLimitManager := TcaRequestLimitManager.Create;
-  FExceptionManager := TcaExceptionManager.Current;
   FResponseStream := nil;
+  fExceptionManager := TcaExceptionManager.Current;
 end;
 
 constructor TCloudApiClientBase.Create(const ABaseUrl: string);
@@ -96,6 +95,7 @@ begin
   FRequestLimitManager.Free;
   FDefaultParams.Free;
   FHttpClient.Free;
+ // fExceptionManager.Free;
   inherited;
 end;
 
@@ -108,8 +108,6 @@ end;
 
 function TCloudApiClientBase.InternalExecute(ARequest: IcaRequest): IcaResponseBase;
 var
-  LHttpRequest: IHTTPRequest;
-  LHttpResponse: IHTTPResponse;
   I: Integer;
 begin
   if not Assigned(ARequest) then
@@ -117,17 +115,17 @@ begin
   AuthenticateIfNeeded(ARequest);
   for I := 0 to FDefaultParams.Count - 1 do
     ARequest.AddParam(FDefaultParams[I]);
-  LHttpRequest := TRequestBuilder.Build(self, ARequest);
+  Result := TcaResponseBase.Create(ARequest, nil, nil, nil);
+  Result.HttpRequest := TRequestBuilder.Build(self, ARequest);
   WriteLimitInfo(ARequest);
   ARequest.StartAt := Now;
   try
-    LHttpResponse := FHttpClient.Execute(LHttpRequest, FResponseStream, LHttpRequest.Headers);
-    Result := TcaResponseBase.Create(ARequest, LHttpRequest, LHttpResponse, nil);
+    Result.HttpResponse := FHttpClient.Execute(Result.HttpRequest, FResponseStream, Result.HttpRequest.Headers);
   except
     on E: Exception do
     begin
-      Result := TcaResponseBase.Create(ARequest, LHttpRequest, LHttpResponse, E);
-      FExceptionManager.Alert(Result.Exception);
+      Result.Exception := ECloudApiException.Create(E.ClassName, E.ToString);
+      ExceptionManager.Alert(Result.Exception);
     end;
   end;
 end;
