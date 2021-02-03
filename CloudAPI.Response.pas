@@ -45,7 +45,7 @@ type
     FHttpRequest: IHTTPRequest;
     FHttpResponse: IHTTPResponse;
     FTiming: TcaTiming;
-    FException: ECloudApiException;
+    fException: ECloudApiException;
     function GetHttpRequest: IHTTPRequest;
     function GetHttpResponse: IHTTPResponse;
     procedure SetHttpRequest(const Value: IHTTPRequest);
@@ -104,12 +104,12 @@ begin
   FHttpRequest := AHttpRequest;
   FHttpResponse := AHttpResponse;
   FTiming := TcaTiming.Create(ACloudRequest.StartAt, Now);
-  FException := AException;
+  fException := AException;
 end;
 
 function TcaResponseBase.GetException: ECloudApiException;
 begin
-  Result := FException;
+  Result := fException;
 end;
 
 function TcaResponseBase.GetHttpRequest: IHTTPRequest;
@@ -136,7 +136,7 @@ end;
 
 procedure TcaResponseBase.SetException(const Value: ECloudApiException);
 begin
-  FException := Value;
+  fException := Value;
 end;
 
 procedure TcaResponseBase.SetHttpRequest(const Value: IHTTPRequest);
@@ -154,14 +154,21 @@ constructor TcaResponse<T>.Create(ACloudRequest: IcaRequest; AHttpRequest: IHTTP
 begin
   inherited Create(ACloudRequest, AHttpRequest, AHttpResponse, AException);
   FSerializer := ASerializer;
-  if not Assigned(FException) then
+  if not Assigned(fException) then
     DoUpdateData;
 end;
 
 procedure TcaResponse<T>.DoUpdateData;
 begin
   FDataJson := GetHttpResponse.ContentAsString(TEncoding.UTF8);
-  SetData(FSerializer.Deserialize<T>(FDataJson));
+  try
+    SetData(FSerializer.Deserialize<T>(FDataJson));
+  except
+    on E: System.SysUtils.Exception do
+    begin
+      fException := ECloudApiException.Create(E.ClassName, E.ToString);
+    end;
+  end;
 end;
 
 function TcaResponse<T>.GetData: T;
