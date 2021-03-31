@@ -96,7 +96,7 @@ begin
     begin
       LResponseBase := InternalExecute(ARequest);
       LResponseT := TcaResponse<T>.Create(ARequest, LResponseBase.HttpRequest, LResponseBase.HttpResponse,
-        GetSerializer);
+        GetSerializer, nil);
       TThread.Synchronize(nil,
         procedure()
         begin
@@ -145,7 +145,8 @@ begin
       for I := Low(ARequests) to High(ARequests) do
       begin
         LResult := InternalExecute(ARequests[I]);
-        LResponseT[I] := TcaResponse<T>.Create(ARequests[I], LResult.HttpRequest, LResult.HttpResponse, GetSerializer);
+        LResponseT[I] := TcaResponse<T>.Create(ARequests[I], LResult.HttpRequest, LResult.HttpResponse,
+          GetSerializer, nil);
       end;
       TThread.Synchronize(nil,
         procedure()

@@ -107,7 +107,7 @@ var
   LArguments: Pointer;
   lIsCaParameter: Boolean;
 begin
-  if AType.TypeKind = TTypeKind.tkClass then // <------Viktor Akselrodв
+  if AType.TypeKind = TTypeKind.tkClass then // <------Viktor Akselrod
     LArguments := PPointer(AArguments)^
   else
     LArguments := AArguments;
