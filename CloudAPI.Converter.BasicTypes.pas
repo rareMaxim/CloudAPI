@@ -14,6 +14,7 @@ type
     class procedure Int64Converter(AConverterManager: TcaRequestArgument);
     class procedure SingleConverter(AConverterManager: TcaRequestArgument);
     class procedure BooleanConverter(AConverterManager: TcaRequestArgument);
+    class procedure TDateTimeConverter(AConverterManager: TcaRequestArgument);
   public
     class procedure BasicConverter(AConverterManager: TcaRequestArgument);
   end;
@@ -21,6 +22,7 @@ type
 implementation
 
 uses
+  System.DateUtils,
   System.JSON.Serializers,
   System.SysUtils,
   System.Rtti;
@@ -35,6 +37,7 @@ begin
   Int64Converter(AConverterManager);
   BooleanConverter(AConverterManager);
   SingleConverter(AConverterManager);
+  TDateTimeConverter(AConverterManager);
 end;
 
 class procedure TcaBasicConverters.BooleanConverter(AConverterManager: TcaRequestArgument);
@@ -100,6 +103,19 @@ begin
       finally
         LSerializer.Free;
       end;
+    end);
+end;
+
+class procedure TcaBasicConverters.TDateTimeConverter(AConverterManager: TcaRequestArgument);
+begin
+  AConverterManager.RegisterConverter<TDateTime>(
+    function(AValue: TValue): string
+    var
+      LValue: TDateTime;
+      LSerializer: TJsonSerializer;
+    begin
+      LValue := AValue.AsType<TDateTime>;
+      Result := DateTimeToUnix(LValue).ToString;
     end);
 end;
 
