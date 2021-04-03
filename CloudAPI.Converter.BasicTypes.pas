@@ -112,7 +112,6 @@ begin
     function(AValue: TValue): string
     var
       LValue: TDateTime;
-      LSerializer: TJsonSerializer;
     begin
       LValue := AValue.AsType<TDateTime>;
       Result := DateTimeToUnix(LValue).ToString;
