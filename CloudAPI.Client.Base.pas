@@ -77,6 +77,7 @@ constructor TCloudApiClientBase.Create;
 begin
   FHttpClient := THTTPClient.Create;
   FHttpClient.AllowCookies := True;
+  FHttpClient.AutomaticDecompression := [THTTPCompressionMethod.Any];
   FSerializer := TJsonSerializer.Create;
   FHttpClient.UserAgent := 'CloudAPI for Delphi v 4.0.0';
   FHttpClient.ResponseTimeout := 5000;
