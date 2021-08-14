@@ -48,6 +48,7 @@ contains
   CloudAPI.Client.Sync in 'CloudAPI.Client.Sync.pas',
   CloudAPI.Request in 'CloudAPI.Request.pas',
   CloudAPI.Core.RequestBuilder in 'CloudAPI.Core.RequestBuilder.pas',
-  CloudAPI.Core.Constants in 'CloudAPI.Core.Constants.pas';
+  CloudAPI.Core.Constants in 'CloudAPI.Core.Constants.pas',
+  CloudAPI.Response.Printer in 'CloudAPI.Response.Printer.pas';
 
 end.
