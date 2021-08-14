@@ -157,11 +157,14 @@ var
 begin
   inherited Create(ACloudRequest, AHttpRequest, AHttpResponse, AException);
   FSerializer := ASerializer;
-  lContentAsString := GetHttpResponse.ContentAsString(TEncoding.UTF8);
-  if TestHtml(lContentAsString) then
-    fException := ECloudApiException.Create('600', 'Server return Html text')
-  else if not Assigned(fException) then
-    DoUpdateData(lContentAsString);
+  if Assigned(FHttpResponse) then
+  begin
+    lContentAsString := FHttpResponse.ContentAsString(TEncoding.UTF8);
+    if TestHtml(lContentAsString) then
+      fException := ECloudApiException.Create('600', 'Server return Html text')
+    else if not Assigned(fException) then
+      DoUpdateData(lContentAsString);
+  end;
 end;
 
 procedure TcaResponse<T>.DoUpdateData(const AData: string);

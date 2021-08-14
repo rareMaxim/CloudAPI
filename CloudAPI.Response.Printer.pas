@@ -109,8 +109,10 @@ end;
 procedure TcaResponsePrinter.ParseResponse(AResponse: TcaResponseBase);
 begin
   FreeData;
-  FRequest := TrpRequest.Create(AResponse.HttpRequest);
-  FResponse := TrpResponse.Create(AResponse.HttpResponse);
+  if Assigned(AResponse.HttpRequest) then
+    FRequest := TrpRequest.Create(AResponse.HttpRequest);
+  if Assigned(AResponse.HttpResponse) then
+    FResponse := TrpResponse.Create(AResponse.HttpResponse);
 end;
 
 class procedure TcaResponsePrinter.ToConsole(AResponse: TcaResponseBase);
