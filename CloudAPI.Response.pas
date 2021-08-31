@@ -84,7 +84,8 @@ type
     procedure SetData(const Value: T);
     procedure SetSerializer(const Value: TJsonSerializer);
   protected
-    procedure DoUpdateData;
+    procedure DoUpdateData(const AData: string);
+    function TestHtml(const AData: string): Boolean;
   public
     constructor Create(ACloudRequest: IcaRequest; AHttpRequest: IHTTPRequest; AHttpResponse: IHTTPResponse;
       ASerializer: TJsonSerializer; AException: ECloudApiException); reintroduce;
@@ -151,18 +152,25 @@ end;
 
 constructor TcaResponse<T>.Create(ACloudRequest: IcaRequest; AHttpRequest: IHTTPRequest; AHttpResponse: IHTTPResponse;
   ASerializer: TJsonSerializer; AException: ECloudApiException);
+var
+  lContentAsString: string;
 begin
   inherited Create(ACloudRequest, AHttpRequest, AHttpResponse, AException);
   FSerializer := ASerializer;
-  if not Assigned(fException) then
-    DoUpdateData;
+  if Assigned(FHttpResponse) then
+  begin
+    lContentAsString := FHttpResponse.ContentAsString(TEncoding.UTF8);
+    if TestHtml(lContentAsString) then
+      fException := ECloudApiException.Create('600', 'Server return Html text')
+    else if not Assigned(fException) then
+      DoUpdateData(lContentAsString);
+  end;
 end;
 
-procedure TcaResponse<T>.DoUpdateData;
+procedure TcaResponse<T>.DoUpdateData(const AData: string);
 begin
-  FDataJson := GetHttpResponse.ContentAsString(TEncoding.UTF8);
   try
-    SetData(FSerializer.Deserialize<T>(FDataJson));
+    FData := FSerializer.Deserialize<T>(AData);
   except
     on E: System.SysUtils.Exception do
     begin
@@ -189,6 +197,11 @@ end;
 procedure TcaResponse<T>.SetSerializer(const Value: TJsonSerializer);
 begin
   FSerializer := Value;
+end;
+
+function TcaResponse<T>.TestHtml(const AData: string): Boolean;
+begin
+  Result := AData.Substring(0, 5).TrimLeft.ToLower = '<html';
 end;
 
 { TcaTiming }

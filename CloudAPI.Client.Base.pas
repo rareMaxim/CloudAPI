@@ -9,6 +9,7 @@ uses
   CloudAPI.Parameter,
   CloudAPI.Request,
   CloudAPI.Response,
+  CloudAPI.Response.Printer,
   System.Classes,
   System.Generics.Collections,
   System.JSON.Serializers,
@@ -29,6 +30,7 @@ type
     FResponseStream: TStream;
     FSerializer: TJsonSerializer;
     fExceptionManager: TcaExceptionManager;
+    FResponsePrinter: TcaResponsePrinter;
   private
     function GetAuthenticator: IAuthenticator;
     function GetBaseUrl: string;
@@ -44,7 +46,7 @@ type
     constructor Create; overload;
     constructor Create(const ABaseUrl: string); overload;
     destructor Destroy; override;
-{$REGION 'Property'}
+  public
     property Authenticator: IAuthenticator read GetAuthenticator write SetAuthenticator;
     property BaseUrl: string read GetBaseUrl write SetBaseUrl;
     property DefaultParams: TList<TcaParameter> read FDefaultParams;
@@ -54,7 +56,7 @@ type
     property Version: string read FVersion;
     property Serializer: TJsonSerializer read FSerializer;
     property ExceptionManager: TcaExceptionManager read fExceptionManager write fExceptionManager;
-{$ENDREGION}
+    property ResponsePrinter: TcaResponsePrinter read FResponsePrinter write FResponsePrinter;
   end;
 
 implementation
@@ -74,6 +76,8 @@ end;
 constructor TCloudApiClientBase.Create;
 begin
   FHttpClient := THTTPClient.Create;
+  FHttpClient.AllowCookies := True;
+  FHttpClient.AutomaticDecompression := [THTTPCompressionMethod.Any];
   FSerializer := TJsonSerializer.Create;
   FHttpClient.UserAgent := 'CloudAPI for Delphi v 4.0.0';
   FHttpClient.ResponseTimeout := 5000;
@@ -81,6 +85,7 @@ begin
   FRequestLimitManager := TcaRequestLimitManager.Create;
   FResponseStream := nil;
   fExceptionManager := TcaExceptionManager.Current;
+  FResponsePrinter := TcaResponsePrinter.Create();
 end;
 
 constructor TCloudApiClientBase.Create(const ABaseUrl: string);
@@ -95,7 +100,7 @@ begin
   FRequestLimitManager.Free;
   FDefaultParams.Free;
   FHttpClient.Free;
- // fExceptionManager.Free;
+  // fExceptionManager.Free;
   inherited;
 end;
 
@@ -128,6 +133,7 @@ begin
       ExceptionManager.Alert(Result.Exception);
     end;
   end;
+  FResponsePrinter.ParseResponse(Result as TcaResponseBase);
 end;
 
 function TCloudApiClientBase.GetAuthenticator: IAuthenticator;
