@@ -32,6 +32,8 @@ type
     function ObjToRequest<T>(AArguments: T): IcaRequest; overload;
     function ObjToRequest(AArguments: Pointer; AType: Pointer): IcaRequest; overload;
     function ConvertToString(AValue: TValue): string;
+    function TryConvertToString(AValue: TValue; var AStringValue: string): Boolean;
+    function TryGetConverterName(AValue: TValue; var AConverterName: string): Boolean;
     function ParsePrototype(AType: Pointer; var ARttiType: TRttiType; var ADefaltParam: TcaParameter;
       var Resourse: string; var AMethod: TcaMethod): Boolean;
     function ParseLimitInfo(ARttiType: TRttiType; AResourse: string; ALimitInfo: TcaRequestLimit): Boolean;
@@ -75,16 +77,30 @@ begin
 end;
 { TcaRequestArgument }
 
-function TcaRequestArgument.ConvertToString(AValue: TValue): string;
+function TcaRequestArgument.TryConvertToString(AValue: TValue; var AStringValue: string): Boolean;
 var
   LName: string;
 begin
+  Result := TryGetConverterName(AValue, LName);
+  if Result then
+    AStringValue := fConverter[LName](AValue)
+end;
+
+function TcaRequestArgument.TryGetConverterName(AValue: TValue; var AConverterName: string): Boolean;
+begin
   if AValue.IsEmpty then
-    Exit('');
-  LName := GetShortStringString(@AValue.TypeInfo.Name);
-  if not fConverter.ContainsKey(LName) then
-    raise ENotSupportedException.CreateFmt('Converter for %s not supported', [AValue.TypeInfo.Name]);
-  Result := fConverter[LName](AValue);
+  begin
+    AConverterName := 'AValue.IsEmpty';
+    Exit(False);
+  end;
+  AConverterName := GetShortStringString(@AValue.TypeInfo.Name);
+  Result := fConverter.ContainsKey(AConverterName);
+end;
+
+function TcaRequestArgument.ConvertToString(AValue: TValue): string;
+begin
+  if not TryConvertToString(AValue, Result) then
+    raise ENotSupportedException.CreateFmt('Converter for "%S" not supported', [AValue.ToString]);
 end;
 
 class constructor TcaRequestArgument.Create;
