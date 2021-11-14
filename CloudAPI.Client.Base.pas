@@ -114,25 +114,29 @@ end;
 function TCloudApiClientBase.InternalExecute(ARequest: IcaRequest): IcaResponseBase;
 var
   I: Integer;
+  lHttpRequest: IHTTPRequest;
+  lHttpResponse: IHTTPResponse;
+  lException: ECloudApiException;
 begin
+  lException := nil;
   if not Assigned(ARequest) then
     ARequest := TcaRequest.Create;
   AuthenticateIfNeeded(ARequest);
   for I := 0 to FDefaultParams.Count - 1 do
     ARequest.AddParam(FDefaultParams[I]);
-  Result := TcaResponseBase.Create(ARequest, nil, nil, nil);
-  Result.HttpRequest := TRequestBuilder.Build(self, ARequest);
+  lHttpRequest := TRequestBuilder.Build(self, ARequest);
   WriteLimitInfo(ARequest);
   ARequest.StartAt := Now;
   try
-    Result.HttpResponse := FHttpClient.Execute(Result.HttpRequest, FResponseStream, Result.HttpRequest.Headers);
+    lHttpResponse := FHttpClient.Execute(lHttpRequest, FResponseStream, lHttpRequest.Headers);
   except
     on E: Exception do
     begin
-      Result.Exception := ECloudApiException.Create(E.ClassName, E.ToString);
-      ExceptionManager.Alert(Result.Exception);
+      lException := ECloudApiException.Create(E.ClassName, E.ToString);
+      ExceptionManager.Alert(lException);
     end;
   end;
+  Result := TcaResponseBase.Create(ARequest, lHttpRequest, lHttpResponse, lException);
   FResponsePrinter.ParseResponse(Result as TcaResponseBase);
 end;
 

@@ -5,6 +5,7 @@ interface
 uses
   CloudAPI.Exceptions,
   CloudAPI.Request,
+  System.JSON,
   System.JSON.Serializers,
   System.Net.HttpClient,
   System.SysUtils;
@@ -46,6 +47,7 @@ type
     FHttpResponse: IHTTPResponse;
     FTiming: TcaTiming;
     fException: ECloudApiException;
+    FJson: TJSONValue;
     function GetHttpRequest: IHTTPRequest;
     function GetHttpResponse: IHTTPResponse;
     procedure SetHttpRequest(const Value: IHTTPRequest);
@@ -53,7 +55,10 @@ type
     function GetTiming: TcaTiming;
     function GetException: ECloudApiException;
     procedure SetException(const Value: ECloudApiException);
+  protected
+    procedure TryLoadJSON(AHttpResponse: IHTTPResponse);
   public
+    function AsJson: TJSONValue;
     function RawBytes: TBytes;
     constructor Create(ACloudRequest: IcaRequest; AHttpRequest: IHTTPRequest; AHttpResponse: IHTTPResponse;
       AException: ECloudApiException);
@@ -98,6 +103,11 @@ implementation
 uses
   CloudAPI.Types;
 
+function TcaResponseBase.AsJson: TJSONValue;
+begin
+  Result := FJson;
+end;
+
 constructor TcaResponseBase.Create(ACloudRequest: IcaRequest; AHttpRequest: IHTTPRequest; AHttpResponse: IHTTPResponse;
   AException: ECloudApiException);
 begin
@@ -106,6 +116,7 @@ begin
   FHttpResponse := AHttpResponse;
   FTiming := TcaTiming.Create(ACloudRequest.StartAt, Now);
   fException := AException;
+  TryLoadJSON(AHttpResponse);
 end;
 
 function TcaResponseBase.GetException: ECloudApiException;
@@ -148,6 +159,16 @@ end;
 procedure TcaResponseBase.SetHttpResponse(const Value: IHTTPResponse);
 begin
   FHttpResponse := Value;
+end;
+
+procedure TcaResponseBase.TryLoadJSON(AHttpResponse: IHTTPResponse);
+var
+  lJsonStr: string;
+begin
+  if Assigned(FJson) then
+    FreeAndNil(FJson);
+  lJsonStr := AHttpResponse.ContentAsString(TEncoding.UTF8);
+  FJson := TJSONObject.ParseJSONValue(lJsonStr);
 end;
 
 constructor TcaResponse<T>.Create(ACloudRequest: IcaRequest; AHttpRequest: IHTTPRequest; AHttpResponse: IHTTPResponse;
