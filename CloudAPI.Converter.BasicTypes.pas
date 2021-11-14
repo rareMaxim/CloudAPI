@@ -9,7 +9,6 @@ type
   TcaBasicConverters = class
   private
     class procedure StringConverter(AConverterManager: TcaRequestArgument);
-    class procedure TArray_String_Converter(AConverterManager: TcaRequestArgument);
     class procedure IntegerConverter(AConverterManager: TcaRequestArgument);
     class procedure Int64Converter(AConverterManager: TcaRequestArgument);
     class procedure SingleConverter(AConverterManager: TcaRequestArgument);
@@ -32,7 +31,7 @@ uses
 class procedure TcaBasicConverters.BasicConverter(AConverterManager: TcaRequestArgument);
 begin
   StringConverter(AConverterManager);
-  TArray_String_Converter(AConverterManager);
+  AConverterManager.RegisterToJson<TArray<string>>;
   IntegerConverter(AConverterManager);
   Int64Converter(AConverterManager);
   BooleanConverter(AConverterManager);
@@ -85,24 +84,6 @@ begin
     function(AValue: TValue): string
     begin
       Result := AValue.AsString;
-    end);
-end;
-
-class procedure TcaBasicConverters.TArray_String_Converter(AConverterManager: TcaRequestArgument);
-begin
-  AConverterManager.RegisterConverter < TArray < string >> (
-    function(AValue: TValue): string
-    var
-      LValue: TArray<string>;
-      LSerializer: TJsonSerializer;
-    begin
-      LValue := AValue.AsType<TArray<String>>;
-      LSerializer := TJsonSerializer.Create;
-      try
-        Result := LSerializer.Serialize < TArray < string >> (LValue);
-      finally
-        LSerializer.Free;
-      end;
     end);
 end;
 

@@ -122,7 +122,6 @@ type
     function AddQueryParameter(const AName, AValue: string; const AEncode: Boolean): IcaRequest; overload;
     function AddQueryParametersJoined(const ANameValues: string; ALineDelimeter: Char = '&'; ADelimeter: Char = '=')
       : IcaRequest; overload;
-
     procedure AddFile(const AFile: TcaFileToSend); overload;
     procedure AddFile(const AFile: TcaFileToSend; AParameterType: TcaParameterType); overload;
     function IsMultipartFormData: Boolean;

@@ -26,11 +26,11 @@ type
     constructor Create;
     destructor Destroy; override;
     procedure RegisterConverter<T>(AConverter: TFunc<TValue, string>);
+    procedure RegisterToJson<T>;
     function ObjToParams(AArguments: Pointer; AType: TRttiType; ADefaultParam: TcaParameter)
       : TArray<TcaParameter>; overload;
     function ObjToParams<T>(AArguments: T): TArray<TcaParameter>; overload;
     function ObjToRequest<T>(AArguments: T): IcaRequest; overload;
-    function ObjToRequest(AArguments: Pointer; AType: Pointer): IcaRequest; overload;
     function ConvertToString(AValue: TValue): string;
     function TryConvertToString(AValue: TValue; var AStringValue: string): Boolean;
     function TryGetConverterName(AValue: TValue; var AConverterName: string): Boolean;
@@ -47,7 +47,7 @@ implementation
 
 uses
   CloudAPI.Attributes,
-  CloudAPI.Converter.BasicTypes;
+  CloudAPI.Converter.BasicTypes, CloudAPI.Client.Base;
 
 function GetShortStringString(const ShortStringPointer: PByte): string;
 var
@@ -127,6 +127,8 @@ begin
     LArguments := PPointer(AArguments)^
   else
     LArguments := AArguments;
+  if not Assigned(LArguments) then
+    Exit;
   lParamList := TList<TcaParameter>.Create;
   try
     for LRttiField in AType.GetFields do
@@ -158,7 +160,7 @@ begin
   end;
 end;
 
-function TcaRequestArgument.ObjToRequest(AArguments: Pointer; AType: Pointer): IcaRequest;
+function TcaRequestArgument.ObjToRequest<T>(AArguments: T): IcaRequest;
 var
   LRttiType: TRttiType;
   LParam: TcaParameter;
@@ -166,21 +168,17 @@ var
   lRes: string;
   lMethod: TcaMethod;
 begin
+  // Result := ObjToRequest(@AArguments, TypeInfo(T));
   Result := TcaRequest.Create;
-  ParsePrototype(AType, LRttiType, LParam, lRes, lMethod);
+  // ParsePrototype(AType, LRttiType, LParam, lRes, lMethod);
+  ParsePrototype(TypeInfo(T), LRttiType, LParam, lRes, lMethod);
   Result.Resource := lRes;
   Result.Method := lMethod;
   ParseLimitInfo(LRttiType, Result.Resource, Result.LimitInfo);
-  lParams := ObjToParams(AArguments, LRttiType, LParam);
+  // lParams := ObjToParams(AArguments, LRttiType, LParam);
+  lParams := ObjToParams(@AArguments, LRttiType, LParam);
   for LParam in lParams do
-  begin
     Result.AddParam(LParam);
-  end;
-end;
-
-function TcaRequestArgument.ObjToRequest<T>(AArguments: T): IcaRequest;
-begin
-  Result := ObjToRequest(@AArguments, TypeInfo(T));
 end;
 
 function TcaRequestArgument.ParseLimitInfo(ARttiType: TRttiType; AResourse: string;
@@ -229,6 +227,24 @@ begin
   LTypeInfo := TypeInfo(T);
   LName := string(LTypeInfo.Name);
   fConverter.AddOrSetValue(LName, AConverter);
+end;
+
+procedure TcaRequestArgument.RegisterToJson<T>;
+begin
+  RegisterConverter<T>(
+    function(AValue: TValue): string
+    var
+      lData: T;
+      lCA: TCloudApiClientBase;
+    begin
+      lData := AValue.AsType<T>;
+      lCA := TCloudApiClientBase.Create;
+      try
+        Result := lCA.Serializer.Serialize<T>(lData);
+      finally
+        lCA.Free;
+      end;
+    end);
 end;
 
 constructor TcaRequestArgument.Create;
