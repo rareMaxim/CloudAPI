@@ -34,6 +34,7 @@ type
     function GetException: ECloudApiException;
     procedure SetException(const Value: ECloudApiException);
     // public
+    function AsJson: TJSONValue;
     function RawBytes: TBytes;
     property HttpRequest: IHTTPRequest read GetHttpRequest write SetHttpRequest;
     property HttpResponse: IHTTPResponse read GetHttpResponse write SetHttpResponse;
@@ -83,7 +84,6 @@ type
   private
     FSerializer: TJsonSerializer;
     FData: T;
-    FDataJson: string;
     function GetData: T;
     function GetSerializer: TJsonSerializer;
     procedure SetData(const Value: T);
