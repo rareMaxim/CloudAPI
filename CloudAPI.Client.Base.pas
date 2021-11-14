@@ -101,6 +101,7 @@ begin
   FDefaultParams.Free;
   FHttpClient.Free;
   // fExceptionManager.Free;
+  FResponsePrinter.Free;
   inherited;
 end;
 

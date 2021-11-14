@@ -63,6 +63,7 @@ type
     function RawBytes: TBytes;
     constructor Create(ACloudRequest: IcaRequest; AHttpRequest: IHTTPRequest; AHttpResponse: IHTTPResponse;
       AException: ECloudApiException);
+    destructor Destroy; override;
     property HttpRequest: IHTTPRequest read GetHttpRequest write SetHttpRequest;
     property HttpResponse: IHTTPResponse read GetHttpResponse write SetHttpResponse;
     property Timing: TcaTiming read GetTiming;
@@ -117,6 +118,13 @@ begin
   FTiming := TcaTiming.Create(ACloudRequest.StartAt, Now);
   fException := AException;
   TryLoadJSON(AHttpResponse);
+end;
+
+destructor TcaResponseBase.Destroy;
+begin
+  if Assigned(FJson) then
+    FreeAndNil(FJson);
+  inherited;
 end;
 
 function TcaResponseBase.GetException: ECloudApiException;
