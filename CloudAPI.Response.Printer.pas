@@ -17,6 +17,8 @@ type
     FMethod: string;
     [JsonName('Headers')]
     FHeaders: TArray<string>;
+    [JsonName('Content')]
+    FContent: string;
   protected
 
   public
@@ -26,6 +28,7 @@ type
     property Url: string read FUrl;
     property Method: string read FMethod;
     property Headers: TArray<string> read FHeaders;
+    property Content: string read FContent;
   end;
 
   TrpResponse = class
@@ -68,9 +71,29 @@ type
 implementation
 
 uses
-
   System.Json.Types,
-  System.SysUtils;
+  System.SysUtils,
+  System.Classes;
+
+function StreamToString(aStream: TStream): string;
+var
+  SS: TStringStream;
+begin
+  if aStream <> nil then
+  begin
+    SS := TStringStream.Create('');
+    try
+      SS.CopyFrom(aStream, 0); // No need to position at 0 nor provide size
+      Result := SS.DataString;
+    finally
+      SS.Free;
+    end;
+  end
+  else
+  begin
+    Result := '';
+  end;
+end;
 { TcaPrintResponse }
 
 function TcaResponsePrinter.AsJson: string;
@@ -80,6 +103,7 @@ begin
   lSerializer := TJsonSerializer.Create;
   try
     lSerializer.Formatting := TJsonFormatting.Indented;
+    lSerializer.StringEscapeHandling := TJsonStringEscapeHandling.EscapeNonAscii;
     Result := lSerializer.Serialize<TcaResponsePrinter>(Self);
   finally
     lSerializer.Free;
@@ -135,6 +159,8 @@ begin
   FUrl := AHttpRequest.Url.ToString;
   FMethod := AHttpRequest.MethodString;
   FHeaders := TNetHeadersToStrings(AHttpRequest.Headers);
+  FContent := StreamToString(AHttpRequest.SourceStream);
+
 end;
 
 class function TrpRequest.TNetHeadersToStrings(AHeaders: TNetHeaders): TArray<string>;
