@@ -31,8 +31,7 @@ type
     FSerializer: TJsonSerializer;
     fExceptionManager: TcaExceptionManager;
     FResponsePrinter: TcaResponsePrinter;
-  private
-    FOnExcecute: TProc<IcaResponseBase>;
+    FOnExcecuteCallback: TProc<IcaResponseBase>;
     function GetAuthenticator: IAuthenticator;
     function GetBaseUrl: string;
     procedure SetAuthenticator(const Value: IAuthenticator);
@@ -60,7 +59,7 @@ type
     property Serializer: TJsonSerializer read FSerializer;
     property ExceptionManager: TcaExceptionManager read fExceptionManager write fExceptionManager;
     property ResponsePrinter: TcaResponsePrinter read FResponsePrinter write FResponsePrinter;
-    property OnExcecute: TProc<IcaResponseBase> read FOnExcecute write FOnExcecute;
+    property OnExcecuteCallback: TProc<IcaResponseBase> read FOnExcecuteCallback write FOnExcecuteCallback;
   end;
 
 implementation
@@ -76,7 +75,7 @@ begin
   if Source is TCloudApiClientBase then
   begin
     FAuthenticator := TCloudApiClientBase(Source).Authenticator;
-    FOnExcecute := TCloudApiClientBase(Source).FOnExcecute;
+    FOnExcecuteCallback := TCloudApiClientBase(Source).FOnExcecuteCallback;
   end
   else
     inherited Assign(Source);
@@ -122,8 +121,8 @@ end;
 
 procedure TCloudApiClientBase.DoOnExcecute(AcaResponse: IcaResponseBase);
 begin
-  if Assigned(OnExcecute) then
-    OnExcecute(AcaResponse);
+  if Assigned(OnExcecuteCallback) then
+    OnExcecuteCallback(AcaResponse);
 end;
 
 procedure TCloudApiClientBase.DoOnLimit(const ATimeLimit: Int64);
