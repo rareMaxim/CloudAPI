@@ -117,7 +117,8 @@ begin
   FHttpResponse := AHttpResponse;
   FTiming := TcaTiming.Create(ACloudRequest.StartAt, Now);
   fException := AException;
-  TryLoadJSON(AHttpResponse);
+  if Assigned(AHttpResponse) then
+    TryLoadJSON(AHttpResponse);
 end;
 
 destructor TcaResponseBase.Destroy;
@@ -175,8 +176,13 @@ var
 begin
   if Assigned(FJson) then
     FreeAndNil(FJson);
-  lJsonStr := AHttpResponse.ContentAsString(TEncoding.UTF8);
-  FJson := TJSONObject.ParseJSONValue(lJsonStr);
+  try
+    lJsonStr := AHttpResponse.ContentAsString(TEncoding.UTF8);
+    FJson := TJSONObject.ParseJSONValue(lJsonStr);
+  except
+    on E: System.SysUtils.Exception do
+      fException := ECloudApiException.Create(E.ToString);
+  end;
 end;
 
 constructor TcaResponse<T>.Create(ACloudRequest: IcaRequest; AHttpRequest: IHTTPRequest; AHttpResponse: IHTTPResponse;

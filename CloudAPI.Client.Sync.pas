@@ -14,6 +14,8 @@ type
     function Download(const AUrl, AFileName: string; ARequest: IcaRequest = nil): IcaResponseBase;
     function Execute(ARequest: IcaRequest): IcaResponseBase; overload;
     function Execute<T>(ARequest: IcaRequest): IcaResponse<T>; overload;
+    function TryExecute(ARequest: IcaRequest; var AResp: IcaResponseBase): Boolean; overload;
+    function TryExecute<T>(ARequest: IcaRequest; var AResp: IcaResponse<T>): Boolean; overload;
     function GroupExecute(ARequests: TArray<IcaRequest>): TArray<IcaResponseBase>; overload;
     function GroupExecute<T>(ARequests: TArray<IcaRequest>): TArray<IcaResponse<T>>; overload;
   end;
@@ -30,7 +32,7 @@ begin
   ResponseStream := TFileStream.Create(AFileName, fmCreate);
   try
     BaseUrl := AUrl;
-    Result := InternalExecute(ARequest);
+    TryInternalExcecute(ARequest, Result);
   finally
     ResponseStream.Free;
   end;
@@ -38,7 +40,7 @@ end;
 
 function TCloudApiClient.Execute(ARequest: IcaRequest): IcaResponseBase;
 begin
-  Result := InternalExecute(ARequest);
+  TryInternalExcecute(ARequest, Result);
 end;
 
 function TCloudApiClient.Execute<T>(ARequest: IcaRequest): IcaResponse<T>;
@@ -66,6 +68,21 @@ begin
   SetLength(Result, Length(ARequests));
   for I := Low(ARequests) to High(ARequests) do
     Result[I] := Execute<T>(ARequests[I]);
+end;
+
+function TCloudApiClient.TryExecute(ARequest: IcaRequest; var AResp: IcaResponseBase): Boolean;
+begin
+  Result := TryInternalExcecute(ARequest, AResp);
+end;
+
+function TCloudApiClient.TryExecute<T>(ARequest: IcaRequest; var AResp: IcaResponse<T>): Boolean;
+var
+  LResult: IcaResponseBase;
+begin
+  if TryExecute(ARequest, LResult) then
+    AResp := TcaResponse<T>.Create(ARequest, LResult.HttpRequest, LResult.HttpResponse, GetSerializer,
+      LResult.Exception);
+  Result := AResp <> nil;
 end;
 
 end.

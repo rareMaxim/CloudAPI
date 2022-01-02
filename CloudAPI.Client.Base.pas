@@ -39,7 +39,7 @@ type
   protected
     procedure AuthenticateIfNeeded(ARequest: IcaRequest);
     function GetSerializer: TJsonSerializer;
-    function InternalExecute(ARequest: IcaRequest): IcaResponseBase;
+    function TryInternalExcecute(ARequest: IcaRequest; var AResp: IcaResponseBase): Boolean;
     procedure WriteLimitInfo(ARequest: IcaRequest);
     procedure DoOnLimit(const ATimeLimit: Int64);
   public
@@ -112,7 +112,7 @@ begin
       FRequestLimitManager.OnLimit(ATimeLimit);
 end;
 
-function TCloudApiClientBase.InternalExecute(ARequest: IcaRequest): IcaResponseBase;
+function TCloudApiClientBase.TryInternalExcecute(ARequest: IcaRequest; var AResp: IcaResponseBase): Boolean;
 var
   I: Integer;
   lHttpRequest: IHTTPRequest;
@@ -130,15 +130,18 @@ begin
   ARequest.StartAt := Now;
   try
     lHttpResponse := FHttpClient.Execute(lHttpRequest, FResponseStream, lHttpRequest.Headers);
+    Result := True;
   except
     on E: Exception do
     begin
       lException := ECloudApiException.Create(E.ClassName, E.ToString);
       ExceptionManager.Alert(lException);
+      lHttpResponse := nil;
+      Result := False;
     end;
   end;
-  Result := TcaResponseBase.Create(ARequest, lHttpRequest, lHttpResponse, lException);
-  FResponsePrinter.ParseResponse(Result as TcaResponseBase);
+  AResp := TcaResponseBase.Create(ARequest, lHttpRequest, lHttpResponse, lException);
+  FResponsePrinter.ParseResponse(AResp as TcaResponseBase);
 end;
 
 function TCloudApiClientBase.GetAuthenticator: IAuthenticator;

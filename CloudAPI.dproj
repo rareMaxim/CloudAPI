@@ -134,7 +134,6 @@
         <DCCReference Include="CloudAPI.Exceptions.pas"/>
         <DCCReference Include="CloudAPI.LongPolling.pas"/>
         <DCCReference Include="CloudAPI.Ext.MethodLimits.pas"/>
-        <DCCReference Include="CloudAPI.Client.Async.pas"/>
         <DCCReference Include="CloudAPI.Client.Sync.pas"/>
         <DCCReference Include="CloudAPI.Request.pas"/>
         <DCCReference Include="CloudAPI.Core.RequestBuilder.pas"/>
