@@ -19,7 +19,7 @@ uses
   System.SysUtils;
 
 type
-  TCloudApiClientBase = class
+  TCloudApiClientBase = class(TPersistent)
   private
     FAuthenticator: IAuthenticator;
     FBaseUrl: string;
@@ -49,6 +49,7 @@ type
     constructor Create(const ABaseUrl: string); overload;
     destructor Destroy; override;
   public
+    procedure Assign(Source: TPersistent); override;
     property Authenticator: IAuthenticator read GetAuthenticator write SetAuthenticator;
     property BaseUrl: string read GetBaseUrl write SetBaseUrl;
     property DefaultParams: TList<TcaParameter> read FDefaultParams;
@@ -69,6 +70,17 @@ uses
   CloudAPI.Types,
   System.Rtti;
 { TCloudApiClientBase }
+
+procedure TCloudApiClientBase.Assign(Source: TPersistent);
+begin
+  if Source is TCloudApiClientBase then
+  begin
+    FAuthenticator := TCloudApiClientBase(Source).Authenticator;
+    FOnExcecute := TCloudApiClientBase(Source).FOnExcecute;
+  end
+  else
+    inherited Assign(Source);
+end;
 
 procedure TCloudApiClientBase.AuthenticateIfNeeded(ARequest: IcaRequest);
 begin
