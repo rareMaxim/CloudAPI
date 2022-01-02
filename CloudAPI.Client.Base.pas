@@ -32,6 +32,7 @@ type
     fExceptionManager: TcaExceptionManager;
     FResponsePrinter: TcaResponsePrinter;
   private
+    FOnExcecute: TProc<IcaResponseBase>;
     function GetAuthenticator: IAuthenticator;
     function GetBaseUrl: string;
     procedure SetAuthenticator(const Value: IAuthenticator);
@@ -42,6 +43,7 @@ type
     function TryInternalExcecute(ARequest: IcaRequest; var AResp: IcaResponseBase): Boolean;
     procedure WriteLimitInfo(ARequest: IcaRequest);
     procedure DoOnLimit(const ATimeLimit: Int64);
+    procedure DoOnExcecute(AcaResponse: IcaResponseBase);
   public
     constructor Create; overload;
     constructor Create(const ABaseUrl: string); overload;
@@ -57,6 +59,7 @@ type
     property Serializer: TJsonSerializer read FSerializer;
     property ExceptionManager: TcaExceptionManager read fExceptionManager write fExceptionManager;
     property ResponsePrinter: TcaResponsePrinter read FResponsePrinter write FResponsePrinter;
+    property OnExcecute: TProc<IcaResponseBase> read FOnExcecute write FOnExcecute;
   end;
 
 implementation
@@ -105,6 +108,12 @@ begin
   inherited;
 end;
 
+procedure TCloudApiClientBase.DoOnExcecute(AcaResponse: IcaResponseBase);
+begin
+  if Assigned(OnExcecute) then
+    OnExcecute(AcaResponse);
+end;
+
 procedure TCloudApiClientBase.DoOnLimit(const ATimeLimit: Int64);
 begin
   if ATimeLimit > 0 then
@@ -142,6 +151,7 @@ begin
   end;
   AResp := TcaResponseBase.Create(ARequest, lHttpRequest, lHttpResponse, lException);
   FResponsePrinter.ParseResponse(AResp as TcaResponseBase);
+  DoOnExcecute(AResp);
 end;
 
 function TCloudApiClientBase.GetAuthenticator: IAuthenticator;
