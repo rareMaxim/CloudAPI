@@ -6,12 +6,14 @@ uses
   CloudAPI.Client.Base,
   CloudAPI.Response,
   CloudAPI.Request,
-  CloudAPI.Types;
+  CloudAPI.Types,
+  System.Classes;
 
 type
   TCloudApiClient = class(TCloudApiClientBase)
   public
-    function Download(const AUrl, AFileName: string; ARequest: IcaRequest = nil): IcaResponseBase;
+    function Download(const AUrl, AFileName: string; ARequest: IcaRequest = nil): IcaResponseBase; overload;
+    function Download(const AUrl: string; AStream: TStream; ARequest: IcaRequest = nil): IcaResponseBase; overload;
     function Execute(ARequest: IcaRequest): IcaResponseBase; overload;
     function Execute<T>(ARequest: IcaRequest): IcaResponse<T>; overload;
     function TryExecute(ARequest: IcaRequest; var AResp: IcaResponseBase): Boolean; overload;
@@ -22,19 +24,28 @@ type
 
 implementation
 
-uses
-  System.Classes;
-
 { TCloudApiClient }
 
 function TCloudApiClient.Download(const AUrl, AFileName: string; ARequest: IcaRequest = nil): IcaResponseBase;
+var
+  lFileStream: TFileStream;
 begin
-  ResponseStream := TFileStream.Create(AFileName, fmCreate);
+  lFileStream := TFileStream.Create(AFileName, fmCreate);
+  try
+    Result := Download(AUrl, lFileStream, ARequest);
+  finally
+    lFileStream.Free;
+  end;
+end;
+
+function TCloudApiClient.Download(const AUrl: string; AStream: TStream; ARequest: IcaRequest = nil): IcaResponseBase;
+begin
+  ResponseStream := AStream;
   try
     BaseUrl := AUrl;
     TryInternalExcecute(ARequest, Result);
   finally
-    ResponseStream.Free;
+
   end;
 end;
 

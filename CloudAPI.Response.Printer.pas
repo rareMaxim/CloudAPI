@@ -179,7 +179,8 @@ begin
   FStatusCode := AHttpResponse.StatusCode;
   FStatusText := AHttpResponse.StatusText;
   FHeaders := TrpRequest.TNetHeadersToStrings(AHttpResponse.Headers);
-  FContent := AHttpResponse.ContentAsString();
+  if AHttpResponse.HeaderValue['Content-Type'] = 'application/json' then
+    FContent := AHttpResponse.ContentAsString();
 end;
 
 end.

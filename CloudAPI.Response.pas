@@ -117,8 +117,9 @@ begin
   FHttpResponse := AHttpResponse;
   FTiming := TcaTiming.Create(ACloudRequest.StartAt, Now);
   fException := AException;
-  if Assigned(AHttpResponse) then
-    TryLoadJSON(AHttpResponse);
+  if AHttpResponse.HeaderValue['Content-Type'] = 'application/json' then
+    if Assigned(AHttpResponse) then
+      TryLoadJSON(AHttpResponse);
 end;
 
 destructor TcaResponseBase.Destroy;
