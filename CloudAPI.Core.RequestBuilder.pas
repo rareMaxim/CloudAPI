@@ -222,6 +222,7 @@ end;
 
 destructor TRequestBuilder.Destroy;
 begin
+  FRequestBody.Free;
   inherited Destroy;
 end;
 
