@@ -160,7 +160,6 @@ begin
   FMethod := AHttpRequest.MethodString;
   FHeaders := TNetHeadersToStrings(AHttpRequest.Headers);
   FContent := StreamToString(AHttpRequest.SourceStream);
-
 end;
 
 class function TrpRequest.TNetHeadersToStrings(AHeaders: TNetHeaders): TArray<string>;
