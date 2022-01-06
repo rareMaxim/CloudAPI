@@ -40,15 +40,18 @@ end;
 
 function TCloudApiClient.Download(const AUrl: string; AStream: TStream; ARequest: IcaRequest = nil): IcaResponseBase;
 var
-  lOriginalStram: TStream;
+  lOriginalStream: TStream;
+  lOriginalUrl: string;
 begin
-  lOriginalStram := ResponseStream;
+  lOriginalStream := ResponseStream;
+  lOriginalUrl := BaseUrl;
   ResponseStream := AStream;
   try
     BaseUrl := AUrl;
     TryInternalExcecute(ARequest, Result);
   finally
-    ResponseStream := lOriginalStram;
+    ResponseStream := lOriginalStream;
+    BaseUrl := lOriginalUrl;
   end;
 end;
 
