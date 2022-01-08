@@ -153,7 +153,7 @@ var
 begin
   for LParam in FcaRequest.HttpHeaders do
   begin
-    FRequest.AddHeader(LParam.Name, LParam.ValueAsString);
+    FRequest.HeaderValue[LParam.Name] := LParam.ValueAsString;
   end;
 end;
 

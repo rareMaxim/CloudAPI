@@ -20,6 +20,8 @@ uses
 
 type
   TCloudApiClientBase = class(TPersistent)
+  public const
+    LIB_VERSION = '4.2.2';
   private
     FAuthenticator: IAuthenticator;
     FBaseUrl: string;
@@ -93,7 +95,7 @@ begin
   FHttpClient.AllowCookies := True;
   FHttpClient.AutomaticDecompression := [THTTPCompressionMethod.Any];
   FSerializer := TJsonSerializer.Create;
-  FHttpClient.UserAgent := 'CloudAPI for Delphi v 4.0.0';
+  FHttpClient.UserAgent := 'CloudAPI for Delphi v.' + LIB_VERSION;
   FHttpClient.ResponseTimeout := 5000;
   FDefaultParams := TList<TcaParameter>.Create;
   FRequestLimitManager := TcaRequestLimitManager.Create;
