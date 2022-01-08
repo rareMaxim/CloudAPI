@@ -117,9 +117,8 @@ begin
   FHttpResponse := AHttpResponse;
   FTiming := TcaTiming.Create(ACloudRequest.StartAt, Now);
   fException := AException;
-  if AHttpResponse.HeaderValue['Content-Type'] = 'application/json' then
-    if Assigned(AHttpResponse) then
-      TryLoadJSON(AHttpResponse);
+  if Assigned(AHttpResponse) then
+    TryLoadJSON(AHttpResponse);
 end;
 
 destructor TcaResponseBase.Destroy;
@@ -177,6 +176,8 @@ var
 begin
   if Assigned(FJson) then
     FreeAndNil(FJson);
+  if AHttpResponse.HeaderValue['Content-Type'] <> 'application/json' then
+    Exit;
   try
     lJsonStr := AHttpResponse.ContentAsString(TEncoding.UTF8);
     FJson := TJSONObject.ParseJSONValue(lJsonStr);
