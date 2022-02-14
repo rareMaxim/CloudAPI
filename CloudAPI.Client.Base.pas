@@ -21,7 +21,7 @@ uses
 type
   TCloudApiClientBase = class(TPersistent)
   public const
-    LIB_VERSION = '4.2.2';
+    LIB_VERSION = '4.3.0';
   private
     FAuthenticator: IAuthenticator;
     FBaseUrl: string;
