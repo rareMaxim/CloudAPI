@@ -43,7 +43,10 @@ type
     function AddCookie(const AName, AValue: string): IcaRequest;
     function AddUrlSegment(const AName, AValue: string): IcaRequest;
     function AddQueryParameter(const AName, AValue: string): IcaRequest; overload;
+    function AddQueryParameterJoined(const ANameValue: string; ADelimeter: Char = '='): IcaRequest; overload;
     function AddQueryParameter(const AName, AValue: string; const AEncode: Boolean): IcaRequest; overload;
+    function AddQueryParametersJoined(const ANameValues: string; ALineDelimeter: Char = '&'; ADelimeter: Char = '=')
+      : IcaRequest; overload;
     procedure AddFile(const AFile: TcaFileToSend);
     function GetLimitInfo: TcaRequestLimit;
     procedure SetLimitInfo(const Value: TcaRequestLimit);
@@ -115,7 +118,10 @@ type
     function AddCookie(const AName, AValue: string): IcaRequest;
     function AddUrlSegment(const AName, AValue: string): IcaRequest;
     function AddQueryParameter(const AName, AValue: string): IcaRequest; overload;
+    function AddQueryParameterJoined(const ANameValue: string; ADelimeter: Char = '='): IcaRequest; overload;
     function AddQueryParameter(const AName, AValue: string; const AEncode: Boolean): IcaRequest; overload;
+    function AddQueryParametersJoined(const ANameValues: string; ALineDelimeter: Char = '&'; ADelimeter: Char = '=')
+      : IcaRequest; overload;
     procedure AddFile(const AFile: TcaFileToSend); overload;
     procedure AddFile(const AFile: TcaFileToSend; AParameterType: TcaParameterType); overload;
     function IsMultipartFormData: Boolean;
@@ -199,7 +205,7 @@ begin
   end
   else if AParam.IsDefaultParameter and AParam.IsRequired then
   begin
-    raise ECloudApiRequairedParameterException.Create(AParam);
+    TcaExceptionManager.Current.Alert(ECloudApiRequairedParameterException.Create(FResource, AParam));
   end
   else if AParam.IsDefaultParameter then
   begin
@@ -229,6 +235,16 @@ end;
 function TcaRequest.AddParam(const AName: string; AValue: TValue; AType: TcaParameterType): IcaRequest;
 begin
   Result := AddParam(TcaParameter.Create(AName, AValue, TValue.Empty, AType, False));
+end;
+
+function TcaRequest.AddQueryParameterJoined(const ANameValue: string; ADelimeter: Char = '='): IcaRequest;
+var
+  lNameValue: TArray<string>;
+begin
+  lNameValue := ANameValue.Split([ADelimeter]);
+  if Length(lNameValue) <> 2 then
+    raise EArgumentException.Create('Cant split ANameValue');
+  Result := AddParam(lNameValue[0], lNameValue[1], TcaParameterType.QueryString);
 end;
 
 function TcaRequest.AddQueryParameter(const AName, AValue: string): IcaRequest;
@@ -273,14 +289,19 @@ procedure TcaRequest.AddFile(const AFile: TcaFileToSend; AParameterType: TcaPara
 var
   LParam: TcaParameter;
 begin
-  case AFile.Tag of
-    TcaFileToSendTag.FromFile, TcaFileToSendTag.FromStream:
+  case AFile.&Type of
+    TcaFileToSendType.&File, TcaFileToSendType.Stream:
       begin
         FFiles.Add(AFile);
       end;
-    TcaFileToSendTag.FromURL, TcaFileToSendTag.ID:
+    TcaFileToSendType.URL:
       begin
-        LParam := TcaParameter.Create(AFile.Name, AFile.Data, '', AParameterType, True);
+        LParam := TcaParameter.Create(AFile.Name, AFile.URL, '', AParameterType, True);
+        AddParam(LParam);
+      end;
+    TcaFileToSendType.ID:
+      begin
+        LParam := TcaParameter.Create(AFile.Name, AFile.ID, '', AParameterType, True);
         AddParam(LParam);
       end;
   else
@@ -313,6 +334,16 @@ begin
   else
     LParameterType := TcaParameterType.QueryStringWithoutEncode;
   Result := AddParam(AName, AValue, LParameterType);
+end;
+
+function TcaRequest.AddQueryParametersJoined(const ANameValues: string; ALineDelimeter, ADelimeter: Char): IcaRequest;
+var
+  lNameValues: TArray<string>;
+  lNameValue: string;
+begin
+  lNameValues := ANameValues.Split([ALineDelimeter]);
+  for lNameValue in lNameValues do
+    AddQueryParameterJoined(lNameValue, ADelimeter);
 end;
 
 function TcaRequest.GetAlwaysMultipartFormData: Boolean;

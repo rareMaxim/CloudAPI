@@ -3,11 +3,13 @@
 interface
 
 uses
+  CloudAPI.Exceptions,
   CloudAPI.Ext.MethodLimits,
   CloudAPI.IAuthenticator,
   CloudAPI.Parameter,
   CloudAPI.Request,
   CloudAPI.Response,
+  CloudAPI.Response.Printer,
   System.Classes,
   System.Generics.Collections,
   System.JSON.Serializers,
@@ -17,7 +19,9 @@ uses
   System.SysUtils;
 
 type
-  TCloudApiClientBase = class
+  TCloudApiClientBase = class(TPersistent)
+  public const
+    LIB_VERSION = '4.3.0';
   private
     FAuthenticator: IAuthenticator;
     FBaseUrl: string;
@@ -26,9 +30,10 @@ type
     FDefaultParams: TList<TcaParameter>;
     FRequestLimitManager: TcaRequestLimitManager;
     FResponseStream: TStream;
-  private
-    class var FSerializer: TJsonSerializer;
-  private
+    FSerializer: TJsonSerializer;
+    fExceptionManager: TcaExceptionManager;
+    FResponsePrinter: TcaResponsePrinter;
+    FOnExcecuteCallback: TProc<IcaResponseBase>;
     function GetAuthenticator: IAuthenticator;
     function GetBaseUrl: string;
     procedure SetAuthenticator(const Value: IAuthenticator);
@@ -36,14 +41,16 @@ type
   protected
     procedure AuthenticateIfNeeded(ARequest: IcaRequest);
     function GetSerializer: TJsonSerializer;
-    function InternalExecute(ARequest: IcaRequest): IcaResponseBase;
+    function TryInternalExcecute(ARequest: IcaRequest; var AResp: IcaResponseBase): Boolean;
     procedure WriteLimitInfo(ARequest: IcaRequest);
     procedure DoOnLimit(const ATimeLimit: Int64);
+    procedure DoOnExcecute(AcaResponse: IcaResponseBase);
   public
     constructor Create; overload;
     constructor Create(const ABaseUrl: string); overload;
     destructor Destroy; override;
-{$REGION 'Property'}
+  public
+    procedure Assign(Source: TPersistent); override;
     property Authenticator: IAuthenticator read GetAuthenticator write SetAuthenticator;
     property BaseUrl: string read GetBaseUrl write SetBaseUrl;
     property DefaultParams: TList<TcaParameter> read FDefaultParams;
@@ -51,18 +58,30 @@ type
     property RequestLimitManager: TcaRequestLimitManager read FRequestLimitManager write FRequestLimitManager;
     property ResponseStream: TStream read FResponseStream write FResponseStream;
     property Version: string read FVersion;
-    class property Serializer: TJsonSerializer read FSerializer;
-{$ENDREGION}
+    property Serializer: TJsonSerializer read FSerializer;
+    property ExceptionManager: TcaExceptionManager read fExceptionManager write fExceptionManager;
+    property ResponsePrinter: TcaResponsePrinter read FResponsePrinter write FResponsePrinter;
+    property OnExcecuteCallback: TProc<IcaResponseBase> read FOnExcecuteCallback write FOnExcecuteCallback;
   end;
 
 implementation
 
 uses
+  CloudAPI.Core.RequestBuilder,
   CloudAPI.Types,
-  System.Rtti,
-  CloudAPI.Core.RequestBuilder;
-
+  System.Rtti;
 { TCloudApiClientBase }
+
+procedure TCloudApiClientBase.Assign(Source: TPersistent);
+begin
+  if Source is TCloudApiClientBase then
+  begin
+    FAuthenticator := TCloudApiClientBase(Source).Authenticator;
+    FOnExcecuteCallback := TCloudApiClientBase(Source).FOnExcecuteCallback;
+  end
+  else
+    inherited Assign(Source);
+end;
 
 procedure TCloudApiClientBase.AuthenticateIfNeeded(ARequest: IcaRequest);
 begin
@@ -73,12 +92,16 @@ end;
 constructor TCloudApiClientBase.Create;
 begin
   FHttpClient := THTTPClient.Create;
-  FHttpClient.UserAgent := 'CloudAPI for Delphi v 4.0.0';
-  FHttpClient.ResponseTimeout := 5000;
+  FHttpClient.AllowCookies := True;
+  FHttpClient.AutomaticDecompression := [THTTPCompressionMethod.Any];
   FSerializer := TJsonSerializer.Create;
+  FHttpClient.UserAgent := 'CloudAPI for Delphi v.' + LIB_VERSION;
+  FHttpClient.ResponseTimeout := 5000;
   FDefaultParams := TList<TcaParameter>.Create;
   FRequestLimitManager := TcaRequestLimitManager.Create;
   FResponseStream := nil;
+  fExceptionManager := TcaExceptionManager.Current;
+  FResponsePrinter := TcaResponsePrinter.Create();
 end;
 
 constructor TCloudApiClientBase.Create(const ABaseUrl: string);
@@ -89,11 +112,19 @@ end;
 
 destructor TCloudApiClientBase.Destroy;
 begin
+  FSerializer.Free;
   FRequestLimitManager.Free;
   FDefaultParams.Free;
-  FSerializer.Free;
   FHttpClient.Free;
+  // fExceptionManager.Free;
+  FResponsePrinter.Free;
   inherited;
+end;
+
+procedure TCloudApiClientBase.DoOnExcecute(AcaResponse: IcaResponseBase);
+begin
+  if Assigned(OnExcecuteCallback) then
+    OnExcecuteCallback(AcaResponse);
 end;
 
 procedure TCloudApiClientBase.DoOnLimit(const ATimeLimit: Int64);
@@ -103,18 +134,26 @@ begin
       FRequestLimitManager.OnLimit(ATimeLimit);
 end;
 
-function TCloudApiClientBase.InternalExecute(ARequest: IcaRequest): IcaResponseBase;
+function TCloudApiClientBase.TryInternalExcecute(ARequest: IcaRequest; var AResp: IcaResponseBase): Boolean;
 var
+<<<<<<< HEAD
   LHttpRequest: IHTTPRequest;
   LHttpResponse: IHTTPResponse;
   LRequestBuilder: TRequestBuilder;
+=======
+>>>>>>> develop
   I: Integer;
+  lHttpRequest: IHTTPRequest;
+  lHttpResponse: IHTTPResponse;
+  lException: ECloudApiException;
 begin
+  lException := nil;
   if not Assigned(ARequest) then
     ARequest := TcaRequest.Create;
   AuthenticateIfNeeded(ARequest);
   for I := 0 to FDefaultParams.Count - 1 do
     ARequest.AddParam(FDefaultParams[I]);
+<<<<<<< HEAD
   WriteLimitInfo(ARequest);
   ARequest.StartAt := Now;
   LRequestBuilder := TRequestBuilder.Create(self, ARequest);
@@ -125,6 +164,26 @@ begin
   finally
     LRequestBuilder.Free;
   end;
+=======
+  lHttpRequest := TRequestBuilder.Build(self, ARequest);
+  WriteLimitInfo(ARequest);
+  ARequest.StartAt := Now;
+  try
+    lHttpResponse := FHttpClient.Execute(lHttpRequest, FResponseStream, lHttpRequest.Headers);
+    Result := True;
+  except
+    on E: Exception do
+    begin
+      lException := ECloudApiException.Create(E.ClassName, E.ToString);
+      ExceptionManager.Alert(lException);
+      lHttpResponse := nil;
+      Result := False;
+    end;
+  end;
+  AResp := TcaResponseBase.Create(ARequest, lHttpRequest, lHttpResponse, lException);
+  FResponsePrinter.ParseResponse(AResp as TcaResponseBase);
+  DoOnExcecute(AResp);
+>>>>>>> develop
 end;
 
 function TCloudApiClientBase.GetAuthenticator: IAuthenticator;

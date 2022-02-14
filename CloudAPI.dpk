@@ -44,9 +44,12 @@ contains
   CloudAPI.Exceptions in 'CloudAPI.Exceptions.pas',
   CloudAPI.LongPolling in 'CloudAPI.LongPolling.pas',
   CloudAPI.Ext.MethodLimits in 'CloudAPI.Ext.MethodLimits.pas',
-  CloudAPI.Client.Async in 'CloudAPI.Client.Async.pas',
   CloudAPI.Client.Sync in 'CloudAPI.Client.Sync.pas',
   CloudAPI.Request in 'CloudAPI.Request.pas',
-  CloudAPI.Core.RequestBuilder in 'CloudAPI.Core.RequestBuilder.pas';
+  CloudAPI.Core.RequestBuilder in 'CloudAPI.Core.RequestBuilder.pas',
+  CloudAPI.Core.Constants in 'CloudAPI.Core.Constants.pas',
+  CloudAPI.Response.Printer in 'CloudAPI.Response.Printer.pas',
+  CloudAPI.Request.New in 'CloudAPI.Request.New.pas',
+  CloudAPI.Request.Body in 'CloudAPI.Request.Body.pas';
 
 end.

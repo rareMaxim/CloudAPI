@@ -14,8 +14,8 @@ uses
   DUnitX.Loggers.Xml.NUnit,
   {$ENDIF }
   DUnitX.TestFramework,
-  HttpBinTest in 'HttpBinTest.pas',
-  HttpBinTest.Types in 'HttpBinTest.Types.pas';
+  RequestArgumentTest in 'UntiTests\RequestArgumentTest.pas',
+  RequestArgumentTest.Types in 'UntiTests\RequestArgumentTest.Types.pas';
 
 {$IFNDEF TESTINSIGHT}
 

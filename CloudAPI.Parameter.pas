@@ -47,17 +47,22 @@ end;
 
 function TcaParameter.DefaultValueAsString: string;
 begin
-  Result := TcaRequestArgument.ConvertToString(DefaultValue);
+  if not TcaRequestArgument.Current.TryConvertToString(DefaultValue, Result) then
+    Result := '';
 end;
 
 function TcaParameter.IsDefaultParameter: Boolean;
+var
+  LVal, LDefVal: string;
 begin
-  Result := ValueAsString = DefaultValueAsString;
+  LVal := ValueAsString;
+  LDefVal := DefaultValueAsString;
+  Result := LVal = LDefVal;
 end;
 
 function TcaParameter.ValueAsString: string;
 begin
-  Result := TcaRequestArgument.ConvertToString(Value);
+  Result := TcaRequestArgument.Current.ConvertToString(Value);
 end;
 
 end.

@@ -8,7 +8,9 @@ uses
   CloudAPI.Request,
   System.Net.Mime,
   System.Net.URLClient,
-  System.Classes;
+  System.Classes,
+  System.SysUtils,
+  CloudAPI.Types;
 
 type
   TRequestBuilder = class
@@ -17,7 +19,7 @@ type
     FRequest: IHTTPRequest;
     FcaRequest: IcaRequest;
     FFormData: TMultipartFormData;
-    FRequestBody: TStringStream;
+    FRequestBody: TStringList;
     FUrl: TURI;
     FUrlString: string;
   protected
@@ -30,6 +32,8 @@ type
     procedure BuildFormData;
     procedure BuildRequestBody;
     function DoBuild: IHTTPRequest;
+    class procedure CreateFormFromStrings(const ASource: TStrings; const AEncoding: TEncoding;
+      const AHeaders: TNetHeaders; var ASourceStream: TStream; var ASourceHeaders: TNetHeaders);
   public
     constructor Create(AClient: TCloudApiClientBase; ARequest: IcaRequest);
     function Build: IHTTPRequest; overload;
@@ -42,10 +46,8 @@ implementation
 
 uses
   CloudAPI.Parameter,
-  CloudAPI.Types,
   System.NetEncoding,
-  System.Rtti,
-  System.SysUtils;
+  System.Rtti;
 
 { TRequestBuilder }
 
@@ -56,6 +58,8 @@ begin
   LMethodString := TRttiEnumerationType.GetName<TcaMethod>(FcaRequest.Method);
   if FcaRequest.Resource.IsEmpty then
     FUrl := TURI.Create(FClient.BaseUrl)
+  else if FClient.BaseUrl.IsEmpty then
+    FUrl := TURI.Create(FcaRequest.Resource)
   else
     FUrl := TURI.Create(FClient.BaseUrl + '/' + FcaRequest.Resource);
   BuildUrlSegments();
@@ -64,12 +68,12 @@ begin
   FRequest := FClient.HttpClient.GetRequest(LMethodString, FUrl);
   BuildFiles;
 
-  BuildHttpHeaders;
   BuildCookies;
   if FcaRequest.IsMultipartFormData then
     BuildFormData
   else
     BuildRequestBody;
+  BuildHttpHeaders;
   FUrlString := FUrl.ToString;
   Result := FRequest;
 end;
@@ -105,11 +109,11 @@ var
   LFile: TcaFileToSend;
 begin
   for LFile in FcaRequest.Files do
-    case LFile.Tag of
-      TcaFileToSendTag.FromFile:
-        FFormData.AddFile(LFile.Name, LFile.Data);
-      TcaFileToSendTag.FromStream:
-        FFormData.AddStream(LFile.Name, LFile.Content, LFile.Data);
+    case LFile.&Type of
+      TcaFileToSendType.File:
+        FFormData.AddFile(LFile.Name, LFile.FilePath);
+      TcaFileToSendType.Stream:
+        FFormData.AddStream(LFile.Name, LFile.Content, LFile.FilePath);
     end;
 end;
 
@@ -126,9 +130,16 @@ var
 begin
   for LParam in FcaRequest.GetOrPosts do
   begin
-    if FcaRequest.IsMultipartFormData then
+    if FcaRequest.Method = TcaMethod.POST then
     begin
-      FFormData.AddField(LParam.Name, LParam.ValueAsString);
+      if FcaRequest.IsMultipartFormData then
+      begin
+        FFormData.AddField(LParam.Name, LParam.ValueAsString);
+      end
+      else
+      begin
+        FRequestBody.Add(LParam.Name + '=' + LParam.ValueAsString)
+      end;
     end
     else
     begin
@@ -143,7 +154,7 @@ var
 begin
   for LParam in FcaRequest.HttpHeaders do
   begin
-    FRequest.AddHeader(LParam.Name, LParam.ValueAsString);
+    FRequest.HeaderValue[LParam.Name] := LParam.ValueAsString;
   end;
 end;
 
@@ -158,8 +169,17 @@ begin
 end;
 
 procedure TRequestBuilder.BuildRequestBody;
+var
+  LSourceHeaders: TNetHeaders;
+  LSourceStream: TStream;
+  I: Integer;
 begin
-  FRequest.SourceStream := FRequestBody;
+  LSourceHeaders := [];
+  CreateFormFromStrings(FRequestBody, TEncoding.UTF8, FRequest.Headers, LSourceStream, LSourceHeaders);
+  for I := Low(LSourceHeaders) to High(LSourceHeaders) do
+    FcaRequest.HttpHeaders.Add(TcaParameter.Create(LSourceHeaders[I].Name, LSourceHeaders[I].Value, '',
+      TcaParameterType.HttpHeader, False));
+  FRequest.SourceStream := LSourceStream;
 end;
 
 procedure TRequestBuilder.BuildUrlSegments;
@@ -181,16 +201,36 @@ begin
   FcaRequest := ARequest;
   if FcaRequest.IsMultipartFormData then
     FFormData := TMultipartFormData.Create
-  else if FcaRequest.IsRequestBody then
-    FRequestBody := TStringStream.Create(FcaRequest.RequestBody.Text);
+  else
+  begin
+    FRequestBody := TStringList.Create;
+    FRequestBody.LineBreak := '&';
+  end;
+end;
+
+class procedure TRequestBuilder.CreateFormFromStrings(const ASource: TStrings; const AEncoding: TEncoding;
+  const AHeaders: TNetHeaders; var ASourceStream: TStream; var ASourceHeaders: TNetHeaders);
+var
+  lHttp: THTTPClient;
+begin
+  lHttp := THTTPClient.Create;
+  try
+    lHttp.CreateFormFromStrings(ASource, AEncoding, AHeaders, ASourceStream, ASourceHeaders);
+  finally
+    lHttp.Free;
+  end;
 end;
 
 destructor TRequestBuilder.Destroy;
 begin
+<<<<<<< HEAD
   if FcaRequest.IsMultipartFormData then
     FFormData.Free
   else if FcaRequest.IsRequestBody then
     FRequestBody.Free;
+=======
+  FRequestBody.Free;
+>>>>>>> develop
   inherited Destroy;
 end;
 

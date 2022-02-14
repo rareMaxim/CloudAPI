@@ -14,32 +14,54 @@ uses
 type
   TCloudApiClient = class(TCloudApiClientBase)
   private
-    FTask: TList<ITask>;
+    class var FTask: TList<ITask>;
   protected
   public
+    procedure Download(const AUrl, AFileName: string; ARequest: IcaRequest = nil;
+      OnResult: TProc < IcaResponseBase >= nil);
+
     procedure Execute(ARequest: IcaRequest; OnResult: TProc<IcaResponseBase>); overload;
     procedure Execute<T>(ARequest: IcaRequest; OnResult: TProc < IcaResponse < T >> ); overload;
     procedure GroupExecute(ARequests: TArray<IcaRequest>; OnResult: TProc < TArray < IcaResponseBase >> ); overload;
     procedure GroupExecute<T>(ARequests: TArray<IcaRequest>; OnResult: TProc < TArray < IcaResponse<T> >> ); overload;
-    destructor Destroy; override;
-    constructor Create;
+    class constructor Create;
+    class destructor Destroy;
   end;
 
 implementation
 
 { TCloudApiClient }
 
-constructor TCloudApiClient.Create;
+class constructor TCloudApiClient.Create;
 begin
-  inherited Create;
   FTask := TList<ITask>.Create;
 end;
 
-destructor TCloudApiClient.Destroy;
+class destructor TCloudApiClient.Destroy;
 begin
   TTask.WaitForAll(FTask.ToArray);
   FTask.Free;
-  inherited Destroy;
+end;
+
+procedure TCloudApiClient.Download(const AUrl, AFileName: string; ARequest: IcaRequest;
+  OnResult: TProc<IcaResponseBase>);
+var
+  LResult: IcaResponseBase;
+begin
+  ResponseStream := TFileStream.Create(AFileName, fmCreate);
+  try
+    BaseUrl := AUrl;
+    LResult := InternalExecute(ARequest);
+
+  finally
+    ResponseStream.Free;
+  end;
+  TThread.Synchronize(nil,
+    procedure()
+    begin
+      if Assigned(OnResult) then
+        OnResult(LResult);
+    end);
 end;
 
 procedure TCloudApiClient.Execute(ARequest: IcaRequest; OnResult: TProc<IcaResponseBase>);
@@ -74,7 +96,7 @@ begin
     begin
       LResponseBase := InternalExecute(ARequest);
       LResponseT := TcaResponse<T>.Create(ARequest, LResponseBase.HttpRequest, LResponseBase.HttpResponse,
-        GetSerializer);
+        GetSerializer, nil);
       TThread.Synchronize(nil,
         procedure()
         begin
@@ -123,7 +145,8 @@ begin
       for I := Low(ARequests) to High(ARequests) do
       begin
         LResult := InternalExecute(ARequests[I]);
-        LResponseT[I] := TcaResponse<T>.Create(ARequests[I], LResult.HttpRequest, LResult.HttpResponse, GetSerializer);
+        LResponseT[I] := TcaResponse<T>.Create(ARequests[I], LResult.HttpRequest, LResult.HttpResponse,
+          GetSerializer, nil);
       end;
       TThread.Synchronize(nil,
         procedure()

@@ -6,7 +6,9 @@ uses
   CloudAPI.Types;
 
 type
-  caNameAttribute = class(TCustomAttribute)
+  TcaCustomAttribute = class(TCustomAttribute);
+
+  caNameAttribute = class(TcaCustomAttribute)
   private
     FName: string;
   public
@@ -14,7 +16,7 @@ type
     property Name: string read FName write FName;
   end;
 
-  caMethodAttribute = class(TCustomAttribute)
+  caMethodAttribute = class(TcaCustomAttribute)
   private
     FMethod: TcaMethod;
   public
@@ -22,7 +24,7 @@ type
     property Method: TcaMethod read FMethod write FMethod;
   end;
 
-  caDefaultValueAttribute = class(TCustomAttribute)
+  caDefaultValueAttribute = class(TcaCustomAttribute)
   public
     function ToString: string; override; abstract;
   end;
@@ -36,6 +38,11 @@ type
   end;
 
   caDefaultValueStringAttribute = class(caDefaultValueAttribute<string>)
+  public
+    function ToString: string; override;
+  end;
+
+  caDefaultValueIntAttribute = class(caDefaultValueAttribute<Integer>)
   public
     function ToString: string; override;
   end;
@@ -55,7 +62,7 @@ type
     function ToString: string; override;
   end;
 
-  caIsRequairedAttribute = class(TCustomAttribute)
+  caIsRequairedAttribute = class(TcaCustomAttribute)
   private
     FIsRequired: Boolean;
   public
@@ -64,7 +71,7 @@ type
     property IsRequired: Boolean read FIsRequired write FIsRequired;
   end;
 
-  caParameterTypeAttribute = class(TCustomAttribute)
+  caParameterTypeAttribute = class(TcaCustomAttribute)
   private
     FParameterType: TcaParameterType;
   public
@@ -72,7 +79,7 @@ type
     property ParameterType: TcaParameterType read FParameterType write FParameterType;
   end;
 
-  caLimitedMethodAttribute = class(TCustomAttribute)
+  caLimitedMethodAttribute = class(TcaCustomAttribute)
   private
     FLimit: Int64;
     FIsGlobal: Boolean;
@@ -157,6 +164,13 @@ end;
 { caDefaultValueSingleAttribute }
 
 function caDefaultValueSingleAttribute.ToString: string;
+begin
+  Result := FDefaultValue.ToString;
+end;
+
+{ caDefaultValueIntAttribute }
+
+function caDefaultValueIntAttribute.ToString: string;
 begin
   Result := FDefaultValue.ToString;
 end;
