@@ -136,12 +136,6 @@ end;
 
 function TCloudApiClientBase.TryInternalExcecute(ARequest: IcaRequest; var AResp: IcaResponseBase): Boolean;
 var
-<<<<<<< HEAD
-  LHttpRequest: IHTTPRequest;
-  LHttpResponse: IHTTPResponse;
-  LRequestBuilder: TRequestBuilder;
-=======
->>>>>>> develop
   I: Integer;
   lHttpRequest: IHTTPRequest;
   lHttpResponse: IHTTPResponse;
@@ -153,18 +147,7 @@ begin
   AuthenticateIfNeeded(ARequest);
   for I := 0 to FDefaultParams.Count - 1 do
     ARequest.AddParam(FDefaultParams[I]);
-<<<<<<< HEAD
-  WriteLimitInfo(ARequest);
-  ARequest.StartAt := Now;
-  LRequestBuilder := TRequestBuilder.Create(self, ARequest);
-  try
-    LHttpRequest := LRequestBuilder.Build();
-    LHttpResponse := FHttpClient.Execute(LHttpRequest, FResponseStream, LHttpRequest.Headers);
-    Result := TcaResponseBase.Create(ARequest, LHttpRequest, LHttpResponse);
-  finally
-    LRequestBuilder.Free;
-  end;
-=======
+
   lHttpRequest := TRequestBuilder.Build(self, ARequest);
   WriteLimitInfo(ARequest);
   ARequest.StartAt := Now;
@@ -183,7 +166,6 @@ begin
   AResp := TcaResponseBase.Create(ARequest, lHttpRequest, lHttpResponse, lException);
   FResponsePrinter.ParseResponse(AResp as TcaResponseBase);
   DoOnExcecute(AResp);
->>>>>>> develop
 end;
 
 function TCloudApiClientBase.GetAuthenticator: IAuthenticator;

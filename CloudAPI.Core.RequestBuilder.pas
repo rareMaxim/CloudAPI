@@ -223,14 +223,7 @@ end;
 
 destructor TRequestBuilder.Destroy;
 begin
-<<<<<<< HEAD
-  if FcaRequest.IsMultipartFormData then
-    FFormData.Free
-  else if FcaRequest.IsRequestBody then
-    FRequestBody.Free;
-=======
   FRequestBody.Free;
->>>>>>> develop
   inherited Destroy;
 end;
 
