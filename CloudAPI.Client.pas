@@ -1,4 +1,4 @@
-﻿unit CloudAPI.Client.Sync;
+﻿unit CloudAPI.Client;
 
 interface
 
@@ -7,7 +7,8 @@ uses
   CloudAPI.Response,
   CloudAPI.Request,
   CloudAPI.Types,
-  System.Classes;
+  System.Classes,
+  System.SysUtils;
 
 type
   TCloudApiClient = class(TCloudApiClientBase)
@@ -20,9 +21,15 @@ type
     function TryExecute<T>(ARequest: IcaRequest; var AResp: IcaResponse<T>): Boolean; overload;
     function GroupExecute(ARequests: TArray<IcaRequest>): TArray<IcaResponseBase>; overload;
     function GroupExecute<T>(ARequests: TArray<IcaRequest>): TArray<IcaResponse<T>>; overload;
+    // Async
+    procedure TryExecuteAsync(ARequest: IcaRequest; AResponse: TProc<Boolean, IcaResponseBase>); overload;
+    procedure TryExecuteAsync<T>(ARequest: IcaRequest; AOnResponse: TProc < IcaResponse < T >> ); overload;
   end;
 
 implementation
+
+uses
+  CloudAPI.Exceptions;
 
 { TCloudApiClient }
 
@@ -57,7 +64,8 @@ end;
 
 function TCloudApiClient.Execute(ARequest: IcaRequest): IcaResponseBase;
 begin
-  TryInternalExcecute(ARequest, Result);
+  if not TryInternalExcecute(ARequest, Result) then
+    raise Result.Exception;
 end;
 
 function TCloudApiClient.Execute<T>(ARequest: IcaRequest): IcaResponse<T>;
@@ -100,6 +108,54 @@ begin
     AResp := TcaResponse<T>.Create(ARequest, LResult.HttpRequest, LResult.HttpResponse, GetSerializer,
       LResult.Exception);
   Result := AResp <> nil;
+end;
+
+procedure TCloudApiClient.TryExecuteAsync(ARequest: IcaRequest; AResponse: TProc<Boolean, IcaResponseBase>);
+var
+  LThread: TThread;
+begin
+  LThread := TThread.CreateAnonymousThread(
+    procedure
+    var
+      LResult: Boolean;
+      LResponse: IcaResponseBase;
+    begin
+      LResult := TryExecute(ARequest, LResponse);
+      if IsConsole then
+      begin
+        if Assigned(AResponse) then
+          AResponse(LResult, LResponse);
+      end
+      else
+      begin
+        TThread.Synchronize(nil,
+          procedure
+          begin
+            if Assigned(AResponse) then
+              AResponse(LResult, LResponse);
+          end);
+      end;
+    end);
+
+  LThread.FreeOnTerminate := True;
+  LThread.Start;
+
+end;
+
+procedure TCloudApiClient.TryExecuteAsync<T>(ARequest: IcaRequest; AOnResponse: TProc < IcaResponse < T >> );
+begin
+  TryExecuteAsync(ARequest,
+    procedure(AResult: Boolean; AResponse: IcaResponseBase)
+    var
+      LResponse: IcaResponse<T>;
+    begin
+      if Assigned(AOnResponse) then
+      begin
+        LResponse := TcaResponse<T>.Create(ARequest, AResponse.HttpRequest, AResponse.HttpResponse, GetSerializer,
+          AResponse.Exception);
+        AOnResponse(LResponse);
+      end;
+    end);
 end;
 
 end.
