@@ -26,7 +26,7 @@ type
     procedure BuildHttpHeaders;
     procedure BuildCookies;
     procedure BuildQueryParameters;
-    procedure BuildUrlSegments;
+    class function BuildUrlSegments(const AUrl: string; ARequest: IcaRequest): TURI;
     procedure BuildGetOrPosts;
     procedure BuildFiles;
     procedure BuildFormData;
@@ -57,12 +57,12 @@ var
 begin
   LMethodString := TRttiEnumerationType.GetName<TcaMethod>(FcaRequest.Method);
   if FcaRequest.Resource.IsEmpty then
-    FUrl := TURI.Create(FClient.BaseUrl)
+    FUrl := BuildUrlSegments(FClient.BaseUrl, FcaRequest)
   else if FClient.BaseUrl.IsEmpty then
-    FUrl := TURI.Create(FcaRequest.Resource)
+    FUrl := BuildUrlSegments(FcaRequest.Resource, FcaRequest)
   else
-    FUrl := TURI.Create(FClient.BaseUrl + '/' + FcaRequest.Resource);
-  BuildUrlSegments();
+    FUrl := BuildUrlSegments(FClient.BaseUrl + '/' + FcaRequest.Resource, FcaRequest);
+
   BuildGetOrPosts;
   BuildQueryParameters;
   FRequest := FClient.HttpClient.GetRequest(LMethodString, FUrl);
@@ -182,17 +182,15 @@ begin
   FRequest.SourceStream := LSourceStream;
 end;
 
-procedure TRequestBuilder.BuildUrlSegments;
+class function TRequestBuilder.BuildUrlSegments(const AUrl: string; ARequest: IcaRequest): TURI;
 var
   LFullUrl: string;
   LParam: TcaParameter;
 begin
-  LFullUrl := TNetEncoding.URL.Decode(FUrl.ToString);
-  for LParam in FcaRequest.UrlSegments do
-  begin
+  LFullUrl := AUrl;
+  for LParam in ARequest.UrlSegments do
     LFullUrl := LFullUrl.Replace('{' + LParam.Name + '}', LParam.ValueAsString);
-  end;
-  FUrl := TURI.Create(LFullUrl);
+  Result := TURI.Create(LFullUrl);
 end;
 
 constructor TRequestBuilder.Create(AClient: TCloudApiClientBase; ARequest: IcaRequest);
